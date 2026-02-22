@@ -1,0 +1,64 @@
+---
+title: "Jean-Michel Jarre y el origen de la música electrónica moderna"
+description: "Un repaso por el surgimiento de la música electrónica desde la década de 1960 y la trayectoria de Jean-Michel Jarre: discos clave, conciertos históricos e innovación sonora."
+pubDatetime: 2026-02-21T00:00:00-06:00
+author: "Rodolfo Gonzalez"
+slug: "jean-michel-jarre-origen-musica-electronica-moderna"
+featured: true
+draft: false
+tags:
+  - musica-electronica
+  - sintetizadores
+  - jean-michel-jarre
+  - historia
+  - conciertos
+  - composicion
+  - jarre
+timezone: "America/Mexico_City"
+---
+
+# Síntesis y música electrónica: contexto y Jean-Michel Jarre
+
+Al aparecer los primeros sintetizadores y otros instrumentos musicales electrónicos en la década de 1960, surgió un nuevo tipo de música, fusión de varios géneros (jazz, rock, clásico, música étnica...), pero también con características propias. En su comienzo fue música experimental, y aparecieron compositores e intérpretes como Vangelis, Walter Carlos, Isao Tomita y Jean-Michel Jarre.
+
+Jean-Michel Jarre es un compositor e intérprete francés, nacido en Lyon en 1948. Su padre es Maurice Jarre, conocido compositor de música para películas tales como *Dr. Zhivago*, *Lawrence de Arabia* y *Ghost*.
+
+La música de Jean-Michel Jarre actualmente se puede encontrar clasificada como New Age, pero, por ejemplo, el disco *Oxygène* en 1977 alcanzó el lugar 3 en las listas de popularidad de jazz en los EE. UU., y también entró a la lista de los 10 primeros del rock. Jarre ha dicho que su música no es New Age, sino música electrónica. Jarre comenta:
+
+> “Aún el término ‘música electrónica’ puede ser muy peligroso, porque para mucha gente tiene un significado muy estrecho.”
+
+El hecho de que se usen instrumentos electrónicos no debe ser una clase de justificación sobre la originalidad o valor de lo que se hace. Solo usamos esos instrumentos porque pueden producir nuevos sonidos y algunos sentimientos que queremos expresar. El problema es que mucha gente toma la música electrónica como algo robotizado y muy frío, pero de hecho no lo es. De hecho, Jean-Michel ha combinado los instrumentos electrónicos con una orquesta tradicional china (*Fishing Junks at Sunset*, una de sus melodías más emotivas); orquestas de cuerdas y metales, y coros (*Rendez-Vous II* y otras); un ensamble árabe; coros y percusionistas africanos; e incluso con los steel drums de un grupo de calipso de Trinidad y Tobago (*The Amoco Renegades* en *Calypso*).
+
+Jarre estudió piano y guitarra desde los 5 años y, posteriormente, armonía, contrapunto y fuga en el Conservatorio de París, obteniendo su Licenciatura en Artes con una tesis sobre literatura comparativa: *The Faust Of Literature and Music*. Tras formar parte de varios grupos de rock (inspirados por los Beatles) en París, en 1968 se unió al Grupo de Investigación Musical de Pierre Schaeffer, en donde tuvo la oportunidad de trabajar con uno de los primeros sintetizadores en Europa. Jarre dejó aquel grupo tres años después y, en 1970, grabó su primer disco. Al año siguiente se convirtió en el músico más joven en tocar en vivo en la Ópera de París, al ejecutar una melodía electrónica llamada *Luz* (Aor) que sirvió de fondo para un ballet con el que se reinauguró el Palais Garnier.
+
+Después de formar su propio estudio de grabación, y componer y producir música para películas y para varios grupos de rock franceses, en 1976, tras haber firmado con una pequeña disquera independiente de París, Disques Dreyfus, Jarre grabó *Oxygène*, el primero de sus éxitos. Lanzado a nivel mundial por Polygram, vendió 6 millones de copias (siendo el disco más vendido en Europa) en ese año; ganó el Premio de la Academia Francesa de Charles Cros; y Jarre fue nombrado Hombre del Año por la revista *People*. A partir de ese disco, Jarre hace equipo con Michel Geiss, un músico y diseñador de varios de los instrumentos electrónicos utilizados por Jarre. Ese mismo año conoció a la actriz francesa Charlotte Rampling, con quien en 1978 contraería matrimonio.
+
+Posteriormente, en 1978, graba *Équinoxe*, y el 14 de julio de 1979 ejecuta el Concierto de la Plaza de la Concordia, en París, que entra al Libro Guinness de Récords Mundiales por tener la más grande asistencia para un concierto (un millón de personas).
+
+Jean-Michel Jarre realiza la mayoría de sus conciertos desde entonces al aire libre, sirviéndose del paisaje y los edificios del lugar como escenario, y utilizando bastantes efectos audiovisuales en ellos: proyecciones sobre pantallas gigantes y edificios; videos; luces; rayos láser; fuegos artificiales; así como orquestas, coros y artistas del lugar donde se realiza el concierto.
+
+En 1981 lanza *Magnetic Fields* (*Les Chants Magnétiques*), introduciendo nuevas técnicas (efectos de estereofonía, separación de eco y ruido blanco) e instrumentos (como los sintetizadores digitales Fairlight). Tras el éxito de este disco, Jarre es nombrado miembro honorario del Conservatorio de Música de Beijing, y ejecuta en 1981 los cinco Conciertos en China en Pekín y Shanghái, convirtiéndose en uno de los primeros intérpretes de música contemporánea occidental en realizar un concierto en la República Popular China. Obtuvo un éxito que ni los Rolling Stones ni Pink Floyd habían logrado antes. En estos conciertos aparece por primera vez la Arpa Láser, diseñada por el francés Bernard Szajner. Este instrumento usa rayos láser de bajo poder en lugar de cuerdas, los cuales salen de su base verticalmente en un plano. Cada cuerda láser se puede programar actualmente vía MIDI, de manera que corresponda a una nota de la escala (o a transposición, etc.).
+
+En 1983, Jarre entra nuevamente al Libro Guinness, edición francesa, por la venta de la única copia del disco *Música para Supermercados*, vendido en 69 000 francos franceses, siendo el disco más caro que se hubiera vendido en ese país. Jarre grabó este disco como una forma de mostrar su rechazo y disgusto hacia el negocio de la música. Este disco fue transmitido por Radio Luxemburgo, y Jarre invitó a la gente para que grabara la transmisión libremente.
+
+Tras grabar *Zoolook* (noviembre de 1984) y *Rendez-Vous* (1986, dedicado a los astronautas del Challenger, uno de los cuales, Ron McNair, hubiera grabado para este disco la primera melodía desde el espacio), siendo este uno de los discos más exitosos de Jarre, ejecuta los conciertos *Rendez-Vous Houston: A City in Concert* (abril de 1986, nuevo récord en el Libro Guinness por la asistencia de 1.3 millones de personas) y *Rendez-Vous Lyon: Concert for the Pope* (octubre de 1986, en honor a la visita de Juan Pablo II a Lyon). Posteriormente, lanza *Revoluciones* (1988) y ejecuta los dos conciertos *Destination Docklands* (1988) en el río Támesis, Londres. Estos conciertos se vieron envueltos en muchos problemas climatológicos y protestas de varias organizaciones vecinales y, pese a tener la mayor asistencia pagada para un concierto en Inglaterra (200 000 personas), le ocasionaron a Jarre una pérdida de 30 millones de libras esterlinas.
+
+En 1990 Jarre graba *Waiting for Cousteau* (dedicado al explorador submarino francés Jacques Cousteau), con una de las composiciones más extrañas realizadas por J-MJ: una pieza totalmente ambiental de 46 minutos de duración. En ese año ejecuta el concierto *París La Défense - Une ville en Concert*, con una asistencia de más de 2 millones de espectadores, lo que hace entrar a Jarre una vez más en el Libro Guinness. Al año siguiente, Jean-Michel viene a México para ejecutar *Teotihuacán: Concert for the Eclipse* (11 de julio de 1991), pero este concierto es desafortunadamente cancelado de último momento.
+
+En 1992, parte de la ceremonia de apertura de los juegos olímpicos de invierno en Albertville, Francia, es creada por Jarre. En ese año ejecuta los dos conciertos *Swatch the World Events* (Suiza), y los tres *Lost City Concerts* en Sudáfrica (encargados por una firma hotelera), y al año siguiente comienza una exitosa gira europea de 15 conciertos en estadios y al aire libre, *Europe in Concert*, tras lanzar *Chronologie* (disco dedicado al libro *Brief History of Time* de Stephen Hawking).
+
+Jean-Michel ha obtenido varios reconocimientos internacionales, y en 1993 obtiene uno más, siendo nombrado Embajador de Buena Voluntad para la Tolerancia y la Juventud de la UNESCO. En 1994, tras ejecutar un concierto en Hong Kong, se comienzan a planear los Conciertos para la Tolerancia (el primero de los cuales se realizó en la Torre Eiffel de París el 14 de julio de 1995, con una asistencia de más de 1.2 millones de espectadores). Estos conciertos se realizarán en ciudades de los cinco continentes (entre otras, se planean en Lyon el 28 de junio de 1996, Brasilia y Beirut) durante 1995-1996 y serán patrocinados por la UNESCO como parte de las celebraciones por el Año de la Tolerancia. Además, tal vez saldrá al mercado un nuevo disco (llamado tentativamente *Tolerance*) a fines de diciembre de 1996, con motivo de esta gira mundial.
+
+En la tercera semana de enero de 1996 se anunció que el Concierto por la Tolerancia en Atlanta, GA, EE. UU., había sido cancelado.
+
+1996 fue un año con poca actividad; se rumoró mucho acerca del lanzamiento de la obra conmemorativa de los 20 años de *Oxygène*, y los fans en las listas de correo de JMJ en Internet crearon el Global Jarre Track: *Jarreologie*, bajo la dirección de Mirai. Asimismo aparece un disco de remezclas de varias de sus obras (*Jarremix*), con el que se continúa la larga cadena de remixes techno, rave, house, etc., de las obras de JMJ, que comenzó con *Chronologie*.
+
+Sin embargo, tras muchas posposiciones, fue hasta el 17 de febrero de 1997 cuando se lanzó al mercado, bajo la firma disquera Sony/Epic para su distribución internacional, el nuevo disco *Oxygène 7-13*, y se anuncia una gira mundial de conciertos bajo techo (!), cosa que Jarre había dicho que nunca haría. Esta gira comienza en mayo y termina, en su primera parte, en junio. Esta primera parte de la gira lo lleva a diversos lugares de Europa, incluyendo Alemania, Suecia, Holanda y Bélgica, entre otros países. La segunda parte de la gira se desarrolló en octubre, y comprendió diversas ciudades de Francia.
+
+En estos conciertos Jarre utilizó sintetizadores analógicos y un estilo un tanto techno, con iluminación basada en tubos neón, además de utilizar un novedoso sistema llamado Xpose, que controla proyecciones en pantallas de video mediante MIDI.
+
+Como cierre de ese año, Jarre participó con un megaconcierto enfrente de la Universidad Estatal de Moscú, con motivo del 850 aniversario de esta ciudad.
+
+---
+
+*Publiqué este artículo originalmente en mi sitio dedicado a Jean-Michel Jarre, allá por 1995, siendo actualizado por última vez en 1997. Los fans recordarán qué ocurrió entonces.*

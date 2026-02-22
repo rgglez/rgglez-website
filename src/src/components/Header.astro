@@ -5,6 +5,10 @@ import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconArchive from "@/assets/icons/IconArchive.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
+import IconLinkedin from "@/assets/icons/IconLinkedin.svg";
+import IconGitHub from "@/assets/icons/IconGitHub.svg";
+import IconRss from "@/assets/icons/IconRss.svg";
+import Logo from "@/assets/images/logo_r.svg";
 import LinkButton from "./LinkButton.astro";
 import { SITE } from "@/config";
 
@@ -46,7 +50,10 @@ const isActive = (path: string) => {
       href="/"
       class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
-      {SITE.title}
+        <Logo width={24}
+        height={24}
+        class="mr-2 float-left scale-125 stroke-accent stroke-3 rtl:-rotate-90" />
+        {SITE.title}
     </a>
     <nav
       id="nav-menu"
@@ -119,6 +126,46 @@ const isActive = (path: string) => {
             <IconSearch />
             <span class="sr-only">Search</span>
           </LinkButton>
+        </li>
+        <li class="col-span-1 flex items-center justify-center">
+            <a
+                target="_blank"
+                href="/rss.xml"
+                class="inline-block"
+                aria-label="rss feed"
+                title="RSS Feed"
+            >
+                <IconRss
+                width={16}
+                height={16}
+                class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
+                />
+                <span class="sr-only">Linkedin</span>
+            </a>
+        </li>
+        <li class="col-span-1 flex items-center justify-center">
+            <a
+                target="_blank"
+                href="https://github.com/rgglez"
+                class="inline-block"
+                aria-label="rss feed"
+                title="RSS Feed"
+            >
+                <IconGitHub/>
+                <span class="sr-only">RSS Feed</span>
+            </a>
+        </li>
+        <li class="col-span-1 flex items-center justify-center">
+            <a
+                target="_blank"
+                href="https://linkedin.com/in/rggonzalez"
+                class="inline-block"
+                aria-label="rss feed"
+                title="RSS Feed"
+            >
+                <IconLinkedin/>
+                <span class="sr-only">RSS Feed</span>
+            </a>
         </li>
         {
           SITE.lightAndDarkMode && (
