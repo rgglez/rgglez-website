@@ -29,6 +29,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const params = Astro.params;
 const { tag } = params;
 const { page, tagName } = Astro.props;
+const allPosts = await getCollection("blog");
 ---
 
 <Layout title={`Tag: ${tagName} | ${SITE.title}`}>
@@ -40,7 +41,7 @@ const { page, tagName } = Astro.props;
   >
     <h1 slot="title" transition:name={tag}>{`Tag:${tag}`}</h1>
     <ul>
-      {page.data.map(data => <Card {...data} />)}
+      {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
     </ul>
   </Main>
 

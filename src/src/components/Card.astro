@@ -2,15 +2,21 @@
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@/utils/slugify";
 import { getPath } from "@/utils/getPath";
+import { getTranslations } from "@/utils/getTranslations";
 import Datetime from "./Datetime.astro";
 
 type Props = {
   variant?: "h2" | "h3";
+  allPosts?: CollectionEntry<"blog">[];
 } & CollectionEntry<"blog">;
 
-const { variant: Heading = "h2", id, data, filePath } = Astro.props;
+const { variant: Heading = "h2", id, data, filePath, allPosts } = Astro.props;
 
 const { title, description, ...props } = data;
+
+/* ========== Language Translations ========== */
+
+const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
 ---
 
 <li class="my-6">
@@ -28,6 +34,30 @@ const { title, description, ...props } = data;
       {title}
     </Heading>
   </a>
-  <Datetime {...props} />
+  <div class="flex items-center gap-2">
+    <Datetime {...props} />
+    {
+      translations.length > 1 && (
+        <>
+          <span aria-hidden="true" class="text-foreground/40">|</span>
+          {translations.map(({ lang, href, isCurrent }) =>
+            isCurrent ? (
+              <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">
+                {lang}
+              </span>
+            ) : (
+              <a
+                href={href}
+                class="rounded border border-border px-1.5 py-0.5 text-xs text-foreground/70 hover:border-accent hover:text-accent"
+                hreflang={lang}
+              >
+                {lang}
+              </a>
+            )
+          )}
+        </>
+      )
+    }
+  </div>
   <p>{description}</p>
 </li>

@@ -14,6 +14,7 @@ if (!SITE.showArchives) {
 }
 
 const posts = await getCollection("blog", ({ data }) => !data.draft);
+const allPosts = await getCollection("blog");
 
 const months = [
   "January",
@@ -70,7 +71,7 @@ const months = [
                           )
                       )
                       .map(data => (
-                        <Card {...data} />
+                        <Card {...data} allPosts={allPosts} />
                       ))}
                   </ul>
                 </div>

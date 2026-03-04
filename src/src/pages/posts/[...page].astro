@@ -16,13 +16,14 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
+const allPosts = await getCollection("blog");
 ---
 
 <Layout title={`Posts | ${SITE.title}`}>
   <Header />
   <Main pageTitle="Posts" pageDesc="All the articles I've posted.">
     <ul>
-      {page.data.map(data => <Card {...data} />)}
+      {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
     </ul>
   </Main>
 

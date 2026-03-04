@@ -11,6 +11,7 @@ import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
+import { getTranslations } from "@/utils/getTranslations";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import { SITE } from "@/config";
@@ -18,9 +19,10 @@ import { SITE } from "@/config";
 type Props = {
   post: CollectionEntry<"blog">;
   posts: CollectionEntry<"blog">[];
+  allPosts: CollectionEntry<"blog">[];
 };
 
-const { post, posts } = Astro.props;
+const { post, posts, allPosts } = Astro.props;
 
 const {
   title,
@@ -67,19 +69,23 @@ const layoutProps = {
   scrollSmooth: true,
 };
 
+/* ========== Language Translations ========== */
+
+const translations = getTranslations(post, allPosts);
+
 /* ========== Prev/Next Posts ========== */
 
-const allPosts = posts.map(({ data: { title }, id, filePath }) => ({
+const navPosts = posts.map(({ data: { title }, id, filePath }) => ({
   id,
   title,
   filePath,
 }));
 
-const currentPostIndex = allPosts.findIndex(a => a.id === post.id);
+const currentPostIndex = navPosts.findIndex(a => a.id === post.id);
 
-const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
+const prevPost = currentPostIndex !== 0 ? navPosts[currentPostIndex - 1] : null;
 const nextPost =
-  currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
+  currentPostIndex !== navPosts.length ? navPosts[currentPostIndex + 1] : null;
 ---
 
 <Layout {...layoutProps}>
@@ -106,6 +112,28 @@ const nextPost =
         ]}>|</span
       >
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+      {
+        translations.length > 1 && (
+          <>
+            <span aria-hidden="true" class="text-foreground/40">|</span>
+            {translations.map(({ lang, href, isCurrent }) =>
+              isCurrent ? (
+                <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">
+                  {lang}
+                </span>
+              ) : (
+                <a
+                  href={href}
+                  class="rounded border border-border px-1.5 py-0.5 text-xs text-foreground/70 hover:border-accent hover:text-accent"
+                  hreflang={lang}
+                >
+                  {lang}
+                </a>
+              )
+            )}
+          </>
+        )
+      }
     </div>
     <article
       id="article"
