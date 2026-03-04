@@ -6,16 +6,26 @@ import Footer from "@/components/Footer.astro";
 import Socials from "@/components/Socials.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Card from "@/components/Card.astro";
+import TagCloud from "@/components/TagCloud.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
+import getUniquePosts from "@/utils/getUniquePosts";
+import getUniqueTags from "@/utils/getUniqueTags";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 
+const { supportedLangs, defaultLang } = SITE;
+
 const posts = await getCollection("blog");
 
-const sortedPosts = getSortedPosts(posts);
+const sortedPosts = getUniquePosts(getSortedPosts(posts));
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+
+const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
+  label: tagName,
+  href: `/tags/${tag}/`,
+}));
 ---
 
 <Layout>
@@ -81,16 +91,60 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
         <IconArrowRight class="inline-block rtl:-rotate-180" />
       </LinkButton>
     </div>
+
+    {
+      tagCloudTags.length > 0 && (
+        <section id="tag-cloud" class="border-t border-border pt-10 pb-6">
+          <h2 class="mb-2 text-2xl font-semibold tracking-wide">Tags</h2>
+          <TagCloud tags={tagCloudTags} width={700} height={360} />
+        </section>
+      )
+    }
   </main>
   <Footer />
 </Layout>
 
-<script>
+<script is:inline define:vars={{ supportedLangs, defaultLang }}>
   document.addEventListener("astro:page-load", () => {
-    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
-      ?.dataset?.layout;
+    const indexLayout = document.querySelector("#main-content")?.dataset?.layout;
     if (indexLayout) {
       sessionStorage.setItem("backUrl", "/");
     }
+
+    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
+    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+
+    document.documentElement.lang = lang;
+
+    // Group cards by article key, then pick the best version per article:
+    // priority: browser language > "en" > first available
+    const cards = Array.from(document.querySelectorAll("li[data-lang][data-article-key]"));
+    const groups = {};
+    cards.forEach(card => {
+      const key = card.dataset.articleKey;
+      if (key) {
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(card);
+      }
+    });
+
+    Object.values(groups).forEach(group => {
+      const best =
+        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === "en") ||
+        group[0];
+      group.forEach(el => {
+        el.style.display = el === best ? "" : "none";
+      });
+    });
+
+    // Hide sections with no visible cards
+    ["#featured", "#recent-posts"].forEach(selector => {
+      const section = document.querySelector(selector);
+      if (!section) return;
+      const hasVisible = Array.from(section.querySelectorAll("li[data-lang]"))
+        .some(el => el.style.display !== "none");
+      section.style.display = hasVisible ? "" : "none";
+    });
   });
 </script>

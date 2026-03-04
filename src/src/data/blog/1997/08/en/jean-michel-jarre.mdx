@@ -18,12 +18,13 @@ timezone: "America/Mexico_City"
 ---
 
 import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
 import familia from '@/assets/posts/1997/08/jean-michel-jarre/familia.webp';
 import dustbins from '@/assets/posts/1997/08/jean-michel-jarre/dustbins.webp';
 
-# Synthesis and Electronic Music: Context and Jean-Michel Jarre
+<ImageHeroHeader frontmatter={frontmatter} image={familia} />
 
-<Image src={familia} alt="Concert" style="max-width:800px;max-height:600px;" />
+## Synthesis and Electronic Music: Context and Jean-Michel Jarre
 
 When the first synthesizers and other electronic musical instruments appeared in the 1960s, a new kind of music emerged — a fusion of several genres (jazz, rock, classical, ethnic music...), but also with its own distinctive characteristics. In its early days it was experimental music, and composers and performers such as Vangelis, Walter Carlos, Isao Tomita, and Jean-Michel Jarre appeared on the scene.
 

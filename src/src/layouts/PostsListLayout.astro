@@ -1,0 +1,83 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Layout from "./Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import TagCloud from "@/components/TagCloud.astro";
+import PostsTree from "@/components/PostsTree.astro";
+import { SITE } from "@/config";
+
+interface TagItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  title: string;
+  pageTitle: string;
+  pageDesc?: string;
+  tagCloudTags?: TagItem[];
+  showTagCloud?: boolean;
+  posts?: CollectionEntry<"blog">[];
+  noMarginTop?: boolean;
+}
+
+const {
+  title,
+  pageTitle,
+  pageDesc,
+  tagCloudTags = [],
+  showTagCloud = false,
+  posts = [],
+  noMarginTop = false,
+} = Astro.props;
+
+const backUrl = SITE.showBackButton ? Astro.url.pathname : "/";
+const showSidebar = showTagCloud || posts.length > 0;
+---
+
+<Layout title={title}>
+  <Header />
+  <Breadcrumb />
+  <main data-backUrl={backUrl} id="main-content" class="app-layout pb-4">
+    <h1 class="text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>
+    {pageDesc && <p class="mt-2 mb-6 italic">{pageDesc}</p>}
+
+    <div class:list={["grid grid-cols-1 gap-x-10 gap-y-8", { "md:grid-cols-3": showSidebar }]}>
+      <div class:list={{ "md:col-span-2": showSidebar }}>
+        <slot />
+        <slot name="pagination" />
+      </div>
+
+      {
+        showSidebar && (
+          <aside class="md:col-span-1 flex flex-col gap-8">
+            {posts.length > 0 && (
+              <section>
+                <PostsTree {posts} />
+              </section>
+            )}
+            {showTagCloud && tagCloudTags.length > 0 && (
+              <section>
+                <TagCloud tags={tagCloudTags} width={400} height={380} />
+              </section>
+            )}
+          </aside>
+        )
+      }
+    </div>
+  </main>
+  <Footer {noMarginTop} />
+</Layout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const mainContent: HTMLElement | null =
+      document.querySelector("#main-content");
+    const backUrl = mainContent?.dataset?.backurl;
+    if (backUrl) {
+      sessionStorage.setItem("backUrl", backUrl);
+    }
+  });
+</script>

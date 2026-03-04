@@ -7,7 +7,7 @@ const postFilter = ({ data, filePath }: CollectionEntry<"blog">) => {
     new Date(data.pubDatetime).getTime() - SITE.scheduledPostMargin;
   const parts = (filePath ?? "").split("/");
   const lang = parts[parts.length - 2];
-  return !data.draft && (import.meta.env.DEV || isPublishTimePassed) && lang === "es";
+  return !data.draft && (import.meta.env.DEV || isPublishTimePassed) && (SITE.supportedLangs as readonly string[]).includes(lang);
 };
 
 export default postFilter;

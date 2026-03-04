@@ -1,0 +1,129 @@
+---
+interface TagItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  tags: string[] | TagItem[];
+  width?: number;
+  height?: number;
+  textHeight?: number;
+  maxSpeed?: number;
+}
+
+const {
+  tags,
+  width = 600,
+  height = 340,
+  textHeight = 18,
+  maxSpeed = 0.04,
+} = Astro.props;
+---
+
+<div class="tagcloud-wrapper not-prose my-8 flex w-full justify-center overflow-hidden">
+  <canvas
+    id="tagcloud-canvas"
+    width={width}
+    height={height}
+    data-text-height={textHeight}
+    data-max-speed={maxSpeed}
+    class="max-w-full"
+  >
+    <p>Tu navegador no soporta canvas / Your browser does not support canvas.</p>
+  </canvas>
+</div>
+
+<ul id="tagcloud-list" class="hidden" aria-hidden="true">
+  {
+    tags.map((tag) => {
+      const label = typeof tag === "string" ? tag : tag.label;
+      const href = typeof tag === "string" ? "#" : (tag.href ?? "#");
+      return (
+        <li>
+          <a href={href}>{label}</a>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<script is:inline src="https://www.goat1000.com/tagcanvas.min.js"></script>
+
+<script is:inline data-astro-rerun>
+  (function () {
+    const CANVAS_ID = "tagcloud-canvas";
+    const LIST_ID = "tagcloud-list";
+
+    function getAccentColor() {
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue("--accent")
+        .trim();
+    }
+
+    function startCloud() {
+      if (typeof window.TagCanvas === "undefined") return;
+
+      const canvas = document.getElementById(CANVAS_ID);
+      if (!canvas) return;
+
+      try {
+        window.TagCanvas.Stop(CANVAS_ID);
+      } catch (_) {}
+
+      const accent = getAccentColor();
+      const textHeight = parseInt(canvas.dataset.textHeight ?? "18", 10);
+      const maxSpeed = parseFloat(canvas.dataset.maxSpeed ?? "0.04");
+
+      try {
+        window.TagCanvas.Start(CANVAS_ID, LIST_ID, {
+          textColour: accent,
+          outlineColour: accent + "44",
+          outlineMethod: "colour",
+          reverse: true,
+          depth: 0.8,
+          maxSpeed: maxSpeed,
+          minSpeed: 0.01,
+          wheelZoom: false,
+          textHeight: textHeight,
+          initial: [0.08, -0.06],
+          fadeIn: 600,
+          clickToFront: 500,
+          activeCursor: "pointer",
+        });
+      } catch (e) {
+        console.warn("[TagCloud]", e);
+      }
+    }
+
+    // Restart when theme toggles (data-theme changes on <html>)
+    const themeObserver = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.attributeName === "data-theme") {
+          startCloud();
+          break;
+        }
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true });
+
+    // Resize canvas when container size changes
+    const canvas = document.getElementById(CANVAS_ID);
+    if (canvas && window.ResizeObserver) {
+      const ro = new ResizeObserver(() => {
+        const wrapper = canvas.parentElement;
+        if (!wrapper) return;
+        const newW = wrapper.clientWidth;
+        if (newW > 0 && newW < canvas.width) {
+          const ratio = newW / canvas.width;
+          canvas.width = newW;
+          canvas.height = Math.round(canvas.height * ratio);
+          startCloud();
+        }
+      });
+      ro.observe(canvas.parentElement ?? canvas);
+    }
+
+    startCloud();
+  })();
+</script>

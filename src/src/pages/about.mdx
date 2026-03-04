@@ -5,15 +5,53 @@ title: "About"
 
 import miFoto from "../assets/images/rgg_yamato.png";
 import { Image } from "astro:assets";
+import TagCloud from "../components/TagCloud.astro";
+
+export const techTags = [
+  "JavaScript", "TypeScript", "PHP", "Go", "Python", "C", "C++", "C#",
+  "Perl", "SQL", "Java", "Prolog", "Lisp", "R", "Pascal", "Assembly",
+  "Svelte", "SvelteKit", "Node.js", "Laravel", "Yii", "CodeIgniter",
+  "HTML5", "CSS3", "jQuery", "Bootstrap",
+  "AWS", "Azure", "Alibaba Cloud", "Docker", "Ansible", "Cloudflare", "VMware",
+  "MySQL", "PostgreSQL", "MongoDB", "Redis", "SQLite", "ElasticSearch",
+  "DynamoDB", "BoltDB", "Neo4j",
+  "Linux", "Ubuntu", "Debian", "Alpine", "Fedora", "Slackware",
+  "Apache", "nginx", "Git", "GORM", "SQLAlchemy",
+  "Bash", "Make", "Vim", "LaTeX",
+];
 
 <Image src={miFoto} alt="rodolfo.gg" class="float-left mr-6 mb-4 rounded-full w-48 h-48 object-cover" />
 
-¿Quién es Rodolfo González?
+## ¿Quién es Rodolfo González?
 
-Ingeniero con 29 años de experiencia y formación en ciencias de la computación. Con experiencia en arquitectura de sistemas; administración y migración de entornos cloud (AWS, Alibaba y Azure); desarrollo de software (JavaScript, PHP, Python, C#, C, C++, Perl y otros lenguajes); desarrollo full stack (Svelte, JavaScript y Python) y desarrollo web MVC con varios frameworks (como Yii y CI); conexiones satelitales a Internet; administración de routers Cisco; administración de redes; administración de sistemas (principalmente Linux: Ubuntu, Red Hat y Slackware); y FaaS (AWS Lambda/Aliyun FC). Siempre en búsqueda de aprender cosas nuevas.
+Ingeniero con más de 29 años de experiencia y formación en ciencias de la computación. Entusiasta de la programación y la administración de sistemas, con especial interés en el diseño de software robusto y escalable.
 
-Who is Rodolfo Gonzalez?
+**Desarrollo de software:** Amplia experiencia en múltiples lenguajes: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly y otros. Desarrollo full stack con Svelte/SvelteKit, Node.js, Laravel, Yii y CodeIgniter. Proyectos opensource destacados incluyen [gormcache](https://github.com/rgglez/gormcache) (plugin de caché para GORM con soporte para Redis, Memcached y BoltDB), [go-storage](https://github.com/rgglez/go-storage) (librería de almacenamiento multi-nube para Go), y [svelte-i18n-gettext](https://github.com/rgglez/svelte-i18n-gettext) (internacionalización para Svelte con gettext).
 
-Engineer with 29 years of experience and a background in Computer Science. Experienced in systems architecture; cloud administration and migration (AWS, Alibaba, and Azure); software development (JavaScript, PHP, Python, C#, C, C++, Perl, and other languages); full-stack development (Svelte, JavaScript, and Python); and MVC web development using several frameworks (such as Yii and CI). Additional experience includes satellite internet connectivity, Cisco router administration, network administration, systems administration (mainly Linux: Ubuntu, Red Hat, and Slackware), and FaaS (AWS Lambda/Aliyun FC). Always looking to learn new things.
+**Cloud y DevOps:** Arquitectura, administración y migración de entornos en AWS, Alibaba Cloud y Azure. Experiencia con Docker, Ansible, Cloudflare y VMware. FaaS con AWS Lambda y Aliyun Function Compute.
+
+**Bases de datos:** MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB y Neo4j. Generación de modelos con GORM y SQLAlchemy.
+
+**Administración de sistemas:** Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, administración de redes y routers Cisco, conexiones satelitales a Internet.
+
+**Otras áreas:** Producción musical (Ableton Live, StudioOne), diseño gráfico (GIMP, Photoshop) y edición de video. Siempre en búsqueda de aprender cosas nuevas.
+
+---
+
+## Who is Rodolfo Gonzalez?
+
+Engineer with over 29 years of experience and a background in Computer Science. A programming and systems administration enthusiast with a passion for building robust and scalable software.
+
+**Software Development:** Broad experience across many languages: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly, and others. Full-stack development with Svelte/SvelteKit, Node.js, Laravel, Yii, and CodeIgniter. Notable opensource projects include [gormcache](https://github.com/rgglez/gormcache) (a cache plugin for GORM with Redis, Memcached, and BoltDB backends), [go-storage](https://github.com/rgglez/go-storage) (a vendor-neutral multi-cloud storage library for Go), and [svelte-i18n-gettext](https://github.com/rgglez/svelte-i18n-gettext) (gettext-based i18n for Svelte).
+
+**Cloud & DevOps:** Architecture, administration, and migration of environments on AWS, Alibaba Cloud, and Azure. Experience with Docker, Ansible, Cloudflare, and VMware. FaaS with AWS Lambda and Aliyun Function Compute.
+
+**Databases:** MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB, and Neo4j. Model generation with GORM and SQLAlchemy.
+
+**Systems Administration:** Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, network administration, Cisco routers, and satellite internet connectivity.
+
+**Other Areas:** Music production (Ableton Live, StudioOne), graphic design (GIMP, Photoshop), and video editing. Always looking to learn new things.
 
 <div class="clear-both"></div>
+
+<TagCloud tags={techTags} width={640} height={360} />

@@ -2,8 +2,9 @@
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@/utils/slugify";
 import { getPath } from "@/utils/getPath";
-import { getTranslations } from "@/utils/getTranslations";
+import { getTranslations, getTranslationKey } from "@/utils/getTranslations";
 import Datetime from "./Datetime.astro";
+import { SITE } from "@/config";
 
 type Props = {
   variant?: "h2" | "h3";
@@ -14,12 +15,16 @@ const { variant: Heading = "h2", id, data, filePath, allPosts } = Astro.props;
 
 const { title, description, ...props } = data;
 
+const postLangParts = (filePath ?? "").split("/");
+const postLang = postLangParts[postLangParts.length - 2] ?? SITE.lang;
+const articleKey = getTranslationKey(filePath);
+
 /* ========== Language Translations ========== */
 
 const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
 ---
 
-<li class="my-6">
+<li class="my-6" data-lang={postLang} data-article-key={articleKey}>
   <a
     href={getPath(id, filePath)}
     class:list={[

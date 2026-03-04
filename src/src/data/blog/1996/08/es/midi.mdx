@@ -1,0 +1,71 @@
+---
+title: "MIDI: Interfaz Musical para Instrumentos Digitales"
+description: "Una breve introducción al MIDI (Musical Instrument Digital Interface, Interfaz Digital para Instrumentos Musicales)."
+pubDatetime: 1996-08-10T00:00:00-06:00
+author: "Rodolfo Gonzalez"
+slug: "interfaz-digital-para-instrumentos-musicales"
+ogImage: "../../../../../assets/posts/1996/08/midi/midi.webp"
+featured: false
+draft: false
+tags:
+  - musica-electronica
+  - MIDI
+  - historia
+  - computadoras
+  - sintetizadores
+  - electrónica
+  - protocolos
+timezone: "America/Mexico_City"
+---
+
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import heroImage from "@/assets/posts/1996/08/midi/midi.webp";
+
+<ImageHeroHeader frontmatter={frontmatter} image={heroImage} />
+
+## Introducción
+
+Desde su surgimiento, la MIDI (Musical Instrument Digital Interface, Interfaz Digital para Instrumentos Musicales) se ha ido popularizando rápidamente. La MIDI es una herramienta poderosa tanto para composición como para enseñanza de la música, y consiste básicamente en un protocolo de comunicaciones que permite la interactuación de instrumentos musicales digitales, computadoras, etc.
+
+## Historia
+
+La idea de producir sonido por medios eléctricos no es reciente. Tuvo su origen en el Telégrafo Musical de Elisha Gray (¡sí!, el mismo que compitió con Bell por la patente del teléfono). Sin embargo, los instrumentos electrónicos fueron poco populares hasta la década de 1960, con el surgimiento de los primeros sintetizadores Moog que funcionaban con transistores.
+
+Sin embargo, la verdadera popularización de los sintetizadores se da a fines de los 70's y comienzos de los 80's, con la entrada de este tipo de instrumentos al mundo de la música disco, pop y rock. Esto ocasionó que se dieran grandes avances en el aspecto de la generación del sonido, llegando hasta el sampling o muestreo, que permite la reproducción casi fiel del sonido de los instrumentos convencionales. Con estos avances, los músicos comenzaron a reconocer al sintetizador como un instrumento musical por derecho propio, ya que hasta ese momento el uso de estos aparatos se limitaba a un relativamente reducido grupo de "músicos electrónicos" (v. gr. Jean-Michel Jarre, Walter (actualmente Wendy) Carlos, Vangelis, Isao Tomita, o Tangerine Dream).
+
+Pero los músicos deseaban aún más: poder tocar varios sonidos (o, por decirlo de otra manera, tocar más sintetizadores) al mismo tiempo. Esto no se podía lograr en ese entonces más que en un estudio de grabación de pistas múltiples, pero no, por ejemplo, en un concierto en vivo.
+
+Por tanto, comenzaron a surgir secuenciadores con las características más variadas, fabricados tanto por algunas empresas como por los propios músicos (por ejemplo el [Geiss Matrisequencer](https://www.soundonsound.com/forum/viewtopic.php?t=48444)). Todo esto ocasionó una especie de caos de incompatibilidades entre interfaces de comunicación de instrumentos electrónicos.
+
+Al darse cuenta de la necesidad de estandarizar dichas interfaces, algunos técnicos y diseñadores de varias compañías se reunieron para generar un protocolo estándar de comunicaciones, el cual (sí, adivinaron, la MIDI) fue presentado en la Primera Muestra de Fabricantes de Instrumentos Musicales de Norte América (NAMM) en Los Angeles, en 1983.
+
+## La MIDI
+
+La MIDI funciona de manera análoga a un protocolo de comunicación entre computadoras, vía módem, por ejemplo. La aplicación más simple de MIDI consiste en poder tocar una nota a control remoto, es decir, al presionar una tecla en un instrumento, hacer que otro conectado al primero reproduzca exactamente la misma nota.
+
+Pero claro que eso no es todo. Hace relativamente poco tiempo se comenzó a utilizar la interfaz MIDI entre computadoras y sintetizadores o teclados, lo que permite editar y guardar información musical del sintetizador en la computadora. Esto abre un campo de posibilidades aún más amplio para la creatividad de los compositores.
+
+## De MIDI y computadoras
+
+Los fabricantes de computadoras pronto se dieron cuenta del provecho que se podía obtener por el uso de la MIDI.
+
+Dado que la velocidad de transmisión de datos por MIDI (31.5 kBaudios) es diferente de todos los rangos de transmisión en las computadoras, los diseñadores tuvieron que crear una interfaz MIDI para computadoras. Apple Computers (con la Macintosh y la Apple II) y Commodore fueron las primeras compañías en adaptar dicha interfaz. La gran compañía fabricante de sintetizadores Roland diseñó una interfaz para las IBM y compatibles (algún tiempo después). Pero Atari llegó aún más lejos, diseñando una nueva serie de computadoras (las Atari ST) con la interfaz MIDI interconstruida (computadoras muy especializadas, usadas extensamente para secuenciamiento).
+
+Y junto con el hardware debía aparecer una gran variedad de programas para todas las plataformas en el mercado. Los más simples son los secuenciadores, que permiten realizar las operaciones básicas de grabar información de un teclado, guardarla en disco (en los famosos archivos .MID) y reproducir dichos datos MIDI. Actualmente existen bastantes programas para trabajar con MIDI en las computadoras. En el caso de las PC, la mayoría corren bajo la interfaz gráfica de MS-Windows y similares (bueno, ahí se ven mejor las partituras).
+
+## Créditos
+
+Copyright © 1996 por Rodolfo González González, para GAUSS Gazette, una publicación avalada por la Vicerrectoría de Asuntos Estudiantiles de la B.U.A.P.
+
+Por favor incluye los créditos si planeas usar este artículo de alguna manera. También incluye las referencias que vienen más abajo.
+
+## Referencias:
+
+- LIPSCOMB, Eric. (BITNET: LIPS@UNTVAX). "How Much for Just the MIDI?". This article appeared in the October 1989 issue of North Texas Computing Center Newsletter, "Benchmarks".
+Créditos para: "Articles database of CCNEWS, the Electronic Forum for Campus Computing Newsletter Editors, a BITNET-based service of EDUCOM".
+
+- CALDWELL, Dustin. "Standar MIDI File Format". Games Programming Encyclopaedia.
+
+---
+
+*Publicado originalmente en "GAUSS Gazette", una publicación avalada por la Vicerrectoría de Asuntos Estudiantiles de la B.U.A.P., en agosto de 1996*

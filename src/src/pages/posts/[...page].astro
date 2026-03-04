@@ -1,33 +1,71 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
-import Main from "@/layouts/Main.astro";
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
+import PostsListLayout from "@/layouts/PostsListLayout.astro";
 import Card from "@/components/Card.astro";
 import Pagination from "@/components/Pagination.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
+import getUniquePosts from "@/utils/getUniquePosts";
+import getUniqueTags from "@/utils/getUniqueTags";
 import { SITE } from "@/config";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
-  return paginate(getSortedPosts(posts), { pageSize: SITE.postPerPage });
+  const uniquePosts = getUniquePosts(getSortedPosts(posts));
+  return paginate(uniquePosts, { pageSize: SITE.postPerPage });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
 const allPosts = await getCollection("blog");
+const { supportedLangs, defaultLang } = SITE;
+
+const tagCloudTags = getUniqueTags(allPosts).map(({ tag, tagName }) => ({
+  label: tagName,
+  href: `/tags/${tag}/`,
+}));
 ---
 
-<Layout title={`Posts | ${SITE.title}`}>
-  <Header />
-  <Main pageTitle="Posts" pageDesc="All the articles I've posted.">
-    <ul>
-      {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
-    </ul>
-  </Main>
+<PostsListLayout
+  title={`Posts | ${SITE.title}`}
+  pageTitle="Posts"
+  pageDesc="All the articles I've posted."
+  {tagCloudTags}
+  showTagCloud={true}
+  posts={allPosts}
+  noMarginTop={page.lastPage > 1}
+>
+  <ul>
+    {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
+  </ul>
 
-  <Pagination {page} />
+  <Pagination {page} slot="pagination" />
+</PostsListLayout>
 
-  <Footer noMarginTop={page.lastPage > 1} />
-</Layout>
+<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+  document.addEventListener("astro:page-load", () => {
+    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
+    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+
+    document.documentElement.lang = lang;
+
+    const cards = Array.from(document.querySelectorAll("li[data-lang][data-article-key]"));
+    const groups = {};
+    cards.forEach(card => {
+      const key = card.dataset.articleKey;
+      if (key) {
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(card);
+      }
+    });
+
+    Object.values(groups).forEach(group => {
+      const best =
+        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === "en") ||
+        group[0];
+      group.forEach(el => {
+        el.style.display = el === best ? "" : "none";
+      });
+    });
+  });
+</script>

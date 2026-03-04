@@ -4,6 +4,7 @@ description: "Un repaso por el surgimiento de la música electrónica desde la d
 pubDatetime: 1997-08-21T00:00:00-06:00
 author: "Rodolfo Gonzalez"
 slug: "jean-michel-jarre-origen-musica-electronica-moderna"
+ogImage: "../../../../../assets/posts/1997/08/jean-michel-jarre/familia.webp"
 featured: true
 draft: false
 tags:
@@ -18,12 +19,13 @@ timezone: "America/Mexico_City"
 ---
 
 import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
 import familia from '@/assets/posts/1997/08/jean-michel-jarre/familia.webp';
 import dustbins from '@/assets/posts/1997/08/jean-michel-jarre/dustbins.webp';
 
-# Síntesis y música electrónica: contexto y Jean-Michel Jarre
+<ImageHeroHeader frontmatter={frontmatter} image={familia} />
 
-<Image src={familia} alt="Concierto" style="max-width:800px;max-height:600px;" />
+## Síntesis y música electrónica: contexto y Jean-Michel Jarre
 
 Al aparecer los primeros sintetizadores y otros instrumentos musicales electrónicos en la década de 1960, surgió un nuevo tipo de música, fusión de varios géneros (jazz, rock, clásico, música étnica...), pero también con características propias. En su comienzo fue música experimental, y aparecieron compositores e intérpretes como Vangelis, Walter Carlos, Isao Tomita y Jean-Michel Jarre.
 
