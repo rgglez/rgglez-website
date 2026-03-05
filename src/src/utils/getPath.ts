@@ -1,36 +1,43 @@
-import { BLOG_PATH } from "@/content.config";
-import { slugifyStr } from "./slugify";
-
 /**
- * Get full path of a blog post
- * @param id - id of the blog post (aka slug)
- * @param filePath - the blog post full file location
- * @param includeBase - whether to include `/posts` in return value
- * @returns blog post path
+ * Get the URL path for a blog post.
+ *
+ * In Astro 5 with the glob loader, `id` is the frontmatter `slug` field
+ * (e.g. "jean-michel-jarre-origen-musica-electronica-moderna"), so we derive
+ * year / month / lang from `filePath` instead.
+ *
+ * filePath structure: .../{BLOG_PATH}/{year}/{month}/{lang}/{filename}.{ext}
+ *
+ * @param id          - entry id (= frontmatter slug)
+ * @param filePath    - absolute path to the source file
+ * @param includeBase - true  → "/{lang}/posts/{year}/{month}/{id}"
+ *                      false → "{year}/{month}/{id}"  (for [..slug] params)
  */
 export function getPath(
   id: string,
-  filePath: string | undefined,
+  filePath?: string,
   includeBase = true
-) {
-  const pathSegments = filePath
-    ?.replace(BLOG_PATH, "")
-    .split("/")
-    .filter(path => path !== "") // remove empty string in the segments ["", "other-path"] <- empty string will be removed
-    .filter(path => !path.startsWith("_")) // exclude directories start with underscore "_"
-    .slice(0, -1) // remove the last segment_ file name_ since it's unnecessary
-    .map(segment => slugifyStr(segment)); // slugify each segment path
+): string {
+  if (filePath) {
+    const parts = filePath.split("/");
+    // parts from end: [-1]=filename.ext  [-2]=lang  [-3]=month  [-4]=year
+    const lang  = parts[parts.length - 2] ?? "";
+    const month = parts[parts.length - 3] ?? "";
+    const year  = parts[parts.length - 4] ?? "";
 
-  const basePath = includeBase ? "/posts" : "";
-
-  // Making sure `id` does not contain the directory
-  const blogId = id.split("/");
-  const slug = blogId.length > 0 ? blogId.slice(-1) : blogId;
-
-  // If not inside the sub-dir, simply return the file path
-  if (!pathSegments || pathSegments.length < 1) {
-    return [basePath, slug].join("/");
+    if (includeBase) {
+      return `/${lang}/posts/${year}/${month}/${id}`;
+    }
+    return `${year}/${month}/${id}`;
   }
 
-  return [basePath, ...pathSegments, slug].join("/");
+  // Fallback when filePath is unavailable: treat id as "year/month/lang/slug"
+  const segs = id.split("/");
+  const lang     = segs.length >= 2 ? segs[segs.length - 2] : "";
+  const slug     = segs[segs.length - 1] ?? id;
+  const dirSegs  = segs.slice(0, -2);
+
+  if (includeBase) {
+    return ["", lang, "posts", ...dirSegs, slug].join("/");
+  }
+  return [...dirSegs, slug].join("/");
 }

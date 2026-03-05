@@ -1,0 +1,193 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import Card from "@/components/Card.astro";
+import TagCloud from "@/components/TagCloud.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import getUniquePosts from "@/utils/getUniquePosts";
+import getUniqueTags from "@/utils/getUniqueTags";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import miFoto from "@/assets/images/rgg_yamato.png";
+import { SITE } from "@/config";
+import { SOCIALS } from "@/constants";
+
+export const getStaticPaths = (() => {
+  return SITE.supportedLangs.map(lang => ({ params: { lang } }));
+}) satisfies GetStaticPaths;
+
+const { supportedLangs, defaultLang } = SITE;
+const { lang } = Astro.params;
+
+const posts = await getCollection("blog");
+
+const sortedPosts = getUniquePosts(getSortedPosts(posts));
+const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
+const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+
+const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
+  label: tagName,
+  href: `/${lang}/tags/${tag}/`,
+}));
+---
+
+<Layout>
+  <Header />
+  <main id="main-content" data-layout="index" class="app-layout">
+    <div class="flex gap-8 pt-8">
+
+      <!-- Left column: About content (70%) -->
+      <div class="w-[70%]">
+        <section id="about" class="app-prose prose-img:border-0 max-w-none">
+          <Image src={miFoto} alt="rodolfo.gg" class="float-left mr-6 mb-4 rounded-full w-48 h-48 object-cover" />
+
+          <h2 class="text-2xl font-semibold tracking-wide">Bienvenidos a mi sitio web</h2>
+
+          <h3>Sobre mi...</h3>
+
+          <p>Ingeniero con más de 29 años de experiencia y formación en ciencias de la computación. Entusiasta de la programación y la administración de sistemas, con especial interés en el diseño de software robusto y escalable.</p>
+
+          <p><strong>Desarrollo de software:</strong> Amplia experiencia en múltiples lenguajes: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly y otros. Desarrollo full stack con Svelte/SvelteKit, Node.js, Laravel, Yii y CodeIgniter. Proyectos opensource destacados incluyen <a href="https://github.com/rgglez/gormcache">gormcache</a> (plugin de caché para GORM con soporte para Redis, Memcached y BoltDB), <a href="https://github.com/rgglez/go-storage">go-storage</a> (librería de almacenamiento multi-nube para Go), y <a href="https://github.com/rgglez/svelte-i18n-gettext">svelte-i18n-gettext</a> (internacionalización para Svelte con gettext).</p>
+
+          <p><strong>Cloud y DevOps:</strong> Arquitectura, administración y migración de entornos en AWS, Alibaba Cloud y Azure. Experiencia con Docker, Ansible, Cloudflare y VMware. FaaS con AWS Lambda y Aliyun Function Compute.</p>
+
+          <p><strong>Bases de datos:</strong> MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB y Neo4j. Generación de modelos con GORM y SQLAlchemy.</p>
+
+          <p><strong>Administración de sistemas:</strong> Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, administración de redes y routers Cisco, conexiones satelitales a Internet.</p>
+
+          <p><strong>Otras áreas:</strong> Producción musical (Ableton Live, StudioOne), diseño gráfico (GIMP, Photoshop) y edición de video. Siempre en búsqueda de aprender cosas nuevas.</p>
+
+          <hr />
+
+          <h2 class="text-2xl font-semibold tracking-wide">Who is Rodolfo Gonzalez?</h2>
+
+          <p>Engineer with over 29 years of experience and a background in Computer Science. A programming and systems administration enthusiast with a passion for building robust and scalable software.</p>
+
+          <p><strong>Software Development:</strong> Broad experience across many languages: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly, and others. Full-stack development with Svelte/SvelteKit, Node.js, Laravel, Yii, and CodeIgniter. Notable opensource projects include <a href="https://github.com/rgglez/gormcache">gormcache</a> (a cache plugin for GORM with Redis, Memcached, and BoltDB backends), <a href="https://github.com/rgglez/go-storage">go-storage</a> (a vendor-neutral multi-cloud storage library for Go), and <a href="https://github.com/rgglez/svelte-i18n-gettext">svelte-i18n-gettext</a> (gettext-based i18n for Svelte).</p>
+
+          <p><strong>Cloud &amp; DevOps:</strong> Architecture, administration, and migration of environments on AWS, Alibaba Cloud, and Azure. Experience with Docker, Ansible, Cloudflare, and VMware. FaaS with AWS Lambda and Aliyun Function Compute.</p>
+
+          <p><strong>Databases:</strong> MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB, and Neo4j. Model generation with GORM and SQLAlchemy.</p>
+
+          <p><strong>Systems Administration:</strong> Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, network administration, Cisco routers, and satellite internet connectivity.</p>
+
+          <p><strong>Other Areas:</strong> Music production (Ableton Live, StudioOne), graphic design (GIMP, Photoshop), and video editing. Always looking to learn new things.</p>
+
+          <div class="clear-both"></div>
+        </section>
+      </div>
+
+      <!-- Right column: Posts (30%) -->
+      <div class="w-[30%] border-l border-border pl-8">
+        {
+          SOCIALS.length > 0 && (
+            <div class="mb-6 flex flex-wrap items-center gap-2">
+              <Socials />
+            </div>
+          )
+        }
+
+        {
+          featuredPosts.length > 0 && (
+            <section
+              id="featured"
+              class:list={[
+                "pb-6",
+                { "border-b border-border": recentPosts.length > 0 },
+              ]}
+            >
+              <h2 class="text-2xl font-semibold tracking-wide">Featured</h2>
+              <ul>
+                {featuredPosts.map(data => (
+                  <Card variant="h3" {...data} allPosts={posts} />
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          recentPosts.length > 0 && (
+            <section id="recent-posts" class="pt-6 pb-6">
+              <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
+              <ul>
+                {recentPosts.map(
+                  (data, index) =>
+                    index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
+                )}
+              </ul>
+            </section>
+          )
+        }
+
+        <div class="my-8 text-center">
+          <LinkButton href={`/${lang}/posts/`}>
+            All Posts
+            <IconArrowRight class="inline-block rtl:-rotate-180" />
+          </LinkButton>
+        </div>
+
+        {
+          tagCloudTags.length > 0 && (
+            <section id="tag-cloud" class="border-t border-border pt-6 pb-6">
+              <h2 class="mb-2 text-2xl font-semibold tracking-wide">Tags</h2>
+              <TagCloud tags={tagCloudTags} width={300} height={200} />
+            </section>
+          )
+        }
+      </div>
+
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+  document.addEventListener("astro:page-load", () => {
+    const indexLayout = document.querySelector("#main-content")?.dataset?.layout;
+    if (indexLayout) {
+      sessionStorage.setItem("backUrl", "/");
+    }
+
+    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
+    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+
+    document.documentElement.lang = lang;
+
+    // Group cards by article key, then pick the best version per article:
+    // priority: browser language > "en" > first available
+    const cards = Array.from(document.querySelectorAll("li[data-lang][data-article-key]"));
+    const groups = {};
+    cards.forEach(card => {
+      const key = card.dataset.articleKey;
+      if (key) {
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(card);
+      }
+    });
+
+    Object.values(groups).forEach(group => {
+      const best =
+        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === "en") ||
+        group[0];
+      group.forEach(el => {
+        el.style.display = el === best ? "" : "none";
+      });
+    });
+
+    // Hide sections with no visible cards
+    ["#featured", "#recent-posts"].forEach(selector => {
+      const section = document.querySelector(selector);
+      if (!section) return;
+      const hasVisible = Array.from(section.querySelectorAll("li[data-lang]"))
+        .some(el => el.style.display !== "none");
+      section.style.display = hasVisible ? "" : "none";
+    });
+  });
+</script>

@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getPath } from "@/utils/getPath";
+import { getFileLang, getTranslationKey } from "@/utils/getTranslations";
+import { SITE } from "@/config";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
@@ -8,6 +10,7 @@ interface Props {
 }
 
 const { posts, maxTitleLength = 48 } = Astro.props;
+const { supportedLangs, defaultLang } = SITE;
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
@@ -21,7 +24,7 @@ const MONTHS = [
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-type PostLeaf = { title: string; href: string };
+type PostLeaf = { title: string; href: string; lang: string; articleKey: string };
 
 const grouped = new Map<number, Map<number, PostLeaf[]>>();
 
@@ -37,6 +40,8 @@ for (const post of posts) {
   byMonth.get(month)!.push({
     title: truncate(post.data.title, maxTitleLength),
     href: getPath(post.id, post.filePath),
+    lang: getFileLang(post.filePath),
+    articleKey: getTranslationKey(post.filePath),
   });
 }
 
@@ -55,8 +60,8 @@ const years = [...grouped.entries()].sort(([a], [b]) => b - a);
             {sortedMonths.map(([monthIdx, monthPosts]) => (
               <rux-tree-node slot="node">
                 {MONTHS[monthIdx]}
-                {monthPosts.map(({ title, href }) => (
-                  <rux-tree-node slot="node">
+                {monthPosts.map(({ title, href, lang, articleKey }) => (
+                  <rux-tree-node slot="node" data-lang={lang} data-article-key={articleKey}>
                     <a href={href} class="post-link">
                       {title}
                     </a>
@@ -75,6 +80,53 @@ const years = [...grouped.entries()].sort(([a], [b]) => b - a);
   type="module"
   src="https://cdn.jsdelivr.net/npm/@astrouxds/astro-web-components/dist/astro-web-components/astro-web-components.esm.js"
 ></script>
+
+<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+  document.addEventListener("astro:page-load", () => {
+    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
+    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+
+    const wrapper = document.querySelector(".posts-tree-wrapper");
+    if (!wrapper) return;
+
+    // Group leaf nodes by article key and show only the best language
+    const leaves = Array.from(wrapper.querySelectorAll("rux-tree-node[data-lang][data-article-key]"));
+    const groups = {};
+    leaves.forEach(node => {
+      const key = node.dataset.articleKey;
+      if (key) {
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(node);
+      }
+    });
+
+    Object.values(groups).forEach(group => {
+      const best =
+        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === "en") ||
+        group[0];
+      group.forEach(el => {
+        el.style.display = el === best ? "" : "none";
+      });
+    });
+
+    // Hide month nodes with no visible leaves
+    const monthNodes = Array.from(wrapper.querySelectorAll("rux-tree-node[slot='node']:not([data-lang])"));
+    monthNodes.forEach(monthNode => {
+      const visibleLeaves = Array.from(monthNode.querySelectorAll("rux-tree-node[data-lang]"))
+        .filter(el => el.style.display !== "none");
+      monthNode.style.display = visibleLeaves.length > 0 ? "" : "none";
+    });
+
+    // Hide year nodes with no visible months
+    const yearNodes = Array.from(wrapper.querySelectorAll("rux-tree > rux-tree-node"));
+    yearNodes.forEach(yearNode => {
+      const visibleMonths = Array.from(yearNode.querySelectorAll("rux-tree-node[slot='node']:not([data-lang])"))
+        .filter(el => el.style.display !== "none");
+      yearNode.style.display = visibleMonths.length > 0 ? "" : "none";
+    });
+  });
+</script>
 
 <style>
   .posts-tree-wrapper {

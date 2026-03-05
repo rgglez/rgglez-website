@@ -1,0 +1,46 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import PostsListLayout from "@/layouts/PostsListLayout.astro";
+import Card from "@/components/Card.astro";
+import Pagination from "@/components/Pagination.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import getUniqueTags from "@/utils/getUniqueTags";
+import { getFileLang } from "@/utils/getTranslations";
+import { SITE } from "@/config";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+  return SITE.supportedLangs.flatMap(lang => {
+    const langPosts = getSortedPosts(allPosts).filter(
+      post => getFileLang(post.filePath) === lang
+    );
+    return paginate(langPosts, { params: { lang }, pageSize: SITE.postPerPage });
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { lang } = Astro.params;
+const allPosts = await getCollection("blog");
+
+const tagCloudTags = getUniqueTags(allPosts).map(({ tag, tagName }) => ({
+  label: tagName,
+  href: `/${lang}/tags/${tag}/`,
+}));
+---
+
+<PostsListLayout
+  title={`Posts | ${SITE.title}`}
+  pageTitle="Posts"
+  pageDesc="All the articles I've posted."
+  {tagCloudTags}
+  showTagCloud={true}
+  posts={allPosts}
+  noMarginTop={page.lastPage > 1}
+>
+  <ul>
+    {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
+  </ul>
+
+  <Pagination {page} slot="pagination" />
+</PostsListLayout>

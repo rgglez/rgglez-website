@@ -21,6 +21,7 @@
     "astro": "^5.18.0",
     "astro-expressive-code": "^0.41.7",
     "dayjs": "^1.11.19",
+    "flag-icons": "^7.5.0",
     "lodash.kebabcase": "^4.1.1",
     "playwright": "^1.58.2",
     "rehype-katex": "^7.0.1",
