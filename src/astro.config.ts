@@ -5,7 +5,6 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeMermaid from "rehype-mermaid";
 import expressiveCode from 'astro-expressive-code';
 import {
   transformerNotationDiff,
@@ -32,7 +31,7 @@ export default defineConfig({
   }), mdx()],
 
   markdown: {
-    rehypePlugins: [rehypeKatex, rehypeMermaid],
+    rehypePlugins: [rehypeKatex],
     remarkPlugins: [remarkToc, remarkMath, [remarkCollapse, { test: "Table of contents" }]],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes

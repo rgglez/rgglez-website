@@ -311,3 +311,31 @@ const nextPost =
     window.scrollTo({ left: 0, top: 0, behavior: "instant" })
   );
 </script>
+
+<script>
+  import mermaid from "mermaid";
+
+  function renderMermaid() {
+    const codeBlocks = document.querySelectorAll("pre > code.language-mermaid");
+    if (codeBlocks.length === 0) return;
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+    });
+
+    codeBlocks.forEach(async (code) => {
+      const pre = code.parentElement!;
+      const definition = code.textContent ?? "";
+      const id = `mermaid-${Math.random().toString(36).slice(2)}`;
+      const { svg } = await mermaid.render(id, definition);
+      const container = document.createElement("div");
+      container.className = "mermaid my-6 flex justify-center overflow-x-auto";
+      container.innerHTML = svg;
+      pre.replaceWith(container);
+    });
+  }
+
+  renderMermaid();
+  document.addEventListener("astro:after-swap", renderMermaid);
+</script>
