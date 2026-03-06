@@ -1,0 +1,71 @@
+---
+title: "Cómo ver archivos markdown \"renderizados\" en Linux"
+description: "Este artículo describe cómo ver archivos markdown \"renderizados\" en Linux."
+pubDatetime: 2026-03-05T00:00:00-06:00
+author: "Rodolfo González"
+slug: "como-ver-archivos-markdown-linux"
+ogImage: "../../../../../assets/posts/2026/03/ver-markdown-linux/header.webp"
+featured: false
+draft: false
+tags:
+  - linux
+  - cli
+  - okular
+  - markdown
+timezone: "America/Mexico_City"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/03/ver-markdown-linux/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## ¿Qué es markdown?
+
+[Markdown](https://es.wikipedia.org/wiki/Markdown) es un lenguaje de marcado ligero creado por John Gruber y Aaron Swartz que trata de conseguir la máxima legibilidad y facilidad de publicación tanto en su forma de entrada como de salida, inspirándose en muchas convenciones existentes para marcar mensajes de correo electrónico usando texto llano. John Gruber creó el lenguaje markdown en 2004, con una importante ayuda de Aaron Swartz en la sintaxis. Gruber tenía como objetivo que la gente "pudiera escribir usando un formato de texto llano fácil de leer, fácil de escribir y con la posibilidad de convertir su documento en HTML válido".
+
+Los archivos markdown pueden convertirse a una representación visual en HTML, pero también en PDF, por ejemplo.
+
+## Cómo ver archivos markdown en Linux
+
+Digamos que tenemos el siguiente documento markdown en un archivo llamado `test.md`:
+
+```markdown
+# Documento
+
+*Hola mundo*
+
+## Lista de compras
+
+> Tengo que comprar lo siguiente:
+
+- Jabón para el perro.
+- Comida para el gato.
+```
+
+Al ser un archivo de texto, se puede ver con cualquier editor. Pero, si queremos ver su representación gráfica o su versión final publicable, existen varias formas de hacerlo en Linux:
+
+### pandoc
+
+Desde la línea de comandos podemos usar el programa [`pandoc`](https://pandoc.org/) para convertir el archivo a PDF y luego usar cualquier visor para abrir el archivo PDF resultante:
+
+```bash
+pandoc test.md -o test.pdf
+okular test.pdf
+```
+
+### Okular
+
+Si no queremos convertir el documento markdown a PDF, se puede utilizar directamente Okular con el plugin adecuado. En Debian y derivados:
+
+```bash
+sudo apt install okular okular-extra-backends
+okular test.md
+```
+
+Usualmente [`okular`](https://okular.kde.org/es/) se instala con KDE, pero hay que instalar aparte el paquete `okular-extra-backends`.
+
+### Visual Studio Code
+
+Basta con abrir el archivo markdown en el editor y hacer clic en el botón: ![previsualización](@/assets/posts/2026/03/ver-markdown-linux/vscode.png) usualmente ubicado en la esquina superior derecha.

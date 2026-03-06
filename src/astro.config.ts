@@ -17,14 +17,20 @@ import { SITE } from "./src/config";
 
 import mdx from "@astrojs/mdx";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
+
   site: SITE.website,
+
   integrations: [sitemap({
     filter: page => SITE.showArchives || !page.endsWith("/archives"),
   }), expressiveCode({
     themes: ['dracula', 'github-light'],
   }), mdx()],
+
   markdown: {
     rehypePlugins: [rehypeKatex, rehypeMermaid],
     remarkPlugins: [remarkToc, remarkMath, [remarkCollapse, { test: "Table of contents" }]],
@@ -41,6 +47,7 @@ export default defineConfig({
       ],
     },
   },
+
   vite: {
     // eslint-disable-next-line
     // @ts-ignore
@@ -51,6 +58,7 @@ export default defineConfig({
       exclude: ["@resvg/resvg-js"],
     },
   },
+
   image: {
     responsiveStyles: true,
     layout: "constrained",
@@ -58,6 +66,7 @@ export default defineConfig({
       entrypoint: 'astro/assets/services/sharp',
     },
   },
+
   env: {
     schema: {
       PUBLIC_GOOGLE_SITE_VERIFICATION: envField.string({
@@ -67,6 +76,7 @@ export default defineConfig({
       }),
     },
   },
+
   experimental: {
     preserveScriptOrder: true,
     fonts: [
@@ -80,4 +90,6 @@ export default defineConfig({
       },
     ],
   },
+
+  adapter: cloudflare(),
 });

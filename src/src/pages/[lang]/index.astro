@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
@@ -26,7 +26,13 @@ const { lang } = Astro.params;
 
 const posts = await getCollection("blog");
 
-const sortedPosts = getUniquePosts(getSortedPosts(posts));
+const aboutEntry =
+  (await getEntry("about", lang)) ?? (await getEntry("about", defaultLang));
+const { Content: AboutContent } = aboutEntry
+  ? await render(aboutEntry)
+  : { Content: null };
+
+const sortedPosts = getUniquePosts(getSortedPosts(posts), lang);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
@@ -45,39 +51,7 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
       <div class="w-[70%]">
         <section id="about" class="app-prose prose-img:border-0 max-w-none">
           <Image src={miFoto} alt="rodolfo.gg" class="float-left mr-6 mb-4 rounded-full w-48 h-48 object-cover" />
-
-          <h2 class="text-2xl font-semibold tracking-wide">Bienvenidos a mi sitio web</h2>
-
-          <h3>Sobre mi...</h3>
-
-          <p>Ingeniero con más de 29 años de experiencia y formación en ciencias de la computación. Entusiasta de la programación y la administración de sistemas, con especial interés en el diseño de software robusto y escalable.</p>
-
-          <p><strong>Desarrollo de software:</strong> Amplia experiencia en múltiples lenguajes: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly y otros. Desarrollo full stack con Svelte/SvelteKit, Node.js, Laravel, Yii y CodeIgniter. Proyectos opensource destacados incluyen <a href="https://github.com/rgglez/gormcache">gormcache</a> (plugin de caché para GORM con soporte para Redis, Memcached y BoltDB), <a href="https://github.com/rgglez/go-storage">go-storage</a> (librería de almacenamiento multi-nube para Go), y <a href="https://github.com/rgglez/svelte-i18n-gettext">svelte-i18n-gettext</a> (internacionalización para Svelte con gettext).</p>
-
-          <p><strong>Cloud y DevOps:</strong> Arquitectura, administración y migración de entornos en AWS, Alibaba Cloud y Azure. Experiencia con Docker, Ansible, Cloudflare y VMware. FaaS con AWS Lambda y Aliyun Function Compute.</p>
-
-          <p><strong>Bases de datos:</strong> MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB y Neo4j. Generación de modelos con GORM y SQLAlchemy.</p>
-
-          <p><strong>Administración de sistemas:</strong> Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, administración de redes y routers Cisco, conexiones satelitales a Internet.</p>
-
-          <p><strong>Otras áreas:</strong> Producción musical (Ableton Live, StudioOne), diseño gráfico (GIMP, Photoshop) y edición de video. Siempre en búsqueda de aprender cosas nuevas.</p>
-
-          <hr />
-
-          <h2 class="text-2xl font-semibold tracking-wide">Who is Rodolfo Gonzalez?</h2>
-
-          <p>Engineer with over 29 years of experience and a background in Computer Science. A programming and systems administration enthusiast with a passion for building robust and scalable software.</p>
-
-          <p><strong>Software Development:</strong> Broad experience across many languages: JavaScript, PHP, Go, Python, C#, C, C++, Perl, SQL, Prolog, Lisp, Java, R, Pascal, Assembly, and others. Full-stack development with Svelte/SvelteKit, Node.js, Laravel, Yii, and CodeIgniter. Notable opensource projects include <a href="https://github.com/rgglez/gormcache">gormcache</a> (a cache plugin for GORM with Redis, Memcached, and BoltDB backends), <a href="https://github.com/rgglez/go-storage">go-storage</a> (a vendor-neutral multi-cloud storage library for Go), and <a href="https://github.com/rgglez/svelte-i18n-gettext">svelte-i18n-gettext</a> (gettext-based i18n for Svelte).</p>
-
-          <p><strong>Cloud &amp; DevOps:</strong> Architecture, administration, and migration of environments on AWS, Alibaba Cloud, and Azure. Experience with Docker, Ansible, Cloudflare, and VMware. FaaS with AWS Lambda and Aliyun Function Compute.</p>
-
-          <p><strong>Databases:</strong> MySQL, PostgreSQL, MongoDB, Redis, SQLite, ElasticSearch, DynamoDB, BoltDB, and Neo4j. Model generation with GORM and SQLAlchemy.</p>
-
-          <p><strong>Systems Administration:</strong> Linux (Ubuntu, Red Hat/CentOS/Fedora, Slackware, Debian, Alpine), Apache, nginx, network administration, Cisco routers, and satellite internet connectivity.</p>
-
-          <p><strong>Other Areas:</strong> Music production (Ableton Live, StudioOne), graphic design (GIMP, Photoshop), and video editing. Always looking to learn new things.</p>
-
+          {AboutContent && <AboutContent />}
           <div class="clear-both"></div>
         </section>
       </div>
@@ -89,6 +63,20 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
             <div class="mb-6 flex flex-wrap items-center gap-2">
               <Socials />
             </div>
+          )
+        }
+
+        {
+          recentPosts.length > 0 && (
+            <section id="recent-posts" class="pt-6 pb-6">
+              <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
+              <ul>
+                {recentPosts.map(
+                  (data, index) =>
+                    index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
+                )}
+              </ul>
+            </section>
           )
         }
 
@@ -106,20 +94,6 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
                 {featuredPosts.map(data => (
                   <Card variant="h3" {...data} allPosts={posts} />
                 ))}
-              </ul>
-            </section>
-          )
-        }
-
-        {
-          recentPosts.length > 0 && (
-            <section id="recent-posts" class="pt-6 pb-6">
-              <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
-              <ul>
-                {recentPosts.map(
-                  (data, index) =>
-                    index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
-                )}
               </ul>
             </section>
           )
