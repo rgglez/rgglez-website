@@ -1,0 +1,19 @@
+# rodolfo.gg
+
+> Sitio web personal de Rodolfo González González, ingeniero con más de 29 años de experiencia en ciencias de la computación, desarrollo de software y administración de sistemas. Actualmente cursando maestría en inteligencia artificial.
+
+## Secciones
+
+- [Inicio](https://rodolfo.gg/): Página principal
+- [Blog](https://rodolfo.gg/es/posts): Artículos técnicos sobre programación, sistemas y tecnología
+- [Archivo](https://rodolfo.gg/es/archives): Archivo de publicaciones
+- [Acerca de](https://rodolfo.gg/es/about): Información sobre el autor
+- [Búsqueda](https://rodolfo.gg/search): Búsqueda de contenido
+
+## Idiomas
+
+El sitio está disponible en español (es), inglés (en) y francés (fr).
+
+## Autor
+
+Rodolfo González González — ingeniero de software, entusiasta del software libre y la administración de sistemas. Experiencia en JavaScript, PHP, Go, Python, C, C++, Perl, SQL y otros lenguajes.
