@@ -1,4 +1,6 @@
 import type { APIRoute } from "astro";
+
+export const prerender = true;
 import { getCollection, type CollectionEntry } from "astro:content";
 import { getPath } from "@/utils/getPath";
 import { getFileLang } from "@/utils/getTranslations";
