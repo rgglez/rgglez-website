@@ -1,0 +1,17 @@
+---
+const { id, title } = Astro.props;
+---
+
+<div class="mb-8">
+  <div class="relative w-full overflow-hidden rounded-xl" style="padding-bottom: 56.25%;">
+    <iframe
+      class="absolute inset-0 w-full h-full"
+      src={`https://www.youtube.com/embed/${id}`}
+      title={title}
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+  <small class="block text-center">{title}</small>
+</div>
