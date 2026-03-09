@@ -13,9 +13,8 @@ import {
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { SITE } from "./src/config";
-
 import mdx from "@astrojs/mdx";
-
+import googleAnalytics from 'astro-google-analytics';
 import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
@@ -24,11 +23,18 @@ export default defineConfig({
 
   site: SITE.website,
 
-  integrations: [sitemap({
-    filter: page => SITE.showArchives || !page.endsWith("/archives"),
-  }), expressiveCode({
-    themes: ['dracula', 'github-light'],
-  }), mdx()],
+  integrations: [
+    sitemap({
+        filter: page => SITE.showArchives || !page.endsWith("/archives"),
+    }),
+    expressiveCode({
+        themes: ['dracula', 'github-light'],
+    }),
+    mdx(),
+    googleAnalytics({
+      measurementId: 'G-XXXXXXXXXX'
+    })
+  ],
 
   markdown: {
     rehypePlugins: [rehypeKatex],
