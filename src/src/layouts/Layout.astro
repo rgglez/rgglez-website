@@ -179,6 +179,22 @@ const structuredData = {
         };
       })();
     </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YK7ZVRYWFW"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-YK7ZVRYWFW');
+
+      document.addEventListener('astro:page-load', () => {
+        gtag('event', 'page_view', {
+          page_location: window.location.href,
+          page_title: document.title,
+        });
+      });
+    </script>
   </head>
   <body>
     <slot />
