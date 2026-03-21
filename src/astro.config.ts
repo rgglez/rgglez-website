@@ -54,7 +54,17 @@ export default defineConfig({
     // @ts-ignore
     // This will be fixed in Astro 6 with Vite 7 support
     // See: https://github.com/withastro/astro/issues/14030
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        name: "externalize-native-addons",
+        resolveId(id: string) {
+          if (id.endsWith(".node")) {
+            return { id, external: true };
+          }
+        },
+      },
+    ],
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
