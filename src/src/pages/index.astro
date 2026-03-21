@@ -2,9 +2,19 @@
 export const prerender = true;
 import { SITE } from "@/config";
 const { supportedLangs, defaultLang } = SITE;
+const defaultUrl = new URL(`/${defaultLang}/`, SITE.website).href;
 ---
-<script is:inline define:vars={{ supportedLangs, defaultLang }}>
-  const lang = (navigator.language ?? "").split("-")[0].toLowerCase();
-  const target = supportedLangs.includes(lang) ? lang : defaultLang;
-  window.location.pathname = `/${target}/`;
-</script>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="canonical" href={defaultUrl} />
+    <meta http-equiv="refresh" content={`0;url=${defaultUrl}`} />
+  </head>
+  <body>
+    <script is:inline define:vars={{ supportedLangs, defaultLang }}>
+      const lang = (navigator.language ?? "").split("-")[0].toLowerCase();
+      const target = supportedLangs.includes(lang) ? lang : defaultLang;
+      window.location.pathname = `/${target}/`;
+    </script>
+  </body>
+</html>

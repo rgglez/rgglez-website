@@ -81,19 +81,16 @@ export default defineConfig({
     },
   },
 
-  experimental: {
-    preserveScriptOrder: true,
-    fonts: [
-      {
-        name: "Funnel Sans",
-        cssVariable: "--font-funnel-sans",
-        provider: fontProviders.google(),
-        fallbacks: ["monospace"],
-        weights: [300, 400, 500, 600, 700],
-        styles: ["normal", "italic"],
-      },
-    ],
-  },
+  fonts: [
+    {
+      name: "Funnel Sans",
+      cssVariable: "--font-funnel-sans",
+      provider: fontProviders.google(),
+      fallbacks: ["monospace"],
+      weights: [300, 400, 500, 600, 700],
+      styles: ["normal", "italic"],
+    },
+  ],
 
   adapter: cloudflare(),
 });

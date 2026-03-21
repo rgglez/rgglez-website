@@ -25,6 +25,14 @@ export const getStaticPaths = (() => {
 const { supportedLangs, defaultLang } = SITE;
 const { lang } = Astro.params;
 
+const hreflangAlternates = [
+  { hreflang: "x-default", href: new URL(`/${defaultLang}/`, Astro.site).href },
+  ...supportedLangs.map(l => ({
+    hreflang: l,
+    href: new URL(`/${l}/`, Astro.site).href,
+  })),
+];
+
 const posts = await getCollection("blog");
 
 const aboutEntry =
@@ -43,7 +51,7 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
 }));
 ---
 
-<Layout>
+<Layout {hreflangAlternates}>
   <Header />
   <main id="main-content" data-layout="index" class="app-layout">
     <div class="flex flex-col md:flex-row gap-8 pt-8">

@@ -15,6 +15,7 @@ type Props = {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  hreflangAlternates?: { hreflang: string; href: string }[];
 };
 
 const {
@@ -27,6 +28,7 @@ const {
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  hreflangAlternates,
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.url);
@@ -64,6 +66,9 @@ const structuredData = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="canonical" href={canonicalURL} />
+    {hreflangAlternates?.map(({ hreflang, href }) => (
+      <link rel="alternate" hreflang={hreflang} href={href} />
+    ))}
     <meta name="generator" content={Astro.generator} />
 
     <!-- Load Font -->
