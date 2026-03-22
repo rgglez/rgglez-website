@@ -34,7 +34,11 @@ export default defineConfig({
 
   markdown: {
     rehypePlugins: [rehypeKatex],
-    remarkPlugins: [remarkToc, remarkMath, [remarkCollapse, { test: "Table of contents" }]],
+    remarkPlugins: [
+      [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
+      remarkMath,
+      [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i }],
+    ],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
       themes: { light: "min-light", dark: "night-owl" },
