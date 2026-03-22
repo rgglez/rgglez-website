@@ -163,19 +163,15 @@ et des variables comme `GOPRIVATE`, le téléchargement se termine par des erreu
 
 ## Contexte
 
-Définissons d'abord quelques hypothèses :
-
 | Élément | Valeur |
 |---|---|
 | Dépôt | `https://github.com/myorg/my-go-module` (privé) |
-| Protocole Git | HTTPS **ou** SSH (choisissez l'un) |
 | Consommateurs | Programmes Go internes de **myorg** |
 | OS de développement | Debian 13 (Trixie) |
 
 Les développeurs appartiennent déjà à une **équipe** de l'organisation `myorg` avec
 la permission **write** sur le dépôt. Le guide suppose que chaque développeur
-exécute les étapes sur sa propre machine. L'utilisation d'une distribution Linux
-moderne est également supposée. Dans mon cas, Debian 13.
+exécute les étapes sur sa propre machine.
 
 ---
 
@@ -345,15 +341,15 @@ git config --global --get-regexp url
 ## A5. Variables Go pour les modules privés
 
 Go tente de valider les modules contre le proxy public et la base de checksums.
-Les deux échouent avec les dépôts privés, il faut donc les exclure :
+Les deux échouent avec les dépôts privés. Listez **uniquement** les modules Go privés que vous utilisez comme dépendances, pas tous les dépôts de l'org :
 
 ```bash
 cat >> ~/.bashrc << 'EOF'
 
 # --- Go : modules privés de myorg ---
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 
 source ~/.bashrc
@@ -361,7 +357,7 @@ source ~/.bashrc
 
 | Variable | Effet |
 |---|---|
-| `GOPRIVATE` | Indique à Go que `github.com/myorg/*` est privé. Implique `GONOSUMDB` et `GONOPROXY`. |
+| `GOPRIVATE` | Indique à Go que les modules listés sont privés. Implique `GONOSUMDB` et `GONOPROXY`. |
 | `GONOSUMDB` | Ne consulte pas `sum.golang.org` pour ces modules. |
 | `GONOSUMCHECK` | Ne vérifie pas les checksums contre la base de données publique. |
 
@@ -369,8 +365,14 @@ Vérifiez :
 
 ```bash
 go env GOPRIVATE GONOSUMDB GONOSUMCHECK
-# Les trois doivent afficher github.com/myorg/*
+# Les trois doivent afficher github.com/myorg/my-go-module
 ```
+
+> **Plusieurs modules privés** : séparez-les par des virgules, sans espaces :
+> ```
+> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+> ```
+> Répétez le même modèle pour `GONOSUMDB` et `GONOSUMCHECK`.
 
 ---
 
@@ -439,9 +441,11 @@ git config --global url."https://github.com/".insteadOf "git@github.com:"
 
 # Variables Go
 cat >> ~/.bashrc << 'EOF'
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+# Si vous avez plusieurs modules privés, séparez-les par des virgules :
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 source ~/.bashrc
 ```
@@ -452,8 +456,8 @@ source ~/.bashrc
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/*` |
-| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/*"` |
+| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/my-go-module` |
+| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/my-go-module"` |
 | `go get` télécharge une vieille version | Cache local de Go | Exécutez `go clean -modcache` et réessayez |
 | `fatal: could not read Username` | Credential helper non configuré | Exécutez l'étape A3 |
 | `403 Forbidden` | Token sans permissions suffisantes | Vérifiez que le PAT a la permission **Contents: Read and write** |
@@ -572,9 +576,9 @@ git config --global --get-regexp url
 cat >> ~/.bashrc << 'EOF'
 
 # --- Go : modules privés de myorg ---
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 
 source ~/.bashrc
@@ -584,8 +588,14 @@ Vérifiez :
 
 ```bash
 go env GOPRIVATE GONOSUMDB GONOSUMCHECK
-# Les trois doivent afficher github.com/myorg/*
+# Les trois doivent afficher github.com/myorg/my-go-module
 ```
+
+> **Plusieurs modules privés** : séparez-les par des virgules, sans espaces :
+> ```
+> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+> ```
+> Répétez le même modèle pour `GONOSUMDB` et `GONOSUMCHECK`.
 
 ---
 
@@ -662,9 +672,11 @@ git config --global url."git@github.com:".insteadOf "https://github.com/"
 
 # Variables Go
 cat >> ~/.bashrc << 'EOF'
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+# Si vous avez plusieurs modules privés, séparez-les par des virgules :
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 source ~/.bashrc
 ```
@@ -675,8 +687,8 @@ source ~/.bashrc
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/*` |
-| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/*"` |
+| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/my-go-module` |
+| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/my-go-module"` |
 | `go get` télécharge une vieille version | Cache local de Go | Exécutez `go clean -modcache` et réessayez |
 | `Permission denied (publickey)` | Clé non chargée dans l'agent ou non enregistrée sur GitHub | Exécutez `ssh-add -l` ; vérifiez la clé sur GitHub |
 | `ssh: connect to host github.com port 22: Connection refused` | Le pare-feu bloque le port 22 | Ajoutez à `~/.ssh/config` : `Host github.com` / `Hostname ssh.github.com` / `Port 443` / `User git` |
@@ -837,9 +849,9 @@ git config --global --get-regexp url
 cat >> ~/.bashrc << 'EOF'
 
 # --- Go : modules privés de myorg ---
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 
 source ~/.bashrc
@@ -849,8 +861,14 @@ Vérifiez :
 
 ```bash
 go env GOPRIVATE GONOSUMDB GONOSUMCHECK
-# Les trois doivent afficher github.com/myorg/*
+# Les trois doivent afficher github.com/myorg/my-go-module
 ```
+
+> **Plusieurs modules privés** : séparez-les par des virgules, sans espaces :
+> ```
+> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+> ```
+> Répétez le même modèle pour `GONOSUMDB` et `GONOSUMCHECK`.
 
 ---
 
@@ -944,9 +962,11 @@ git config --global url."git@github-my-go-module:myorg/my-go-module".insteadOf \
 
 # Variables Go
 cat >> ~/.bashrc << 'EOF'
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+# Si vous avez plusieurs modules privés, séparez-les par des virgules :
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 source ~/.bashrc
 ```
@@ -957,8 +977,8 @@ source ~/.bashrc
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/*` |
-| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/*"` |
+| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/my-go-module` |
+| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/my-go-module"` |
 | `go get` télécharge une vieille version | Cache local de Go | Exécutez `go clean -modcache` et réessayez |
 | `ssh -T github-my-go-module` dit `Permission denied` | Clé non chargée, alias mal configuré, ou deploy key non enregistrée | Vérifiez avec `ssh-add -l` ; vérifiez `~/.ssh/config` ; confirmez la deploy key sur GitHub |
 | `ssh -T` répond avec votre **nom d'utilisateur** au lieu du **dépôt** | `ssh-agent` propose votre clé personnelle | Ajoutez `IdentitiesOnly yes` au bloc `Host` dans `~/.ssh/config` |
@@ -1138,9 +1158,9 @@ git config --global --get-regexp url
 cat >> ~/.bashrc << 'EOF'
 
 # --- Go : modules privés de myorg ---
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 
 source ~/.bashrc
@@ -1150,8 +1170,14 @@ Vérifiez :
 
 ```bash
 go env GOPRIVATE GONOSUMDB GONOSUMCHECK
-# Les trois doivent afficher github.com/myorg/*
+# Les trois doivent afficher github.com/myorg/my-go-module
 ```
+
+> **Plusieurs modules privés** : séparez-les par des virgules, sans espaces :
+> ```
+> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+> ```
+> Répétez le même modèle pour `GONOSUMDB` et `GONOSUMCHECK`.
 
 ---
 
@@ -1265,9 +1291,11 @@ git config --global url."https://github.com/myorg/my-go-module".pushInsteadOf \
 # --- Variables Go ---
 
 cat >> ~/.bashrc << 'EOF'
-export GOPRIVATE="github.com/myorg/*"
-export GONOSUMDB="github.com/myorg/*"
-export GONOSUMCHECK="github.com/myorg/*"
+# Si vous avez plusieurs modules privés, séparez-les par des virgules :
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/autre-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
 EOF
 source ~/.bashrc
 ```
@@ -1278,8 +1306,8 @@ source ~/.bashrc
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/*` |
-| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/*"` |
+| `410 Gone` lors de `go get` | Go essaie d'utiliser `proxy.golang.org` | Vérifiez que `GOPRIVATE` inclut `github.com/myorg/my-go-module` |
+| `SECURITY ERROR` de checksums | `GONOSUMCHECK` n'est pas défini | Ajoutez `export GONOSUMCHECK="github.com/myorg/my-go-module"` |
 | `go get` télécharge une vieille version | Cache local de Go | Exécutez `go clean -modcache` et réessayez |
 | `ssh -T github-my-go-module` dit `Permission denied` | Clé non chargée, alias mal configuré, ou deploy key non enregistrée | Vérifiez avec `ssh-add -l` ; vérifiez `~/.ssh/config` ; confirmez la deploy key sur GitHub |
 | `ssh -T` répond avec votre **nom d'utilisateur** au lieu du **dépôt** | `ssh-agent` propose votre clé personnelle | Ajoutez `IdentitiesOnly yes` au bloc `Host` |
