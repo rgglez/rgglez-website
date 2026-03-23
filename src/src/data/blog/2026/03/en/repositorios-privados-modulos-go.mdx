@@ -79,6 +79,20 @@ repositories (e.g. GitHub).
 - [D11. Publish a new version](#d11-publish-a-new-version)
 - [D12. Quick summary (all in one block)](#d12-quick-summary-all-in-one-block)
 - [D13. Troubleshooting](#d13-troubleshooting)
+- [Flow E — Deploy key for Go only + HTTPS for development](#flow-e--deploy-key-for-go-only--https-for-development)
+- [E1. Packages](#e1-packages)
+- [E2. Generate the deploy key](#e2-generate-the-deploy-key)
+- [E3. Register the deploy key as read-only](#e3-register-the-deploy-key-as-read-only)
+- [E4. Alias in `~/.ssh/config`](#e4-alias-in-sshconfig)
+- [E5. Configure `ssh-agent`](#e5-configure-ssh-agent)
+- [E6. Personal Access Token + Credential Helper for HTTPS](#e6-personal-access-token--credential-helper-for-https)
+- [E7. Go wrapper with `GIT_CONFIG_*`](#e7-go-wrapper-with-git_config_)
+- [E8. Go variables for private modules](#e8-go-variables-for-private-modules)
+- [E9. Verify](#e9-verify)
+- [E10. Daily workflow](#e10-daily-workflow)
+- [E11. Publish a new version](#e11-publish-a-new-version)
+- [E12. Quick summary (all in one block)](#e12-quick-summary-all-in-one-block)
+- [E13. Troubleshooting](#e13-troubleshooting)
 
 
 ## Introduction
@@ -1318,3 +1332,454 @@ source ~/.bashrc
 | `Key already in use` | GitHub does not allow the same key in more than one repo | Generate a separate pair per repository |
 | `ssh: connect to host github.com port 22: Connection refused` | Firewall blocks port 22 | Add `Hostname ssh.github.com` and `Port 443` to the `Host` block |
 | `Host key verification failed` | First connection to GitHub | Run `ssh-keyscan github.com >> ~/.ssh/known_hosts` |
+
+# Flow E — Deploy key for Go only + HTTPS for development
+
+This flow achieves **total separation** between Go and git. Go uses SSH with the
+deploy key to download private modules. The developer uses HTTPS with
+their PAT for all git work (clone, pull, push). Neither interferes
+with the other.
+
+The problem with flows C and D is that the `insteadOf` rule lives in the global
+git config (`~/.gitconfig`). That means **all** git operations see it,
+including those the developer runs directly. In Flow D this is mitigated with
+`pushInsteadOf`, but reads (clone, pull) still go via SSH, which forces using
+the deploy key alias to clone.
+
+The solution in this flow is **not to put any `insteadOf` rule in the global
+config**. Instead, a **shell wrapper** is used that injects the rule only when
+Go executes git, using the environment variables `GIT_CONFIG_COUNT`,
+`GIT_CONFIG_KEY_N`, and `GIT_CONFIG_VALUE_N`. These variables are available
+since Git 2.31 (Debian 13 ships 2.47+). Git treats them as highest-priority
+configuration, but they only exist during the execution of the wrapped command.
+
+The result:
+
+| Who runs | `insteadOf` active | Protocol | Authentication |
+|---|---|---|---|
+| `go get`, `go build`, `go mod tidy` | Yes (via wrapper) | SSH | Deploy key (read-only) |
+| `git clone`, `git pull` | No | HTTPS | PAT (read/write) |
+| `git push` | No | HTTPS | PAT (read/write) |
+
+---
+
+## E1. Packages
+
+```bash
+sudo apt update
+sudo apt install -y git golang-go openssh-client
+```
+
+Verify that you have Git ≥ 2.31, which is the version that introduced support
+for `GIT_CONFIG_COUNT`. Debian 13 ships 2.47+, so this should be met:
+
+```bash
+git --version   # ≥ 2.31 (Debian 13 ships 2.47+)
+go version      # ≥ 1.21
+ssh -V          # OpenSSH ≥ 9.x
+```
+
+---
+
+## E2. Generate the deploy key
+
+Same as in Flows C and D: a dedicated key with a name that identifies
+the repo.
+
+```bash
+ssh-keygen -t ed25519 -C "deploy-my-go-module" \
+  -f ~/.ssh/deploy_my-go-module
+```
+
+> **GitHub restriction**: the same public key cannot be a deploy key
+> for more than one repository. Generate a separate pair for each repo that
+> needs one.
+
+---
+
+## E3. Register the deploy key as read-only
+
+The only thing Go needs to do with the module is download it. It does not need
+to write. That is why the deploy key is registered as read-only (minimum
+privilege):
+
+Copy the public key:
+
+```bash
+cat ~/.ssh/deploy_my-go-module.pub
+```
+
+On GitHub:
+
+1. Go to **myorg/my-go-module → Settings → Deploy keys → Add deploy key**.
+2. Configure:
+   - **Title**: e.g. `go-readonly-rodolfo`.
+   - **Key**: paste the content.
+   - **Allow write access**: **do NOT check it** (read-only).
+3. Click **Add key**.
+
+---
+
+## E4. Alias in `~/.ssh/config`
+
+The alias works exactly as in Flows C and D. See the detailed explanation
+of each directive in step C4.
+
+```bash
+cat >> ~/.ssh/config << 'SSHCFG'
+
+# --- Deploy key: myorg/my-go-module (read-only, for Go) ---
+Host github-my-go-module
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/deploy_my-go-module
+  IdentitiesOnly yes
+SSHCFG
+
+chmod 600 ~/.ssh/config
+```
+
+---
+
+## E5. Configure `ssh-agent`
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/deploy_my-go-module
+```
+
+For auto-start:
+
+```bash
+cat >> ~/.bashrc << 'AGENT'
+
+# --- Automatic SSH agent (deploy key my-go-module) ---
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)" > /dev/null
+  ssh-add ~/.ssh/deploy_my-go-module 2>/dev/null
+fi
+AGENT
+
+source ~/.bashrc
+```
+
+---
+
+## E6. Personal Access Token + Credential Helper for HTTPS
+
+The developer uses HTTPS for all git work. The PAT and the credential helper
+are configured exactly as in Flow A.
+
+If you already have a Classic PAT with scope `repo` working, you can reuse it.
+If you need to create one, follow the detailed instructions in step A2.
+
+### Configure the credential helper
+
+```bash
+git config --global credential.helper store
+
+# Clear previous github.com entry
+sed -i '\|://.*@github\.com|d' ~/.git-credentials 2>/dev/null
+
+# Store the credential
+printf 'protocol=https\nhost=github.com\nusername=YOUR_USERNAME\npassword=YOUR_TOKEN\n' \
+  | git credential approve
+
+chmod 600 ~/.git-credentials
+```
+
+Remember that the credential helper stores **one credential per host**, so
+the token must cover all your repos on `github.com`.
+
+---
+
+## E7. Go wrapper with `GIT_CONFIG_*`
+
+Here is the piece that makes this flow unique. In Flows C and D, the
+`insteadOf` rule is placed in `~/.gitconfig` (global config), where it affects
+**all** git commands, whether run by Go or by the developer.
+Here, in contrast, the rule is injected **only when Go executes git**, using
+environment variables.
+
+Git 2.31+ recognizes three environment variables that allow injecting
+ad-hoc configuration entries:
+
+- `GIT_CONFIG_COUNT=N` — how many entries there are
+- `GIT_CONFIG_KEY_0`, `GIT_CONFIG_KEY_1`, ... — the key of each entry
+- `GIT_CONFIG_VALUE_0`, `GIT_CONFIG_VALUE_1`, ... — the value of each entry
+
+Git treats these entries with the **highest priority** (above
+`~/.gitconfig` and `.git/config`). But since they are environment variables,
+they only exist during the execution of the process that defines them.
+
+The wrapper is a shell function that wraps the `go` binary. Every time
+you type `go` in the terminal, bash runs the function instead of the binary
+directly. The function sets the `GIT_CONFIG_*` variables and then
+calls the real binary with `command go` (which skips the function and runs the
+binary from `$PATH`):
+
+```bash
+cat >> ~/.bashrc << 'GOWRAP'
+
+# --- Go: inject insteadOf only for Go ---
+go() {
+    GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
+    GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
+    command go "$@"
+}
+GOWRAP
+
+source ~/.bashrc
+```
+
+### What happens step by step
+
+1. The developer runs `go get github.com/myorg/my-go-module@latest`.
+2. Bash intercepts `go` and runs the wrapper function.
+3. The function sets `GIT_CONFIG_COUNT=1`, `GIT_CONFIG_KEY_0`, and
+   `GIT_CONFIG_VALUE_0` as environment variables of the process.
+4. The function calls the real Go binary with `command go "$@"`.
+5. Go needs to download the module. It executes git internally.
+6. Git inherits the environment variables from its parent process (Go).
+7. Git sees `GIT_CONFIG_COUNT=1` and reads the injected configuration entry.
+8. The entry says: "rewrite `https://github.com/myorg/my-go-module` to
+   `git@github-my-go-module:myorg/my-go-module`".
+9. Git connects using the alias `github-my-go-module`.
+10. SSH looks up the alias in `~/.ssh/config`, finds the deploy key, and uses it.
+11. GitHub authorizes the read. The module is downloaded.
+12. Go and git finish. The environment variables disappear.
+
+When the developer runs `git clone https://github.com/myorg/my-go-module.git`
+directly, it does not go through the wrapper. Git sees no
+`GIT_CONFIG_*` variables, applies no `insteadOf`, and uses HTTPS with the PAT
+from the credential helper.
+
+### Verify the wrapper is active
+
+```bash
+type go
+# go is a function
+# go ()
+# {
+#     GIT_CONFIG_COUNT=1 ...
+# }
+```
+
+If it says `go is /usr/bin/go` or similar, the wrapper was not loaded. Run
+`source ~/.bashrc`.
+
+> **Multiple private modules with deploy key**: increment `GIT_CONFIG_COUNT` and
+> add additional `KEY_N`/`VALUE_N` pairs. Each module needs its own
+> deploy key, SSH alias, and pair of variables:
+> ```bash
+> go() {
+>     GIT_CONFIG_COUNT=2 \
+>     GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
+>     GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
+>     GIT_CONFIG_KEY_1="url.git@github-another-module:myorg/another-module.insteadOf" \
+>     GIT_CONFIG_VALUE_1="https://github.com/myorg/another-module" \
+>     command go "$@"
+> }
+> ```
+
+---
+
+## E8. Go variables for private modules
+
+The same reasons as always: Go must not consult the public proxy or the
+checksum database for private modules.
+
+```bash
+cat >> ~/.bashrc << 'EOF'
+
+# --- Go: private modules from myorg ---
+# If you have multiple private modules, separate them with commas:
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
+EOF
+
+source ~/.bashrc
+```
+
+Verify:
+
+```bash
+go env GOPRIVATE GONOSUMDB GONOSUMCHECK
+# All three should show github.com/myorg/my-go-module
+```
+
+> **Multiple private modules**: separate them with commas, no spaces:
+> ```
+> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+> ```
+> Repeat the same pattern in `GONOSUMDB` and `GONOSUMCHECK`.
+
+---
+
+## E9. Verify
+
+Verification has two independent parts: confirm that Go uses the deploy key,
+and confirm that git uses HTTPS with the PAT.
+
+### Deploy key (Go channel)
+
+```bash
+# SSH connection with the alias (should say the repo, not a username)
+ssh -T github-my-go-module
+# Hi myorg/my-go-module! You've been authenticated, but GitHub does not
+# provide shell access.
+
+# go get uses the deploy key via the wrapper
+mkdir /tmp/test-go && cd /tmp/test-go
+go mod init github.com/myorg/test-app
+go get github.com/myorg/my-go-module@latest
+rm -rf /tmp/test-go
+```
+
+### HTTPS (development channel)
+
+```bash
+# git clone goes via HTTPS (no insteadOf, uses the PAT)
+git clone https://github.com/myorg/my-go-module.git /tmp/test-dev
+cd /tmp/test-dev
+
+# Confirm that the remote is pure HTTPS (not rewritten to SSH)
+git remote -v
+# origin  https://github.com/myorg/my-go-module.git (fetch)
+# origin  https://github.com/myorg/my-go-module.git (push)
+
+# push works via HTTPS
+git checkout -b test-push-verify
+git commit --allow-empty -m "test: verify HTTPS push"
+git push origin test-push-verify
+# If it works, the configuration is correct.
+git push origin --delete test-push-verify
+rm -rf /tmp/test-dev
+```
+
+The check with `git remote -v` is important: if the URLs show
+`git@github-my-go-module:...` instead of `https://...`, there is an active
+global `insteadOf` rule that should not be there. Remove it with
+`git config --global --unset`.
+
+---
+
+## E10. Daily workflow
+
+The developer uses HTTPS as usual. No need to know that Go uses a
+different channel. Everything is transparent:
+
+```bash
+# Development: everything via HTTPS
+git clone https://github.com/myorg/my-go-module.git
+cd my-go-module
+
+git checkout -b feature/new-function
+# ... edit files ...
+git add .
+git commit -m "feat: new function XYZ"
+git push origin feature/new-function
+
+# Module consumption: Go uses the deploy key automatically
+# (in any other Go project from myorg)
+go get github.com/myorg/my-go-module@latest
+```
+
+---
+
+## E11. Publish a new version
+
+```bash
+git checkout main && git pull
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+Consumers update with:
+
+```bash
+go get github.com/myorg/my-go-module@v0.2.0
+```
+
+---
+
+## E12. Quick summary (all in one block)
+
+```bash
+sudo apt install -y git golang-go openssh-client
+
+# --- Read channel (Go): deploy key ---
+
+ssh-keygen -t ed25519 -C "deploy-my-go-module" -f ~/.ssh/deploy_my-go-module
+#    → Admin adds ~/.ssh/deploy_my-go-module.pub as a read-only deploy key
+#      in myorg/my-go-module → Settings → Deploy keys
+
+cat >> ~/.ssh/config << 'SSHCFG'
+Host github-my-go-module
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/deploy_my-go-module
+  IdentitiesOnly yes
+SSHCFG
+chmod 600 ~/.ssh/config
+
+cat >> ~/.bashrc << 'AGENT'
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)" > /dev/null
+  ssh-add ~/.ssh/deploy_my-go-module 2>/dev/null
+fi
+AGENT
+
+# --- Development channel (git): HTTPS + PAT ---
+
+git config --global credential.helper store
+sed -i '\|://.*@github\.com|d' ~/.git-credentials 2>/dev/null
+printf 'protocol=https\nhost=github.com\nusername=MY_USERNAME\npassword=MY_TOKEN\n' \
+  | git credential approve
+chmod 600 ~/.git-credentials
+
+# --- Go wrapper (injects insteadOf only for Go) ---
+
+cat >> ~/.bashrc << 'GOWRAP'
+go() {
+    GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
+    GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
+    command go "$@"
+}
+GOWRAP
+
+# --- Go variables ---
+
+cat >> ~/.bashrc << 'EOF'
+# If you have multiple private modules, separate them with commas:
+# export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+export GOPRIVATE="github.com/myorg/my-go-module"
+export GONOSUMDB="github.com/myorg/my-go-module"
+export GONOSUMCHECK="github.com/myorg/my-go-module"
+EOF
+source ~/.bashrc
+```
+
+---
+
+## E13. Troubleshooting
+
+| Symptom | Probable cause | Solution |
+|---|---|---|
+| `410 Gone` on `go get` | Go tries to use `proxy.golang.org` | Verify that `GOPRIVATE` includes `github.com/myorg/my-go-module` |
+| Checksum `SECURITY ERROR` | `GONOSUMCHECK` is not defined | Add `export GONOSUMCHECK="github.com/myorg/my-go-module"` |
+| `go get` downloads old version | Go local cache | Run `go clean -modcache` and retry |
+| `go get` fails with 401/403 | Wrapper not active; Go tries HTTPS without deploy key | Verify with `type go` (should say "go is a function"); run `source ~/.bashrc` |
+| `ssh -T github-my-go-module` says `Permission denied` | Key not loaded, alias misconfigured, or deploy key not registered | Verify with `ssh-add -l`; check `~/.ssh/config`; confirm deploy key on GitHub |
+| `ssh -T` responds with your **username** instead of the **repo** | `ssh-agent` offers your personal key | Add `IdentitiesOnly yes` to the `Host` block in `~/.ssh/config` |
+| `git clone/pull` asks for username/password | Credential helper not configured | Run step E6 |
+| `git push` fails with 403 | PAT without permissions on the repo | Verify scope `repo` (classic) or **Contents: Read and write** (fine-grained) |
+| `go get` works but `git` also goes via SSH | There is an active global `insteadOf` rule | Run `git config --global --get-regexp url` and remove extra rules with `git config --global --unset url.XXX.insteadOf` |
+| `Key already in use` | GitHub does not allow the same key in more than one repo | Generate a separate pair per repository |
+| `ssh: connect to host github.com port 22: Connection refused` | Firewall blocks port 22 | Add `Hostname ssh.github.com` and `Port 443` to the `Host` block |
+| `Host key verification failed` | First connection to GitHub | Run `ssh-keyscan github.com >> ~/.ssh/known_hosts` |
+| The wrapper does not activate in scripts or CI | Non-interactive scripts do not load `~/.bashrc` | Use `source ~/.bashrc` at the beginning of the script, or export the `GIT_CONFIG_*` variables directly in the CI environment |
