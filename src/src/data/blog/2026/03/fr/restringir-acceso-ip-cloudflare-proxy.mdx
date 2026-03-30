@@ -1,0 +1,405 @@
+---
+title: "Comment restreindre l'accès par adresse IP à un hôte proxy Cloudflare"
+description: "Cet article décrit comment restreindre l'accès à un site web derrière un proxy Cloudflare."
+pubDatetime: 2026-03-29T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "restreindre-acces-ip-proxy-cloudflare"
+ogImage: "../../../../../assets/posts/2026/03/restringir-acceso-ip-cloudflare-proxy/header.webp"
+featured: false
+draft: false
+tags:
+  - linux
+  - apache
+  - nginx
+  - cloudflare
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/03/restringir-acceso-ip-cloudflare-proxy/header.webp';
+import proxy_inverso from '@/assets/posts/2026/03/restringir-acceso-ip-cloudflare-proxy/proxy_inverso_fr.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+Il est fréquent d'avoir des applications web auxquelles il faut restreindre
+l'accès à certaines adresses IP seulement. Cela peut normalement se faire au
+niveau du serveur web :
+
+* **Apache** avec [mod_authz_host](https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html),
+comme expliqué [ici](https://httpd.apache.org/docs/2.4/howto/access.html).
+* **nginx** avec [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html).
+* **lighttpd** avec [mod_access](https://doc.lighttpd.net/lighttpd2/mod_access.html).
+
+Cependant, l'utilisation de [Cloudflare](https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/)
+comme proxy inverse est de plus en plus répandue. Un proxy inverse est un service
+qui reçoit les requêtes des clients et les transmet à un ou plusieurs serveurs
+d'origine situés derrière lui. Les clients ne communiquent pas directement avec
+ces serveurs, mais avec le proxy inverse, qui agit comme intermédiaire entre les
+deux extrémités, comme le montre la figure suivante :
+
+<Image src={proxy_inverso} alt="Proxy inverse" />
+
+Dans notre scénario, le serveur d'origine doit accepter les connexions uniquement
+depuis les plages IP de Cloudflare (qui peuvent changer au fil du temps) et
+maintenir la restriction en utilisant la vraie adresse IP du client.
+
+## Table des matières
+
+- [Cloudflare](#cloudflare)
+  - [Dans la console Cloudflare](#dans-la-console-cloudflare)
+  - [Sur le serveur web](#sur-le-serveur-web)
+- [Apache](#apache)
+- [nginx](#nginx)
+- [lighttpd](#lighttpd)
+- [Dans le pare-feu](#dans-le-pare-feu)
+- [Vérification](#vérification)
+- [Résumé du modèle de défense](#résumé-du-modèle-de-défense)
+- [Bonus](#bonus)
+  - [Comment obtenir mon adresse IP de sortie ?](#comment-obtenir-mon-adresse-ip-de-sortie-)
+  - [Scripts](#scripts)
+
+## Cloudflare
+
+### Dans la console Cloudflare
+
+La première partie de la solution se traite dans Cloudflare.
+
+Dans le tableau de bord Cloudflare, allez dans Security → WAF → Custom rules
+et créez une règle :
+
+1. Saisissez un nom facile à identifier :
+
+**Nom** : Bureau uniquement
+
+2. Créez une « expression » ou règle indiquant au WAF de Cloudflare quoi faire.
+C'est souvent la partie la plus complexe.
+
+**Expression** (Edit expression) :
+
+Une règle simple pourrait être
+
+`(ip.src ne a.b.c.d)`
+
+qui signifie « l'IP source n'est pas `a.b.c.d` ». Cela bloque tout le trafic
+qui ne provient pas de votre IP de bureau avant qu'il n'atteigne votre serveur.
+Si vous avez besoin d'ajouter une autre IP ultérieurement, l'expression ressemblerait à :
+
+`(ip.src ne a.b.c.d and ip.src ne e.f.g.h)`.
+
+> Note importante : ces règles s'appliquent à **tout** le domaine !
+
+Pour appliquer une règle **à des hôtes spécifiques**, vous pouvez faire quelque chose comme :
+
+`(ip.src ne a.b.c.d and http.host in {"app.example.com" "admin.example.com"})`
+
+Ainsi, `www.example.com` ou d'autres sous-domaines pointant vers des serveurs
+sans restriction restent libres.
+
+> Les adresses IP peuvent évidemment être en IPv6 également.
+
+3. Sélectionnez l'action souhaitée, dans ce cas *Block* :
+
+**Action** : **Block**
+
+Cela amène Cloudflare à bloquer les requêtes provenant d'adresses IP qui ne
+correspondent pas à la règle.
+
+### Sur le serveur web
+
+Comme mentionné ci-dessus, les adresses IP des proxies Cloudflare peuvent
+changer périodiquement. Le script suivant met à jour un fichier avec ces
+adresses :
+
+```bash
+#!/usr/bin/env bash
+# /usr/local/sbin/update-cloudflare-proxies.sh
+set -euo pipefail
+
+RAW="/var/lib/cloudflare/cloudflare-trusted-proxies.lst"
+TMP="$(mktemp)"
+
+cleanup() { rm -f "$TMP"; }
+trap cleanup EXIT
+
+mkdir -p "$(dirname "$RAW")"
+
+{
+    echo "# Cloudflare trusted proxies"
+    echo "# Generated on $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+    echo
+    curl -fsSL https://www.cloudflare.com/ips-v4
+    echo
+    curl -fsSL https://www.cloudflare.com/ips-v6
+} > "$TMP"
+
+LINES=$(grep -cE '^[0-9a-f:.\/]+$' "$TMP" || true)
+if [ "$LINES" -lt 5 ]; then
+    echo "ERROR: seulement $LINES plages obtenues. Abandon." >&2
+    exit 1
+fi
+
+if cmp -s "$TMP" "$RAW" 2>/dev/null; then
+    echo "Aucun changement."
+    exit 0
+fi
+
+mv "$TMP" "$RAW"
+chmod 644 "$RAW"
+echo "Liste mise à jour ($LINES plages)."
+```
+
+> N'oubliez pas d'ajuster les chemins selon vos préférences.
+
+Ce script peut être exécuté avec cron ou systemd. N'étant pas fan de systemd,
+voici la procédure pour cron :
+
+```bash
+sudo chmod +x /usr/local/sbin/update-cloudflare-proxies.sh
+```
+
+```bash
+sudo crontab -e
+```
+
+```
+# Mettre à jour les proxies Cloudflare — lundi 4h00
+0 4 * * 1 /usr/local/sbin/update-cloudflare-proxies.sh >> /var/log/cloudflare-proxies.log 2>&1
+```
+
+Première exécution du script :
+
+```bash
+sudo /usr/local/sbin/update-cloudflare-proxies.sh
+```
+
+---
+
+Il faut maintenant indiquer au serveur web d'origine les éléments suivants :
+
+1. La liste des adresses IP des proxies Cloudflare.
+1. L'adresse IP autorisée.
+1. La restriction d'accès pour toutes les adresses IP sauf celle autorisée.
+
+> Il peut y avoir une ou plusieurs adresses IP autorisées, bien entendu.
+
+## Apache
+
+Le module `remoteip` est nécessaire pour obtenir la vraie adresse IP distante.
+
+```bash
+sudo a2enmod remoteip
+sudo systemctl restart apache2
+```
+
+Apache lit la liste directement, sans conversion :
+
+```
+# /etc/apache2/conf-available/cloudflare-remoteip.conf
+<IfModule mod_remoteip.c>
+    RemoteIPHeader CF-Connecting-IP
+    RemoteIPTrustedProxyList /var/lib/cloudflare/cloudflare-trusted-proxies.lst
+</IfModule>
+```
+
+L'utilisation de `RemoteIPHeader CF-Connecting-IP` est essentielle, car elle
+indique à Apache que la vraie adresse du client provient de Cloudflare dans
+cet en-tête.
+
+Activez cette configuration, soit en créant le lien symbolique dans
+`conf-enabled`, soit avec :
+
+```bash
+sudo a2enmod remoteip
+sudo systemctl restart apache2
+```
+
+Ensuite, appliquez la restriction pour l'IP source :
+
+```
+# /etc/apache2/sites-available/example.com.conf
+<VirtualHost *:443>
+    ServerName www.example.com
+
+    # ... votre configuration SSL, DocumentRoot, etc. ...
+
+    # Autoriser uniquement votre IP de bureau
+    <Location "/">
+        Require ip a.b.c.d 2001:db8::1
+    </Location>
+</VirtualHost>
+```
+
+> N'oubliez pas d'inclure ici toutes vos adresses IP de sortie, y compris IPv6.
+
+```bash
+sudo apache2ctl configtest
+sudo systemctl reload apache2
+```
+
+## nginx
+
+nginx n'a pas d'équivalent à TrustedProxyList, il faut donc générer un snippet
+à partir de la liste :
+
+```bash
+# /usr/local/sbin/gen-nginx-cloudflare.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="/var/lib/cloudflare/cloudflare-trusted-proxies.lst"
+OUT="/etc/nginx/snippets/cloudflare-trusted-proxies.conf"
+
+{
+    echo "# Généré depuis $SRC — ne pas modifier"
+    grep -E '^[0-9a-f:.\/]+$' "$SRC" | while IFS= read -r cidr; do
+        echo "set_real_ip_from $cidr;"
+    done
+    echo "real_ip_header CF-Connecting-IP;"
+} > "$OUT"
+
+nginx -t 2>/dev/null && systemctl reload nginx
+```
+
+```
+# /etc/nginx/sites-available/app.example.com
+server {
+    listen 443 ssl;
+    server_name app.example.com;
+
+    include snippets/cloudflare-trusted-proxies.conf;
+
+    allow a.b.c.d;
+    allow 2001:db8::1;
+    deny all;
+
+    # ...
+}
+```
+
+## lighttpd
+
+Même situation, nécessite un snippet généré :
+
+```bash
+# /usr/local/sbin/gen-lighttpd-cloudflare.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="/var/lib/cloudflare/cloudflare-trusted-proxies.lst"
+OUT="/etc/lighttpd/conf-available/90-cloudflare-trusted-proxies.conf"
+
+{
+    echo "# Généré depuis $SRC — ne pas modifier"
+    echo 'server.modules += ("mod_extforward")'
+    echo 'extforward.headers = ("CF-Connecting-IP")'
+    printf 'extforward.forwarder = ('
+    FIRST=1
+    grep -E '^[0-9a-f:.\/]+$' "$SRC" | while IFS= read -r cidr; do
+        [ "$FIRST" -eq 1 ] && FIRST=0 || printf ','
+        printf '\n    "%s" => "trust"' "$cidr"
+    done
+    echo
+    echo ')'
+} > "$OUT"
+
+lighttpd -t -f /etc/lighttpd/lighttpd.conf 2>/dev/null && systemctl reload lighttpd
+```
+
+```
+# /etc/lighttpd/lighttpd.conf
+include "conf-available/90-cloudflare-trusted-proxies.conf"
+
+# Restriction par IP sur le vhost
+$HTTP["host"] == "app.example.com" {
+    $HTTP["remoteip"] !~ "^(a\.b\.c\.d|2001:db8::1)$" {
+        url.access-deny = ("")
+    }
+}
+```
+
+## Dans le pare-feu
+
+En guise de défense supplémentaire, configurez ufw pour que le port 443 (et 80)
+n'accepte que le trafic provenant des plages Cloudflare, en rejetant les
+connexions directes de toute autre IP :
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="/var/lib/cloudflare/cloudflare-trusted-proxies.lst"
+
+if [ ! -f "$SRC" ]; then
+    echo "ERROR: $SRC n'existe pas. Exécutez update-cloudflare-proxies.sh d'abord." >&2
+    exit 1
+fi
+
+CIDRS=$(grep -E '^[0-9a-f:.\/]+$' "$SRC")
+
+if [ -z "$CIDRS" ]; then
+    echo "ERROR: aucun CIDR trouvé dans $SRC." >&2
+    exit 1
+fi
+
+# Supprimer les règles Cloudflare précédentes sur les ports 80,443
+ufw status numbered | grep -E '80,443' | grep -oP '^\[\s*\K[0-9]+' | sort -rn | while read -r num; do
+    yes | ufw delete "$num"
+done
+
+# Ajouter les règles mises à jour
+while IFS= read -r cidr; do
+    ufw allow from "$cidr" to any port 80,443 proto tcp
+done <<< "$CIDRS"
+
+ufw reload
+echo "ufw mis à jour avec $(echo "$CIDRS" | wc -l) plages."
+```
+
+Cela empêche quiconque découvrant l'IP de votre serveur de s'y connecter
+directement en contournant Cloudflare.
+
+> Notez que nous avons travaillé sous Linux, mais sur d'autres systèmes comme
+> FreeBSD, les étapes ne devraient pas changer beaucoup.
+
+## Vérification
+
+Depuis votre IP de bureau, accédez à https://www.example.com — cela devrait
+fonctionner normalement. Depuis un autre réseau (par exemple votre téléphone
+en données mobiles), essayez d'y accéder : vous devriez recevoir un blocage
+Cloudflare (erreur 1020).
+
+Vérifiez les logs d'Apache pour confirmer que les vraies IP sont enregistrées
+correctement. Dans le cas d'Apache :
+
+```bash
+bashtail -f /var/log/apache2/access.log
+```
+
+Vous devriez voir a.b.c.d et non une IP Cloudflare.
+
+## Résumé du modèle de défense
+
+| Couche | Ce qu'elle fait | Ce qu'elle bloque |
+|---|---|---|
+| **Cloudflare WAF** | Filtre par IP du visiteur | Trafic d'IP non autorisées avant d'atteindre le serveur |
+| **Apache + mod_remoteip** | Filtre par vraie IP restaurée | Trafic non autorisé qui passe quand même par Cloudflare |
+| **ufw** | Filtre par IP source au niveau réseau | Connexions directes au serveur qui contournent Cloudflare |
+
+Les trois couches ensemble vous donnent une défense en profondeur : si l'une
+échoue, les autres maintiennent la restriction.
+
+## Bonus
+
+### Comment obtenir mon adresse IP de sortie ?
+
+Vous pouvez utiliser un site comme
+<a href="https://www.whatismyip.com" target="_blank">whatismyip</a> pour obtenir
+l'adresse IP publique de votre sortie.
+
+### Scripts
+
+Vous pouvez trouver les scripts sur mon [GitHub](https://github.com/rgglez/cloudflare-utils),
+sous licence [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html).
