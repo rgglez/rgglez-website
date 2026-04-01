@@ -1,0 +1,984 @@
+---
+title: "Wie man Argilla installiert, ohne den Verstand zu verlieren."
+description: "Diese Anleitung erklärt, wie man Argilla und seine Abhängigkeiten OHNE Docker-Container unter Debian installiert."
+pubDatetime: 2026-03-29T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "argilla-installieren-abhaengigkeiten"
+ogImage: "../../../../../assets/posts/2026/04/instalando-argilla/header.webp"
+featured: false
+draft: false
+tags:
+  - argilla
+  - opensearch
+  - postgresql
+  - redis
+  - künstliche intelligenz
+  - verarbeitung natürlicher sprache
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.de"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/instalando-argilla/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Einleitung
+
+<a href="https://argilla.io/" target="_blank">Argilla</a> ist eine Open-Source-
+Plattform zur Datenkuratierung für künstliche Intelligenz und Sprachmodelle,
+die dafür ausgelegt ist, Engineering-Teams und Domänenexperten beim Aufbau,
+der Überprüfung und Pflege qualitativ hochwertiger Datensätze zu unterstützen.
+Sie wird für die Datenannotation, die Bewertung von Modellausgaben, die
+Einbindung von menschlichem Feedback und die kontinuierliche Verbesserung von
+Trainings- und Validierungsdatensätzen verwendet. Das Projekt wurde ursprünglich
+vom Recognai-Team erstellt, begann als Rubrix und entwickelte sich später zu
+Argilla. Heute gilt es als solide technische Lösung im LLMOps- und
+data-centric-AI-Ökosystem. Es wird unter der Apache-2.0-Lizenz vertrieben und
+sein Stack umfasst auf Python und FastAPI basierende Komponenten, mit Fokus auf
+offenes Deployment, Zusammenarbeit und vollständige Datenkontrolle.
+
+Diese Anleitung beschreibt den Installationsprozess von Argilla und seinen
+Abhängigkeiten auf Debian 13 Trixie. Obwohl die für die Tests verwendete
+Umgebung eigentlich Debian Testing entspricht, werden keine wesentlichen
+Unterschiede in den Verfahrensschritten erwartet. Vielleicht nur die
+PostgreSQL-Version 17 anstatt 16 oder 18, aber diese sind vollständig
+kompatibel. Es sei darauf hingewiesen, dass es sich nicht um eine triviale
+Installation handelt, sondern um einen Prozess, der solide Erfahrung in der
+GNU/Linux-Systemadministration erfordert. Für diejenigen, die eine einfachere
+und schnellere Alternative zum Einsatz suchen, kann es vorzuziehen sein, das
+<a href="https://docs.argilla.io/latest/getting_started/how-to-deploy-argilla-with-docker/" target="_blank">Docker-Deployment</a>
+zu wählen, das im Allgemeinen direkter ist.
+
+Für die Installation auf anderen GNU/Linux-Distributionen ist es unbedingt
+erforderlich, die Versionen jeder der in dieser Anleitung genannten Komponenten
+sorgfältig zu berücksichtigen.
+
+---
+
+## Inhaltsverzeichnis
+
+- [1. Architekturübersicht](#1-architekturübersicht)
+- [2. Systemvorbereitung](#2-systemvorbereitung)
+  - [2.1 System aktualisieren](#21-system-aktualisieren)
+  - [2.2 Basissystemabhängigkeiten installieren](#22-basissystemabhängigkeiten-installieren)
+  - [2.3 Dedizierten Systembenutzer erstellen](#23-dedizierten-systembenutzer-erstellen)
+- [3. Java 21 installieren](#3-java-21-installieren)
+- [4. OpenSearch 2.x installieren](#4-opensearch-2x-installieren)
+  - [4.1 OpenSearch installieren](#41-opensearch-installieren)
+  - [4.3 OpenSearch für Argilla konfigurieren](#43-opensearch-für-argilla-konfigurieren)
+  - [4.4 OpenSearch JVM-Speicher anpassen](#44-opensearch-jvm-speicher-anpassen)
+  - [4.5 Betriebssystemlimits anpassen](#45-betriebssystemlimits-anpassen)
+  - [4.6 Swap deaktivieren (empfohlen für Produktion)](#46-swap-deaktivieren-empfohlen-für-produktion)
+  - [4.7 OpenSearch aktivieren und starten](#47-opensearch-aktivieren-und-starten)
+  - [4.8 Fehlerbehebung](#48-fehlerbehebung)
+- [5. PostgreSQL 16 oder 18 installieren](#5-postgresql-16-oder-18-installieren)
+  - [5.1 Aus Debian-Repositories installieren](#51-aus-debian-repositories-installieren)
+  - [5.2 PostgreSQL starten und aktivieren](#52-postgresql-starten-und-aktivieren)
+  - [5.3 Datenbank und Benutzer für Argilla erstellen](#53-datenbank-und-benutzer-für-argilla-erstellen)
+  - [5.4 Verbindung überprüfen](#54-verbindung-überprüfen)
+- [6. Redis installieren](#6-redis-installieren)
+  - [6.1 Grundkonfiguration](#61-grundkonfiguration)
+  - [6.2 Redis aktivieren und starten](#62-redis-aktivieren-und-starten)
+- [7. Python-Umgebung vorbereiten](#7-python-umgebung-vorbereiten)
+  - [7.1 Python überprüfen](#71-python-überprüfen)
+  - [7.2 Virtuelle Umgebung erstellen](#72-virtuelle-umgebung-erstellen)
+- [8. argilla-server installieren](#8-argilla-server-installieren)
+  - [8.1 Installation](#81-installation)
+- [9. Argilla-Server konfigurieren](#9-argilla-server-konfigurieren)
+  - [9.1 Umgebungskonfigurationsdatei erstellen](#91-umgebungskonfigurationsdatei-erstellen)
+  - [9.2 Datenverzeichnis erstellen](#92-datenverzeichnis-erstellen)
+- [10. Datenbankinitialisierung](#10-datenbankinitialisierung)
+- [11. systemd-Dienste erstellen](#11-systemd-dienste-erstellen)
+  - [11.1 Argilla-Server-Dienst](#111-argilla-server-dienst)
+  - [11.2 Argilla-Worker-Dienst](#112-argilla-worker-dienst)
+  - [11.3 Dienste aktivieren und starten](#113-dienste-aktivieren-und-starten)
+  - [11.4 Status aller Dienste überprüfen](#114-status-aller-dienste-überprüfen)
+- [12. Überprüfung und erste Verwendung](#12-überprüfung-und-erste-verwendung)
+  - [12.1 API-Antwort überprüfen](#121-api-antwort-überprüfen)
+  - [12.2 Weboberfläche aufrufen](#122-weboberfläche-aufrufen)
+  - [12.3 Indizes in OpenSearch überprüfen](#123-indizes-in-opensearch-überprüfen)
+  - [12.4 Überprüfen, ob Argilla den richtigen Client verwendet](#124-überprüfen-ob-argilla-den-richtigen-client-verwendet)
+- [13. Python-SDK (Client) installieren](#13-python-sdk-client-installieren)
+- [14. Wartung](#14-wartung)
+- [Port- und Dienstübersicht](#port--und-dienstübersicht)
+- [Wesentliche Unterschiede zur Elasticsearch-Installation](#wesentliche-unterschiede-zur-elasticsearch-installation)
+
+---
+
+## 1. Architekturübersicht
+
+Argilla v2 besteht aus vier Diensten, die gleichzeitig laufen müssen:
+
+| Dienst | Rolle | Standardport |
+|---|---|---|
+| **OpenSearch 2.x** | Vektor- und Volltextsuchmaschine | 9200 |
+| **PostgreSQL 18** | Relationale Datenbank (Benutzer, Workspaces, Metadaten) | 5432 |
+| **Redis** | Aufgabenwarteschlange für den Hintergrundworker | 6379 |
+| **argilla-server** | FastAPI-API + Web-UI | 6900 |
+| **argilla worker** | Asynchroner Aufgabenprozess | — (verbraucht Redis) |
+
+OpenSearch ist ein von Amazon unter der Apache-2.0-Lizenz gepflegter Fork von Elasticsearch. Es teilt dieselbe REST-API und dieselbe Indexierungsmaschine (Apache Lucene), was es vollständig kompatibel mit Argilla macht. Die minimal erforderliche Version ist OpenSearch 2.4.0.
+
+---
+
+## 2. Systemvorbereitung
+
+### 2.1 System aktualisieren
+
+```bash
+sudo apt update && sudo apt full-upgrade -y
+```
+
+### 2.2 Basissystemabhängigkeiten installieren
+
+```bash
+sudo apt install -y \
+  curl wget gnupg2 lsb-release ca-certificates \
+  build-essential libssl-dev libffi-dev \
+  python3 python3-pip python3-venv python3-dev \
+  git unzip
+```
+
+### 2.3 Dedizierten Systembenutzer erstellen
+
+Argilla unter einem unprivilegierten Benutzer auszuführen ist eine bewährte Sicherheitspraxis:
+
+```bash
+sudo useradd --system --shell /bin/bash --home /opt/argilla --create-home argilla
+```
+
+---
+
+## 3. Java 21 installieren
+
+OpenSearch 2.x benötigt mindestens Java 11; Java 21 wird für bessere Leistung und langfristigen Support empfohlen:
+
+```bash
+sudo apt install -y openjdk-21-jdk-headless
+```
+
+Unter Debian 13 und testing ist die Standardversion openjdk-25-jre-headless, die nicht mit OpenSearch kompatibel ist. Dies liegt
+erstens daran, dass das OpenSearch-Repository selbst einen Commit enthält, der besagt „Wrap checked exceptions in
+painless.DefBootstrap to support JDK-25" auf GitHub, was bedeutet, dass die Java-25-Kompatibilität spezifische Korrekturen
+erforderte, die nur in neueren Versionen des Hauptentwicklungszweigs ankamen, nicht in der in diesem Leitfaden verwendeten
+stabilen 2.x-Serie. Zweitens ist JDK 21 die für OpenSearch 3.0 erklärte Mindestanforderung, nicht für 2.x. Die 2.x-Serie wurde
+offiziell mit Java 17 erstellt und getestet. Java 25 ist auch eine Nicht-LTS-Version, die OpenSearch historisch als
+Testumgebung vermeidet. Die Lösung besteht darin, Java 21 explizit neben Java 25 zu installieren und OpenSearch zu sagen,
+welches verwendet werden soll. Unter Debian 13 (und anderen Distros) können beide Versionen koexistieren.
+
+Es gibt mindestens 2 Möglichkeiten, sie koexistieren zu lassen. Die erste besteht darin, die zu verwendende Java-Version global
+explizit anzugeben:
+
+```bash
+sudo update-alternatives --config java
+```
+
+Wenn ein anderes Programm Java 25 verwenden sollte, müsste vorübergehend dazu zurückgewechselt werden.
+
+Die andere Möglichkeit besteht darin, OpenSearch zu sagen, welches verwendet werden soll. Unter Debian 13 können beide Versionen
+koexistieren: Anstatt `JAVA_HOME` global zu definieren (was das gesamte System beeinflussen würde), verwenden Sie die Variable
+`OPENSEARCH_JAVA_HOME`, die OpenSearch mit Priorität gegenüber `JAVA_HOME` liest:
+
+```bash
+sudo nano /etc/opensearch/opensearch.env
+```
+
+Wenn diese Datei nicht existiert, können Sie sie direkt im systemd-Dienst-Override konfigurieren:
+
+```
+sudo systemctl edit opensearch
+```
+
+Und hinzufügen:
+
+```ini
+[Service]
+Environment=OPENSEARCH_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+```
+
+Die Variable `OPENSEARCH_JAVA_HOME` hat Vorrang vor `JAVA_HOME`, was es ermöglicht, dass mehrere Anwendungen auf demselben
+Server verschiedene JVM-Versionen ohne Konflikte verwenden.
+
+Überprüfen:
+
+```bash
+java -version
+# Sollte anzeigen: openjdk version "21.x.x" ...
+```
+
+`JAVA_HOME` global konfigurieren (aber die vorherige Anmerkung zu den Versionen berücksichtigen):
+
+```bash
+echo 'JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' | sudo tee /etc/environment
+source /etc/environment
+```
+
+> **Hinweis:** Den genauen Pfad im Zweifelsfall mit `update-java-alternatives --list` überprüfen.
+
+---
+
+## 4. OpenSearch 2.x installieren
+
+### 4.1 OpenSearch installieren
+
+Ab OpenSearch 2.12 erfordert das Installationsprogramm, dass das Passwort des `admin`-Benutzers vor der Installation als
+Umgebungsvariable gesetzt wird. Dies gilt auch dann, wenn das Sicherheits-Plugin später deaktiviert wird.
+Die folgenden Befehle werden vorzugsweise als `root`-Benutzer ausgeführt:
+
+```bash
+sudo apt update
+
+# Establecer la contraseña de admin antes de instalar (requerido desde 2.12+)
+export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
+
+# Descargar el .deb directamente, para evitar problemas con la firma del APT de OpenSearch
+wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensearch-2.19.0-linux-x64.deb
+
+# Instalar
+sudo dpkg -i opensearch-2.19.0-linux-x64.deb
+```
+
+> **Passwortanforderung:** Das Passwort muss mindestens 8 Zeichen lang sein und Großbuchstaben, Kleinbuchstaben, Zahlen und ein Sonderzeichen enthalten. Verwenden Sie vorzugsweise einen sicheren Passwortgenerator.
+> Wenn die Variable nicht definiert ist, schlägt die Installation fehl. Wenn `sudo dpkg -i` ohne sie ausgeführt wird, schlägt die Installation ebenfalls fehl.
+
+Um eine bestimmte Version zu installieren (z.B. die neueste der stabilen 2.x-Serie):
+
+```bash
+# Instalar versión concreta
+export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
+
+# Descargar el .deb e instalar.
+wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.x.y/opensearch-2.x.y-linux-x64.deb
+sudo dpkg -i opensearch-2.x.y-linux-x64.deb
+```
+
+### 4.3 OpenSearch für Argilla konfigurieren
+
+Argilla kommuniziert mit OpenSearch ohne Authentifizierung im lokalen Netzwerk. Das OpenSearch-Sicherheits-Plugin (das TLS, Authentifizierung und Autorisierung verwaltet) muss für diesen Zweck deaktiviert werden.
+
+Standardkonfigurationsdatei sichern:
+
+```bash
+sudo cp /etc/opensearch/opensearch.yml /etc/opensearch/opensearch.yml.orig
+```
+
+Hauptkonfigurationsdatei bearbeiten:
+
+```bash
+sudo nano /etc/opensearch/opensearch.yml
+```
+
+Den Inhalt durch folgendes ersetzen:
+
+```yaml
+# ─── Identidad del clúster ───────────────────────────────────────────────────
+cluster.name: os-argilla-local
+node.name: argilla-node-1
+
+# ─── Red ─────────────────────────────────────────────────────────────────────
+network.host: 127.0.0.1
+http.port: 9200
+
+# ─── Modo nodo único ─────────────────────────────────────────────────────────
+discovery.type: single-node
+
+# ─── Deshabilitar el plugin de seguridad ─────────────────────────────────────
+# Argilla no usa autenticación TLS entre servicios internos.
+plugins.security.disabled: true
+plugins.security.ssl.http.enabled: false
+plugins.security.ssl.transport.enabled: false
+
+# ─── Desactivar limitaciones de disco ────────────────────────────────────────
+cluster.routing.allocation.disk.threshold_enabled: false
+```
+
+### 4.4 OpenSearch JVM-Speicher anpassen
+
+```bash
+sudo cp /etc/opensearch/jvm.options /etc/opensearch/jvm.options.orig
+```
+
+```bash
+sudo nano /etc/opensearch/jvm.options
+```
+
+Die Heap-Zeilen suchen und ändern (oder eine Override-Datei in `/etc/opensearch/jvm.options.d/` erstellen):
+
+```bash
+sudo nano /etc/opensearch/jvm.options.d/heap.options
+```
+
+```
+-Xms1g
+-Xmx1g
+```
+
+> **Allgemeine Regel:** OpenSearch nicht mehr als 50 % des gesamten Server-RAMs zuweisen.
+
+### 4.5 Betriebssystemlimits anpassen
+
+OpenSearch (wie Elasticsearch) erfordert zusätzliche Kernel-Konfiguration:
+
+```bash
+# vm.max_map_count — unverzichtbar für Lucene
+echo 'vm.max_map_count=262144' | sudo tee /etc/sysctl.d/99-opensearch.conf
+sudo sysctl --system
+
+# Überprüfen
+sysctl vm.max_map_count
+# Sollte anzeigen: vm.max_map_count = 262144
+```
+
+Dateideskriptor-Limits für den opensearch-Benutzer:
+
+```bash
+sudo nano /etc/security/limits.d/opensearch.conf
+```
+
+```
+opensearch  soft  nofile  65535
+opensearch  hard  nofile  65535
+opensearch  soft  memlock  unlimited
+opensearch  hard  memlock  unlimited
+```
+
+### 4.6 Swap deaktivieren (empfohlen für Produktion)
+
+OpenSearch empfiehlt, den Swap zu deaktivieren, um Leistungseinbußen zu vermeiden:
+
+```bash
+sudo swapoff -a
+# Um es dauerhaft zu machen, die Swap-Zeile in /etc/fstab auskommentieren:
+sudo sed -i '/\bswap\b/s/^/#/' /etc/fstab
+```
+
+### 4.7 OpenSearch aktivieren und starten
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable opensearch
+sudo systemctl start opensearch
+```
+
+OpenSearch benötigt zwischen 20 und 40 Sekunden zum vollständigen Starten. Überprüfen:
+
+```bash
+sudo systemctl status opensearch
+
+# Probar la API (sin autenticación, porque deshabilitamos el plugin de seguridad)
+curl -s http://localhost:9200/
+```
+
+Die Antwort sollte ein JSON ähnlich dem folgenden sein:
+
+```json
+{
+  "name" : "argilla-node-1",
+  "cluster_name" : "os-argilla-local",
+  "version" : {
+    "distribution" : "opensearch",
+    "number" : "2.x.x",
+    ...
+  },
+  "tagline" : "The OpenSearch Project: https://opensearch.org/"
+}
+```
+
+> **Wichtig:** Die Eigenschaft `"distribution": "opensearch"` bestätigt, dass Argilla den `opensearch-py`-Client für die korrekte Verbindung verwendet und den `UnsupportedProductError` vermeidet, der beim Elasticsearch-Client auftreten würde.
+
+### 4.8 Fehlerbehebung
+
+> Beim Testen der Verbindung gibt OpenSearch einen leeren Wert zurück: `curl -s http://localhost:9200/`
+
+Es gibt mehrere mögliche Ursachen. Prüfen Sie diese in folgender Reihenfolge:
+
+1. Überprüfen, ob der Dienst tatsächlich läuft:
+
+```bash
+sudo systemctl status opensearch
+```
+
+Wenn Active: active (running) erscheint, läuft er, aber etwas anderes schlägt fehl. Wenn failed oder activating erscheint, liegt das Problem dort.
+
+2. Die Logs anzeigen, um zu sehen, was passiert:
+
+```bash
+sudo journalctl -u opensearch -n 50 --no-pager
+```
+
+Dies enthüllt fast immer den genauen Grund.
+
+3. Überprüfen, ob auf Port 9200 gelauscht wird:
+
+```bash
+ss -tlnp | grep 9200
+```
+
+Wenn nichts erscheint, hat OpenSearch das Starten nicht abgeschlossen oder ist fehlgeschlagen.
+
+4. Das häufigste Problem beim `.deb`-Paket ist, dass das Sicherheits-Plugin trotz `plugins.security.disabled: true` aktiv bleibt.
+In diesem Fall antwortet OpenSearch nur über HTTPS, nicht HTTP, und curl ohne Optionen erhält eine leere Verbindung. Versuchen Sie:
+
+```bash
+curl -sk https://localhost:9200/ -u admin:Admin_Password_Seguro1!
+```
+
+Wenn dies das erwartete JSON zurückgibt, liegt das Problem genau darin: Das Sicherheits-Plugin wurde nicht korrekt deaktiviert.
+Die Lösung besteht darin zu bestätigen, dass die Konfigurationsdatei die richtige Zeile enthält, und neu zu starten:
+
+```bash
+sudo grep "plugins.security" /etc/opensearch/opensearch.yml
+# Debe mostrar: plugins.security.disabled: true
+
+sudo systemctl restart opensearch
+sleep 30
+curl -s http://localhost:9200/
+```
+
+---
+
+## 5. PostgreSQL 16 oder 18 installieren
+
+### 5.1 Aus Debian-Repositories installieren
+
+```bash
+sudo apt install -y postgresql postgresql-contrib
+```
+
+### 5.2 PostgreSQL starten und aktivieren
+
+```bash
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+sudo systemctl status postgresql
+```
+
+### 5.3 Datenbank und Benutzer für Argilla erstellen
+
+```bash
+sudo -u postgres psql
+```
+
+In der psql-Shell:
+
+```sql
+-- Crear usuario de base de datos para Argilla
+CREATE USER argilla_user WITH PASSWORD 'argilla_secret_password';
+
+-- Crear la base de datos
+CREATE DATABASE argilla OWNER argilla_user;
+
+-- Otorgar todos los privilegios
+GRANT ALL PRIVILEGES ON DATABASE argilla TO argilla_user;
+
+-- Salir
+\q
+```
+
+> **Sicherheit:** Ersetzen Sie `argilla_secret_password` durch ein sicheres Passwort:
+> `openssl rand -base64 24` zum Beispiel.
+
+### 5.4 Verbindung überprüfen
+
+```bash
+psql -h localhost -U argilla_user -d argilla -c "SELECT version();"
+```
+
+---
+
+## 6. Redis installieren
+
+```bash
+sudo apt install -y redis-server
+```
+
+### 6.1 Grundkonfiguration
+
+```bash
+sudo nano /etc/redis/redis.conf
+```
+
+Überprüfen, ob diese Zeilen vorhanden sind:
+
+```
+bind 127.0.0.1 -::1
+protected-mode yes
+port 6379
+```
+
+### 6.2 Redis aktivieren und starten
+
+```bash
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
+
+# Überprüfen
+redis-cli ping
+# Sollte antworten: PONG
+```
+
+---
+
+## 7. Python-Umgebung vorbereiten
+
+### 7.1 Python überprüfen
+
+```bash
+python3 --version
+# Python 3.11.x oder höher
+```
+
+### 7.2 Virtuelle Umgebung erstellen
+
+```bash
+sudo -i -u argilla
+
+python3 -m venv /opt/argilla/venv
+
+source /opt/argilla/venv/bin/activate
+
+pip install --upgrade pip setuptools wheel
+```
+
+> Oder `source /opt/argilla/venv/bin/activate.fish` wenn Sie fish verwenden.
+
+---
+
+## 8. argilla-server installieren
+
+### 8.1 Installation
+
+Mit aktivierter virtueller Umgebung:
+
+```bash
+# Degradar click para evitar problemas de compatibilidad. Crea un archivo de restricciones.
+echo "click<8.2.0" > /opt/argilla/constraints.txt
+
+pip install "argilla-server[postgresql]" -c /opt/argilla/constraints.txt
+```
+
+Dadurch werden automatisch installiert:
+- `argilla-server` — FastAPI-Server mit eingebetteter Web-UI
+- `opensearch-py` — offizieller OpenSearch-Client (verwendet wenn `ARGILLA_SEARCH_ENGINE=opensearch`)
+- `asyncpg` + `psycopg2-binary` — PostgreSQL-Treiber
+- `redis` — Redis-Client
+- `uvicorn` — ASGI-Server
+- `alembic` — Datenbankmigrationen
+- Alle FastAPI-, Pydantic- und SQLAlchemy-Abhängigkeiten
+
+Überprüfen:
+
+```bash
+python -m argilla_server --help
+```
+
+**Click- und Typer-Inkompatibilitäten**
+
+Es ist wichtig zu beachten, dass das click-Paket Änderungen einführt, die es mit Argilla inkompatibel machen:
+
+| Click-Version | Fehler |
+|---|---|
+| ≥ 8.3.0 | `Secondary flag is not valid for non-boolean flag` |
+| 8.2.x | `Parameter.make_metavar() missing 1 required positional argument: 'ctx'` |
+| **≤ 8.1.8** | **Funktioniert korrekt mit argilla-server** |
+
+Das Argilla-Team wird seine Verwendung von Typer auf eine neuere Version aktualisieren müssen, um dies an der Wurzel
+zu beheben, aber in der Zwischenzeit ist click==8.1.8 die stabile Lösung.
+
+---
+
+## 9. Argilla-Server konfigurieren
+
+### 9.1 Umgebungskonfigurationsdatei erstellen
+
+```bash
+nano /opt/argilla/.env
+```
+
+```dotenv
+# ─────────────────────────────────────────
+# Configuración del servidor Argilla
+# ─────────────────────────────────────────
+
+ARGILLA_HOME_PATH=/opt/argilla/data
+ARGILLA_BASE_URL=/
+
+# ─────────────────────────────────────────
+# Base de datos relacional (PostgreSQL)
+# ─────────────────────────────────────────
+ARGILLA_DATABASE_URL=postgresql+asyncpg://argilla_user:argilla_secret_password@localhost:5432/argilla
+
+# ─────────────────────────────────────────
+# Motor de búsqueda: OpenSearch
+# ─────────────────────────────────────────
+# La variable ARGILLA_ELASTICSEARCH apunta al endpoint del motor,
+# independientemente de si es Elasticsearch u OpenSearch.
+ARGILLA_ELASTICSEARCH=http://localhost:9200
+ARGILLA_SEARCH_ENGINE=opensearch
+
+# ─────────────────────────────────────────
+# Redis
+# ─────────────────────────────────────────
+ARGILLA_REDIS_URL=redis://localhost:6379/0
+
+# ─────────────────────────────────────────
+# Usuario inicial
+# ─────────────────────────────────────────
+USERNAME=admin
+PASSWORD=admin_password_seguro_aqui
+API_KEY=argilla.apikey
+WORKSPACE=default
+
+# ─────────────────────────────────────────
+# Worker de tareas en segundo plano
+# ─────────────────────────────────────────
+BACKGROUND_NUM_WORKERS=2
+
+# ─────────────────────────────────────────
+# Telemetría (descomenta para desactivar)
+# ─────────────────────────────────────────
+# HF_HUB_DISABLE_TELEMETRY=1
+```
+
+> **Hinweis zu `ARGILLA_SEARCH_ENGINE`:** Der Wert `opensearch` weist Argilla an, den `opensearch-py`-Client anstelle des Elasticsearch-Clients zu verwenden und so den Fehler wegen nicht unterstütztem Produkt zu vermeiden.
+
+> *Wichtig*: Vergessen Sie nicht, die Passwörter in `ARGILLA_DATABASE_URL` und `PASSWORD` durch die während des Installationsprozesses erstellten zu ersetzen.
+
+> *Wichtig*: Wenn das Passwort reservierte oder Shell-spezielle Zeichen enthält, wie z.B. ein Gleichheitszeichen, sollte der Wert von `ARGILLA_DATABASE_URL` in Anführungszeichen gesetzt werden.
+
+Datei schützen:
+
+```bash
+chmod 600 /opt/argilla/.env
+```
+
+### 9.2 Datenverzeichnis erstellen
+
+```bash
+mkdir -p /opt/argilla/data
+```
+
+---
+
+## 10. Datenbankinitialisierung
+
+Mit allen laufenden Diensten (OpenSearch, PostgreSQL, Redis) das Schema initialisieren:
+
+```bash
+sudo -i -u argilla
+source /opt/argilla/venv/bin/activate
+set -a
+source /opt/argilla/.env
+set +a
+```
+
+Alembic-Migrationen ausführen:
+
+```bash
+python -m argilla_server database migrate
+```
+
+Initialen Benutzer und Workspace erstellen:
+
+```bash
+python -m argilla_server database users create_default
+```
+
+Um später zusätzliche Benutzer zu erstellen:
+
+```bash
+python -m argilla_server database users create \
+  --username nombre_usuario \
+  --first-name "Nombre" \
+  --password contraseña \
+  --role owner
+```
+
+Um alle verfügbaren Befehle anzuzeigen:
+
+```bash
+python -m argilla_server database users --help
+```
+
+---
+
+## 11. systemd-Dienste erstellen
+
+### 11.1 Argilla-Server-Dienst
+
+```bash
+sudo nano /etc/systemd/system/argilla-server.service
+```
+
+```ini
+[Unit]
+Description=Argilla Server (FastAPI)
+Documentation=https://docs.argilla.io
+After=network.target opensearch.service postgresql.service redis-server.service
+Wants=opensearch.service postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=argilla
+Group=argilla
+WorkingDirectory=/opt/argilla
+EnvironmentFile=/opt/argilla/.env
+ExecStart=/opt/argilla/venv/bin/python -m argilla_server start
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=argilla-server
+
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 11.2 Argilla-Worker-Dienst
+
+```bash
+sudo nano /etc/systemd/system/argilla-worker.service
+```
+
+```ini
+[Unit]
+Description=Argilla Background Worker
+Documentation=https://docs.argilla.io
+After=network.target opensearch.service postgresql.service redis-server.service argilla-server.service
+Wants=opensearch.service postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=argilla
+Group=argilla
+WorkingDirectory=/opt/argilla
+EnvironmentFile=/opt/argilla/.env
+ExecStart=/opt/argilla/venv/bin/python -m argilla_server worker --num-workers ${BACKGROUND_NUM_WORKERS}
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=argilla-worker
+
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 11.3 Dienste aktivieren und starten
+
+```bash
+sudo systemctl daemon-reload
+
+sudo systemctl enable argilla-server argilla-worker
+
+sudo systemctl start argilla-server
+sleep 5
+sudo systemctl start argilla-worker
+```
+
+### 11.4 Status aller Dienste überprüfen
+
+```bash
+sudo systemctl status opensearch
+sudo systemctl status postgresql
+sudo systemctl status redis-server
+sudo systemctl status argilla-server
+sudo systemctl status argilla-worker
+```
+
+Logs in Echtzeit verfolgen:
+
+```bash
+sudo journalctl -u argilla-server -f
+sudo journalctl -u argilla-worker -f
+```
+
+---
+
+## 12. Überprüfung und erste Verwendung
+
+### 12.1 API-Antwort überprüfen
+
+```bash
+curl -s http://localhost:6900/api/v1/status | python3 -m json.tool
+```
+
+### 12.2 Weboberfläche aufrufen
+
+```
+http://localhost:6900
+```
+
+Initiale Zugangsdaten:
+- **Benutzer:** `admin`
+- **Passwort:** der in `PASSWORD` in `.env` konfigurierte Wert
+
+### 12.3 Indizes in OpenSearch überprüfen
+
+```bash
+curl -s http://localhost:9200/_cat/indices?v
+```
+
+### 12.4 Überprüfen, ob Argilla den richtigen Client verwendet
+
+Bei der Überprüfung der Server-Logs sollte etwas wie folgendes erscheinen:
+
+```
+INFO: Search engine: opensearch
+INFO: Connected to OpenSearch 2.x.x
+```
+
+Wenn ein `UnsupportedProductError`-Fehler erscheint, bedeutet dies, dass `ARGILLA_SEARCH_ENGINE` nicht korrekt geladen wurde — die `.env`-Datei überprüfen und den Dienst neu starten.
+
+---
+
+## 13. Python-SDK (Client) installieren
+
+Das Argilla-SDK wird in der Umgebung installiert, aus der heraus programmiert wird (kann derselbe Server oder ein Remote-Rechner sein):
+
+```bash
+pip install argilla
+```
+
+Mit dem Server verbinden:
+
+```python
+import argilla as rg
+
+client = rg.Argilla(
+    api_url="http://localhost:6900",
+    api_key="argilla.apikey"   # Valor de API_KEY en .env
+)
+
+# Verificar conexión
+print(client.http_client.get("/api/v1/status"))
+```
+
+Einen Test-Datensatz erstellen:
+
+```python
+settings = rg.Settings(
+    guidelines="Clasifica el sentimiento del texto.",
+    fields=[
+        rg.TextField(name="text", title="Texto")
+    ],
+    questions=[
+        rg.LabelQuestion(
+            name="sentiment",
+            title="¿Cuál es el sentimiento?",
+            labels=["positivo", "negativo", "neutro"]
+        )
+    ]
+)
+
+dataset = rg.Dataset(
+    name="mi-primer-dataset",
+    settings=settings
+)
+dataset.create()
+
+records = [
+    rg.Record(fields={"text": "Me encanta este producto"}),
+    rg.Record(fields={"text": "Muy mala experiencia"}),
+    rg.Record(fields={"text": "El producto llegó a tiempo"}),
+]
+dataset.records.log(records)
+print("Dataset creado correctamente.")
+```
+
+---
+
+## 14. Wartung
+
+### Argilla-Dienste neu starten
+
+```bash
+sudo systemctl restart argilla-server argilla-worker
+```
+
+### Argilla aktualisieren
+
+```bash
+sudo -i -u argilla
+source /opt/argilla/venv/bin/activate
+
+pip install --upgrade "argilla-server[postgresql]" -c /opt/argilla/constraints.txt
+
+set -a; source /opt/argilla/.env; set +a
+python -m argilla_server database migrate
+
+sudo systemctl restart argilla-server argilla-worker
+```
+
+### OpenSearch aktualisieren
+
+```bash
+export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
+sudo apt update
+sudo apt install --only-upgrade opensearch
+sudo systemctl restart opensearch
+```
+
+> Überprüfen Sie vor dem Aktualisieren immer die Kompatibilität zwischen der OpenSearch-Version und Argilla. Argilla benötigt OpenSearch ≥ 2.4.0.
+
+### Datensicherung
+
+| Komponente | Sicherungsmethode |
+|---|---|
+| PostgreSQL | `pg_dump argilla -U argilla_user > argilla_backup.sql` |
+| OpenSearch | Snapshots über API (`/_snapshot`) oder Sicherung des Verzeichnisses `/var/lib/opensearch/` |
+| Argilla-Dateien | Verzeichnis `/opt/argilla/data/` |
+
+### Datensätze in OpenSearch neu indizieren
+
+Wenn OpenSearch seine Indizes verliert, können sie durch Neustart des Servers mit einer zusätzlichen Umgebungsvariable neu indiziert werden:
+
+```bash
+sudo systemctl edit argilla-server
+```
+
+Vorübergehend in den Abschnitt `[Service]` hinzufügen:
+
+```ini
+[Service]
+Environment=REINDEX_DATASETS=1
+```
+
+Den Dienst neu starten, dann diese Konfiguration entfernen und erneut neu starten.
+
+---
+
+## Port- und Dienstübersicht
+
+| Komponente | Port | URL / Überprüfungsbefehl |
+|---|---|---|
+| OpenSearch | 9200 | `curl http://localhost:9200/` |
+| PostgreSQL | 5432 | `psql -h localhost -U argilla_user argilla` |
+| Redis | 6379 | `redis-cli ping` |
+| Argilla Server (UI + API) | 6900 | `http://localhost:6900` |
+
+---
+
+## Wesentliche Unterschiede zur Elasticsearch-Installation
+
+| Aspekt | Elasticsearch 8 | OpenSearch 2.x |
+|---|---|---|
+| APT-Repository | `artifacts.elastic.co` | `artifacts.opensearch.org` |
+| systemd-Dienstname | `elasticsearch` | `opensearch` |
+| Sicherheitskonfiguration | `xpack.security.enabled: false` | `plugins.security.disabled: true` |
+| Argilla-Umgebungsvariable | `ARGILLA_SEARCH_ENGINE=elasticsearch` | `ARGILLA_SEARCH_ENGINE=opensearch` |
+| Passwort bei Installation erforderlich | Nein | Ja (ab Version 2.12+) |
+| Lizenz | SSPL (proprietär) | Apache 2.0 (frei) |
+| Von Argilla verwendeter Python-Client | `elasticsearch-py` | `opensearch-py` |
+
+---
+
+*Leitfaden erstellt für Argilla 2.x auf Debian 13 „Trixie" mit OpenSearch 2.x · März 2026*

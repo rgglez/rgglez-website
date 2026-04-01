@@ -1,5 +1,5 @@
 ---
-title: "Comment restreindre l'accès par adresse IP à un hôte proxy Cloudflare"
+title: "Comment restreindre l'accès par adresse IP à un hôte proxy Cloudflare."
 description: "Cet article décrit comment restreindre l'accès à un site web derrière un proxy Cloudflare."
 pubDatetime: 2026-03-29T00:00:00-06:00
 author: "Rodolfo González González"
@@ -46,6 +46,8 @@ Dans notre scénario, le serveur d'origine doit accepter les connexions uniqueme
 depuis les plages IP de Cloudflare (qui peuvent changer au fil du temps) et
 maintenir la restriction en utilisant la vraie adresse IP du client.
 
+---
+
 ## Table des matières
 
 - [Cloudflare](#cloudflare)
@@ -60,6 +62,8 @@ maintenir la restriction en utilisant la vraie adresse IP du client.
 - [Bonus](#bonus)
   - [Comment obtenir mon adresse IP de sortie ?](#comment-obtenir-mon-adresse-ip-de-sortie-)
   - [Scripts](#scripts)
+
+---
 
 ## Cloudflare
 
@@ -185,6 +189,8 @@ Il faut maintenant indiquer au serveur web d'origine les éléments suivants :
 
 > Il peut y avoir une ou plusieurs adresses IP autorisées, bien entendu.
 
+---
+
 ## Apache
 
 Le module `remoteip` est nécessaire pour obtenir la vraie adresse IP distante.
@@ -239,6 +245,8 @@ sudo apache2ctl configtest
 sudo systemctl reload apache2
 ```
 
+---
+
 ## nginx
 
 nginx n'a pas d'équivalent à TrustedProxyList, il faut donc générer un snippet
@@ -278,6 +286,8 @@ server {
     # ...
 }
 ```
+
+---
 
 ## lighttpd
 
@@ -319,6 +329,8 @@ $HTTP["host"] == "app.example.com" {
     }
 }
 ```
+
+---
 
 ## Dans le pare-feu
 
@@ -364,6 +376,8 @@ directement en contournant Cloudflare.
 > Notez que nous avons travaillé sous Linux, mais sur d'autres systèmes comme
 > FreeBSD, les étapes ne devraient pas changer beaucoup.
 
+---
+
 ## Vérification
 
 Depuis votre IP de bureau, accédez à https://www.example.com — cela devrait
@@ -380,6 +394,8 @@ bashtail -f /var/log/apache2/access.log
 
 Vous devriez voir a.b.c.d et non une IP Cloudflare.
 
+---
+
 ## Résumé du modèle de défense
 
 | Couche | Ce qu'elle fait | Ce qu'elle bloque |
@@ -390,6 +406,8 @@ Vous devriez voir a.b.c.d et non une IP Cloudflare.
 
 Les trois couches ensemble vous donnent une défense en profondeur : si l'une
 échoue, les autres maintiennent la restriction.
+
+---
 
 ## Bonus
 

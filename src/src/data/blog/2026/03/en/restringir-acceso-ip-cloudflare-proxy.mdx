@@ -1,5 +1,5 @@
 ---
-title: "How to restrict IP address access to a Cloudflare proxy host"
+title: "How to restrict IP address access to a Cloudflare proxy host."
 description: "This article describes how to restrict access to a website behind a Cloudflare proxy."
 pubDatetime: 2026-03-29T00:00:00-06:00
 author: "Rodolfo González González"
@@ -45,6 +45,8 @@ In our scenario, the origin server must accept connections only from Cloudflare'
 IP ranges (which can change over time) and enforce the restriction using the
 real client IP.
 
+---
+
 ## Table of Contents
 
 - [Cloudflare](#cloudflare)
@@ -59,6 +61,8 @@ real client IP.
 - [Bonus](#bonus)
   - [How do I get my "outgoing" IP address?](#how-do-i-get-my-outgoing-ip-address)
   - [Scripts](#scripts)
+
+---
 
 ## Cloudflare
 
@@ -183,6 +187,8 @@ Now, you need to tell the origin web server the following:
 
 > There can be one or several allowed IP addresses, of course.
 
+---
+
 ## Apache
 
 The `remoteip` module is required to obtain the real remote IP address.
@@ -236,6 +242,8 @@ sudo apache2ctl configtest
 sudo systemctl reload apache2
 ```
 
+---
+
 ## nginx
 
 nginx has no equivalent to TrustedProxyList, so you need to generate a snippet
@@ -275,6 +283,8 @@ server {
     # ...
 }
 ```
+
+---
 
 ## lighttpd
 
@@ -316,6 +326,8 @@ $HTTP["host"] == "app.example.com" {
     }
 }
 ```
+
+---
 
 ## On the firewall
 
@@ -361,6 +373,8 @@ bypassing Cloudflare.
 > Note that we have been working with Linux, but on other systems such as
 > FreeBSD, the steps should not differ much.
 
+---
+
 ## Verification
 
 From your office IP, access https://www.example.com — it should work normally.
@@ -376,6 +390,8 @@ bashtail -f /var/log/apache2/access.log
 
 You should see a.b.c.d and not a Cloudflare IP.
 
+---
+
 ## Defense model summary
 
 | Layer | What it does | What it blocks |
@@ -386,6 +402,8 @@ You should see a.b.c.d and not a Cloudflare IP.
 
 The three layers together give you defense in depth: if one fails, the others
 hold the restriction.
+
+---
 
 ## Bonus
 
