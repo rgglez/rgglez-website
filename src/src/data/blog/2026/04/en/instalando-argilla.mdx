@@ -222,7 +222,7 @@ Starting with OpenSearch 2.12, the installer requires that the `admin` user pass
 This applies even if the security plugin is later disabled. The following commands are preferably run as the `root` user:
 
 ```bash
-sudo apt update
+apt update
 
 # Establecer la contraseña de admin antes de instalar (requerido desde 2.12+)
 export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
@@ -231,7 +231,7 @@ export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
 wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensearch-2.19.0-linux-x64.deb
 
 # Instalar
-sudo dpkg -i opensearch-2.19.0-linux-x64.deb
+dpkg -i opensearch-2.19.0-linux-x64.deb
 ```
 
 > **Password requirement:** The password must be at least 8 characters long and include uppercase, lowercase, numbers, and a special symbol. Preferably use a secure password generator.

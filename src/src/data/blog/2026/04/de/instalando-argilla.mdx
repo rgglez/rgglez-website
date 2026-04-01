@@ -229,7 +229,7 @@ Umgebungsvariable gesetzt wird. Dies gilt auch dann, wenn das Sicherheits-Plugin
 Die folgenden Befehle werden vorzugsweise als `root`-Benutzer ausgeführt:
 
 ```bash
-sudo apt update
+apt update
 
 # Establecer la contraseña de admin antes de instalar (requerido desde 2.12+)
 export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
@@ -238,7 +238,7 @@ export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
 wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensearch-2.19.0-linux-x64.deb
 
 # Instalar
-sudo dpkg -i opensearch-2.19.0-linux-x64.deb
+dpkg -i opensearch-2.19.0-linux-x64.deb
 ```
 
 > **Passwortanforderung:** Das Passwort muss mindestens 8 Zeichen lang sein und Großbuchstaben, Kleinbuchstaben, Zahlen und ein Sonderzeichen enthalten. Verwenden Sie vorzugsweise einen sicheren Passwortgenerator.

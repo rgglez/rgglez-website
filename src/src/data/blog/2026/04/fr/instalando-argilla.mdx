@@ -229,7 +229,7 @@ d'environnement avant l'installation. Cela s'applique même si le plugin de séc
 Les commandes suivantes sont de préférence exécutées en tant qu'utilisateur `root` :
 
 ```bash
-sudo apt update
+apt update
 
 # Establecer la contraseña de admin antes de instalar (requerido desde 2.12+)
 export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
@@ -238,7 +238,7 @@ export OPENSEARCH_INITIAL_ADMIN_PASSWORD='Admin_Password_Seguro1!'
 wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensearch-2.19.0-linux-x64.deb
 
 # Instalar
-sudo dpkg -i opensearch-2.19.0-linux-x64.deb
+dpkg -i opensearch-2.19.0-linux-x64.deb
 ```
 
 > **Exigence de mot de passe :** Le mot de passe doit comporter au moins 8 caractères et inclure des majuscules, minuscules, chiffres et un symbole spécial. Utilisez de préférence un générateur de mots de passe sécurisés.
