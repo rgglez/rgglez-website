@@ -389,7 +389,7 @@ Revisa los logs de Apache para confirmar que las IP reales se registran correcta
 En el caso de Apache:
 
 ```bash
-bashtail -f /var/log/apache2/access.log
+tail -f /var/log/apache2/access.log
 ```
 
 Deberías ver a.b.c.d y no una IP de Cloudflare.

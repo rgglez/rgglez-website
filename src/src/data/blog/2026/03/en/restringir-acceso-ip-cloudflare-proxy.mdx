@@ -385,7 +385,7 @@ Check the Apache logs to confirm that real IPs are recorded correctly.
 In the case of Apache:
 
 ```bash
-bashtail -f /var/log/apache2/access.log
+tail -f /var/log/apache2/access.log
 ```
 
 You should see a.b.c.d and not a Cloudflare IP.
