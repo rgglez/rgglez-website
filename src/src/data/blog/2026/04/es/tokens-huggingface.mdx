@@ -1,0 +1,59 @@
+---
+title: "Cómo obtener tokens de autorización en HuggingFace."
+description: "Esta guía indica cómo obtener tokens de autorización para poder usar la CLI de HuggingFace."
+pubDatetime: 2026-04-07T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "tokens-huggingface"
+ogImage: "../../../../../assets/posts/2026/04/tokens-huggingface/header.webp"
+featured: false
+draft: false
+tags:
+  - huggingface
+  - ai
+  - models
+  - auth
+  - tokens
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/tokens-huggingface/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Introducción
+
+De acuerdo con Wikipedia:
+
+> Hugging Face, Inc. es una empresa franco-estadounidense que desarrolla
+> herramientas para crear aplicaciones utilizando el aprendizaje automático.
+> Es conocida por su biblioteca de transformadores creada para aplicaciones
+> de procesamiento de lenguaje natural y su plataforma que permite a los
+> usuarios compartir conjuntos de datos y modelos de aprendizaje automático.
+
+## Paso a paso
+
+1. Ve a <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
+1. Clic en "*New token*".
+1. Ponle un nombre, selecciona tipo "`Write`" (necesario para subir datasets) o "`Read`" (solo lectura).
+1. Clic en "*Generate a token*" y cópialo. Cuidado: **solo se muestra una vez**.
+
+> Importante: la variable de ambiente `HF_TOKEN` puede ser exportada con el valor del token generado. En caso de necesitar usar otro token, basta con cambiar la exportación:
+> ```bash
+> export HF_TOKEN=my_token
+> ```
+
+## Comandos útiles en CLI
+
+* `hf auth login` hace login con HuggingFace.
+* `hf auth list` lista los tokens autorizados.
+* `hf auth whoami` muestra qué usuario está conectado.
+
+> Nota: algunas guías en la web dicen que el comando de CLI es `huggingface-cli`, lo cual parece ser antiguo.
+
+## Bonus
+
+La variable `HF_DEBUG` con valor `1` se puede usar para depurar la interacción con HuggingFace.

@@ -1,0 +1,219 @@
+---
+title: "Cómo desplegar una aplicación de Svelte+SvelteKit en Cloudflare Workers (free)."
+description: "Esta guía indica cómo desplegar una aplicación Svelte+SvelteKit en Cloudflare Workers (free)."
+pubDatetime: 2026-04-07T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "desplegar-sveltekit-cloudflare-workers"
+ogImage: "../../../../../assets/posts/2026/04/desplegar-sveltekit-cloudflare-workers/header.webp"
+featured: false
+draft: false
+tags:
+  - svelte
+  - sveltekit
+  - cloudflare workers
+  - bun
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/desplegar-sveltekit-cloudflare-workers/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Introducción
+
+De acuerdo con Wikipedia:
+
+> Cloudflare, Inc. es una empresa estadounidense que proporciona una red de
+> entrega de contenido, servicios de seguridad de Internet y servicios de
+> servidores de nombres de dominio distribuidos, localizados entre el visitante
+> y el proveedor de alojamiento del usuario de Cloudflare, y que actúan como
+> proxy inverso para sitios web.
+
+> En 2017 Cloudflare lanzó Cloudflare Workers, una plataforma de arquitecturas
+> sin servidor (serverless computing) que permite crear nuevas aplicaciones
+> enteramente o aumentar las ya existentes sin tener que configurar o mantener
+> la infraestructura. Desde entonces, el producto se ha expandido para incluir
+> Workers KV, una base de datos clave-valor de latencia baja, Cron Triggers para
+> planificar guiones cron, y herramientas adicionales para desarrolladores para
+> desplegar y escalar su código a través del mundo.
+
+Workers se basa en un motor de ejecución ligero basado en Node.js (que no Node.js
+directamente).
+
+Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudflare Workers (free).
+
+## 1) Qué hacer en Cloudflare (dashboard)
+
+1. Crear/usar cuenta Cloudflare (plan Free).
+2. Ir a **Workers & Pages** y habilitar Workers en la cuenta.
+3. (Recomendado) Crear un **API Token** para deploy desde CLI:
+   - Permisos mínimos:
+     - `Account -> Workers Scripts -> Edit`
+     - Si usarás dominio propio:
+       - `Zone -> DNS -> Edit`
+       - `Zone -> Workers Routes -> Edit` (o usar Custom Domain desde UI)
+4. Si usarás dominio propio:
+   - Tener la zona (`tudominio.com`) en Cloudflare.
+   - En el Worker desplegado: **Settings > Domains & Routes > Add Custom Domain**.
+
+## 2) Qué configurar en el proyecto
+
+El proyecto debe estar alineado a Worker puro:
+
+```toml
+# wrangler.toml
+  - `main = "build/_worker.js"`
+  - `[assets] directory = "build", binding = "ASSETS"`
+```
+
+```js
+# svelte.config.js
+import adapter from '@sveltejs/adapter-cloudflare';
+```
+
+### Requisitos locales
+
+- Node/npm, o <a href="https://bun.com/docs/installation" target="_blank">Bun</a> (recomendado)
+- <a href="https://developers.cloudflare.com/workers/wrangler/install-and-update/" target="_blank">Wrangler CLI</a>
+(vía `npx wrangler` o `bunx wrangler` también sirve)
+
+## 3) Variables y secretos (importante)
+
+### En tu app actual
+
+Si se usa `import.meta.env.VITE_*` (build-time), eso significa que:
+
+- Las variables deben existir **antes de `npm run build` o `bun run build`** (`.env`, CI vars, etc).
+- **No se leen dinámicamente desde `env` de Worker en runtime**.
+
+Ejemplos críticos podrían ser:
+
+- `VITE_API`
+- `VITE_API_KEY`
+- Otros `VITE_*` de tracking/auth/etc.
+
+### Secretos runtime (opcional)
+
+Si luego quieres agregar secretos en runtime:
+
+- `wrangler secret put NOMBRE`
+- y leerlos desde `env.NOMBRE`.
+
+## 4) Build + deploy (paso a paso)
+
+En los siguientes pasos se puede reemplazar `npm` con `bun` en los comandos:
+
+1. Instalar dependencias:
+
+```bash
+npm ci
+```
+
+2. Preparar `.env` de build (con tus `VITE_*` correctas).
+
+3. Build:
+
+```bash
+make build
+# o npm run build
+```
+
+4. Verificar output:
+
+- `build/_worker.js`
+- `build/_app/...`
+
+5. Probar local Worker:
+
+```bash
+make preview
+# o bunx wrangler dev
+```
+
+6. Deploy:
+
+```bash
+make deploy
+# o bunx wrangler deploy
+```
+
+7. Probar URL publicada (`workers.dev` o dominio personalizado).
+
+## 5) Configuración OIDC (Zitadel o algún otro proveedor) para producción
+
+En caso de utilizar algún proveedor de OIDC como Zitadel, debes registrar en el proveedor los endpoints requeridos:
+
+1. **Redirect URI(s)** (callback login).
+2. **Post-logout redirect URI(s)**.
+3. **Web origins** del frontend.
+
+> Además, en tu app revisa `csrf.trustedOrigins` en `svelte.config.js` para incluir el dominio, si utilizas esta medida de seguridad.
+
+## 6) Verificaciones post-deploy
+
+Para ver logs:
+
+```bash
+npx wrangler tail
+```
+
+## 7) Límites Workers Free que debes considerar (revisados el 7 de abril de 2026)
+
+- 100,000 requests/día.
+- CPU 10ms por request.
+- 50 subrequests externas/request.
+- 128MB memoria.
+- Worker size 3MB.
+- Static assets por versión: hasta 20,000 archivos.
+
+Si excedes estos límites, tendrás errores tipo *1027/cuotas*.
+
+## 8) Errores típicos
+
+1. `Cannot read properties of undefined (reading 'fetch')`
+
+- Causa común: falta binding `ASSETS` o deploy ejecutado en modo incorrecto (Pages vs Worker).
+- En tu estado actual ya está corregido para Worker.
+
+2. Variables `VITE_*` vacías en producción
+
+- Se construyó sin `.env` correcto.
+
+3. Login Zitadel falla en prod
+
+- Redirect URI / origins no registrados para dominio final.
+
+## Bonus: Reglas de Makefile útiles
+
+```makefile
+deploy:
+	bunx wrangler deploy
+
+preview:
+	bunx wrangler dev
+
+build:
+	@echo "Building with $(DOTENV_FILE)"
+	DOTENV_FILE=$(DOTENV_FILE) bun run build
+```
+
+---
+
+### Fuentes oficiales usadas
+
+- Workers limits: https://developers.cloudflare.com/workers/platform/limits/
+- Workers pricing: https://developers.cloudflare.com/workers/platform/pricing/
+- Wrangler config (`assets`): https://developers.cloudflare.com/workers/wrangler/configuration/
+- Static assets binding: https://developers.cloudflare.com/workers/static-assets/binding/
+- Environment vars/secrets:
+  - https://developers.cloudflare.com/workers/development-testing/environment-variables/
+  - https://developers.cloudflare.com/workers/configuration/environment-variables/
+  - https://developers.cloudflare.com/workers/configuration/secrets/
+- Routing/domains:
+  - https://developers.cloudflare.com/workers/configuration/routing/
+  - https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+  - https://developers.cloudflare.com/workers/configuration/routing/routes/
