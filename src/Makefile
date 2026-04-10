@@ -4,7 +4,7 @@ MSG ?= Update pagefind index
 
 all: build
 	git add public/pagefind
-	git commit -m "$(MSG)"
+	git diff --cached --quiet || git commit -m "$(MSG)"
 	git push
 
 dev:
