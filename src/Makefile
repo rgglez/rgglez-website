@@ -18,4 +18,5 @@ preview:
 	bun run preview
 
 deploy:
-	bunx wrangler deploy
+	git add . && git commit -a -m "deployment" && git push
+	# bunx wrangler deploy

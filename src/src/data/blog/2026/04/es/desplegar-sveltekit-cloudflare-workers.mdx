@@ -49,16 +49,30 @@ Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudf
 ## 1) Qué hacer en Cloudflare (dashboard)
 
 1. Crear/usar cuenta Cloudflare (plan Free).
-2. Ir a **Workers & Pages** y habilitar Workers en la cuenta.
+2. Ir a `Desarrollo -> Workers y Pages` y habilitar Workers en la cuenta.
 3. (Recomendado) Crear un **API Token** para deploy desde CLI:
-   - Permisos mínimos:
-     - `Account -> Workers Scripts -> Edit`
-     - Si usarás dominio propio:
-       - `Zone -> DNS -> Edit`
-       - `Zone -> Workers Routes -> Edit` (o usar Custom Domain desde UI)
-4. Si usarás dominio propio:
+  1. Ir a `Administrar cuenta -> Tokens de API de cuenta`.
+  2. En `Account Resources:` selecciona tu cuenta.
+  3. `Crear token`
+    1. Usa la plantilla **Edit Cloudflare Workers** (tiene los permisos mínimos necesarios)
+    2. Si usarás dominio propio:
+      - `Zone -> DNS -> Editar`
+      - `Zone -> Rutas de Workers -> Editar` (o usar Custom Domain desde UI)
+  4. Seleccionar los `Recursos de zona` según las zonas que cubrirá el token.
+4. Clic Continue to summary → Create Token.
+
+> **Importante: copia el token y guárdalo en un lugar seguro, porque no lo volverás a ver.**
+
+5. Si usarás dominio propio:
    - Tener la zona (`tudominio.com`) en Cloudflare.
-   - En el Worker desplegado: **Settings > Domains & Routes > Add Custom Domain**.
+   - En el Worker desplegado: `Settings -> Domains & Routes -> Add Custom Domain`
+
+6. El nuevo token puede ser probado:
+
+```bash
+curl "https://api.cloudflare.com/client/v4/accounts/xxx123/tokens/verify" \
+-H "Authorization: Bearer cfat_ABCD_my_token"
+```
 
 ## 2) Qué configurar en el proyecto
 
@@ -70,6 +84,21 @@ El proyecto debe estar alineado a Worker puro:
   - `[assets] directory = "build", binding = "ASSETS"`
 ```
 
+Si no tienes el `account_id`, agrégalo:
+
+```toml
+# wrangler.toml
+account_id = "tu_account_id"
+```
+
+El `account_id` lo encuentras en el dashboard de Cloudflare en la barra lateral derecha de tu dominio, o con:
+
+```toml
+bunx wrangler whoami
+```
+
+Es, por supuesto, muy importante, usar el `adapter-cloudflare`:
+
 ```js
 # svelte.config.js
 import adapter from '@sveltejs/adapter-cloudflare';
@@ -77,9 +106,37 @@ import adapter from '@sveltejs/adapter-cloudflare';
 
 ### Requisitos locales
 
+1. Dependencias:
+
 - Node/npm, o <a href="https://bun.com/docs/installation" target="_blank">Bun</a> (recomendado)
 - <a href="https://developers.cloudflare.com/workers/wrangler/install-and-update/" target="_blank">Wrangler CLI</a>
 (vía `npx wrangler` o `bunx wrangler` también sirve)
+
+2. Configurar el token en tu entorno local
+
+```bash
+export CLOUDFLARE_API_TOKEN=cfat_ABCD_my_token
+```
+
+O de forma permanente en `~/.bashrc`, `~/.zshrc` o el archivo adecuado para tu shell:
+
+```bash
+echo 'export CLOUDFLARE_API_TOKEN=tu_token_aqui' >> ~/.bashrc
+```
+
+Alternativamente con wrangler:
+
+```bash
+bunx wrangler login
+```
+
+Esto abre un browser para OAuth. Personalmente esto no me gusta.
+
+Si prefieres token directo:
+
+```bash
+bunx wrangler config
+```
 
 ## 3) Variables y secretos (importante)
 
@@ -100,8 +157,11 @@ Ejemplos críticos podrían ser:
 
 Si luego quieres agregar secretos en runtime:
 
-- `wrangler secret put NOMBRE`
-- y leerlos desde `env.NOMBRE`.
+```bash
+bunx wrangler secret put NOMBRE_VARIABLE
+```
+
+y leerlos desde `env.NOMBRE_VARIABLE`.
 
 ## 4) Build + deploy (paso a paso)
 
@@ -113,35 +173,46 @@ En los siguientes pasos se puede reemplazar `npm` con `bun` en los comandos:
 npm ci
 ```
 
-2. Preparar `.env` de build (con tus `VITE_*` correctas).
+2. Configurar token:
 
-3. Build:
+```bash
+export CLOUDFLARE_API_TOKEN=tu_token
+```
+
+3. Preparar `.env` de build (con tus `VITE_*` correctas).
+
+4. Build:
 
 ```bash
 make build
-# o npm run build
+# npm run build
+# bun run build
 ```
 
-4. Verificar output:
+4. Verificar salida:
 
 - `build/_worker.js`
 - `build/_app/...`
 
-5. Probar local Worker:
+5. Probar localmente el Worker:
 
 ```bash
 make preview
-# o bunx wrangler dev
+# bunx wrangler dev
 ```
 
 6. Deploy:
 
 ```bash
 make deploy
-# o bunx wrangler deploy
+# bunx wrangler deploy
 ```
 
-7. Probar URL publicada (`workers.dev` o dominio personalizado).
+7. Probar el worker, que quedará en
+
+`https://klanet-store-frontend.tu-subdominio.workers.dev`
+
+o en tu dominio personalizado si lo configuras en el dashboard.
 
 ## 5) Configuración OIDC (Zitadel o algún otro proveedor) para producción
 
@@ -186,6 +257,75 @@ Si excedes estos límites, tendrás errores tipo *1027/cuotas*.
 3. Login Zitadel falla en prod
 
 - Redirect URI / origins no registrados para dominio final.
+
+## 9) Deploy en dominio propio
+
+Hay 2 formas de hacerlo, asumiendo que el dominio se encuentra en Cloudflare:
+
+### A. Usando `wrangler.toml`
+
+Configurar las rutas:
+
+```toml
+routes = [
+  { pattern = "www.example.com/*", zone_name = "example.com" }
+]
+```
+
+Y luego hacer el deploy normal:
+
+```bash
+bunx wrangler deploy
+```
+
+### B. En el dashboard de Cloudflare
+
+1. Ve a Workers & Pages → tu worker → Settings → Triggers
+2. Clic en Add Custom Domain
+3. Escribe `www.example.com`
+4. Cloudflare crea automáticamente el registro DNS y el certificado TLS
+
+### Dominio fuera de Cloudflare
+
+Si el dominio **no** está en Cloudflare:
+
+Primero debes agregar el dominio a Cloudflare (o al menos usar un registro DNS externo):
+
+En el DNS de tu registrador, crea un registro CNAME:
+
+En tinydns, por ejemplo:
+
+```bash
+Cwww:tu-proyecto.tu-subdominio.workers.dev:86400
+```
+
+Luego en Cloudflare, ve al worker y en `Triggers` clic en `Add Custom Domain` y agrega `www.example.com`.
+
+### Diferencia entre routes y custom_domain
+
+| Característica | routes | custom_domain |
+| --- | --- | --- |
+| Requiere zona en CF | Sí | Sí |
+| Configurable en toml | Sí | Sí |
+| TLS automático | Manual (ya existente) | Automático |
+| Comparte con otros workers | Sí (por patrón) | No |
+
+Para un subdominio dedicado al worker, custom_domain es la opción más limpia:
+
+```toml
+# wrangler.toml
+routes = [
+  { pattern = "ssr.example.com/*", custom_domain = true, zone_name = "example.com" }
+]
+```
+
+O la sintaxis alternativa:
+
+```toml
+[[env.production.routes]]
+pattern = "ssr.example.com/*"
+zone_name = "example.com"
+```
 
 ## Bonus: Reglas de Makefile útiles
 
