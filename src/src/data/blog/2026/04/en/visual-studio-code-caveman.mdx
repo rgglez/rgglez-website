@@ -1,0 +1,212 @@
+---
+title: "How to install caveman in Visual Studio Code for Claude Code."
+description: "This guide explains how to install the caveman skill in Visual Studio Code for Claude Code."
+pubDatetime: 2026-04-14T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "vscode-caveman-mode-claude-code"
+ogImage: "../../../../../assets/posts/2026/04/visual-studio-code-caveman/header.webp"
+featured: false
+draft: false
+tags:
+  - vscode
+  - visual studio code
+  - caveman
+  - claude
+  - artificial intelligence
+  - agent
+  - ai
+  - llm
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/visual-studio-code-caveman/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Install the Claude Code CLI](#install-the-claude-code-cli)
+  - [Configure the PATH](#configure-the-path)
+  - [Verify](#verify)
+- [Global installation](#global-installation)
+- [Per-project installation](#per-project-installation)
+- [Verification](#verification)
+- [How to use it](#how-to-use-it)
+  - [Caveman mode](#caveman-mode)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Introduction
+
+Recently **Claude Code**, arguably the best agentic AI coding assistant available today, has restricted its usage to a certain number of tokens per session and per week. These limits may be irrelevant for small projects, but when requesting analysis of medium-sized projects or tasks involving higher reasoning or more advanced models, tokens are consumed too quickly. This leads to being unable to use Claude Code even when paying for a Pro or higher-tier account, which can be frustrating.
+
+This is why user *JuliusBrussee* created <a href="https://github.com/JuliusBrussee/caveman" target="_blank">caveman</a>,
+a <a href="https://www.xataka.com/basics/skills-claude-que-estas-habilidades-sirven-como-se-usan-quien-puede-utilizarlas-para-crear-su-propio-claude" target="_blank">*skill*</a>
+for Claude Code. This *skill* makes Claude Code "speak" like a caveman.
+You know, *"unga unga"*. Well, not quite, but it does make it "speak" with the expressiveness of
+<a href="https://the-big-bang-theory.es/rajesh-koothrappali/" target="_blank">Rajesh Koothrappali</a>
+at Miss Universe. The goal is to save tokens that are normally spent on phrases like
+*"you're right, that library doesn't exist..."*.
+
+This guide describes how to install **caveman** in Visual Studio Code for Claude Code.
+
+> Visual Studio Code (VSCode), because that is the code editor I use most of the time these days.
+
+---
+
+## Install the Claude Code CLI
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+or
+
+```bash
+bun install -g @anthropic-ai/claude-code
+```
+
+### Configure the PATH
+
+You may need to add the Claude Code CLI binary path.
+
+In `bash`, this is done in `~/.bashrc` or `~/.bash_profile`:
+
+```bash
+# ~/.bashrc
+export PATH=$PATH:/path/to/claude-code-cli
+```
+
+In `fish`, this is done in `~/.config/fish/config.fish`:
+
+```bash
+# ~/.config/fish/config.fish
+set -x PATH $PATH:/path/to/claude-code-cli
+```
+
+or
+
+```bash
+# ~/.config/fish/config.fish
+fish_add_path /home/rodolfo/.local/lib/node_modules/.bin
+```
+
+### Verify
+
+```bash
+claude --version
+```
+
+---
+
+## Global installation
+
+To install the *skill* globally, for all your projects:
+
+```bash
+claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman
+```
+
+---
+
+## Per-project installation
+
+1. Make sure the plugin is downloaded. Clone it or let it download automatically:
+
+```bash
+git clone https://github.com/JuliusBrussee/caveman \
+  ~/.claude/plugins/cache/caveman/caveman/local
+```
+
+2. Create or edit `.claude/settings.json` at the project root:
+
+```json
+# .claude/settings.json
+{
+  "enabledPlugins": {
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  }
+}
+```
+
+3. Register the plugin in `~/.claude/plugins/installed_plugins.json`, adding an
+entry with `"scope": "project"`:
+
+```json
+# ~/.claude/plugins/installed_plugins.json
+{
+  "version": 2,
+  "plugins": {
+    "caveman@caveman": [
+      {
+        "scope": "project",
+        "installPath": "/home/john/.claude/plugins/cache/caveman/caveman/local",
+        "version": "local",
+        "installedAt": "2026-04-14T00:00:00.000Z",
+        "lastUpdated": "2026-04-14T00:00:00.000Z",
+        "gitCommitSha": ""
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Verification
+
+The plugin is correctly installed if:
+
+* `installed_plugins.json` shows `caveman@caveman` registered with `scope: user`
+* `settings.json` shows `"enabledPlugins": { "caveman@caveman": true }`
+* Files are present under `~/.claude/plugins/cache/caveman/`
+
+---
+
+## How to use it
+
+* Automatic activation: it should activate on its own at session start (if hooks
+  run correctly in the VSCode extension).
+* Manual activation: type any of the following commands in the chat:
+
+```
+caveman mode
+talk like caveman
+be brief / less tokens
+```
+
+### Caveman mode
+
+To change the intensity of the "caveman", type in the chat:
+
+* `caveman lite` for concise but complete responses.
+* `caveman full` for default mode (telegraphic).
+* `caveman ultra` for maximum compression.
+* `stop caveman` or `normal mode` to deactivate and return to normal mode.
+
+> Important note: the first time **caveman** is used, Claude Code (inside
+> VSCode) will ask to make some updates to its configuration.
+
+---
+
+## Troubleshooting
+
+* **Possible hook issue in VSCode**
+
+If caveman mode does not auto-activate, the SessionStart hooks might not be
+running in the VSCode extension. In that case, simply activate it manually by
+typing "`caveman mode`" in the chat at the start of each conversation.

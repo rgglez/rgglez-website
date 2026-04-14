@@ -1,0 +1,213 @@
+---
+title: "Comment installer caveman dans Visual Studio Code pour Claude Code."
+description: "Ce guide explique comment installer la skill caveman dans Visual Studio Code pour Claude Code."
+pubDatetime: 2026-04-14T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "vscode-mode-cavernicole-claude-code"
+ogImage: "../../../../../assets/posts/2026/04/visual-studio-code-caveman/header.webp"
+featured: false
+draft: false
+tags:
+  - vscode
+  - visual studio code
+  - caveman
+  - claude
+  - intelligence artificielle
+  - agent
+  - ai
+  - llm
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/visual-studio-code-caveman/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Table des matières
+
+- [Introduction](#introduction)
+- [Installer le CLI Claude Code](#installer-le-cli-claude-code)
+  - [Configurer le PATH](#configurer-le-path)
+  - [Vérifier](#vérifier)
+- [Installation globale](#installation-globale)
+- [Installation par projet](#installation-par-projet)
+- [Vérification](#vérification)
+- [Comment l'utiliser](#comment-lutiliser)
+  - [Mode cavernicole](#mode-cavernicole)
+- [Résolution de problèmes](#résolution-de-problèmes)
+
+---
+
+## Introduction
+
+Récemment **Claude Code**, sans doute le meilleur assistant de codage IA agentique disponible aujourd'hui, a restreint son utilisation à un certain nombre de tokens par session et par semaine. Ces limites peuvent être sans importance pour les petits projets, mais lors de l'analyse de projets de taille moyenne ou de tâches impliquant un raisonnement plus poussé ou des modèles plus avancés, les tokens sont consommés trop rapidement. Cela empêche l'utilisation de Claude Code même en payant pour un compte Pro ou de niveau supérieur, ce qui peut être frustrant.
+
+C'est pourquoi l'utilisateur *JuliusBrussee* a créé <a href="https://github.com/JuliusBrussee/caveman" target="_blank">caveman</a>,
+une <a href="https://www.xataka.com/basics/skills-claude-que-estas-habilidades-sirven-como-se-usan-quien-puede-utilizarlas-para-crear-su-propio-claude" target="_blank">*skill*</a>
+pour Claude Code. Cette *skill* fait que Claude Code « parle » comme un homme des cavernes.
+Vous voyez, *« unga unga »*. Enfin, pas tout à fait, mais il « parle » avec l'expressivité de
+<a href="https://the-big-bang-theory.es/rajesh-koothrappali/" target="_blank">Rajesh Koothrappali</a>
+à Miss Univers. L'objectif est d'économiser les tokens normalement dépensés en phrases comme
+*« vous avez raison, cette bibliothèque n'existe pas... »*.
+
+Ce guide décrit comment installer **caveman** dans Visual Studio Code pour Claude Code.
+
+> Visual Studio Code (VSCode), car c'est l'éditeur de code que j'utilise la plupart du temps actuellement.
+
+---
+
+## Installer le CLI Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+ou bien
+
+```bash
+bun install -g @anthropic-ai/claude-code
+```
+
+### Configurer le PATH
+
+Il peut être nécessaire d'ajouter le chemin du binaire de Claude Code CLI.
+
+Dans `bash`, cela se fait dans `~/.bashrc` ou `~/.bash_profile` :
+
+```bash
+# ~/.bashrc
+export PATH=$PATH:/path/to/claude-code-cli
+```
+
+Dans `fish`, cela se fait dans `~/.config/fish/config.fish` :
+
+```bash
+# ~/.config/fish/config.fish
+set -x PATH $PATH:/path/to/claude-code-cli
+```
+
+ou bien
+
+```bash
+# ~/.config/fish/config.fish
+fish_add_path /home/rodolfo/.local/lib/node_modules/.bin
+```
+
+### Vérifier
+
+```bash
+claude --version
+```
+
+---
+
+## Installation globale
+
+Pour installer la *skill* globalement, pour tous vos projets :
+
+```bash
+claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman
+```
+
+---
+
+## Installation par projet
+
+1. Assurez-vous que le plugin est téléchargé. Clonez-le ou laissez-le se télécharger
+automatiquement :
+
+```bash
+git clone https://github.com/JuliusBrussee/caveman \
+  ~/.claude/plugins/cache/caveman/caveman/local
+```
+
+2. Créez ou éditez `.claude/settings.json` à la racine du projet :
+
+```json
+# .claude/settings.json
+{
+  "enabledPlugins": {
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  }
+}
+```
+
+3. Enregistrez le plugin dans `~/.claude/plugins/installed_plugins.json`, en ajoutant
+une entrée avec `"scope": "project"` :
+
+```json
+# ~/.claude/plugins/installed_plugins.json
+{
+  "version": 2,
+  "plugins": {
+    "caveman@caveman": [
+      {
+        "scope": "project",
+        "installPath": "/home/john/.claude/plugins/cache/caveman/caveman/local",
+        "version": "local",
+        "installedAt": "2026-04-14T00:00:00.000Z",
+        "lastUpdated": "2026-04-14T00:00:00.000Z",
+        "gitCommitSha": ""
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Vérification
+
+Le plugin est correctement installé si :
+
+* `installed_plugins.json` affiche `caveman@caveman` enregistré avec `scope: user`
+* `settings.json` affiche `"enabledPlugins": { "caveman@caveman": true }`
+* Les fichiers sont présents dans `~/.claude/plugins/cache/caveman/`
+
+---
+
+## Comment l'utiliser
+
+* Activation automatique : il devrait s'activer seul au démarrage de la session (si les hooks
+  s'exécutent correctement dans l'extension VSCode).
+* Activation manuelle : tapez l'une des commandes suivantes dans le chat :
+
+```
+caveman mode
+talk like caveman
+be brief / less tokens
+```
+
+### Mode cavernicole
+
+Pour changer l'intensité du « cavernicole », tapez dans le chat :
+
+* `caveman lite` pour des réponses concises mais complètes.
+* `caveman full` pour le mode par défaut (télégraphique).
+* `caveman ultra` pour une compression maximale.
+* `stop caveman` ou `normal mode` pour désactiver et revenir au mode normal.
+
+> Note importante : la première fois que **caveman** est utilisé, Claude Code (dans
+> VSCode) demandera d'effectuer quelques mises à jour de sa configuration.
+
+---
+
+## Résolution de problèmes
+
+* **Problème possible avec les hooks dans VSCode**
+
+Si le mode cavernicole ne s'active pas automatiquement, les hooks SessionStart pourraient
+ne pas s'exécuter dans l'extension VSCode. Dans ce cas, activez-le simplement manuellement
+en tapant « `caveman mode` » dans le chat au début de chaque conversation.
