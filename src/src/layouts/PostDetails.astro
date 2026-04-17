@@ -106,7 +106,7 @@ const nextPost =
       {title}
     </h1>
     <div class="my-2 flex items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" />
       <span
         aria-hidden="true"
         class:list={[
@@ -123,7 +123,7 @@ const nextPost =
               href={licenseUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 text-sm sm:text-base text-foreground/70 hover:text-accent"
+              class="inline-flex items-center gap-1 text-sm text-foreground/70 hover:text-accent"
             >
               <IconScale class="inline-block size-6 flex-none" />
               {license}
@@ -153,6 +153,9 @@ const nextPost =
           </>
         )
       }
+    </div>
+    <div class="my-2 flex items-center gap-2 text-sm">
+        By: <b>{author}</b>
     </div>
     <article
       id="article"

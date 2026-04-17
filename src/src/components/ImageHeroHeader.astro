@@ -13,6 +13,8 @@ const heroImage = image;
             alt={`${frontmatter.title}`}
             loading="eager"
             fetchpriority="high"
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 896px, 1024px"
             class="w-full h-auto block border-0"
         />
     </div>
