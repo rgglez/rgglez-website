@@ -40,7 +40,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
     </Heading>
   </a>
   <div class="flex items-center gap-2">
-    <Datetime {...props} />
+    <Datetime {...props} lang={postLang} />
   </div>
   <p>{description}</p>
   {

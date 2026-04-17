@@ -20,6 +20,6 @@ export const SITE = {
   dir: "ltr", // "rtl" | "auto"
   lang: "es", // html lang code. Set this empty and default will be "en"
   defaultLang: "es", // fallback when browser language is not in supportedLangs
-  supportedLangs: ["es", "en", "fr"], // extend this array to add more languages
+  supportedLangs: ["es", "en", "fr", "de"], // extend this array to add more languages
   timezone: "America/Mexico_City", // Default global timezone (IANA format) https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 } as const;

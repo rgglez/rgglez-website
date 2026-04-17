@@ -37,6 +37,7 @@ const tagCloudTags = getUniqueTags(allPosts).map(({ tag, tagName }) => ({
   {tagCloudTags}
   showTagCloud={true}
   posts={allPosts}
+  {lang}
   noMarginTop={page.lastPage > 1}
 >
   <ul>

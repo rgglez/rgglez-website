@@ -11,7 +11,7 @@ import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
-import { getTranslations } from "@/utils/getTranslations";
+import { getTranslations, getFileLang } from "@/utils/getTranslations";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
@@ -41,6 +41,8 @@ const {
 } = post.data;
 
 const { Content } = await render(post);
+
+const postLang = getFileLang(post.filePath) || SITE.lang;
 
 let ogImageUrl: string | undefined;
 
@@ -106,7 +108,7 @@ const nextPost =
       {title}
     </h1>
     <div class="my-2 flex items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" />
+      <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" lang={postLang} />
       <span
         aria-hidden="true"
         class:list={[

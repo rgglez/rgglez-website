@@ -2,14 +2,16 @@
 import type { CollectionEntry } from "astro:content";
 import { getPath } from "@/utils/getPath";
 import { getFileLang, getTranslationKey } from "@/utils/getTranslations";
+import { getMonthName } from "@/utils/formatDate";
 import { SITE } from "@/config";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
   maxTitleLength?: number;
+  lang?: string;
 }
 
-const { posts, maxTitleLength = 48 } = Astro.props;
+const { posts, maxTitleLength = 48, lang = SITE.lang } = Astro.props;
 const { supportedLangs, defaultLang } = SITE;
 
 function truncate(text: string, max: number): string {
@@ -19,10 +21,6 @@ function truncate(text: string, max: number): string {
   return (lastSpace > 0 ? sub.slice(0, lastSpace) : sub) + "…";
 }
 
-const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
-];
 
 type PostLeaf = { title: string; href: string; lang: string; articleKey: string };
 
@@ -59,7 +57,7 @@ const years = [...grouped.entries()].sort(([a], [b]) => b - a);
             {year}
             {sortedMonths.map(([monthIdx, monthPosts]) => (
               <rux-tree-node slot="node">
-                {MONTHS[monthIdx]}
+                {getMonthName(monthIdx, lang)}
                 {monthPosts.map(({ title, href, lang, articleKey }) => (
                   <rux-tree-node slot="node" data-lang={lang} data-article-key={articleKey}>
                     <a href={href} class="post-link">

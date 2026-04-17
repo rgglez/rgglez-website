@@ -1,0 +1,59 @@
+---
+title: "How to Get Authorization Tokens on HuggingFace."
+description: "This guide explains how to obtain authorization tokens to use the HuggingFace CLI."
+pubDatetime: 2026-04-07T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "get-huggingface-tokens"
+ogImage: "../../../../../assets/posts/2026/04/tokens-huggingface/header.webp"
+featured: false
+draft: false
+tags:
+  - huggingface
+  - ai
+  - models
+  - auth
+  - tokens
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/tokens-huggingface/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Introduction
+
+According to Wikipedia:
+
+> Hugging Face, Inc. is a French-American company that develops tools for
+> building applications using machine learning. It is known for its
+> Transformers library built for natural language processing applications,
+> and its platform that allows users to share datasets and machine learning
+> models.
+
+## Step by Step
+
+1. Go to <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
+1. Click "*New token*".
+1. Give it a name, select type "`Write`" (required for uploading datasets) or "`Read`" (read-only).
+1. Click "*Generate a token*" and copy it. Note: **it is only shown once**.
+
+> Important: the `HF_TOKEN` environment variable can be exported with the value of the generated token. If you need to use a different token, simply change the export:
+> ```bash
+> export HF_TOKEN=my_token
+> ```
+
+## Useful CLI Commands
+
+* `hf auth login` logs in to HuggingFace.
+* `hf auth list` lists authorized tokens.
+* `hf auth whoami` shows which user is currently logged in.
+
+> Note: some guides online state that the CLI command is `huggingface-cli`, which appears to be outdated.
+
+## Bonus
+
+The `HF_DEBUG` variable set to `1` can be used to debug interactions with HuggingFace.

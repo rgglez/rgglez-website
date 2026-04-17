@@ -8,10 +8,9 @@ import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
 import IconLinkedin from "@/assets/icons/IconLinkedin.svg";
 import IconGitHub from "@/assets/icons/IconGitHub.svg";
 import IconRss from "@/assets/icons/IconRss.svg";
-import IconWorld from "@/assets/icons/IconWorld.svg";
 import LinkButton from "./LinkButton.astro";
+import LangMenu from "./LangMenu.astro";
 import { SITE } from "@/config";
-import 'flag-icons/css/flag-icons.min.css'
 
 const { pathname } = Astro.url;
 
@@ -22,21 +21,6 @@ const currentPath =
 // Derive current lang from URL first segment, fallback to default
 const currentLang =
   currentPath.split("/").filter(Boolean)[0] ?? SITE.defaultLang;
-
-const langNames: Record<string, Record<string, string>> = {
-  es: {
-    icon: "fi fi-es",
-    text: "Español",
-  },
-  en: {
-    icon: "fi fi-us",
-    text: "English",
-  },
-  fr: {
-    icon: "fi fi-fr",
-    text: "Français",
-  }
-};
 
 // Compare second segment (index 1) after lang prefix
 const isActive = (path: string) => {
@@ -175,35 +159,7 @@ const isActive = (path: string) => {
                 <span class="sr-only">RSS Feed</span>
             </a>
         </li>
-        <li class="col-span-1 relative flex items-center justify-center">
-          <button
-            id="lang-btn"
-            class="focus-outline flex p-3 sm:p-1 hover:[&>svg]:stroke-accent"
-            aria-label="Change language"
-            title="Change language"
-            aria-expanded="false"
-            aria-haspopup="true"
-          >
-            <IconWorld />
-            <span class="sr-only">Change language</span>
-          </button>
-          <ul
-            id="lang-menu"
-            class="absolute top-full right-0 z-50 hidden mt-1 min-w-max rounded border border-border bg-background shadow-lg"
-          >
-            {SITE.supportedLangs.map(lang => (
-              <li>
-                <a
-                  href={`/${lang}/`}
-                  class="block px-4 py-2 text-sm hover:text-accent hover:bg-accent/10"
-                >
-                  <span class={langNames[lang].icon} />
-                  {langNames[lang].text ?? lang.toUpperCase()}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </li>
+        <LangMenu />
         {
           SITE.lightAndDarkMode && (
             <li class="col-span-1 flex items-center justify-center">
@@ -248,29 +204,6 @@ const isActive = (path: string) => {
 
   toggleNav();
 
-  function toggleLangMenu() {
-    const langBtn = document.querySelector("#lang-btn");
-    const langMenu = document.querySelector("#lang-menu");
-    if (!langBtn || !langMenu) return;
-
-    langBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      const isOpen = langBtn.getAttribute("aria-expanded") === "true";
-      langBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
-      langMenu.classList.toggle("hidden", isOpen);
-    });
-
-    document.addEventListener("click", () => {
-      langBtn.setAttribute("aria-expanded", "false");
-      langMenu.classList.add("hidden");
-    });
-  }
-
-  toggleLangMenu();
-
   // Runs on view transitions navigation
-  document.addEventListener("astro:after-swap", () => {
-    toggleNav();
-    toggleLangMenu();
-  });
+  document.addEventListener("astro:after-swap", toggleNav);
 </script>

@@ -41,14 +41,18 @@ De acuerdo con Wikipedia:
 > planificar guiones cron, y herramientas adicionales para desarrolladores para
 > desplegar y escalar su código a través del mundo.
 
-Workers se basa en un motor de ejecución ligero basado en Node.js (que no Node.js
-directamente).
+Workers se basa en un motor de ejecución ligero basado en Node.js (no es Node.js
+directamente). Es mucho más rápido y práctico que utilizar una FaaS en Aliyun FC o
+Amazon Lambda para desplegar aplicaciones como este blog hecho en Astro, aunque
+cada tecnología tiene sus ventajas y desventajas. Una ventaja de Workers es la
+rapidez de su ejecución. Otra, su costo.
 
-Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudflare Workers (free).
+Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudflare
+Workers (free).
 
 ## 1) Qué hacer en Cloudflare (dashboard)
 
-1. Crear/usar cuenta Cloudflare (plan Free).
+1. Crear/usar una cuenta de Cloudflare (plan Free).
 2. Ir a `Desarrollo -> Workers y Pages` y habilitar Workers en la cuenta.
 3. (Recomendado) Crear un **API Token** para deploy desde CLI:
   1. Ir a `Administrar cuenta -> Tokens de API de cuenta`.
@@ -59,7 +63,7 @@ Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudf
       - `Zone -> DNS -> Editar`
       - `Zone -> Rutas de Workers -> Editar` (o usar Custom Domain desde UI)
   4. Seleccionar los `Recursos de zona` según las zonas que cubrirá el token.
-4. Clic Continue to summary → Create Token.
+4. Haz clic en Continue to summary → Create Token.
 
 > **Importante: copia el token y guárdalo en un lugar seguro, porque no lo volverás a ver.**
 
@@ -67,7 +71,7 @@ Esta guía muestra cómo desplegar una aplicación de Svelte+SvelteKit en Cloudf
    - Tener la zona (`tudominio.com`) en Cloudflare.
    - En el Worker desplegado: `Settings -> Domains & Routes -> Add Custom Domain`
 
-6. El nuevo token puede ser probado:
+6. El nuevo token se puede probar:
 
 ```bash
 curl "https://api.cloudflare.com/client/v4/accounts/xxx123/tokens/verify" \
@@ -91,13 +95,13 @@ Si no tienes el `account_id`, agrégalo:
 account_id = "tu_account_id"
 ```
 
-El `account_id` lo encuentras en el dashboard de Cloudflare en la barra lateral derecha de tu dominio, o con:
+El `account_id` lo encuentras en el dashboard de Cloudflare, en la barra lateral derecha de tu dominio, o con:
 
 ```toml
 bunx wrangler whoami
 ```
 
-Es, por supuesto, muy importante, usar el `adapter-cloudflare`:
+Es, por supuesto, muy importante usar el `adapter-cloudflare`:
 
 ```js
 # svelte.config.js
@@ -130,7 +134,7 @@ Alternativamente con wrangler:
 bunx wrangler login
 ```
 
-Esto abre un browser para OAuth. Personalmente esto no me gusta.
+Esto abre un navegador para OAuth. Personalmente no me gusta.
 
 Si prefieres token directo:
 
@@ -165,7 +169,7 @@ y leerlos desde `env.NOMBRE_VARIABLE`.
 
 ## 4) Build + deploy (paso a paso)
 
-En los siguientes pasos se puede reemplazar `npm` con `bun` en los comandos:
+En los siguientes pasos puedes reemplazar `npm` por `bun` en los comandos:
 
 1. Instalar dependencias:
 
@@ -189,26 +193,26 @@ make build
 # bun run build
 ```
 
-4. Verificar salida:
+5. Verificar salida:
 
 - `build/_worker.js`
 - `build/_app/...`
 
-5. Probar localmente el Worker:
+6. Probar localmente el Worker:
 
 ```bash
 make preview
 # bunx wrangler dev
 ```
 
-6. Deploy:
+7. Deploy:
 
 ```bash
 make deploy
 # bunx wrangler deploy
 ```
 
-7. Probar el worker, que quedará en
+8. Probar el Worker, que quedará en:
 
 `https://klanet-store-frontend.tu-subdominio.workers.dev`
 
@@ -232,13 +236,13 @@ Para ver logs:
 npx wrangler tail
 ```
 
-## 7) Límites Workers Free que debes considerar (revisados el 7 de abril de 2026)
+## 7) Límites de Workers Free que debes considerar (revisados el 7 de abril de 2026)
 
 - 100,000 requests/día.
 - CPU 10ms por request.
-- 50 subrequests externas/request.
-- 128MB memoria.
-- Worker size 3MB.
+- 50 subrequests externas por request.
+- 128 MB de memoria.
+- Tamaño del Worker: 3 MB.
 - Static assets por versión: hasta 20,000 archivos.
 
 Si excedes estos límites, tendrás errores tipo *1027/cuotas*.

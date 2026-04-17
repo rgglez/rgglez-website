@@ -1,0 +1,60 @@
+---
+title: "Comment obtenir des tokens d'autorisation sur HuggingFace."
+description: "Ce guide explique comment obtenir des tokens d'autorisation pour utiliser la CLI de HuggingFace."
+pubDatetime: 2026-04-07T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "obtenir-tokens-huggingface"
+ogImage: "../../../../../assets/posts/2026/04/tokens-huggingface/header.webp"
+featured: false
+draft: false
+tags:
+  - huggingface
+  - ai
+  - models
+  - auth
+  - tokens
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import { Image } from 'astro:assets';
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import header from '@/assets/posts/2026/04/tokens-huggingface/header.webp';
+
+<ImageHeroHeader frontmatter={frontmatter} image={header} />
+
+## Introduction
+
+Selon Wikipedia :
+
+> Hugging Face, Inc. est une entreprise franco-américaine qui développe des
+> outils pour créer des applications utilisant l'apprentissage automatique.
+> Elle est connue pour sa bibliothèque Transformers créée pour les
+> applications de traitement du langage naturel, et sa plateforme permettant
+> aux utilisateurs de partager des jeux de données et des modèles
+> d'apprentissage automatique.
+
+## Étape par étape
+
+1. Allez sur <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
+1. Cliquez sur "*New token*".
+1. Donnez-lui un nom, sélectionnez le type "`Write`" (nécessaire pour téléverser des datasets) ou "`Read`" (lecture seule).
+1. Cliquez sur "*Generate a token*" et copiez-le. Attention : **il n'est affiché qu'une seule fois**.
+
+> Important : la variable d'environnement `HF_TOKEN` peut être exportée avec la valeur du token généré. Si vous avez besoin d'utiliser un autre token, il suffit de modifier l'export :
+> ```bash
+> export HF_TOKEN=my_token
+> ```
+
+## Commandes CLI utiles
+
+* `hf auth login` se connecte à HuggingFace.
+* `hf auth list` liste les tokens autorisés.
+* `hf auth whoami` affiche quel utilisateur est connecté.
+
+> Remarque : certains guides en ligne indiquent que la commande CLI est `huggingface-cli`, ce qui semble être obsolète.
+
+## Bonus
+
+La variable `HF_DEBUG` avec la valeur `1` peut être utilisée pour déboguer les interactions avec HuggingFace.
