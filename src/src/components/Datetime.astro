@@ -26,6 +26,12 @@ const isModified = modDatetime && modDatetime > pubDatetime;
 
 const activeDate = isModified ? modDatetime! : pubDatetime;
 const date = formatDate(activeDate, lang, postTimezone || SITE.timezone);
+const dateNumeric = new Intl.DateTimeFormat(lang || SITE.lang, {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: postTimezone || SITE.timezone,
+}).format(new Date(activeDate));
 const isoString = new Date(activeDate).toISOString();
 ---
 
@@ -44,7 +50,11 @@ const isoString = new Date(activeDate).toISOString();
     )
   }
   <time
-    class:list={["text-sm", { "sm:text-base": size === "lg" }]}
+    class:list={["text-sm hidden sm:inline", { "sm:text-base": size === "lg" }]}
     datetime={isoString}>{date}</time
+  >
+  <time
+    class="text-sm sm:hidden"
+    datetime={isoString}>{dateNumeric}</time
   >
 </div>

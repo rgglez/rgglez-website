@@ -17,6 +17,7 @@ import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
 import { SITE } from "@/config";
 import Comments from "@/components/Comments";
+import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -81,13 +82,13 @@ const translations = getTranslations(post, allPosts);
 
 /* ========== Prev/Next Posts ========== */
 
-const navPosts = posts.map(({ data: { title }, id, filePath }) => ({
-  id,
-  title,
-  filePath,
+const navPosts = posts.map((p: CollectionEntry<"blog">) => ({
+  id: p.id,
+  title: p.data.title,
+  filePath: p.filePath,
 }));
 
-const currentPostIndex = navPosts.findIndex(a => a.id === post.id);
+const currentPostIndex = navPosts.findIndex((a: { id: string }) => a.id === post.id);
 
 const prevPost = currentPostIndex !== 0 ? navPosts[currentPostIndex - 1] : null;
 const nextPost =
@@ -108,7 +109,7 @@ const nextPost =
     >
       {title}
     </h1>
-    <div class="my-2 flex items-center gap-2">
+    <div class="my-2 flex flex-wrap items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" lang={postLang} />
       <span
         aria-hidden="true"
@@ -134,10 +135,14 @@ const nextPost =
           </>
         )
       }
+      <div class="flex items-center gap-2 text-sm max-sm:w-full">
+        <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">|</span>
+        By: {author}
+      </div>
       {
         translations.length > 1 && (
-          <>
-            <span aria-hidden="true" class="text-foreground/40">|</span>
+          <div class="flex items-center gap-2 max-sm:w-full">
+            <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">|</span>
             {translations.map(({ lang, href, isCurrent }) =>
               isCurrent ? (
                 <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">
@@ -153,13 +158,15 @@ const nextPost =
                 </a>
               )
             )}
-          </>
+          </div>
         )
       }
     </div>
-    <div class="my-2 flex items-center gap-2 text-sm">
-        By: <b>{author}</b>
-    </div>
+
+    <hr class="my-8 border-dashed" />
+
+    <ImageHeroHeader title={title} image={initOgImage} />
+
     <article
       id="article"
       class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
@@ -172,7 +179,7 @@ const nextPost =
     <EditPost class="sm:hidden" {hideEditPost} {post} />
 
     <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
+      {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
     </ul>
 
     <BackToTopButton />

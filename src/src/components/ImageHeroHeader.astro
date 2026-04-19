@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
-const { frontmatter, image } = Astro.props;
+const { title, image } = Astro.props;
 
 const heroImage = image;
 ---
@@ -10,7 +10,7 @@ const heroImage = image;
     <div class="not-prose w-full overflow-hidden rounded-xl mb-4">
         <Image
             src={heroImage}
-            alt={`${frontmatter.title}`}
+            alt={title}
             loading="eager"
             fetchpriority="high"
             widths={[400, 800, 1200]}
