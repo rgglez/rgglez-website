@@ -16,21 +16,19 @@ import { SITE } from "./src/config";
 import mdx from "@astrojs/mdx";
 import cloudflare from "@astrojs/cloudflare";
 
+import react from "@astrojs/react";
+
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
 
   site: SITE.website,
 
-  integrations: [
-    sitemap({
-        filter: page => SITE.showArchives || !page.endsWith("/archives"),
-    }),
-    expressiveCode({
-        themes: ['dracula', 'github-light'],
-    }),
-    mdx(),
-  ],
+  integrations: [sitemap({
+      filter: page => SITE.showArchives || !page.endsWith("/archives"),
+  }), expressiveCode({
+      themes: ['dracula', 'github-light'],
+  }), mdx(), react()],
 
   markdown: {
     rehypePlugins: [rehypeKatex],

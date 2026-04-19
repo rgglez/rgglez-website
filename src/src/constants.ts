@@ -7,6 +7,7 @@ import IconWhatsapp from "@/assets/icons/IconWhatsapp.svg";
 import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconTelegram from "@/assets/icons/IconTelegram.svg";
 import IconPinterest from "@/assets/icons/IconPinterest.svg";
+import type { GiscusProps } from "@giscus/react";
 import { SITE } from "@/config";
 
 interface Social {
@@ -75,3 +76,17 @@ export const SHARE_LINKS: Social[] = [
     icon: IconMail,
   },
 ] as const;
+
+export const GISCUS: GiscusProps = {
+  repo: "rgglez/rgglez-website-giscus",
+  repoId: "R_kgDOSGcVXQ",
+  category: "Announcements",
+  categoryId: "DIC_kwDOSGcVXc4C7K7G",
+  theme: "preferred_color_scheme",
+  mapping: "pathname",
+  reactionsEnabled: "0",
+  emitMetadata: "0",
+  inputPosition: "bottom",
+  lang: "en",
+  loading: "lazy",
+};

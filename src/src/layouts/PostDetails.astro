@@ -16,6 +16,7 @@ import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
 import { SITE } from "@/config";
+import Comments from "@/components/Comments";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -177,6 +178,8 @@ const nextPost =
     <BackToTopButton />
 
     <ShareLinks />
+
+    <Comments client:only="react" />   <!-- importante: client:only="react" -->
 
     <hr class="my-6 border-dashed" />
 
