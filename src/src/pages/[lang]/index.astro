@@ -5,7 +5,6 @@ import { getCollection, getEntry, render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Socials from "@/components/Socials.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Card from "@/components/Card.astro";
 import TagCloud from "@/components/TagCloud.astro";
@@ -13,9 +12,7 @@ import getSortedPosts from "@/utils/getSortedPosts";
 import getUniquePosts from "@/utils/getUniquePosts";
 import getUniqueTags from "@/utils/getUniqueTags";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import miFoto from "@/assets/images/rgg_yamato.png";
 import { SITE } from "@/config";
-import { SOCIALS } from "@/constants";
 
 export const getStaticPaths = (() => {
   return SITE.supportedLangs.map(lang => ({ params: { lang } }));
@@ -34,10 +31,10 @@ const hreflangAlternates = [
 
 const posts = await getCollection("blog");
 
-const aboutEntry =
-  (await getEntry("about", lang)) ?? (await getEntry("about", defaultLang));
-const { Content: AboutContent } = aboutEntry
-  ? await render(aboutEntry)
+const introEntry =
+  (await getEntry("intro", lang)) ?? (await getEntry("intro", defaultLang));
+const { Content: IntroContent } = introEntry
+  ? await render(introEntry)
   : { Content: null };
 
 const sortedPosts = getUniquePosts(getSortedPosts(posts), lang);
@@ -53,104 +50,69 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
 <Layout {hreflangAlternates}>
   <Header />
   <main id="main-content" data-layout="index" class="app-layout">
-    <div class="flex flex-col md:flex-row gap-8 pt-8">
+    <div class="pt-8">
 
-      <!-- Left column: About content (70%) -->
-      <div class="w-full md:w-[70%]">
-        <div id="about-wrapper" class="relative overflow-hidden about-truncated md:overflow-visible md:max-h-none">
-          <section id="about" class="app-prose prose-img:border-0 max-w-none">
-            {AboutContent && <AboutContent />}
-            <div class="clear-both"></div>
+      <section id="about" class="app-prose prose-img:border-0 max-w-none mb-8">
+        {IntroContent && <IntroContent />}
+      </section>
+
+      {
+        recentPosts.length > 0 && (
+          <section id="recent-posts" class="py-6 border-t border-border">
+            <h2 class="text-2xl font-semibold tracking-wide mb-4">Recent Posts</h2>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>li]:my-0">
+              {recentPosts.map(
+                (data, index) =>
+                  index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
+              )}
+            </ul>
+            <div class="mt-6 text-center">
+              <LinkButton href={`/${lang}/posts/`}>
+                All Posts
+                <IconArrowRight class="inline-block rtl:-rotate-180" />
+              </LinkButton>
+            </div>
           </section>
-          <div id="about-fade" class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[var(--color-background)] to-transparent md:hidden"></div>
-        </div>
-        <div class="mt-3 md:hidden text-center">
-          <button id="about-toggle" class="text-accent font-semibold underline underline-offset-4">View more</button>
-        </div>
+        )
+      }
+
+      {
+        featuredPosts.length > 0 && (
+          <section id="featured" class="py-6 border-t border-border">
+            <h2 class="text-2xl font-semibold tracking-wide mb-4">Featured</h2>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>li]:my-0">
+              {featuredPosts.map(data => (
+                <Card variant="h3" {...data} allPosts={posts} />
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <div class="my-8 text-center">
+        <LinkButton href={`/${lang}/posts/`}>
+          All Posts
+          <IconArrowRight class="inline-block rtl:-rotate-180" />
+        </LinkButton>
       </div>
 
-      <!-- Right column: Posts (30%) -->
-      <div class="w-full md:w-[30%] border-t border-border pt-6 md:border-t-0 md:border-l md:border-border md:pt-0 md:pl-8">
-        {
-          recentPosts.length > 0 && (
-            <section id="recent-posts" class="pt-6 pb-6">
-              <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
-              <ul>
-                {recentPosts.map(
-                  (data, index) =>
-                    index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
-                )}
-              </ul>
-            </section>
-          )
-        }
-
-        {
-          featuredPosts.length > 0 && (
-            <section
-              id="featured"
-              class:list={[
-                "pb-6",
-                { "border-b border-border": recentPosts.length > 0 },
-              ]}
-            >
-              <h2 class="text-2xl font-semibold tracking-wide">Featured</h2>
-              <ul>
-                {featuredPosts.map(data => (
-                  <Card variant="h3" {...data} allPosts={posts} />
-                ))}
-              </ul>
-            </section>
-          )
-        }
-
-        <div class="my-8 text-center">
-          <LinkButton href={`/${lang}/posts/`}>
-            All Posts
-            <IconArrowRight class="inline-block rtl:-rotate-180" />
-          </LinkButton>
-        </div>
-
-        {
-          tagCloudTags.length > 0 && (
-            <section id="tag-cloud" class="border-t border-border pt-6 pb-6">
-              <h2 class="mb-2 text-2xl font-semibold tracking-wide">Tags</h2>
-              <TagCloud tags={tagCloudTags} width={300} height={200} />
-            </section>
-          )
-        }
-      </div>
+      {
+        tagCloudTags.length > 0 && (
+          <section id="tag-cloud" class="border-t border-border pt-6 pb-6">
+            <h2 class="mb-2 text-2xl font-semibold tracking-wide">Tags</h2>
+            <TagCloud tags={tagCloudTags} width={300} height={200} />
+          </section>
+        )
+      }
 
     </div>
   </main>
   <Footer />
 </Layout>
 
-<style>
-  .about-truncated {
-    max-height: 30rem;
-  }
-  @media (min-width: 768px) {
-    .about-truncated {
-      max-height: none;
-    }
-  }
-</style>
 
 <script is:inline define:vars={{ supportedLangs, defaultLang }}>
   document.addEventListener("astro:page-load", () => {
-    // About "View more" toggle (mobile only)
-    const aboutWrapper = document.getElementById("about-wrapper");
-    const aboutFade = document.getElementById("about-fade");
-    const aboutToggle = document.getElementById("about-toggle");
-    if (aboutWrapper && aboutToggle) {
-      aboutToggle.addEventListener("click", () => {
-        const expanded = aboutWrapper.classList.toggle("about-truncated");
-        aboutToggle.textContent = !expanded ? "View less" : "View more";
-        if (aboutFade) aboutFade.style.display = !expanded ? "none" : "";
-      });
-    }
-
     const indexLayout = document.querySelector("#main-content")?.dataset?.layout;
     if (indexLayout) {
       sessionStorage.setItem("backUrl", "/");

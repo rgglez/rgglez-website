@@ -6,7 +6,7 @@ export const SITE = {
   title: "rodolfo.gg",
   ogImage: "og.png",
   lightAndDarkMode: true,
-  postPerIndex: 4,
+  postPerIndex: 6,
   postPerPage: 1,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
   showArchives: true,

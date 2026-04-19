@@ -4,9 +4,15 @@ import { SITE } from "@/config";
 
 export const BLOG_PATH = "src/data/blog";
 export const ABOUT_PATH = "src/data/about";
+export const INTRO_PATH = "src/data/intro";
 
 const about = defineCollection({
   loader: glob({ pattern: "*.{md,mdx}", base: `./${ABOUT_PATH}` }),
+  schema: z.object({}),
+});
+
+const intro = defineCollection({
+  loader: glob({ pattern: "*.{md,mdx}", base: `./${INTRO_PATH}` }),
   schema: z.object({}),
 });
 
@@ -31,4 +37,4 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { blog, about };
+export const collections = { blog, about, intro };

@@ -24,7 +24,7 @@ const articleKey = getTranslationKey(filePath);
 const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
 ---
 
-<li class="my-6" data-lang={postLang} data-article-key={articleKey}>
+<li class="my-6 flex flex-col" data-lang={postLang} data-article-key={articleKey}>
   <a
     href={getPath(id, filePath)}
     class:list={[
@@ -42,7 +42,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
   <div class="flex items-center gap-2">
     <Datetime {...props} lang={postLang} />
   </div>
-  <p>{description}</p>
+  <p class="flex-1">{description}</p>
   {
     translations.length > 1 && (
       <div class="flex justify-end gap-1 mt-1">

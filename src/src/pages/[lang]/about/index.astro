@@ -1,0 +1,36 @@
+---
+export const prerender = true;
+import type { GetStaticPaths } from "astro";
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
+
+export const getStaticPaths = (() => {
+  return SITE.supportedLangs.map(lang => ({ params: { lang } }));
+}) satisfies GetStaticPaths;
+
+const { lang } = Astro.params;
+
+const aboutEntry =
+  (await getEntry("about", lang)) ?? (await getEntry("about", SITE.defaultLang));
+const { Content: AboutContent } = aboutEntry
+  ? await render(aboutEntry)
+  : { Content: null };
+
+const layoutProps = {
+  title: `About | ${SITE.title}`,
+  description: SITE.desc,
+};
+---
+
+<Layout {...layoutProps}>
+  <Header />
+  <main id="main-content" class="app-layout py-8">
+    <article class="app-prose prose-img:border-0 max-w-none">
+      {AboutContent && <AboutContent />}
+    </article>
+  </main>
+  <Footer />
+</Layout>

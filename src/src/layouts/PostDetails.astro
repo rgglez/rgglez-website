@@ -15,6 +15,7 @@ import { getTranslations, getFileLang } from "@/utils/getTranslations";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
+import IconAuthor from "@/assets/icons/IconAuthor.svg";
 import { SITE } from "@/config";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
@@ -129,15 +130,15 @@ const nextPost =
               rel="noopener noreferrer"
               class="inline-flex items-center gap-1 text-sm text-foreground/70 hover:text-accent"
             >
-              <IconScale class="inline-block size-6 flex-none" />
+              <IconScale class="inline-block size-6 min-w-5.5 flex-none" />
               {license}
             </a>
           </>
         )
       }
-      <div class="flex items-center gap-2 text-sm max-sm:w-full">
-        <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">|</span>
-        By: {author}
+      <div class="inline-flex items-center gap-1 text-sm text-foreground/70 max-sm:w-full">
+        <span aria-hidden="true" class="max-sm:hidden">|</span>
+        <IconAuthor class="inline-block size-6 min-w-5.5 flex-none" />{author}
       </div>
       {
         translations.length > 1 && (
