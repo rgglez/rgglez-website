@@ -6,7 +6,7 @@ import PostsListLayout from "@/layouts/PostsListLayout.astro";
 import Card from "@/components/Card.astro";
 import Pagination from "@/components/Pagination.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
-import getUniqueTags from "@/utils/getUniqueTags";
+import getTagsWithCount from "@/utils/getTagsWithCount";
 import { getFileLang } from "@/utils/getTranslations";
 import { SITE } from "@/config";
 
@@ -24,9 +24,11 @@ const { page } = Astro.props;
 const { lang } = Astro.params;
 const allPosts = await getCollection("blog");
 
-const tagCloudTags = getUniqueTags(allPosts).map(({ tag, tagName }) => ({
+const langPosts = allPosts.filter(post => getFileLang(post.filePath) === lang);
+const tagCloudTags = getTagsWithCount(langPosts).map(({ tag, tagName, count }) => ({
   label: tagName,
   href: `/${lang}/tags/${tag}/`,
+  count,
 }));
 ---
 
