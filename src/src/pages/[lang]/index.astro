@@ -7,10 +7,8 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Card from "@/components/Card.astro";
-import TagCloud from "@/components/TagCloud.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
 import getUniquePosts from "@/utils/getUniquePosts";
-import getUniqueTags from "@/utils/getUniqueTags";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import { SITE } from "@/config";
 
@@ -40,11 +38,6 @@ const { Content: IntroContent } = introEntry
 const sortedPosts = getUniquePosts(getSortedPosts(posts), lang);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
-
-const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
-  label: tagName,
-  href: `/${lang}/tags/${tag}/`,
-}));
 ---
 
 <Layout {hreflangAlternates}>
@@ -96,14 +89,6 @@ const tagCloudTags = getUniqueTags(posts).map(({ tag, tagName }) => ({
         </LinkButton>
       </div>
 
-      {
-        tagCloudTags.length > 0 && (
-          <section id="tag-cloud" class="border-t border-border pt-6 pb-6">
-            <h2 class="mb-2 text-2xl font-semibold tracking-wide">Tags</h2>
-            <TagCloud tags={tagCloudTags} width={300} height={200} />
-          </section>
-        )
-      }
 
     </div>
   </main>

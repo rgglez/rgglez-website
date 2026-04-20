@@ -45,7 +45,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
   <p class="flex-1">{description}</p>
   {
     translations.length > 1 && (
-      <div class="flex justify-end gap-1 mt-1">
+      <div class="flex justify-start gap-1 mt-1">
         {translations.map(({ lang, href, isCurrent }) =>
           isCurrent ? (
             <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">

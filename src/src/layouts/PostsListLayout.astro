@@ -5,12 +5,14 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import TagCloud from "@/components/TagCloud.astro";
-import PostsTree from "@/components/PostsTree.astro";
+import TagList from "@/components/TagList.astro";
+import PostsAccordion from "@/components/PostsAccordion.astro";
 import { SITE } from "@/config";
 
 interface TagItem {
   label: string;
   href?: string;
+  count?: number;
 }
 
 interface Props {
@@ -43,31 +45,43 @@ const showSidebar = showTagCloud || posts.length > 0;
   <Header />
   <Breadcrumb />
   <main data-backUrl={backUrl} id="main-content" class="app-layout">
-    <div class="flex gap-8 pt-8">
-      <div class="w-[70%]">
+    <div class="flex flex-col md:flex-row gap-8 pt-8">
+      <div class="w-full md:w-[70%]">
         <h1 class="text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>
         {pageDesc && <p class="mt-2 mb-6 italic">{pageDesc}</p>}
+        {showSidebar && (
+          <nav class="flex md:hidden gap-4 mb-4 text-sm">
+            {posts.length > 0 && (
+              <a href="#sidebar-posts" class="sidebar-jump-link">↓ Posts</a>
+            )}
+            {showTagCloud && tagCloudTags.length > 0 && (
+              <a href="#sidebar-tags" class="sidebar-jump-link">↓ Tags</a>
+            )}
+          </nav>
+        )}
         <slot />
         <slot name="pagination" />
       </div>
 
       {
         showSidebar && (
-          <aside class="w-[30%] border-l border-border pl-8">
+          <aside class="w-full md:w-[30%] md:border-l border-border md:pl-8">
             {posts.length > 0 && (
               <section
+                id="sidebar-posts"
                 class:list={[
                   "pb-6",
                   { "border-b border-border": showTagCloud && tagCloudTags.length > 0 },
                 ]}
               >
                 <h2 class="text-2xl font-semibold tracking-wide">Posts</h2>
-                <PostsTree {posts} {lang} />
+                <PostsAccordion {posts} {lang} />
               </section>
             )}
             {showTagCloud && tagCloudTags.length > 0 && (
-              <section class:list={[{ "pt-6": posts.length > 0 }]}>
+              <section id="sidebar-tags" class:list={[{ "pt-6": posts.length > 0 }]}>
                 <h2 class="text-2xl font-semibold tracking-wide">Tags</h2>
+                <TagList tags={tagCloudTags} />
                 <TagCloud tags={tagCloudTags} width={400} height={380} />
               </section>
             )}
@@ -78,6 +92,26 @@ const showSidebar = showTagCloud || posts.length > 0;
   </main>
   <Footer {noMarginTop} />
 </Layout>
+
+<style>
+  .sidebar-jump-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    color: var(--foreground);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .sidebar-jump-link:hover {
+    background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>
 
 <script>
   document.addEventListener("astro:page-load", () => {

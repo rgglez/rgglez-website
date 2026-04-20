@@ -1,0 +1,264 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPath } from "@/utils/getPath";
+import { getFileLang, getTranslationKey } from "@/utils/getTranslations";
+import { getMonthName } from "@/utils/formatDate";
+import { SITE } from "@/config";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  maxTitleLength?: number;
+  lang?: string;
+}
+
+const { posts, maxTitleLength = 100, lang = SITE.lang } = Astro.props;
+const { supportedLangs, defaultLang } = SITE;
+
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const sub = text.slice(0, max);
+  const lastSpace = sub.lastIndexOf(" ");
+  return (lastSpace > 0 ? sub.slice(0, lastSpace) : sub) + "…";
+}
+
+type PostLeaf = { title: string; href: string; lang: string; articleKey: string };
+
+const grouped = new Map<number, Map<number, PostLeaf[]>>();
+
+for (const post of posts) {
+  if (post.data.draft) continue;
+  const date = new Date(post.data.pubDatetime);
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  if (!grouped.has(year)) grouped.set(year, new Map());
+  const byMonth = grouped.get(year)!;
+  if (!byMonth.has(month)) byMonth.set(month, []);
+  byMonth.get(month)!.push({
+    title: truncate(post.data.title, maxTitleLength),
+    href: getPath(post.id, post.filePath),
+    lang: getFileLang(post.filePath),
+    articleKey: getTranslationKey(post.filePath),
+  });
+}
+
+const currentYear = new Date().getFullYear();
+const years = [...grouped.entries()].sort(([a], [b]) => b - a);
+
+function yearCount(byMonth: Map<number, PostLeaf[]>): number {
+  let n = 0;
+  for (const arr of byMonth.values()) n += arr.length;
+  return n;
+}
+---
+
+<div class="posts-accordion">
+  {
+    years.map(([year, byMonth]) => {
+      const sortedMonths = [...byMonth.entries()].sort(([a], [b]) => b - a);
+      return (
+        <details class="year-details" open={year === currentYear || undefined}>
+          <summary class="year-summary">
+            <span class="arrow">▶</span>
+            <span class="label">{year}</span>
+            <sup class="count">{yearCount(byMonth)}</sup>
+          </summary>
+          <div class="months-group">
+            {sortedMonths.map(([monthIdx, monthPosts]) => (
+              <details class="month-details">
+                <summary class="month-summary">
+                  <span class="arrow">▶</span>
+                  <span class="label">{getMonthName(monthIdx, lang)}</span>
+                  <sup class="count">{monthPosts.length}</sup>
+                </summary>
+                <ul class="posts-list">
+                  {monthPosts.map(({ title, href, lang: postLang, articleKey }) => (
+                    <li data-lang={postLang} data-article-key={articleKey}>
+                      <a href={href}>{title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </details>
+      );
+    })
+  }
+</div>
+
+<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+  document.addEventListener("astro:page-load", () => {
+    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
+    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+
+    const wrapper = document.querySelector(".posts-accordion");
+    if (!wrapper) return;
+
+    const leaves = Array.from(wrapper.querySelectorAll("li[data-lang][data-article-key]"));
+    const groups = {};
+    leaves.forEach(node => {
+      const key = node.dataset.articleKey;
+      if (key) {
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(node);
+      }
+    });
+
+    Object.values(groups).forEach(group => {
+      const best =
+        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === "en") ||
+        group[0];
+      group.forEach(el => {
+        el.style.display = el === best ? "" : "none";
+      });
+    });
+
+    wrapper.querySelectorAll("details.month-details").forEach(monthDetails => {
+      const visible = Array.from(monthDetails.querySelectorAll("li[data-lang]"))
+        .filter(el => el.style.display !== "none");
+      monthDetails.style.display = visible.length > 0 ? "" : "none";
+      const countEl = monthDetails.querySelector("summary .count");
+      if (countEl) countEl.textContent = visible.length;
+    });
+
+    wrapper.querySelectorAll("details.year-details").forEach(yearDetails => {
+      const visibleMonths = Array.from(yearDetails.querySelectorAll("details.month-details"))
+        .filter(el => el.style.display !== "none");
+      yearDetails.style.display = visibleMonths.length > 0 ? "" : "none";
+      const visiblePosts = Array.from(yearDetails.querySelectorAll("li[data-lang]"))
+        .filter(el => el.style.display !== "none");
+      const countEl = yearDetails.querySelector(":scope > summary .count");
+      if (countEl) countEl.textContent = visiblePosts.length;
+    });
+
+    // Exclusive accordion: opening one year closes others
+    const yearEls = Array.from(wrapper.querySelectorAll("details.year-details"));
+    yearEls.forEach(el => {
+      el.addEventListener("toggle", () => {
+        if (el.open) {
+          yearEls.forEach(other => { if (other !== el) other.open = false; });
+        }
+      });
+    });
+
+    // Exclusive accordion: opening one month closes siblings within same year
+    wrapper.querySelectorAll("details.year-details").forEach(yearEl => {
+      const monthEls = Array.from(yearEl.querySelectorAll(":scope > .months-group > details.month-details"));
+      monthEls.forEach(el => {
+        el.addEventListener("toggle", () => {
+          if (el.open) {
+            monthEls.forEach(other => { if (other !== el) other.open = false; });
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .posts-accordion {
+    font-family: var(--font-app, inherit);
+    display: block;
+    width: 100%;
+  }
+
+  .year-details,
+  .month-details {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .year-summary,
+  .month-summary {
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.35rem;
+    user-select: none;
+    color: var(--foreground);
+  }
+
+  .year-summary::-webkit-details-marker,
+  .month-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .year-summary {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+  }
+
+  .month-summary {
+    font-size: 0.875rem;
+    margin-left: 0.75rem;
+    color: var(--muted-foreground, var(--foreground));
+  }
+
+  .year-summary:hover,
+  .month-summary:hover {
+    background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+  }
+
+  .arrow {
+    display: inline-block;
+    font-size: 0.55rem;
+    transition: transform 0.15s ease;
+    transform: rotate(0deg);
+    color: var(--accent);
+    flex-shrink: 0;
+    line-height: 1;
+    align-self: center;
+  }
+
+  details[open] > summary .arrow {
+    transform: rotate(90deg);
+  }
+
+  .label {
+    flex: 1 1 auto;
+  }
+
+  .count {
+    color: var(--accent);
+    font-size: 0.65rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .months-group {
+    margin-left: 0.5rem;
+  }
+
+  .posts-list {
+    list-style: none;
+    margin: 0.1rem 0 0.2rem 0;
+    padding: 0 0 0 2.25rem;
+  }
+
+  .posts-list li {
+    padding: 0.15rem 0;
+  }
+
+  .posts-list a {
+    color: var(--foreground);
+    text-decoration: none;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    display: block;
+    word-break: break-word;
+  }
+
+  .posts-list a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
