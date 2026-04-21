@@ -29,6 +29,15 @@ export default defineConfig({
     sitemap({
         filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
+    mermaid({
+        theme: 'forest',
+        autoTheme: false,
+        mermaidConfig: {
+            startOnLoad: false,
+            logLevel: 'error',
+            securityLevel: 'strict'
+        }
+    }),
     expressiveCode({
         themes: ['dracula', 'github-light'],
     }),
@@ -40,10 +49,6 @@ export default defineConfig({
             [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i, summary: (str: string) => str }],
         ],
         rehypePlugins: [rehypeKatex],
-    }),
-    mermaid({
-        theme: 'neutral',
-        autoTheme: false
     }),
     react(),
   ],

@@ -49,38 +49,36 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
         {IntroContent && <IntroContent />}
       </section>
 
-      {
-        recentPosts.length > 0 && (
-          <section id="recent-posts" class="py-6 border-t border-border">
-            <h2 class="text-2xl font-semibold tracking-wide mb-4">Recent Posts</h2>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>li]:my-0">
-              {recentPosts.map(
-                (data, index) =>
-                  index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
-              )}
-            </ul>
-            <div class="mt-6 text-center">
-              <LinkButton href={`/${lang}/posts/`}>
-                All Posts
-                <IconArrowRight class="inline-block rtl:-rotate-180" />
-              </LinkButton>
-            </div>
-          </section>
-        )
-      }
+      <div class="flex flex-col lg:flex-row gap-8 py-6 border-t border-border">
 
-      {
-        featuredPosts.length > 0 && (
-          <section id="featured" class="py-6 border-t border-border">
-            <h2 class="text-2xl font-semibold tracking-wide mb-4">Featured</h2>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>li]:my-0">
-              {featuredPosts.map(data => (
-                <Card variant="h3" {...data} allPosts={posts} />
-              ))}
-            </ul>
-          </section>
-        )
-      }
+        {
+          recentPosts.length > 0 && (
+            <section id="recent-posts" class="flex-1 min-w-0">
+              <h2 class="text-2xl font-semibold tracking-wide mb-4">Recent Posts</h2>
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 [&>li]:my-0">
+                {recentPosts.map(
+                  (data, index) =>
+                    index < SITE.postPerIndex && <Card variant="h3" {...data} allPosts={posts} />
+                )}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          featuredPosts.length > 0 && (
+            <section id="featured" class="lg:w-72 shrink-0 lg:border-l border-border lg:pl-8">
+              <h2 class="text-2xl font-semibold tracking-wide mb-4">Featured</h2>
+              <ul class="flex flex-col gap-6 [&>li]:my-0">
+                {featuredPosts.map(data => (
+                  <Card variant="h3" {...data} allPosts={posts} />
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+      </div>
 
       <div class="my-8 text-center">
         <LinkButton href={`/${lang}/posts/`}>

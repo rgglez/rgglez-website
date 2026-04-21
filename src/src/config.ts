@@ -6,7 +6,7 @@ export const SITE = {
   title: "rodolfo.gg",
   ogImage: "og.png",
   lightAndDarkMode: true,
-  postPerIndex: 6,
+  postPerIndex: 8,
   postPerPage: 10,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
   showArchives: true,
@@ -19,7 +19,7 @@ export const SITE = {
   dynamicOgImage: true,
   dir: "ltr", // "rtl" | "auto"
   lang: "es", // html lang code. Set this empty and default will be "en"
-  defaultLang: "es", // fallback when browser language is not in supportedLangs
+  defaultLang: "en", // fallback when browser language is not in supportedLangs
   supportedLangs: ["es", "en", "fr", "de"], // extend this array to add more languages
   timezone: "America/Mexico_City", // Default global timezone (IANA format) https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 } as const;

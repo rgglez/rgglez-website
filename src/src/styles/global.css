@@ -68,3 +68,30 @@ html[data-theme="dark"] {
 :target {
   scroll-margin-block: 1rem;
 }
+
+/* Mermaid mindmap: todas las secciones no-root usan color de texto del tema */
+svg.mindmapDiagram [class*="section-"]:not(.section-root) span {
+  color: var(--foreground) !important;
+}
+
+/* Mermaid general (flowchart, sequence, class, etc.) */
+[id^="mermaid-"] .node rect,
+[id^="mermaid-"] .node circle,
+[id^="mermaid-"] .node ellipse,
+[id^="mermaid-"] .node polygon,
+[id^="mermaid-"] .node path {
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
+}
+[id^="mermaid-"] .edgePath .path,
+[id^="mermaid-"] .flowchart-link {
+  stroke: var(--accent) !important;
+}
+[id^="mermaid-"] .arrowMarkerPath {
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
+[id^="mermaid-"] .actor rect {
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
+}
