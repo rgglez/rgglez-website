@@ -5,6 +5,7 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import mermaid from 'astro-mermaid';
 import expressiveCode from 'astro-expressive-code';
 import {
   transformerNotationDiff,
@@ -24,11 +25,28 @@ export default defineConfig({
 
   site: SITE.website,
 
-  integrations: [sitemap({
-      filter: page => SITE.showArchives || !page.endsWith("/archives"),
-  }), expressiveCode({
-      themes: ['dracula', 'github-light'],
-  }), mdx(), react()],
+  integrations: [
+    sitemap({
+        filter: page => SITE.showArchives || !page.endsWith("/archives"),
+    }),
+    expressiveCode({
+        themes: ['dracula', 'github-light'],
+    }),
+    mdx({
+        extendMarkdownConfig: true,
+        remarkPlugins: [
+            [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
+             remarkMath,
+            [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i, summary: (str: string) => str }],
+        ],
+        rehypePlugins: [rehypeKatex],
+    }),
+    mermaid({
+        theme: 'neutral',
+        autoTheme: false
+    }),
+    react(),
+  ],
 
   markdown: {
     rehypePlugins: [rehypeKatex],
