@@ -5,7 +5,8 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import mermaid from 'astro-mermaid';
+import rehypeMermaid from 'rehype-mermaid';
+import { visit } from 'unist-util-visit';
 import expressiveCode from 'astro-expressive-code';
 import {
   transformerNotationDiff,
@@ -19,6 +20,19 @@ import cloudflare from "@astrojs/cloudflare";
 
 import react from "@astrojs/react";
 
+function remarkMermaidBypass() {
+  return (tree: any) => {
+    visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
+      if (node.lang === 'mermaid' && parent && typeof index === 'number') {
+        parent.children[index] = {
+          type: 'html',
+          value: `<pre class="mermaid">\n${node.value}\n</pre>`,
+        };
+      }
+    });
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
@@ -29,33 +43,19 @@ export default defineConfig({
     sitemap({
         filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
-    mermaid({
-        theme: 'forest',
-        autoTheme: false,
-        mermaidConfig: {
-            startOnLoad: false,
-            logLevel: 'error',
-            securityLevel: 'strict'
-        }
-    }),
     expressiveCode({
         themes: ['dracula', 'github-light'],
     }),
     mdx({
         extendMarkdownConfig: true,
-        remarkPlugins: [
-            [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
-             remarkMath,
-            [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i, summary: (str: string) => str }],
-        ],
-        rehypePlugins: [rehypeKatex],
     }),
     react(),
   ],
 
   markdown: {
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeKatex, [rehypeMermaid, { strategy: 'img-svg', mermaidConfig: { theme: 'forest' } }]],
     remarkPlugins: [
+      remarkMermaidBypass,
       [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
       remarkMath,
       [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i, summary: (str: string) => str }],
