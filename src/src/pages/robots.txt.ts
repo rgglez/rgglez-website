@@ -3,6 +3,9 @@ import type { APIRoute } from "astro";
 export const prerender = true;
 
 const getRobotsTxt = (sitemapURL: URL) => `
+User-agent: facebookexternalhit
+Allow: /
+
 User-agent: *
 Allow: /
 
