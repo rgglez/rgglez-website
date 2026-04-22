@@ -16,6 +16,7 @@ import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
 import IconAuthor from "@/assets/icons/IconAuthor.svg";
+import { getImage } from "astro:assets";
 import { SITE } from "@/config";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
@@ -52,8 +53,10 @@ let ogImageUrl: string | undefined;
 // Determine OG image source
 if (typeof initOgImage === "string") {
   ogImageUrl = initOgImage; // Remote OG image (absolute URL)
-} else if (initOgImage?.src) {
-  ogImageUrl = initOgImage.src; // Local asset
+} else if (initOgImage) {
+  // Convert local asset to JPEG — Facebook/WhatsApp crawlers don't support WebP
+  const optimized = await getImage({ src: initOgImage, format: "jpeg", width: 1200 });
+  ogImageUrl = optimized.src;
 }
 
 // Use dynamic OG image if enabled and no remote|local ogImage
