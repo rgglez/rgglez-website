@@ -386,6 +386,13 @@ mindmap
     Lematización
     Análisis morfológico
     Vocabulario abierto vs. cerrado (OOV)
+    Lexema
+    Gramema
+    Morfema gramatical
+    Morfema cero
+    Hechos morfotácticos
+    Regla ortográfica
+    Reconocimiento morfológico
 ```
 
 
@@ -480,6 +487,78 @@ Las palabras fuera de vocabulario son un problema clásico en NLP. La tokenizaci
 
 **Ejemplo:** Un modelo entrenado sin datos de redes sociales puede encontrar OOV en "skere", "uwu" o "xdxd".
 
+### 3.15 Morfología
+
+Rama de la lingüística que estudia la estructura interna de las palabras y los procesos de formación léxica. En NLP, la morfología computacional es clave para idiomas morfológicamente ricos (árabe, turco, finés) donde una sola palabra puede encapsular varios constituyentes.
+
+**Ejemplo:** El turco "gidiyormusunuz" (¿Están yendo?) es una única forma verbal que un analizador morfológico descompone en gid- (ir) + -iyor (presente continuo) + -muşunuz (evidencial + 2.ª pers. pl.). Herramientas como Morfessor o UDPipe abordan esta complejidad.
+
+### 3.16 Lexema
+
+Unidad abstracta del léxico que agrupa todas las formas flexionadas de una misma palabra. Equivale a la entrada de diccionario, independientemente de sus variantes morfológicas.
+
+**Ejemplo:** El lexema CANTAR agrupa: canto, cantas, cantaba, cantaría, cantando, cantado, etc. Un lexicón computacional almacena lexemas y sus paradigmas flexivos para facilitar la búsqueda y la lematización.
+
+### 3.17 Gramema
+
+Morfema gramatical que aporta información funcional (tiempo, número, género, caso, persona) sin contenido léxico propio. También llamado morfema de función.
+
+**Ejemplo:** En "niñas", el gramema -a indica género femenino y el gramema -s indica número plural. Los POS taggers enriquecidos identifican estos rasgos morfosintácticos mediante la columna FEATS de Universal Dependencies.
+
+### 3.18 Morfema gramatical
+
+Morfema que expresa categorías gramaticales (concordancia, tiempo verbal, caso) en lugar de significado léxico. Sinónimo de gramema; se distingue del morfema léxico (raíz, lexema).
+
+**Ejemplo:** En "comemos", -mos es morfema gramatical que indica 1.ª persona del plural. Los parsers de dependencias validan la concordancia entre sujeto y verbo a partir de la información codificada en estos morfemas.
+
+### 3.19 Morfema cero (∅)
+
+Morfema que no tiene realización fonológica ni gráfica pero cuya presencia se infiere por contraste paradigmático con otras formas del mismo paradigma.
+
+**Ejemplo:** En "gato" (singular masculino), el morfema de número singular es ∅: gato-∅ vs. gato-s (plural). Los sistemas de anotación morfológica representan esta categoría aunque no haya sufijo visible, manteniendo la regularidad del análisis.
+
+### 3.20 Hechos morfotácticos
+
+Restricciones que determinan en qué orden y con qué combinaciones pueden aparecer los morfemas dentro de una palabra. Son la base de las gramáticas de estado finito para morfología.
+
+**Ejemplo:** En español la secuencia válida es: prefijo + raíz + sufijo derivativo + sufijo flexivo ("des-nacion-aliz-aban"), mientras que sufijo + raíz es inválida. Un analizador morfológico de estado finito (FST) codifica estas restricciones como autómatas compilados.
+
+### 3.21 Regla ortográfica
+
+Convención gráfica que adapta la forma escrita de un morfema al entorno fonológico o gráfico en que aparece; parte de la interfaz entre morfología y escritura.
+
+**Ejemplo:** En inglés, la regla de doblado de consonante: "run" + -ing → "running" (no \*"runing"). En español, el cambio c→qu: "buscar" + -é → "busqué". Los tokenizadores y lematizadores deben conocer estas reglas para segmentar y normalizar correctamente.
+
+### 3.22 Reconocimiento morfológico
+
+Tarea computacional que identifica y etiqueta la estructura morfológica de las palabras de un texto: raíces, afijos y categorías gramaticales asociadas.
+
+**Ejemplo:** Dado "desfavorablemente", un analizador produce: des- [PREF, negación] + favor [ROOT] + -able [SUFF, adjetivador] + -mente [SUFF, adverbializador]. Herramientas como Freeling, UDPipe y Stanza realizan este análisis como parte del pipeline NLP.
+
+---
+
+## Morfosintaxis
+
+```mermaid
+mindmap
+  root((Morfosintaxis))
+    Morfosintaxis
+    Etiquetado morfosintáctico
+```
+
+
+### Morfosintaxis.1 Morfosintaxis
+
+Interfaz entre morfología y sintaxis que estudia cómo las categorías morfológicas (género, número, caso, tiempo, persona) determinan la concordancia entre los constituyentes de la oración y condicionan la estructura sintáctica.
+
+**Ejemplo:** En "Las casas grandes son caras", el morfema plural -s activa la concordancia morfosintáctica en artículo (las), sustantivo (casas), adjetivo (grandes) y predicado (son caras). Universal Dependencies captura estas relaciones en la columna FEATS del formato CoNLL-U.
+
+### Morfosintaxis.2 Etiquetado morfosintáctico
+
+Proceso de asignar a cada token una etiqueta que codifica simultáneamente su categoría léxica (POS) y sus rasgos morfológicos (género, número, tiempo, modo, caso, etc.). También llamado análisis morfosintáctico.
+
+**Ejemplo:** Para "corrieron", el etiquetado morfosintáctico produce: VERB + Mood=Ind|Number=Plur|Person=3|Tense=Past. En UD, la columna FEATS del formato CoNLL-U recoge estos rasgos. Herramientas como Stanza, SpaCy o Trankit los generan automáticamente.
+
 ---
 
 ## 4 · Sintaxis
@@ -501,6 +580,16 @@ mindmap
     Orden de palabras
     Ambigüedad estructural
     Recursividad
+    Tipos de sintagmas (SN, SV, SP, SAdj, SAdv)
+    Árbol sintáctico
+    Análisis sintáctico (parsing)
+    Gramática de estado finito
+    Máquina de estado finito (FSA)
+    Gramática de estructura sintagmática (PSG)
+    Gramática de unificación
+    Gramática valencial
+    Gramática con categorías complejas (CCG)
+    Sintaxis generativa
 ```
 
 
@@ -631,6 +720,72 @@ Propiedad de las lenguas naturales que permite anidar estructuras dentro de sí 
 
 **Ejemplo:** "El gato que persiguió al ratón que comió el queso que compró María…" Las gramáticas CFG capturan esta propiedad; los modelos finitos (n-gramas) no.
 
+### 4.15 Tipos de sintagmas: SN, SV, SP, SAdj, SAdv
+
+Subtipos del sintagma clasificados por la categoría gramatical de su núcleo:
+
+- **SN** (sintagma nominal): núcleo = sustantivo. Ej.: "el perro negro".
+- **SV** (sintagma verbal): núcleo = verbo. Ej.: "corre muy rápido".
+- **SP** (sintagma preposicional): núcleo = preposición. Ej.: "por el parque".
+- **SAdj** (sintagma adjetival): núcleo = adjetivo. Ej.: "muy inteligente".
+- **SAdv** (sintagma adverbial): núcleo = adverbio. Ej.: "bastante bien".
+
+**Ejemplo:** El chunker de SpaCy sobre "El niño come manzanas en el jardín" identifica: [SN El niño] [SV come [SN manzanas] [SP en [SN el jardín]]].
+
+### 4.16 Árbol sintáctico
+
+Representación gráfica de la estructura jerárquica de una oración donde los nodos internos son constituyentes (sintagmas) y los nodos hoja son palabras. Puede ser de constituyentes (_constituency tree_) o de dependencias (_dependency tree_).
+
+**Ejemplo:** Para "El gato duerme", el árbol de constituyentes tiene raíz O con dos hijos: [SN El gato] y [SV duerme]. El Stanford Parser y Stanza producen árboles de constituyentes; SpaCy produce árboles de dependencias.
+
+### 4.17 Análisis sintáctico (_parsing_)
+
+Tarea de NLP que determina la estructura sintáctica de una oración: identifica sus constituyentes y las relaciones entre ellos. Existen dos paradigmas: análisis de constituyentes (_constituency parsing_) y análisis de dependencias (_dependency parsing_).
+
+**Ejemplo:** El dependency parser de SpaCy etiqueta cada token con su cabeza y tipo de relación: "El" (det → gato), "gato" (nsubj → duerme), "duerme" (ROOT). Los modelos modernos usan Transformers fine-tuned sobre treebanks UD.
+
+### 4.18 Gramática de estado finito (_Finite-State Grammar_)
+
+Gramática implementable mediante autómatas finitos (FSA) o transductores de estado finito (FST). Solo puede representar lenguajes regulares; es muy eficiente para morfología y tokenización, pero no para la recursividad sintáctica.
+
+**Ejemplo:** La tokenización de contracciones ("del" → "de" + "el") puede modelarse con un FST en tiempo lineal. Xfst, Foma y OpenFST son herramientas estándar para compilar estas gramáticas.
+
+### 4.19 Máquina de estado finito (_Finite-State Machine / Automaton, FSA_)
+
+Modelo computacional con un conjunto de estados, transiciones etiquetadas y estados aceptadores. Base formal de los transductores y gramáticas de estado finito en lingüística computacional.
+
+**Ejemplo:** Un reconocedor morfológico para verbos regulares en -ar puede diseñarse como una FSA que acepta "canto", "cantas", "cantamos", etc. Las implementaciones compiladas (FST) son órdenes de magnitud más rápidas que los parsers probabilísticos para reconocimiento morfológico.
+
+### 4.20 Gramática de estructura sintagmática (_Phrase Structure Grammar, PSG_)
+
+Gramática que describe la estructura de las oraciones en términos de constituyentes anidados mediante reglas de reescritura (X → Y Z). La gramática libre de contexto (CFG) es su caso más estudiado en NLP.
+
+**Ejemplo:** Las reglas "O → SN SV" y "SN → Det N" definen una PSG mínima. El Penn Treebank anotó más de un millón de palabras del Wall Street Journal con árboles de estructura sintagmática, siendo el recurso de referencia para entrenar parsers de constituyentes.
+
+### 4.21 Gramática de unificación (_Unification Grammar_)
+
+Formalismo donde las restricciones gramaticales se expresan como estructuras de rasgos (_feature structures_) que se combinan mediante unificación. Permite representar concordancia y subcategorización de forma declarativa.
+
+**Ejemplo:** En HPSG, la concordancia de género entre determinante y sustantivo se implementa con [GÉNERO: ?X] que debe unificarse en ambos. HPSG, LFG y FUG son los principales formalismos; el Stanford HPSG parser usa este enfoque.
+
+### 4.22 Gramática valencial (_Valency Grammar_)
+
+Teoría que caracteriza los predicados según el número y tipo de argumentos que requieren (su _valencia_). Deriva de la gramática de dependencias de Tesnière.
+
+**Ejemplo:** "Dar" tiene valencia 3 (trivalente): sujeto (AGENTE), objeto directo (TEMA) y objeto indirecto (DESTINATARIO): "Juan dio el libro a María". PropBank y FrameNet codifican esta información valencial para los parsers semánticos.
+
+### 4.23 Gramática con categorías complejas (_Combinatory Categorial Grammar, CCG_)
+
+Formalismo altamente lexicalizado donde las categorías gramaticales especifican cómo cada palabra se combina con sus vecinos mediante combinadores. Permite derivaciones sintáctico-semánticas simultáneas.
+
+**Ejemplo:** Un verbo transitivo tiene categoría (S\NP)/NP: combina con un SN a la derecha para dar S\NP, y luego con un SN a la izquierda para dar S. El CCGbank y parsers como EasyCCG y DepCCG implementan este formalismo.
+
+### 4.24 Sintaxis generativa
+
+Corriente teórica, iniciada por Chomsky, que postula una gramática universal subyacente a todas las lenguas y estudia las propiedades formales de las estructuras sintácticas mediante reglas y transformaciones abstractas.
+
+**Ejemplo:** La teoría del movimiento Wh- explica "¿Qué libro leíste?" como derivado de "Leíste [qué libro]" mediante una transformación. Estos mecanismos inspiran formalismos como HPSG y LFG, más tractables computacionalmente que la gramática transformacional clásica.
+
 ---
 
 ## 5 · Semántica
@@ -654,6 +809,20 @@ mindmap
     Presuposición
     Composicionalidad
     Multi-Word Expressions (MWE)
+    Homografía y homofonía
+    Metonimia
+    Sentido de la palabra (word sense)
+    Conexión semántica
+    Similitud
+    Semántica composicional
+    Principio de composición
+    Hipótesis rule-to-rule
+    Lexicón
+    Muestra léxica
+    Desambiguación supervisada
+    Desambiguación basada en conocimiento
+    Desambiguación semisupervisada
+    Desambiguación no supervisada (WSI)
 ```
 
 
@@ -765,6 +934,93 @@ Combinaciones de palabras con significado no composicional o con propiedades est
 
 **Ejemplo:** "tomar el pelo" (engañar), "dar a luz" (parir), "a pesar de" (concesión). Los modelos deben tratar estas secuencias como unidades.
 
+### 5.17 Homografía y homofonía
+
+Subtipos de homonimia según el plano de coincidencia:
+
+- **Homografía:** dos palabras con la misma grafía pero distinto significado y origen.
+- **Homofonía:** dos palabras con la misma pronunciación pero distinta grafía y significado.
+
+**Ejemplo:** "vino" (bebida / pretérito de venir) es homógrafa y homófona. "tubo" (cilindro) y "tuvo" (pretérito de tener) son homófonas pero no homógrafas. Los sistemas TTS deben conocer esta distinción para pronunciar correctamente según el contexto.
+
+### 5.18 Metonimia
+
+Fenómeno semántico en que una entidad es referida por el nombre de otra con la que tiene una relación de contigüidad (contenedor/contenido, parte/todo, lugar/institución, causa/efecto).
+
+**Ejemplo:** "Bebí tres vasos" (el continente por el contenido), "el Kremlin declaró" (el lugar por la institución), "leer a Cervantes" (el autor por su obra). En NLP, la metonimia complica la resolución de correferencia y la extracción de información.
+
+### 5.19 Sentido de la palabra (_word sense_)
+
+Cada una de las acepciones diferenciadas de una palabra polisémica u homónima. Los recursos como WordNet organizan los sentidos en grupos de sinónimos (_synsets_) con definiciones (_glosses_) y ejemplos.
+
+**Ejemplo:** "banco" tiene al menos tres sentidos en WordNet-es: _institución financiera_, _asiento largo_ y _banco de peces_. Los sistemas de WSD seleccionan el sentido correcto según el contexto: "fue al banco a pedir un préstamo" → sentido financiero.
+
+### 5.20 Conexión semántica (_semantic relatedness_)
+
+Medida del grado en que dos palabras están relacionadas semánticamente en cualquier forma: sinonimia, meronimia, co-hipónimos, asociación temática, etc. Más amplia que la similitud semántica.
+
+**Ejemplo:** "doctor" y "hospital" tienen alta conexión semántica aunque no son sinónimos ni hiperónimos entre sí: co-ocurren en contextos similares. Datasets como WordSim-353 evalúan esta medida empíricamente.
+
+### 5.21 Similitud (semántica)
+
+Medida del grado en que dos palabras o textos comparten significado esencial, basada en relaciones de sinonimia o hiponimia. Distinta de conexión semántica, que abarca relaciones más generales.
+
+**Ejemplo:** "coche" y "automóvil" tienen similitud alta (casi sinónimos); "coche" y "gasolinera" tienen alta conexión semántica pero baja similitud. SimLex-999 es el benchmark estándar para evaluar similitud léxica frente a asociación.
+
+### 5.22 Semántica composicional
+
+Rama de la semántica que estudia cómo el significado de una expresión compleja se construye sistemáticamente a partir del significado de sus partes y las reglas de combinación sintáctica. Sustentada en el principio de composición.
+
+**Ejemplo:** El significado de "gato negro" se deriva composicionalmente como la intersección de las extensiones de "gato" y "negro". La lógica de primer orden y el lambda-cálculo proveen marcos formales para esta composición.
+
+### 5.23 Principio de composición (_principio de Frege_)
+
+Principio que establece que el significado de una expresión compleja está determinado únicamente por los significados de sus partes y la forma en que se combinan sintácticamente. Pilar formal de la semántica composicional.
+
+**Ejemplo:** "Juan besa a María" → BESAR(JUAN, MARÍA). Cambiando "Juan" por "María" el significado cambia de forma predecible: BESAR(MARÍA, JUAN). Este principio permite que los modelos formales escalen a oraciones de longitud arbitraria.
+
+### 5.24 Hipótesis _rule-to-rule_
+
+Hipótesis de semántica composicional formal que postula una correspondencia biunívoca entre reglas sintácticas y reglas semánticas: a cada regla combinatoria sintáctica le corresponde exactamente una operación de composición semántica.
+
+**Ejemplo:** Si la regla sintáctica es "SN → Det N", la regla semántica especifica cómo combinar las representaciones del determinante y el nombre. La Gramática de Montague implementa estrictamente esta hipótesis, haciendo explícito el puente entre sintaxis y semántica.
+
+### 5.25 Lexicón
+
+Componente de un sistema lingüístico o computacional que almacena información sobre las palabras: formas, categorías, significados, estructura argumental y restricciones de selección. Más completo que un diccionario porque incluye información formal procesable.
+
+**Ejemplo:** El lexicón de un parser HPSG contiene para "dormir": categoría (VERB), valencia (intransitivo), rasgos morfológicos y restricción semántica (sujeto animado). WordNet, FrameNet y PropBank son lexicones computacionales de referencia.
+
+### 5.26 Muestra léxica (_lexical sample_)
+
+Subconjunto de palabras ambiguas seleccionadas para una tarea de evaluación de WSD. Contrasta con el escenario _all-words_ donde se desambiguan todas las palabras del texto.
+
+**Ejemplo:** Senseval-2 y SemEval usaron muestras léxicas de ~40–100 palabras objetivo con múltiples instancias de cada una en contexto. Este enfoque permite evaluación controlada de sistemas de desambiguación.
+
+### 5.27 Desambiguación supervisada
+
+Enfoque de WSD que entrena un clasificador con ejemplos etiquetados (texto + sentido correcto) para predecir el sentido de palabras según el contexto.
+
+**Ejemplo:** Un clasificador SVM entrenado en SemCor aprende que "banco" con "dinero" o "préstamo" corresponde al sentido financiero, y con "madera" o "sentarse" al de asiento. Es el enfoque de mayor rendimiento cuando hay datos etiquetados suficientes.
+
+### 5.28 Desambiguación basada en conocimiento
+
+Enfoque de WSD que utiliza recursos léxicos estructurados (WordNet, diccionarios, grafos de conocimiento) sin datos de entrenamiento anotados; aplica heurísticas o medidas de similitud sobre el grafo semántico.
+
+**Ejemplo:** El algoritmo Lesk selecciona el sentido cuya definición en el diccionario comparte más palabras con el contexto: "banco" en "fue al banco a sacar dinero" → mayor solapamiento con la gloss de institución financiera. Babelfy extiende este enfoque a grafos multilingües.
+
+### 5.29 Desambiguación semisupervisada
+
+Enfoque de WSD que combina pocos ejemplos etiquetados con gran cantidad de texto no etiquetado mediante técnicas de _bootstrapping_ o propagación de etiquetas.
+
+**Ejemplo:** El algoritmo Yarowsky parte de unas pocas instancias "semilla" con sentido conocido y propaga el etiquetado a instancias similares no etiquetadas usando reglas de colocación. Logra alta precisión con una fracción del coste de anotación del enfoque supervisado.
+
+### 5.30 Desambiguación no supervisada (_Word Sense Induction, WSI_)
+
+Enfoque que no usa ningún recurso etiquetado: induce sentidos mediante _clustering_ de representaciones contextuales, sin mapear a inventarios de sentidos predefinidos.
+
+**Ejemplo:** Aplicando clustering sobre representaciones BERT de todas las instancias de "banco" en un corpus, el sistema descubre automáticamente dos grupos de usos: financiero y mueble. No produce etiquetas con nombre pero agrupa instancias semánticamente coherentes.
+
 ---
 
 ## 6 · Pragmática y discurso
@@ -784,6 +1040,11 @@ mindmap
     Relaciones discursivas (RST)
     Registro y estilo
     Turno de diálogo (turn-taking)
+    Agente conversacional
+    Chatbot
+    Punto de coincidencia (common ground)
+    Pares adyacentes
+    Informaciones implícitas
 ```
 
 
@@ -877,6 +1138,36 @@ Variación del lenguaje según el contexto social: formal, informal, técnico, c
 En sistemas conversacionales, la gestión de cuándo habla cada participante. Es central en el diseño de chatbots y asistentes de voz.
 
 **Ejemplo:** Un sistema de diálogo debe detectar que el usuario ha terminado su turno (por silencio o señales lingüísticas como "¿no?") antes de generar una respuesta.
+
+### 6.13 Agente conversacional
+
+Sistema de software capaz de mantener una conversación en lenguaje natural gestionando el flujo del diálogo, la comprensión de intenciones y la generación de respuestas apropiadas al contexto.
+
+**Ejemplo:** Alexa, Siri y Google Assistant son agentes conversacionales. Sus componentes típicos son: ASR (reconocimiento de voz), NLU (intent + slot filling), Dialogue Manager y TTS/NLG. Los LLM modernos habilitan agentes de propósito general sin pipelines modulares explícitos.
+
+### 6.14 Chatbot
+
+Tipo de agente conversacional generalmente orientado a texto y a un dominio específico, diseñado para simular conversación humana mediante respuestas basadas en reglas, recuperación de plantillas o generación neuronal.
+
+**Ejemplo:** Los chatbots de atención al cliente de bancos y aerolíneas responden preguntas frecuentes con respuestas predefinidas. Los chatbots basados en LLM (construidos con LangChain sobre GPT o Claude) tienen capacidades generativas mucho más amplias que los basados en árboles de decisión.
+
+### 6.15 Punto de coincidencia (_common ground_)
+
+Conjunto de conocimientos, creencias y suposiciones que los participantes de una conversación comparten y asumen mutuamente como compartidos. Es fundamental para que el diálogo sea coherente y eficiente.
+
+**Ejemplo:** En un diálogo médico, médico y paciente asumen que ambos saben qué es una "receta": el médico no necesita definirla. Los sistemas de _grounding_ en conversación verifican explícitamente que el interlocutor ha entendido la información aportada.
+
+### 6.16 Pares adyacentes (_adjacency pairs_)
+
+Unidades mínimas de la organización del diálogo formadas por dos turnos consecutivos de hablantes distintos, donde el primer turno (_first pair part_) condiciona el tipo esperado del segundo. Concepto del análisis conversacional (Sacks, Schegloff & Jefferson).
+
+**Ejemplo:** Pregunta/respuesta, saludo/saludo y oferta/aceptación-o-rechazo son pares adyacentes. En sistemas de diálogo orientados a tareas, su detección ayuda al Dialogue Manager a anticipar el tipo de acto de habla que debe generar.
+
+### 6.17 Informaciones implícitas
+
+Contenidos no expresados literalmente en un enunciado que el interlocutor infiere a partir del contexto, el conocimiento compartido y los principios pragmáticos (presuposiciones, implicaturas, inferencias de sentido común).
+
+**Ejemplo:** "¿Puedes pasarme la sal?" se interpreta como una petición, no como una pregunta sobre capacidades físicas. Un modelo de diálogo debe inferir el acto de habla real (_indirect speech act_) más allá del significado literal.
 
 ---
 
@@ -1233,6 +1524,8 @@ mindmap
     Ley de Zipf
     Collocation
     Pointwise Mutual Information (PMI)
+    Tesauro
+    Base de datos léxica
 ```
 
 
@@ -1310,6 +1603,18 @@ $$PMI(w_1, w_2) = \log[P(w_1, w_2) / (P(w_1) \cdot P(w_2))]$$
 
 **Ejemplo:** $PMI(\text{Nueva}, \text{York}) \gg 0$ porque co-ocurren mucho más de lo esperado. $PMI(\text{el}, \text{de}) \approx 0$ porque ambas son tan frecuentes que su co-ocurrencia no es informativa.
 
+### 10.12 Tesauro
+
+Recurso léxico que organiza palabras según relaciones de similitud semántica, sinonimia y antonimia, sin definiciones extensas: presenta redes de equivalencia y oposición. Herramienta clásica para expansión de consultas en recuperación de información.
+
+**Ejemplo:** El Tesauro de Roget agrupa palabras por conceptos. En NLP, la estructura de synsets de WordNet funciona como tesauro computacional para expansión de consultas en IR y para WSD basada en conocimiento. Los tesauros distribucionales se construyen automáticamente a partir de matrices de co-ocurrencia.
+
+### 10.13 Base de datos léxica
+
+Recurso lingüístico computacional que organiza información sobre las palabras (significados, relaciones semánticas, rasgos morfosintácticos, marcos argumentales) de forma estructurada y consultable por máquinas.
+
+**Ejemplo:** WordNet (relaciones semánticas), FrameNet (marcos semánticos y roles), PropBank (roles verbales) y VerbNet (clases verbales y subcategorización) son bases de datos léxicas de referencia. Muchos modelos de NLP se entrenan o evalúan con recursos derivados de estas bases.
+
 ---
 
 ## 11 · Semántica formal y lógica
@@ -1321,6 +1626,14 @@ mindmap
     Semantic parsing
     Lambda cálculo
     Abstract Meaning Representation (AMR)
+    Redes semánticas
+    Lógica descriptiva (DL)
+    Web semántica
+    Inferencia
+    Subsunción
+    Clasificación en DL
+    Anotaciones semánticas
+    Vector de características lingüísticas
 ```
 
 
@@ -1356,6 +1669,54 @@ Formalismo de grafos dirigidos acíclicos para representar el significado de ora
    :ARG1 (i / ir-01
             :ARG0 n))
 ```
+
+### 11.5 Redes semánticas
+
+Estructuras de representación del conocimiento formadas por nodos (conceptos, entidades) conectados por arcos etiquetados con relaciones semánticas (IS-A, PART-OF, HAS-PROPERTY, etc.). Precursoras de los grafos de conocimiento modernos.
+
+**Ejemplo:** En una red semántica, "perro" →IS-A→ "animal", "animal" →HAS-PART→ "célula". ConceptNet es una red semántica contemporánea con millones de relaciones en más de 30 idiomas, usada en NLP para razonamiento de sentido común.
+
+### 11.6 Lógica descriptiva (_Description Logic, DL_)
+
+Familia de formalismos de representación del conocimiento, subconjunto decidible de la lógica de primer orden, diseñada para razonar sobre conceptos (clases), roles (relaciones) e individuos en ontologías. Base formal de OWL (Web Ontology Language).
+
+**Ejemplo:** "Médico" puede definirse en DL como: Médico ≡ Persona ⊓ ∃ejerce.Medicina. Un razonador DL (HermiT, Pellet) deduce automáticamente que "Dr. García" es Médico si es Persona y ejerce Medicina. Protégé es el editor de ontologías OWL más usado.
+
+### 11.7 Web semántica
+
+Visión de extensión de la web donde los datos tienen significado formal, son interoperables y procesables por máquinas, sustentada en estándares del W3C: RDF (grafos de tripletas), OWL (ontologías) y SPARQL (consultas).
+
+**Ejemplo:** DBpedia extrae datos de Wikipedia en RDF, permitiendo consultas SPARQL como "dame todos los presidentes de México nacidos antes de 1950". Wikidata es la realización más activa de la web semántica; sus datos se usan en sistemas de QA para enriquecer grafos de conocimiento.
+
+### 11.8 Inferencia
+
+Proceso de derivar conclusiones nuevas y válidas a partir de conocimiento existente mediante reglas lógicas o restricciones formales. En NLP abarca desde la inferencia en ontologías hasta la inferencia textual (NLI) y el razonamiento de sentido común.
+
+**Ejemplo:** Dado que "todos los mamíferos respiran" y "el delfín es un mamífero", se infiere "el delfín respira" por modus ponens. En NLI, dado "Juan compró leche" se infiere "Juan fue a algún lugar a comprar" usando conocimiento de sentido común.
+
+### 11.9 Subsunción
+
+Relación entre conceptos en lógica descriptiva: el concepto A subsume a B si toda instancia de B es también instancia de A (A es más general). Relación transitiva y reflexiva que estructura jerarquías IS-A en ontologías.
+
+**Ejemplo:** "Animal" subsume a "Perro" porque todo perro es un animal. Los razonadores DL calculan automáticamente las jerarquías de subsunción completas, lo que permite detectar inconsistencias y clasificar nuevos conceptos sin intervención manual.
+
+### 11.10 Clasificación en lógica descriptiva
+
+Tarea de razonamiento que determina la posición jerárquica correcta de un concepto en la taxonomía de una ontología, calculada automáticamente por un razonador DL a partir de las definiciones formales.
+
+**Ejemplo:** Si se define "Cardiólogo" como Médico ⊓ ∃especialidad.Cardiología, el razonador clasifica automáticamente Cardiólogo como subclase de Médico. Esencial para mantener coherencia en ontologías biomédicas de gran escala como SNOMED CT o Gene Ontology.
+
+### 11.11 Anotaciones semánticas
+
+Etiquetas añadidas a unidades textuales (tokens, frases, oraciones) o a nodos de un recurso que especifican su significado, referencia o relación semántica: sentidos de palabra, roles semánticos, entidades nombradas, etc.
+
+**Ejemplo:** En un corpus anotado semánticamente, "Juan vendió su coche a María" puede contener: "Juan" [AGENTE], "coche" [TEMA], "María" [DESTINATARIO], "vendió" → frame Commerce_sell (FrameNet). SemCor es el corpus de inglés más usado con anotaciones de sentidos de WordNet.
+
+### 11.12 Vector de características de la información lingüística
+
+Representación de un token o texto como un vector numérico construido a partir de características lingüísticas explícitas (POS, morfología, dependencias, sentidos de palabra, entidades, etc.), en contraste con los embeddings aprendidos _end-to-end_.
+
+**Ejemplo:** Para WSD con un clasificador SVM, el vector puede incluir: POS en ventana ±3 (one-hot), bigrams de colocación, dependencia sintáctica del token objetivo y presencia de palabras del vecindario en listas semánticas. Los sistemas pre-transformer usaban estos vectores con CRF o SVM.
 
 ---
 
@@ -2014,6 +2375,12 @@ mindmap
       Tokenización (Subword: BPE, WordPiece)
       Stemming y Lematización
       OOV
+      Lexema y Gramema
+      Morfema gramatical y cero
+      Reconocimiento morfológico
+    Morfosintaxis
+      Morfosintaxis
+      Etiquetado morfosintáctico
     Sintaxis
       POS y POS Tagging
       Constituyentes y Sintagmas
@@ -2024,6 +2391,9 @@ mindmap
       Concordancia y Orden de palabras
       Ambigüedad estructural
       Recursividad
+      Árbol sintáctico / Parsing
+      Gramáticas formales (FSG, PSG, Unificación, Valencial, CCG)
+      Sintaxis generativa
     Semántica
       Semántica léxica (Sinonimia, Antonimia, Hiperonimia)
       Polisemia y Homonimia
@@ -2043,6 +2413,10 @@ mindmap
       Morfema
       Raíz (Root)
       Lema
+      Lexema
+      Gramema
+      Morfema gramatical
+      Morfema cero
     Procesos
       Flexión
       Derivación
@@ -2054,6 +2428,10 @@ mindmap
       Stemming
       Lematización
       Análisis morfológico
+    Reconocimiento
+      Hechos morfotácticos
+      Regla ortográfica
+      Reconocimiento morfológico
     Problemas
       Palabra funcional vs Contenido
       Vocabulario abierto/cerrado (OOV)
@@ -2071,11 +2449,19 @@ mindmap
       Meronimia / Holonimia
       Polisemia / Homonimia
       WSD
+      Homografía / Homofonía
+      Metonimia
+      Sentido de la palabra
+      Lexicón
+      Muestra léxica
     Relaciones
       SRL (Semantic Role Labeling)
       FrameNet
       Composicionalidad
       MWE
+      Semántica composicional
+      Principio de composición
+      Hipótesis rule-to-rule
     Inferencia y Similitud
       Textual Entailment (NLI)
       Paráfrasis
@@ -2086,6 +2472,11 @@ mindmap
       Embedding contextual
       Sentence Embedding
       Similitud coseno
+    Desambiguación
+      Supervisada
+      Basada en conocimiento
+      Semisupervisada
+      No supervisada (WSI)
 ```
 
 ### 22.4 Modelos de Lenguaje y Transformers

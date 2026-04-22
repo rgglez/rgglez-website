@@ -69,3 +69,53 @@ html[data-theme="dark"] {
   scroll-margin-block: 1rem;
 }
 
+/* Mermaid: mindmap — secciones no-root usan color de texto del tema */
+svg.mindmapDiagram [class*="section-"]:not(.section-root) span {
+  color: var(--foreground) !important;
+}
+
+/* Mermaid: flowchart node shapes (graph TD, flowchart LR, etc.) */
+[id^="mermaid-"] .node rect,
+[id^="mermaid-"] .node circle,
+[id^="mermaid-"] .node ellipse,
+[id^="mermaid-"] .node polygon,
+[id^="mermaid-"] .node path {
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
+}
+
+/* Mermaid: flowchart edges */
+[id^="mermaid-"] .edgePath .path,
+[id^="mermaid-"] .flowchart-link {
+  stroke: var(--accent) !important;
+}
+
+/* Mermaid: flowchart arrowheads (v11: .arrowheadPath, era .arrowMarkerPath) */
+[id^="mermaid-"] .arrowheadPath {
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
+
+/* Mermaid: sequence diagram — actores (v11: .actor directo en rect, no .actor rect) */
+[id^="mermaid-"] .actor {
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
+}
+
+/* Mermaid: sequence diagram — líneas de mensajes */
+[id^="mermaid-"] .messageLine0,
+[id^="mermaid-"] .messageLine1 {
+  stroke: var(--accent) !important;
+}
+
+/* Mermaid: sequence diagram — arrowheads */
+[id$="-arrowhead"] path {
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
+
+/* Mermaid: sequence diagram — lifelines */
+[id^="mermaid-"] .actor-line {
+  stroke: var(--border) !important;
+}
+

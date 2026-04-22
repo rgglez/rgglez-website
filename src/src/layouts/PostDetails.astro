@@ -294,7 +294,7 @@ const nextPost =
    * allowing users to copy code easily. */
   function attachCopyButtons() {
     const copyButtonLabel = "Copy";
-    const codeBlocks = Array.from(document.querySelectorAll("pre"));
+    const codeBlocks = Array.from(document.querySelectorAll("pre:not(.mermaid)"));
 
     for (const codeBlock of codeBlocks) {
       const wrapper = document.createElement("div");
@@ -350,27 +350,50 @@ const nextPost =
 <script>
   import mermaid from "mermaid";
 
-  function renderMermaid() {
-    const codeBlocks = document.querySelectorAll("pre > code.language-mermaid");
-    if (codeBlocks.length === 0) return;
+  let themeObserver: MutationObserver | null = null;
 
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
-    });
-
-    codeBlocks.forEach(async (code) => {
-      const pre = code.parentElement!;
-      const definition = code.textContent ?? "";
-      const id = `mermaid-${Math.random().toString(36).slice(2)}`;
-      const { svg } = await mermaid.render(id, definition);
-      const container = document.createElement("div");
-      container.className = "mermaid my-6 flex justify-center overflow-x-auto";
-      container.innerHTML = svg;
-      pre.replaceWith(container);
-    });
+  function getTheme() {
+    return document.documentElement.dataset.theme === "dark" ? "dark" : "forest";
   }
 
-  renderMermaid();
-  document.addEventListener("astro:after-swap", renderMermaid);
+  async function renderMermaid() {
+    // Restore any previously rendered diagrams back to pre.mermaid so they
+    // can be re-rendered (needed on theme change)
+    document.querySelectorAll<HTMLElement>("[data-mermaid]").forEach(el => {
+      const pre = document.createElement("pre");
+      pre.className = "mermaid";
+      pre.textContent = el.dataset.mermaid!;
+      el.replaceWith(pre);
+    });
+
+    const blocks = Array.from(document.querySelectorAll<HTMLPreElement>("pre.mermaid"));
+    if (!blocks.length) return;
+
+    mermaid.initialize({ startOnLoad: false, theme: getTheme() });
+
+    await Promise.all(blocks.map(async pre => {
+      const source = (pre.textContent ?? "").trim();
+      const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
+      try {
+        const { svg } = await mermaid.render(id, source);
+        const wrapper = document.createElement("div");
+        wrapper.className = "my-6 flex justify-center overflow-x-auto";
+        wrapper.dataset.mermaid = source;
+        wrapper.innerHTML = svg;
+        pre.replaceWith(wrapper);
+      } catch (err) {
+        console.error("[mermaid]", err);
+      }
+    }));
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    renderMermaid();
+    themeObserver?.disconnect();
+    themeObserver = new MutationObserver(renderMermaid);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+  });
 </script>

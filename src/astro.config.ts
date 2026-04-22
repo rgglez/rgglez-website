@@ -5,7 +5,6 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeMermaid from 'rehype-mermaid';
 import { visit } from 'unist-util-visit';
 import expressiveCode from 'astro-expressive-code';
 import {
@@ -53,7 +52,7 @@ export default defineConfig({
   ],
 
   markdown: {
-    rehypePlugins: [rehypeKatex, [rehypeMermaid, { strategy: 'img-svg', mermaidConfig: { theme: 'forest' } }]],
+    rehypePlugins: [rehypeKatex],
     remarkPlugins: [
       remarkMermaidBypass,
       [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
