@@ -2,7 +2,7 @@ export const SITE = {
   website: "https://rodolfo.gg/",
   author: "Rodolfo González González",
   profile: "https://rodolfo.gg/",
-  desc: "Sitio web de Rodolfo González González - Música, Programación, Computación, Electrónica, AI",
+  desc: "Sitio web personal de Rodolfo González González. Notas y artículos sobre Música, Programación, Computación, Electrónica e Inteligencia Artificial.",
   title: "rodolfo.gg",
   ogImage: "og.jpg",
   lightAndDarkMode: true,

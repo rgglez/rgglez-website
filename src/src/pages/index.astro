@@ -4,6 +4,7 @@ import { SITE } from "@/config";
 const { supportedLangs, defaultLang } = SITE;
 const defaultUrl = new URL(`/${defaultLang}/`, SITE.website).href;
 const ogImageUrl = new URL(SITE.ogImage, SITE.website).href;
+const ogTitle = `${SITE.title} — Música, Programación, Electrónica e IA`;
 ---
 <html>
   <head>
@@ -12,7 +13,7 @@ const ogImageUrl = new URL(SITE.ogImage, SITE.website).href;
     <meta http-equiv="refresh" content={`0;url=${defaultUrl}`} />
 
     <!-- Open Graph -->
-    <meta property="og:title" content={SITE.title} />
+    <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={SITE.desc} />
     <meta property="og:url" content={SITE.website} />
     <meta property="og:image" content={ogImageUrl} />
@@ -20,7 +21,7 @@ const ogImageUrl = new URL(SITE.ogImage, SITE.website).href;
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content={SITE.title} />
+    <meta property="twitter:title" content={ogTitle} />
     <meta property="twitter:description" content={SITE.desc} />
     <meta property="twitter:image" content={ogImageUrl} />
   </head>
