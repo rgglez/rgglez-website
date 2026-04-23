@@ -11,16 +11,18 @@ export default function Comments({
   lightTheme = "light",
   darkTheme = "dark",
 }: CommentsProps) {
-  const [theme, setTheme] = useState(() => {
-    return (
-      document.documentElement.dataset.theme ??
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light")
-    );
-  });
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
+    setTheme(
+      document.documentElement.dataset.theme ??
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light")
+    );
+    setMounted(true);
+
     const observer = new MutationObserver(() => {
       const newTheme = document.documentElement.dataset.theme;
       if (newTheme) setTheme(newTheme);
@@ -33,6 +35,8 @@ export default function Comments({
 
     return () => observer.disconnect();
   }, []);
+
+  if (!mounted) return <div className="mt-8" />;
 
   return (
     <div className="mt-8">
