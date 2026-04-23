@@ -4,7 +4,7 @@ export const SITE = {
   profile: "https://rodolfo.gg/",
   desc: "Sitio web de Rodolfo González González",
   title: "rodolfo.gg",
-  ogImage: "og.png",
+  ogImage: "og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 8,
   postPerPage: 10,
