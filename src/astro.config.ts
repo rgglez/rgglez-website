@@ -73,6 +73,10 @@ export default defineConfig({
     },
   },
 
+  build: {
+    inlineStylesheets: 'always',
+  },
+
   vite: {
     // eslint-disable-next-line
     // @ts-ignore
