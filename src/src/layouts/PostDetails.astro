@@ -55,7 +55,7 @@ if (typeof initOgImage === "string") {
   ogImageUrl = initOgImage; // Remote OG image (absolute URL)
 } else if (initOgImage) {
   // Convert local asset to JPEG — Facebook/WhatsApp crawlers don't support WebP
-  const optimized = await getImage({ src: initOgImage, format: "jpeg", width: 1200 });
+  const optimized = await getImage({ src: initOgImage, format: "jpeg", width: 1200, height: 630, fit: "cover" });
   ogImageUrl = optimized.src;
 }
 
