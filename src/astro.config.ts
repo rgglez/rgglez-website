@@ -1,4 +1,6 @@
 import { defineConfig, envField, fontProviders } from "astro/config";
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import remarkToc from "remark-toc";
@@ -16,8 +18,76 @@ import { transformerFileName } from "./src/utils/transformers/fileName";
 import { SITE } from "./src/config";
 import mdx from "@astrojs/mdx";
 import cloudflare from "@astrojs/cloudflare";
+import type { AstroIntegration } from "astro";
 
 import react from "@astrojs/react";
+
+function fontPreloadIntegration(): AstroIntegration {
+  return {
+    name: 'font-preload',
+    hooks: {
+      'astro:build:done': async ({ dir, logger }) => {
+        const clientDir = resolve(dir.pathname, '..', 'client');
+
+        async function findHtmlFiles(dirPath: string): Promise<string[]> {
+          const entries = await readdir(dirPath, { withFileTypes: true });
+          const files: string[] = [];
+          for (const entry of entries) {
+            const full = join(dirPath, entry.name);
+            if (entry.isDirectory()) {
+              files.push(...await findHtmlFiles(full));
+            } else if (entry.name.endsWith('.html')) {
+              files.push(full);
+            }
+          }
+          return files;
+        }
+
+        const htmlFiles = await findHtmlFiles(clientDir).catch(() => [] as string[]);
+        if (!htmlFiles.length) return;
+
+        const html = await readFile(htmlFiles[0], 'utf-8');
+        const fontFaceRegex = /@font-face\{[^}]+\}/g;
+        const srcRegex = /src:url\("([^"]+)"\)/;
+        let fontUrl: string | null = null;
+
+        for (const match of html.matchAll(fontFaceRegex)) {
+          const block = match[0];
+          if (/font-weight:400/.test(block) && /font-style:normal/.test(block)) {
+            const src = block.match(srcRegex);
+            if (src) { fontUrl = src[1]; break; }
+          }
+        }
+
+        if (!fontUrl) {
+          logger.warn('font-preload: Could not extract font URL from built HTML');
+          return;
+        }
+
+        const preloadTag = `<link rel="preload" as="font" type="font/woff2" href="${fontUrl}" crossorigin>`;
+        const linkHeader = `<${fontUrl}>; rel=preload; as=font; type=font/woff2; crossorigin`;
+
+        // Inject preload into all prerendered HTML files
+        let injected = 0;
+        for (const file of htmlFiles) {
+          const content = await readFile(file, 'utf-8');
+          if (content.includes(preloadTag)) continue;
+          const updated = content.replace('<meta charset="UTF-8">', `<meta charset="UTF-8">${preloadTag}`);
+          if (updated !== content) {
+            await writeFile(file, updated);
+            injected++;
+          }
+        }
+
+        // Write _headers for Cloudflare Pages (covers SSR pages too)
+        const headersPath = join(clientDir, '_headers');
+        await writeFile(headersPath, `/*\n  Link: ${linkHeader}\n`);
+
+        logger.info(`font-preload: preload injected into ${injected} HTML files, _headers written (${fontUrl})`);
+      }
+    }
+  };
+}
 
 function remarkMermaidBypass() {
   return (tree: any) => {
@@ -39,6 +109,7 @@ export default defineConfig({
   site: SITE.website,
 
   integrations: [
+    fontPreloadIntegration(),
     sitemap({
         filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
