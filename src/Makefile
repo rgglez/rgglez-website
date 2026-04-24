@@ -12,7 +12,7 @@ dev:
 
 build:
 	bun run build
-	cp -r dist/pagefind public/
+	cp -r dist/client/pagefind public/
 
 preview:
 	bun run preview
