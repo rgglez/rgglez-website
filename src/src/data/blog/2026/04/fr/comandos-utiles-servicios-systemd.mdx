@@ -1,0 +1,2832 @@
+---
+title: "Guide pour l'administration des services avec systemd."
+description: "Tôt ou tard, on doit administrer des services avec systemd."
+pubDatetime: 2026-04-24T00:00:00-06:00
+author: "Rodolfo González González"
+slug: "commandes-utiles-services-systemd"
+ogImage: "../../../../../assets/posts/2026/04/comandos-utiles-servicios-systemd/header.webp"
+featured: false
+draft: false
+tags:
+  - systemd
+  - linux
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+## Introduction
+
+Il y a bien longtemps, j'ai commencé par administrer un serveur Solaris pendant quelques mois. De là, je suis passé à Slackware, parce que c'était ce qu'il y avait. Puis à Red Hat. En ce temps-là, le cycle de vie des services était géré sans complications avec SysVinit. Cependant, à un moment donné du chemin, quelqu'un a eu l'idée de compliquer les choses.
+
+Entrez systemd.
+
+Et, eh bien, puisque Ubuntu, Debian et la plupart des distributions dérivées utilisent ce système, il n'y a d'autre choix que d'en apprendre un peu.
+
+---
+
+## Table des matières
+
+1. [Introduction : qu'est-ce que systemd et qu'administre-t-il](#1-introduction--quest-ce-que-systemd-et-quadministre-t-il)
+2. [Concepts fondamentaux : unités, services et cibles](#2-concepts-fondamentaux--unités-services-et-cibles)
+3. [Inspection de base du système et des services](#3-inspection-de-base-du-système-et-des-services)
+4. [Installation de services](#4-installation-de-services)
+5. [Création manuelle de services personnalisés](#5-création-manuelle-de-services-personnalisés)
+6. [Démarrer, arrêter, redémarrer et recharger des services](#6-démarrer-arrêter-redémarrer-et-recharger-des-services)
+7. [Activer, désactiver, masquer et démasquer des services](#7-activer-désactiver-masquer-et-démasquer-des-services)
+8. [Configuration des services avec les fichiers unit et les drop-ins](#8-configuration-des-services-avec-les-fichiers-unit-et-les-drop-ins)
+9. [Variables d'environnement, utilisateurs, permissions et répertoires de travail](#9-variables-denvironnement-utilisateurs-permissions-et-répertoires-de-travail)
+10. [Journaux, diagnostics et résolution de problèmes](#10-journaux-diagnostics-et-résolution-de-problèmes)
+11. [Désinstallation, suppression et nettoyage des services](#11-désinstallation-suppression-et-nettoyage-des-services)
+12. [Services utilisateur : systemd --user](#12-services-utilisateur--systemd---user)
+13. [Timers : remplacement pratique de cron pour les services périodiques](#13-timers--remplacement-pratique-de-cron-pour-les-services-périodiques)
+14. [Sécurité et durcissement des services](#14-sécurité-et-durcissement-des-services)
+15. [Bonnes pratiques opérationnelles](#15-bonnes-pratiques-opérationnelles)
+16. [Répertoires et fichiers importants](#16-répertoires-et-fichiers-importants)
+- [Sources de référence](#sources-de-référence)
+- [Référence rapide : aide-mémoire des commandes fréquentes](#référence-rapide--aide-mémoire-des-commandes-fréquentes)
+
+---
+
+## 1. Introduction : qu'est-ce que systemd et qu'administre-t-il
+
+`systemd` est le système d'initialisation et le gestionnaire de services prédominant dans de nombreuses distributions Linux modernes. Son processus principal s'exécute généralement en tant que PID 1 et est responsable du démarrage du système, de la gestion des services, du montage des systèmes de fichiers, du démarrage des sockets, de la planification des tâches, de la gestion des sessions, de la collecte des journaux via `journald` et de la coordination des dépendances entre les composants du système.
+
+Dans l'administration quotidienne, la commande centrale est `systemctl`. Avec elle, les unités systemd sont interrogées, démarrées, arrêtées, activées, désactivées, redémarrées, rechargées, masquées et gérées.
+
+Un « service » dans systemd correspond généralement à une unité avec l'extension `.service`, par exemple :
+
+- `ssh.service`
+- `nginx.service`
+- `postgresql.service`
+- `docker.service`
+- `myapp.service`
+
+Cependant, systemd ne gère pas uniquement des services. Il gère différents types d'unités : services, sockets, timers, cibles, montages, automontages, chemins, tranches, portées, périphériques et espaces d'échange.
+
+Exemple de base pour vérifier l'état d'un service :
+
+```bash
+systemctl status ssh.service
+```
+
+Explication de la commande :
+
+- `systemctl` : outil principal pour communiquer avec le gestionnaire systemd.
+- `status` : sous-commande qui affiche l'état d'une unité.
+- `ssh.service` : nom de l'unité à interroger. Dans de nombreuses distributions, `ssh` peut aussi être utilisé, car systemd déduit l'extension `.service` si aucune autre n'est spécifiée.
+
+Exemple alternatif :
+
+```bash
+systemctl status ssh
+```
+
+Cette commande résout généralement `ssh` en `ssh.service`, tant qu'il n'y a pas d'ambiguïté avec une autre unité du même nom et d'une extension différente.
+
+---
+
+## 2. Concepts fondamentaux : unités, services et cibles
+
+### 2.1 Unité
+
+Une unité est un objet géré par systemd. Chaque unité est définie par un fichier de configuration appelé fichier unit. Le nom de l'unité indique son type par son extension.
+
+Exemples :
+
+```text
+nginx.service
+ssh.socket
+apt-daily.timer
+multi-user.target
+home.mount
+```
+
+### 2.2 Service
+
+Une unité `.service` décrit comment démarrer, arrêter, recharger et superviser un processus ou un ensemble de processus.
+
+Exemple d'un fichier de service minimal :
+
+```ini
+[Unit]
+Description=Service d'exemple
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/mon-service
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Explication des sections :
+
+- `[Unit]` : métadonnées générales et dépendances de l'unité.
+- `[Service]` : instructions spécifiques pour exécuter le service.
+- `[Install]` : règles utilisées lors de l'activation du service avec `systemctl enable`.
+
+### 2.3 Cible (target)
+
+Une cible est une unité qui regroupe d'autres unités. Elle est comparable, de façon approximative, aux anciens niveaux d'exécution (runlevels) de SysVinit.
+
+Cibles courantes :
+
+- `multi-user.target` : mode multi-utilisateur sans interface graphique complète. Très courant sur les serveurs.
+- `graphical.target` : mode multi-utilisateur avec environnement graphique.
+- `rescue.target` : mode de secours.
+- `emergency.target` : mode d'urgence minimal.
+- `default.target` : alias vers la cible par défaut du système.
+
+Afficher la cible par défaut :
+
+```bash
+systemctl get-default
+```
+
+Explication :
+
+- `get-default` : affiche quelle cible sera utilisée par défaut au démarrage.
+
+Définir la cible par défaut :
+
+```bash
+sudo systemctl set-default multi-user.target
+```
+
+Explication :
+
+- `sudo` : exécute la commande avec des privilèges administratifs.
+- `systemctl` : client systemd.
+- `set-default` : change la cible par défaut.
+- `multi-user.target` : cible à définir comme destination principale de démarrage.
+
+Exemple pour un serveur sans bureau graphique :
+
+```bash
+sudo systemctl set-default multi-user.target
+```
+
+Exemple pour un poste de travail avec environnement graphique :
+
+```bash
+sudo systemctl set-default graphical.target
+```
+
+---
+
+## 3. Inspection de base du système et des services
+
+Avant d'installer, de modifier ou de supprimer des services, il est utile de savoir comment inspecter l'état du système.
+
+### 3.1 Lister les services actifs
+
+```bash
+systemctl list-units --type=service --state=running
+```
+
+Explication :
+
+- `list-units` : liste les unités chargées par systemd.
+- `--type=service` : filtre uniquement les unités de type service.
+- `--state=running` : affiche seulement les services dont l'état actif est `running`.
+
+Exemple :
+
+```bash
+systemctl list-units --type=service --state=running
+```
+
+Utile pour vérifier quels processus sont actuellement gérés par systemd.
+
+### 3.2 Lister tous les services chargés
+
+```bash
+systemctl list-units --type=service --all
+```
+
+Explication :
+
+- `--all` : inclut les unités inactives, en échec ou chargées mais pas nécessairement actives.
+
+Exemple :
+
+```bash
+systemctl list-units --type=service --all
+```
+
+### 3.3 Lister les fichiers unit installés
+
+```bash
+systemctl list-unit-files --type=service
+```
+
+Explication :
+
+- `list-unit-files` : liste les fichiers unit disponibles dans les chemins connus de systemd.
+- `--type=service` : limite la sortie aux services.
+
+La sortie inclut généralement des états tels que :
+
+- `enabled` : le service est activé pour démarrer automatiquement.
+- `disabled` : le service existe, mais ne démarre pas automatiquement.
+- `static` : ne peut pas être activé directement ; il est normalement activé comme dépendance d'une autre unité.
+- `masked` : est bloqué via un lien symbolique vers `/dev/null`.
+- `alias` : est un alias vers une autre unité.
+- `generated` : a été généré automatiquement.
+
+Exemple :
+
+```bash
+systemctl list-unit-files --type=service | grep nginx
+```
+
+### 3.4 Afficher l'état détaillé d'un service
+
+```bash
+systemctl status nginx.service
+```
+
+Explication :
+
+- `status` : indique si le service est actif, s'il a échoué, son PID principal, ses derniers journaux et une partie de sa configuration de chargement.
+- `nginx.service` : service interrogé.
+
+Exemple :
+
+```bash
+systemctl status nginx.service
+```
+
+Sortie abrégée typique :
+
+```text
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since ...
+   Main PID: 1234 (nginx)
+      Tasks: 5
+     Memory: 12.3M
+```
+
+### 3.5 Afficher les propriétés internes d'une unité
+
+```bash
+systemctl show nginx.service
+```
+
+Explication :
+
+- `show` : affiche les propriétés internes de systemd pour l'unité indiquée.
+- Utile pour l'automatisation, les scripts ou les diagnostics avancés.
+
+Exemple filtrant une propriété :
+
+```bash
+systemctl show nginx.service --property=MainPID
+```
+
+Explication :
+
+- `--property=MainPID` : affiche uniquement la propriété `MainPID`, qui correspond au processus principal reconnu par systemd.
+
+Autre exemple :
+
+```bash
+systemctl show nginx.service --property=FragmentPath --property=DropInPaths
+```
+
+Explication :
+
+- `FragmentPath` : chemin du fichier unit principal chargé.
+- `DropInPaths` : chemins des fichiers drop-in appliqués à l'unité.
+
+### 3.6 Afficher le fichier unit effectif
+
+```bash
+systemctl cat nginx.service
+```
+
+Explication :
+
+- `cat` : affiche le fichier unit principal et les drop-ins appliqués.
+- C'est l'une des façons les plus sûres de vérifier la configuration effective utilisée par systemd.
+
+Exemple :
+
+```bash
+systemctl cat nginx.service
+```
+
+---
+
+## 4. Installation de services
+
+Installer un service peut signifier deux choses différentes :
+
+1. Installer un paquet système qui inclut son propre service systemd.
+2. Créer et installer manuellement un fichier `.service` pour une application personnalisée.
+
+Cette section couvre l'installation via les gestionnaires de paquets. La création manuelle est couverte dans la section suivante.
+
+### 4.1 Installer un service sur Debian, Ubuntu et dérivés
+
+Exemple avec `nginx` :
+
+```bash
+sudo apt update
+sudo apt install nginx
+```
+
+Explication de la première commande :
+
+- `sudo` : exécute avec des privilèges administrateur.
+- `apt` : gestionnaire de paquets de haut niveau sous Debian, Ubuntu et dérivés.
+- `update` : télécharge les index de paquets mis à jour depuis les dépôts configurés.
+
+Explication de la deuxième commande :
+
+- `install` : installe un ou plusieurs paquets.
+- `nginx` : nom du paquet à installer. Le paquet inclut normalement des binaires, des fichiers de configuration et des unités systemd.
+
+Exemple complet :
+
+```bash
+sudo apt update
+sudo apt install nginx
+systemctl status nginx.service
+```
+
+Après l'installation d'un paquet, il est utile de vérifier si le service est actif ou activé :
+
+```bash
+systemctl is-active nginx.service
+systemctl is-enabled nginx.service
+```
+
+Explication :
+
+- `is-active` : indique si le service est actuellement actif.
+- `is-enabled` : indique si le service est activé pour démarrer automatiquement.
+
+### 4.2 Installer un service sur Fedora, RHEL, CentOS Stream, Rocky Linux ou AlmaLinux
+
+Exemple avec `nginx` :
+
+```bash
+sudo dnf install nginx
+```
+
+Explication :
+
+- `sudo` : privilèges administratifs.
+- `dnf` : gestionnaire de paquets utilisé par Fedora et les distributions modernes de la famille Red Hat.
+- `install` : installe le paquet indiqué.
+- `nginx` : paquet du serveur web.
+
+Exemple complet :
+
+```bash
+sudo dnf install nginx
+systemctl status nginx.service
+```
+
+Dans de nombreuses distributions de la famille Red Hat, l'installation d'un paquet n'implique pas nécessairement son démarrage ni son activation. Pour l'activer et le démarrer :
+
+```bash
+sudo systemctl enable --now nginx.service
+```
+
+Explication :
+
+- `enable` : active le service pour les démarrages futurs.
+- `--now` : en plus de l'activer, le démarre immédiatement.
+- `nginx.service` : service concerné.
+
+### 4.3 Installer un service sur Arch Linux et dérivés
+
+Exemple avec `nginx` :
+
+```bash
+sudo pacman -Syu nginx
+```
+
+Explication :
+
+- `pacman` : gestionnaire de paquets d'Arch Linux.
+- `-S` : synchronise et installe des paquets.
+- `-y` : met à jour la base de données des paquets.
+- `-u` : met à jour les paquets installés si des versions plus récentes sont disponibles.
+- `nginx` : paquet à installer.
+
+Il peut ensuite être activé et démarré :
+
+```bash
+sudo systemctl enable --now nginx.service
+```
+
+### 4.4 Voir quels fichiers un paquet a installés
+
+Sur Debian/Ubuntu :
+
+```bash
+dpkg -L nginx | grep systemd
+```
+
+Explication :
+
+- `dpkg -L nginx` : liste les fichiers installés par le paquet `nginx`.
+- `grep systemd` : filtre les lignes contenant le mot `systemd`.
+
+Exemple :
+
+```bash
+dpkg -L nginx | grep '\.service$'
+```
+
+Explication :
+
+- `grep '\.service$'` : affiche les chemins se terminant par `.service`.
+
+Sur Fedora/RHEL :
+
+```bash
+rpm -ql nginx | grep '\.service$'
+```
+
+Explication :
+
+- `rpm -ql nginx` : liste les fichiers installés par le paquet `nginx`.
+- `grep '\.service$'` : filtre les unités de service.
+
+---
+
+## 5. Création manuelle de services personnalisés
+
+Lorsqu'une application ne vient pas packagée comme service systemd, une unité peut être créée manuellement.
+
+### 5.1 Exemple d'application personnalisée
+
+Supposons qu'il existe un binaire à :
+
+```text
+/usr/local/bin/miapp
+```
+
+Et que nous voulons l'exécuter comme service.
+
+Il est d'abord recommandé de créer un utilisateur système dédié :
+
+```bash
+sudo useradd --system --home /var/lib/miapp --create-home --shell /usr/sbin/nologin miapp
+```
+
+Explication :
+
+- `useradd` : crée un utilisateur local.
+- `--system` : crée un compte système, généralement avec un UID dans la plage réservée aux services.
+- `--home /var/lib/miapp` : définit le répertoire home de l'utilisateur.
+- `--create-home` : crée le répertoire home s'il n'existe pas.
+- `--shell /usr/sbin/nologin` : empêche la connexion interactive normale.
+- `miapp` : nom de l'utilisateur créé.
+
+Dans certaines distributions, le chemin de `nologin` peut être différent. Il peut être vérifié avec :
+
+```bash
+command -v nologin
+```
+
+### 5.2 Créer les répertoires pour l'application
+
+```bash
+sudo mkdir -p /etc/miapp /var/lib/miapp /var/log/miapp
+sudo chown -R miapp:miapp /var/lib/miapp /var/log/miapp
+sudo chmod 0750 /var/lib/miapp /var/log/miapp
+```
+
+Explication :
+
+- `mkdir -p` : crée les répertoires et n'échoue pas s'ils existent déjà.
+- `/etc/miapp` : emplacement recommandé pour la configuration persistante.
+- `/var/lib/miapp` : données persistantes de l'application.
+- `/var/log/miapp` : journaux propres si l'application écrit des fichiers de journaux directement.
+- `chown -R miapp:miapp` : change le propriétaire et le groupe récursivement.
+- `chmod 0750` : accès complet au propriétaire, lecture/exécution au groupe et aucun accès aux autres utilisateurs.
+
+### 5.3 Créer le fichier unit
+
+```bash
+sudo editor /etc/systemd/system/miapp.service
+```
+
+Contenu suggéré :
+
+```ini
+[Unit]
+Description=Mon application d'exemple
+Documentation=https://example.com/docs/miapp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=miapp
+Group=miapp
+WorkingDirectory=/var/lib/miapp
+EnvironmentFile=-/etc/miapp/miapp.env
+ExecStart=/usr/local/bin/miapp --config /etc/miapp/config.yaml
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=30s
+TimeoutStopSec=30s
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Explication de `[Unit]` :
+
+- `Description` : description lisible du service.
+- `Documentation` : URL ou référence de documentation.
+- `After=network-online.target` : ordonne que le service démarre après que systemd considère le réseau en ligne disponible. Ne crée pas à lui seul une dépendance forte.
+- `Wants=network-online.target` : demande que `network-online.target` soit également activé, sans nécessairement faire échouer le démarrage si cette cible échoue.
+
+Explication de `[Service]` :
+
+- `Type=simple` : systemd considère le service démarré immédiatement après le lancement du processus spécifié par `ExecStart`. C'est le type le plus courant pour les applications au premier plan.
+- `User=miapp` : exécute le processus en tant qu'utilisateur `miapp`.
+- `Group=miapp` : exécute le processus avec `miapp` comme groupe principal.
+- `WorkingDirectory=/var/lib/miapp` : répertoire de travail du processus.
+- `EnvironmentFile=-/etc/miapp/miapp.env` : charge les variables d'environnement depuis ce fichier. Le préfixe `-` indique que l'absence du fichier n'est pas une erreur.
+- `ExecStart=/usr/local/bin/miapp --config /etc/miapp/config.yaml` : commande principale du service.
+- `Restart=on-failure` : redémarre le service s'il se termine avec une erreur, un signal non propre ou un délai dépassé.
+- `RestartSec=5s` : attend 5 secondes avant de redémarrer.
+- `TimeoutStartSec=30s` : temps maximum autorisé pour démarrer.
+- `TimeoutStopSec=30s` : temps maximum autorisé pour s'arrêter proprement.
+- `KillSignal=SIGTERM` : signal initial utilisé pour arrêter le processus.
+
+Explication de `[Install]` :
+
+- `WantedBy=multi-user.target` : lors de l'activation du service, systemd crée un lien symbolique pour que le service soit démarré dans le cadre de `multi-user.target`.
+
+### 5.4 Recharger systemd après la création ou la modification d'une unité
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Explication :
+
+- `daemon-reload` : recharge la configuration des unités depuis le disque. Nécessaire après la création, la suppression ou la modification de fichiers `.service`, `.socket`, `.timer`, drop-ins et autres fichiers unit.
+
+Exemple complet :
+
+```bash
+sudo editor /etc/systemd/system/miapp.service
+sudo systemctl daemon-reload
+sudo systemctl status miapp.service
+```
+
+### 5.5 Vérifier la syntaxe d'une unité
+
+```bash
+systemd-analyze verify /etc/systemd/system/miapp.service
+```
+
+Explication :
+
+- `systemd-analyze` : outil d'analyse et de diagnostic de systemd.
+- `verify` : valide les fichiers unit et signale les problèmes de syntaxe, les problèmes de dépendances ou les directives inconnues.
+- `/etc/systemd/system/miapp.service` : fichier à vérifier.
+
+Exemple :
+
+```bash
+systemd-analyze verify /etc/systemd/system/miapp.service
+```
+
+Si la commande n'affiche aucune erreur, l'unité est probablement syntaxiquement valide.
+
+### 5.6 Activer et démarrer le service personnalisé
+
+```bash
+sudo systemctl enable --now miapp.service
+```
+
+Explication :
+
+- `enable` : configure le démarrage automatique.
+- `--now` : démarre le service immédiatement.
+- `miapp.service` : unité concernée.
+
+Vérifier :
+
+```bash
+systemctl status miapp.service
+journalctl -u miapp.service -n 50 --no-pager
+```
+
+Explication :
+
+- `journalctl` : interroge les journaux systemd.
+- `-u miapp.service` : filtre par unité.
+- `-n 50` : affiche les 50 dernières lignes.
+- `--no-pager` : affiche directement sans ouvrir le paginateur interactif.
+
+---
+
+## 6. Démarrer, arrêter, redémarrer et recharger des services
+
+### 6.1 Démarrer un service
+
+```bash
+sudo systemctl start nginx.service
+```
+
+Explication :
+
+- `start` : demande le démarrage immédiat de l'unité.
+- N'active pas le service pour les démarrages futurs.
+- Si le système redémarre, le service ne démarrera automatiquement que s'il est aussi activé.
+
+Exemple :
+
+```bash
+sudo systemctl start nginx.service
+systemctl status nginx.service
+```
+
+### 6.2 Arrêter un service
+
+```bash
+sudo systemctl stop nginx.service
+```
+
+Explication :
+
+- `stop` : arrête l'unité maintenant.
+- Ne désactive pas le service pour les démarrages futurs.
+- Si le service est activé, il peut redémarrer au prochain démarrage du système.
+
+Exemple :
+
+```bash
+sudo systemctl stop nginx.service
+systemctl is-active nginx.service
+```
+
+### 6.3 Redémarrer un service
+
+```bash
+sudo systemctl restart nginx.service
+```
+
+Explication :
+
+- `restart` : arrête et redémarre le service.
+- Utile après des changements de configuration quand le service ne supporte pas le rechargement à chaud.
+- Provoque une interruption du service, même si elle est brève.
+
+Exemple :
+
+```bash
+sudo nginx -t
+sudo systemctl restart nginx.service
+```
+
+Explication :
+
+- `nginx -t` : valide la configuration de Nginx avant de redémarrer.
+- `systemctl restart nginx.service` : redémarre Nginx si l'on décide de continuer.
+
+### 6.4 Recharger un service sans le redémarrer
+
+```bash
+sudo systemctl reload nginx.service
+```
+
+Explication :
+
+- `reload` : demande au service de recharger sa configuration sans arrêter le processus principal.
+- Ne fonctionne que si l'unité définit `ExecReload=` ou si le service a un support natif de rechargement.
+- Généralement préférable à `restart` quand on cherche à éviter les interruptions.
+
+Exemple :
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx.service
+```
+
+### 6.5 Recharger si possible, redémarrer sinon
+
+```bash
+sudo systemctl reload-or-restart nginx.service
+```
+
+Explication :
+
+- `reload-or-restart` : tente de recharger la configuration. Si le service ne supporte pas le rechargement, le redémarre.
+- Utile dans les scripts génériques.
+
+Exemple :
+
+```bash
+sudo systemctl reload-or-restart nginx.service
+```
+
+### 6.6 Redémarrer seulement si le service est déjà actif
+
+```bash
+sudo systemctl try-restart nginx.service
+```
+
+Explication :
+
+- `try-restart` : redémarre le service seulement s'il est déjà actif.
+- S'il est arrêté, ne le démarre pas.
+
+Exemple :
+
+```bash
+sudo systemctl try-restart nginx.service
+```
+
+### 6.7 Recharger ou redémarrer seulement si actif
+
+```bash
+sudo systemctl reload-or-try-restart nginx.service
+```
+
+Explication :
+
+- `reload-or-try-restart` : si le service est actif, tente de le recharger ; si ce n'est pas possible, le redémarre.
+- S'il est inactif, ne le démarre pas.
+
+Exemple :
+
+```bash
+sudo systemctl reload-or-try-restart nginx.service
+```
+
+### 6.8 Tuer les processus d'un service
+
+```bash
+sudo systemctl kill nginx.service
+```
+
+Explication :
+
+- `kill` : envoie un signal aux processus de l'unité.
+- Par défaut envoie généralement `SIGTERM`.
+- Doit être utilisé avec précaution, car il peut interrompre brusquement des processus de production.
+
+Exemple envoyant `SIGKILL` :
+
+```bash
+sudo systemctl kill --signal=SIGKILL nginx.service
+```
+
+Explication :
+
+- `--signal=SIGKILL` : envoie un signal non interceptable qui termine le processus immédiatement.
+- Doit être utilisé en dernier recours.
+
+Exemple envoyant `SIGHUP` :
+
+```bash
+sudo systemctl kill --signal=SIGHUP nginx.service
+```
+
+Explication :
+
+- `SIGHUP` : de nombreux démons l'interprètent comme une demande de rechargement de configuration, bien que cela dépende du programme.
+
+---
+
+## 7. Activer, désactiver, masquer et démasquer des services
+
+Dans systemd, il est important de distinguer démarrer et activer :
+
+- `start` : démarre maintenant.
+- `enable` : configure le démarrage automatique.
+- `stop` : arrête maintenant.
+- `disable` : empêche le démarrage automatique.
+
+### 7.1 Activer un service pour qu'il démarre automatiquement
+
+```bash
+sudo systemctl enable nginx.service
+```
+
+Explication :
+
+- `enable` : crée des liens symboliques selon la section `[Install]` du fichier unit.
+- Ne démarre pas nécessairement le service à ce moment.
+- `nginx.service` : service activé.
+
+Exemple :
+
+```bash
+sudo systemctl enable nginx.service
+systemctl is-enabled nginx.service
+```
+
+### 7.2 Activer et démarrer en une seule étape
+
+```bash
+sudo systemctl enable --now nginx.service
+```
+
+Explication :
+
+- `enable` : active le démarrage automatique.
+- `--now` : démarre le service immédiatement après l'activation.
+
+Exemple :
+
+```bash
+sudo systemctl enable --now nginx.service
+systemctl status nginx.service
+```
+
+### 7.3 Désactiver un service
+
+```bash
+sudo systemctl disable nginx.service
+```
+
+Explication :
+
+- `disable` : supprime les liens symboliques créés par `enable`.
+- N'arrête pas le service s'il est actuellement en cours d'exécution.
+- Le service peut rester actif jusqu'à ce qu'il soit arrêté manuellement ou que le système redémarre.
+
+Exemple :
+
+```bash
+sudo systemctl disable nginx.service
+systemctl is-enabled nginx.service
+systemctl is-active nginx.service
+```
+
+### 7.4 Désactiver et arrêter en un seul flux
+
+Il n'existe pas de sous-commande traditionnelle unique équivalente à « disable --now » dans toutes les versions historiques, bien que de nombreuses versions modernes acceptent `disable --now`. Pour une compatibilité maximale, cela peut être fait explicitement :
+
+```bash
+sudo systemctl disable nginx.service
+sudo systemctl stop nginx.service
+```
+
+Explication :
+
+- `disable` : empêche le démarrage automatique futur.
+- `stop` : arrête le service dans la session actuelle.
+
+Exemple utilisant `--now` quand disponible :
+
+```bash
+sudo systemctl disable --now nginx.service
+```
+
+Explication :
+
+- `--now` : avec `disable`, demande d'arrêter l'unité en plus de la désactiver.
+
+### 7.5 Réactiver un service
+
+```bash
+sudo systemctl reenable nginx.service
+```
+
+Explication :
+
+- `reenable` : désactive et réactive l'unité.
+- Utile si la section `[Install]` a changé ou si l'on souhaite reconstruire les liens symboliques d'activation.
+
+Exemple :
+
+```bash
+sudo systemctl reenable nginx.service
+```
+
+### 7.6 Masquer un service
+
+```bash
+sudo systemctl mask nginx.service
+```
+
+Explication :
+
+- `mask` : bloque l'unité en créant un lien symbolique vers `/dev/null`.
+- Un service masqué ne peut pas être démarré manuellement ni comme dépendance d'un autre service.
+- Plus fort que `disable`.
+
+Exemple :
+
+```bash
+sudo systemctl mask nginx.service
+systemctl status nginx.service
+```
+
+Sortie conceptuelle :
+
+```text
+Loaded: masked (Reason: Unit nginx.service is masked.)
+```
+
+### 7.7 Masquer et arrêter immédiatement
+
+```bash
+sudo systemctl mask --now nginx.service
+```
+
+Explication :
+
+- `mask` : bloque l'unité.
+- `--now` : tente également de l'arrêter immédiatement.
+
+Exemple :
+
+```bash
+sudo systemctl mask --now nginx.service
+```
+
+### 7.8 Démasquer un service
+
+```bash
+sudo systemctl unmask nginx.service
+```
+
+Explication :
+
+- `unmask` : supprime le lien symbolique vers `/dev/null`.
+- Ne démarre ni n'active le service par lui-même.
+
+Exemple :
+
+```bash
+sudo systemctl unmask nginx.service
+sudo systemctl enable --now nginx.service
+```
+
+### 7.9 Vérifier si un service est actif ou activé
+
+```bash
+systemctl is-active nginx.service
+systemctl is-enabled nginx.service
+```
+
+Explication :
+
+- `is-active` : retourne `active`, `inactive`, `failed`, etc.
+- `is-enabled` : retourne `enabled`, `disabled`, `masked`, `static`, etc.
+- Ces commandes sont utiles dans les scripts car elles retournent également des codes de sortie appropriés.
+
+Exemple dans un script :
+
+```bash
+if systemctl is-active --quiet nginx.service; then
+    echo "Nginx est actif"
+else
+    echo "Nginx n'est pas actif"
+fi
+```
+
+Explication :
+
+- `--quiet` : évite d'afficher du texte et permet d'utiliser le code de sortie de la commande.
+
+---
+
+## 8. Configuration des services avec les fichiers unit et les drop-ins
+
+### 8.1 Ne pas modifier directement les fichiers de paquets
+
+Les services installés par des paquets ont généralement leurs unités à des chemins tels que :
+
+```text
+/usr/lib/systemd/system/
+/lib/systemd/system/
+```
+
+Selon la distribution, l'un ou l'autre peut être le chemin principal. Il est déconseillé de modifier ces fichiers directement, car une mise à jour du paquet peut écraser les modifications.
+
+L'emplacement recommandé pour les modifications locales est :
+
+```text
+/etc/systemd/system/
+```
+
+### 8.2 Modifier un service avec un drop-in
+
+```bash
+sudo systemctl edit nginx.service
+```
+
+Explication :
+
+- `edit` : ouvre un éditeur pour créer ou modifier un drop-in local.
+- Par défaut crée un fichier similaire à `/etc/systemd/system/nginx.service.d/override.conf`.
+- Le drop-in est appliqué par-dessus le fichier unit original.
+
+Exemple pour ajouter un redémarrage automatique :
+
+```bash
+sudo systemctl edit nginx.service
+```
+
+Contenu :
+
+```ini
+[Service]
+Restart=on-failure
+RestartSec=3s
+```
+
+Ensuite :
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```
+
+Explication :
+
+- `daemon-reload` : recharge la définition de l'unité.
+- `restart` : redémarre pour que les options affectant le démarrage du processus s'appliquent.
+
+### 8.3 Modifier le fichier unit complet
+
+```bash
+sudo systemctl edit --full nginx.service
+```
+
+Explication :
+
+- `edit --full` : copie le fichier unit complet dans `/etc/systemd/system/` et l'ouvre pour modification.
+- À partir de ce moment, la copie locale peut avoir la priorité sur l'unité du paquet.
+- Doit être utilisé avec plus de précaution qu'un drop-in, car il peut devenir obsolète face aux changements du paquet.
+
+Exemple :
+
+```bash
+sudo systemctl edit --full nginx.service
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```
+
+### 8.4 Voir les différences entre les fichiers originaux et les surcharges
+
+```bash
+systemd-delta
+```
+
+Explication :
+
+- `systemd-delta` : affiche les différences, surcharges, extensions et fichiers masqués par rapport aux unités fournies par les paquets.
+
+Exemple :
+
+```bash
+systemd-delta --type=extended
+```
+
+Explication :
+
+- `--type=extended` : affiche les unités étendues via des drop-ins.
+
+Autre exemple :
+
+```bash
+systemd-delta nginx.service
+```
+
+### 8.5 Réinitialiser les surcharges d'une unité
+
+Pour supprimer un drop-in créé avec `systemctl edit` :
+
+```bash
+sudo rm -rf /etc/systemd/system/nginx.service.d
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```
+
+Explication :
+
+- `rm -rf /etc/systemd/system/nginx.service.d` : supprime le répertoire des drop-ins locaux de ce service.
+- `daemon-reload` : recharge les unités.
+- `restart` : redémarre le service pour appliquer la configuration sans surcharges.
+
+Si `systemctl edit --full` a été utilisé, la copie complète doit être supprimée :
+
+```bash
+sudo rm -f /etc/systemd/system/nginx.service
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```
+
+Explication :
+
+- `rm -f /etc/systemd/system/nginx.service` : supprime l'unité locale complète.
+- Au rechargement, systemd utilisera à nouveau l'unité du paquet, si elle existe.
+
+### 8.6 Remplacer des listes dans les drop-ins
+
+Certaines directives systemd acceptent plusieurs valeurs. Pour les remplacer complètement dans un drop-in, elles doivent d'abord être vidées.
+
+Exemple avec `ExecStart` :
+
+```ini
+[Service]
+ExecStart=
+ExecStart=/usr/local/bin/miapp --modo produccion
+```
+
+Explication :
+
+- `ExecStart=` vide efface les valeurs héritées.
+- La deuxième ligne définit la nouvelle commande.
+- C'est nécessaire car `ExecStart` peut avoir des règles spéciales et n'est pas toujours remplacé comme une simple variable.
+
+Exemple complet :
+
+```bash
+sudo systemctl edit miapp.service
+```
+
+Contenu :
+
+```ini
+[Service]
+ExecStart=
+ExecStart=/usr/local/bin/miapp --config /etc/miapp/prod.yaml
+```
+
+Appliquer :
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart miapp.service
+```
+
+### 8.7 Configurer les redémarrages automatiques
+
+Drop-in :
+
+```ini
+[Service]
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+```
+
+Explication :
+
+- `Restart=on-failure` : redémarre en cas d'échec.
+- `RestartSec=10s` : attend 10 secondes avant de redémarrer.
+- `StartLimitIntervalSec=300` : fenêtre temporelle de 300 secondes pour limiter les tentatives.
+- `StartLimitBurst=5` : permet jusqu'à 5 tentatives dans cette fenêtre avant de considérer que le service échoue répétitivement.
+
+Commandes :
+
+```bash
+sudo systemctl edit miapp.service
+sudo systemctl daemon-reload
+sudo systemctl restart miapp.service
+```
+
+### 8.8 Configurer les dépendances et l'ordre de démarrage
+
+Exemple :
+
+```ini
+[Unit]
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+```
+
+Explication :
+
+- `After=` : définit l'ordre. L'unité démarre après celles listées.
+- `Wants=` : dépendance faible. Tente d'activer l'autre unité, mais n'échoue pas nécessairement si celle-ci échoue.
+- `Requires=` : dépendance forte. Si l'unité requise échoue au démarrage, l'unité dépendante est également affectée.
+
+Exemple de drop-in :
+
+```bash
+sudo systemctl edit miapp.service
+```
+
+Contenu :
+
+```ini
+[Unit]
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+```
+
+Appliquer :
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart miapp.service
+```
+
+---
+
+## 9. Variables d'environnement, utilisateurs, permissions et répertoires de travail
+
+### 9.1 Variables d'environnement inline
+
+```ini
+[Service]
+Environment="APP_ENV=production" "APP_PORT=8080"
+```
+
+Explication :
+
+- `Environment=` définit des variables directement dans le fichier unit.
+- Chaque assignation peut être entre guillemets.
+- Utile pour des valeurs non secrètes et relativement stables.
+
+Exemple :
+
+```bash
+sudo systemctl edit miapp.service
+```
+
+Contenu :
+
+```ini
+[Service]
+Environment="APP_ENV=production" "LOG_LEVEL=info"
+```
+
+Appliquer :
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart miapp.service
+```
+
+### 9.2 Variables depuis un fichier EnvironmentFile
+
+Fichier :
+
+```bash
+sudo install -d -m 0750 -o root -g miapp /etc/miapp
+sudo editor /etc/miapp/miapp.env
+```
+
+Contenu du fichier :
+
+```bash
+APP_ENV=production
+APP_PORT=8080
+LOG_LEVEL=info
+```
+
+Fichier unit :
+
+```ini
+[Service]
+EnvironmentFile=/etc/miapp/miapp.env
+```
+
+Explication :
+
+- `EnvironmentFile=` lit les variables depuis un fichier.
+- Le fichier ne doit pas avoir de syntaxe shell complexe ; il doit normalement contenir des lignes `CLE=valeur`.
+- Si préfixé par `-`, l'absence du fichier n'est pas considérée comme une erreur :
+
+```ini
+[Service]
+EnvironmentFile=-/etc/miapp/miapp.env
+```
+
+Exemple complet :
+
+```bash
+sudo editor /etc/miapp/miapp.env
+sudo systemctl restart miapp.service
+```
+
+Note : si seul le contenu de `EnvironmentFile` change, redémarrer le service suffit généralement. Si le fichier unit est modifié pour ajouter ou supprimer la directive `EnvironmentFile=`, alors `daemon-reload` est requis.
+
+### 9.3 Exécuter en tant qu'utilisateur dédié
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+```
+
+Explication :
+
+- `User=` réduit les privilèges en exécutant le processus en tant qu'utilisateur non privilégié.
+- `Group=` définit le groupe effectif principal.
+- C'est une mesure de sécurité de base pour éviter d'exécuter des applications en tant que `root` inutilement.
+
+Exemple de création d'utilisateur :
+
+```bash
+sudo useradd --system --home /var/lib/miapp --create-home --shell /usr/sbin/nologin miapp
+```
+
+### 9.4 Configurer le répertoire de travail
+
+```ini
+[Service]
+WorkingDirectory=/var/lib/miapp
+```
+
+Explication :
+
+- `WorkingDirectory=` définit le répertoire courant depuis lequel le processus s'exécutera.
+- Utile si l'application attend des chemins relatifs.
+
+Exemple :
+
+```ini
+[Service]
+WorkingDirectory=/opt/miapp
+ExecStart=/opt/miapp/bin/miapp
+```
+
+### 9.5 Créer automatiquement des répertoires avec systemd
+
+systemd peut créer des répertoires runtime, d'état, de cache et de journaux pour un service.
+
+Exemple :
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+RuntimeDirectory=miapp
+StateDirectory=miapp
+CacheDirectory=miapp
+LogsDirectory=miapp
+```
+
+Explication :
+
+- `RuntimeDirectory=miapp` : crée `/run/miapp` pendant que le service est actif.
+- `StateDirectory=miapp` : crée `/var/lib/miapp` pour les données persistantes.
+- `CacheDirectory=miapp` : crée `/var/cache/miapp`.
+- `LogsDirectory=miapp` : crée `/var/log/miapp`.
+- systemd assigne les permissions et la propriété correspondant à l'utilisateur du service quand c'est approprié.
+
+Exemple d'utilisation :
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+StateDirectory=miapp
+WorkingDirectory=/var/lib/miapp
+ExecStart=/usr/local/bin/miapp
+```
+
+### 9.6 Utiliser DynamicUser
+
+```ini
+[Service]
+DynamicUser=yes
+StateDirectory=miapp
+ExecStart=/usr/local/bin/miapp
+```
+
+Explication :
+
+- `DynamicUser=yes` : systemd assigne un utilisateur dynamique pour le service.
+- Réduit le besoin de création manuelle d'utilisateurs.
+- Pour les données persistantes, des directives comme `StateDirectory=` doivent être utilisées.
+
+Exemple :
+
+```ini
+[Unit]
+Description=Service avec utilisateur dynamique
+
+[Service]
+DynamicUser=yes
+StateDirectory=miapp
+ExecStart=/usr/local/bin/miapp --data-dir /var/lib/miapp
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+## 10. Journaux, diagnostics et résolution de problèmes
+
+### 10.1 Voir les journaux d'un service
+
+```bash
+journalctl -u nginx.service
+```
+
+Explication :
+
+- `journalctl` : interroge le journal systemd.
+- `-u nginx.service` : filtre les journaux associés à cette unité.
+
+Exemple :
+
+```bash
+journalctl -u nginx.service
+```
+
+### 10.2 Voir les dernières lignes du journal
+
+```bash
+journalctl -u nginx.service -n 100 --no-pager
+```
+
+Explication :
+
+- `-n 100` : affiche les 100 dernières lignes.
+- `--no-pager` : n'ouvre pas `less` ou autre paginateur.
+
+Exemple :
+
+```bash
+journalctl -u nginx.service -n 100 --no-pager
+```
+
+### 10.3 Suivre les journaux en temps réel
+
+```bash
+journalctl -u nginx.service -f
+```
+
+Explication :
+
+- `-f` : suit le journal en temps réel, similaire à `tail -f`.
+
+Exemple :
+
+```bash
+journalctl -u miapp.service -f
+```
+
+### 10.4 Voir les journaux depuis le dernier démarrage
+
+```bash
+journalctl -u nginx.service -b
+```
+
+Explication :
+
+- `-b` : limite la requête au démarrage actuel.
+
+Exemple :
+
+```bash
+journalctl -u nginx.service -b --no-pager
+```
+
+### 10.5 Voir les journaux d'un démarrage précédent
+
+```bash
+journalctl --list-boots
+```
+
+Explication :
+
+- `--list-boots` : liste les démarrages enregistrés dans le journal.
+
+Ensuite :
+
+```bash
+journalctl -b -1 -u nginx.service
+```
+
+Explication :
+
+- `-b -1` : sélectionne le démarrage précédent.
+- `-u nginx.service` : filtre par service.
+
+### 10.6 Voir les erreurs système
+
+```bash
+journalctl -p err -b
+```
+
+Explication :
+
+- `-p err` : filtre la priorité `err` ou plus grave.
+- `-b` : limite au démarrage actuel.
+
+Exemple :
+
+```bash
+journalctl -p warning..alert -b --no-pager
+```
+
+Explication :
+
+- `warning..alert` : affiche les messages de l'avertissement à l'alerte.
+
+### 10.7 Diagnostiquer les services en échec
+
+```bash
+systemctl --failed
+```
+
+Explication :
+
+- `--failed` : affiche les unités en état d'échec.
+
+Exemple :
+
+```bash
+systemctl --failed
+```
+
+Voir les détails d'une unité en échec :
+
+```bash
+systemctl status miapp.service
+journalctl -u miapp.service -b -n 200 --no-pager
+```
+
+### 10.8 Réinitialiser l'état d'échec
+
+```bash
+sudo systemctl reset-failed miapp.service
+```
+
+Explication :
+
+- `reset-failed` : efface l'état `failed` enregistré par systemd.
+- Ne corrige pas la cause de l'échec ; efface seulement l'état d'échec après l'avoir corrigé ou s'il n'est plus pertinent.
+
+Exemple :
+
+```bash
+sudo systemctl reset-failed miapp.service
+systemctl status miapp.service
+```
+
+Réinitialiser tous les échecs enregistrés :
+
+```bash
+sudo systemctl reset-failed
+```
+
+### 10.9 Vérifier les temps de démarrage
+
+```bash
+systemd-analyze
+```
+
+Explication :
+
+- Affiche le temps de démarrage général du firmware, du chargeur de démarrage, du noyau, de l'initrd et de l'espace utilisateur, selon disponibilité.
+
+Exemple :
+
+```bash
+systemd-analyze blame
+```
+
+Explication :
+
+- `blame` : liste les unités triées par temps d'initialisation.
+
+Exemple avec chemin critique :
+
+```bash
+systemd-analyze critical-chain
+```
+
+Explication :
+
+- `critical-chain` : affiche la chaîne critique des unités qui ont influencé le temps de démarrage.
+
+### 10.10 Voir l'arbre des dépendances
+
+```bash
+systemctl list-dependencies nginx.service
+```
+
+Explication :
+
+- `list-dependencies` : affiche les dépendances liées à l'unité.
+
+Exemple inverse :
+
+```bash
+systemctl list-dependencies --reverse nginx.service
+```
+
+Explication :
+
+- `--reverse` : affiche les unités qui dépendent de celle indiquée.
+
+---
+
+## 11. Désinstallation, suppression et nettoyage des services
+
+Cette section distingue plusieurs opérations qui sont souvent confondues.
+
+- **Arrêter** : éteindre le service maintenant.
+- **Désactiver** : empêcher le démarrage automatique.
+- **Masquer** : empêcher tout démarrage.
+- **Désinstaller** : supprimer le paquet ou les fichiers de l'application.
+- **Supprimer** : effacer les fichiers unit, drop-ins, données, journaux ou configuration locale.
+- **Effacer l'état d'échec** : supprimer l'état `failed` de systemd.
+
+### 11.1 Arrêter avant de désinstaller
+
+```bash
+sudo systemctl stop nginx.service
+```
+
+Explication :
+
+- `stop` : arrête le service immédiatement.
+- Il est bonne pratique d'arrêter les services avant de supprimer des paquets ou d'effacer des unités manuelles.
+
+### 11.2 Désactiver avant de désinstaller
+
+```bash
+sudo systemctl disable nginx.service
+```
+
+Explication :
+
+- `disable` : supprime les liens symboliques de démarrage automatique.
+- Évite de laisser des liens symboliques brisés vers des unités qui seront supprimées.
+
+Exemple combiné :
+
+```bash
+sudo systemctl disable --now nginx.service
+```
+
+Explication :
+
+- `disable` : désactive.
+- `--now` : tente également de l'arrêter.
+
+### 11.3 Désinstaller un paquet sur Debian/Ubuntu
+
+Supprimer le paquet en conservant la configuration :
+
+```bash
+sudo apt remove nginx
+```
+
+Explication :
+
+- `apt remove` : désinstalle le paquet, mais peut conserver les fichiers de configuration dans `/etc`.
+- `nginx` : paquet à supprimer.
+
+Supprimer le paquet et purger la configuration gérée par le paquet :
+
+```bash
+sudo apt purge nginx
+```
+
+Explication :
+
+- `apt purge` : supprime le paquet et ses fichiers de configuration gérés par le système de paquets.
+- Ne supprime pas nécessairement les données générées par l'application dans `/var/lib`, les journaux dans `/var/log` ou les fichiers créés manuellement.
+
+Supprimer les dépendances inutilisées :
+
+```bash
+sudo apt autoremove
+```
+
+Explication :
+
+- `autoremove` : supprime les paquets installés comme dépendances qui ne sont plus requis.
+
+Exemple complet :
+
+```bash
+sudo systemctl disable --now nginx.service
+sudo apt purge nginx
+sudo apt autoremove
+```
+
+### 11.4 Désinstaller un paquet sur Fedora/RHEL
+
+```bash
+sudo dnf remove nginx
+```
+
+Explication :
+
+- `dnf remove` : supprime le paquet indiqué et, selon les dépendances, peut retirer des paquets liés.
+- `nginx` : paquet à désinstaller.
+
+Exemple :
+
+```bash
+sudo systemctl disable --now nginx.service
+sudo dnf remove nginx
+```
+
+### 11.5 Désinstaller un paquet sur Arch Linux
+
+```bash
+sudo pacman -R nginx
+```
+
+Explication :
+
+- `pacman -R` : supprime le paquet indiqué.
+
+Supprimer le paquet et les dépendances inutilisées installées comme dépendances :
+
+```bash
+sudo pacman -Rs nginx
+```
+
+Explication :
+
+- `-R` : supprime.
+- `-s` : supprime les dépendances non requises par d'autres paquets.
+
+Exemple :
+
+```bash
+sudo systemctl disable --now nginx.service
+sudo pacman -Rs nginx
+```
+
+### 11.6 Supprimer un service manuel créé dans /etc/systemd/system
+
+Supposons qu'il a été créé manuellement :
+
+```text
+/etc/systemd/system/miapp.service
+```
+
+Processus recommandé :
+
+```bash
+sudo systemctl disable --now miapp.service
+sudo rm -f /etc/systemd/system/miapp.service
+sudo systemctl daemon-reload
+sudo systemctl reset-failed miapp.service
+```
+
+Explication :
+
+- `disable --now` : désactive et arrête le service.
+- `rm -f` : supprime le fichier unit local.
+- `daemon-reload` : force systemd à recharger la liste des unités disponibles.
+- `reset-failed` : efface un état d'échec possible associé au nom de l'unité.
+
+Si le service avait des drop-ins :
+
+```bash
+sudo rm -rf /etc/systemd/system/miapp.service.d
+sudo systemctl daemon-reload
+```
+
+Explication :
+
+- `.service.d` : répertoire des fragments drop-in.
+- Le supprimer élimine les surcharges locales.
+
+### 11.7 Supprimer les données, journaux et configuration d'une application personnalisée
+
+Après avoir supprimé le fichier unit, si l'on souhaite supprimer complètement l'application :
+
+```bash
+sudo rm -rf /etc/miapp /var/lib/miapp /var/log/miapp /var/cache/miapp
+```
+
+Explication :
+
+- `/etc/miapp` : configuration.
+- `/var/lib/miapp` : données persistantes.
+- `/var/log/miapp` : journaux propres.
+- `/var/cache/miapp` : caches.
+- `rm -rf` : supprime récursivement sans demander confirmation ; doit être utilisé avec une extrême prudence.
+
+Exemple plus sûr, en listant d'abord :
+
+```bash
+sudo find /etc/miapp /var/lib/miapp /var/log/miapp /var/cache/miapp -maxdepth 2 -print
+```
+
+Ensuite, si les chemins sont confirmés corrects :
+
+```bash
+sudo rm -rf /etc/miapp /var/lib/miapp /var/log/miapp /var/cache/miapp
+```
+
+### 11.8 Supprimer l'utilisateur et le groupe d'un service
+
+```bash
+sudo userdel miapp
+```
+
+Explication :
+
+- `userdel` : supprime le compte local.
+- `miapp` : utilisateur à supprimer.
+
+Si l'on souhaite également supprimer son home, selon la façon dont il a été créé :
+
+```bash
+sudo userdel --remove miapp
+```
+
+Explication :
+
+- `--remove` : tente de supprimer le répertoire home et le spool de l'utilisateur.
+
+Note : si le répertoire home était partagé, contient des données nécessaires ou se trouve dans un chemin sensible, il est conseillé de vérifier manuellement d'abord.
+
+### 11.9 Nettoyer les unités orphelines ou non trouvées
+
+Après avoir supprimé des services manuellement :
+
+```bash
+sudo systemctl daemon-reload
+systemctl list-units --type=service --all | grep miapp
+```
+
+Si elle apparaît en échec :
+
+```bash
+sudo systemctl reset-failed miapp.service
+```
+
+Si elle apparaît comme masquée :
+
+```bash
+sudo systemctl unmask miapp.service
+sudo systemctl daemon-reload
+```
+
+### 11.10 Supprimer un service masqué manuellement
+
+Si un lien symbolique comme celui-ci existe :
+
+```text
+/etc/systemd/system/miapp.service -> /dev/null
+```
+
+Il peut être démasqué :
+
+```bash
+sudo systemctl unmask miapp.service
+```
+
+Ou vérifier manuellement :
+
+```bash
+ls -l /etc/systemd/system/miapp.service
+```
+
+Si confirmé comme lien symbolique vers `/dev/null` :
+
+```bash
+sudo rm -f /etc/systemd/system/miapp.service
+sudo systemctl daemon-reload
+```
+
+---
+
+## 12. Services utilisateur : systemd --user
+
+systemd peut également gérer des services par utilisateur, sans privilèges root. Ces services appartiennent à la session de l'utilisateur et sont normalement configurés sous :
+
+```text
+~/.config/systemd/user/
+```
+
+### 12.1 Créer un service utilisateur
+
+```bash
+mkdir -p ~/.config/systemd/user
+editor ~/.config/systemd/user/mi-tarea.service
+```
+
+Contenu :
+
+```ini
+[Unit]
+Description=Service utilisateur d'exemple
+
+[Service]
+ExecStart=/home/usuario/bin/mi-tarea
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Explication :
+
+- L'unité n'utilise pas `sudo`.
+- `WantedBy=default.target` fait référence à la cible par défaut du gestionnaire utilisateur, et non au `multi-user.target` du système.
+
+### 12.2 Recharger les unités utilisateur
+
+```bash
+systemctl --user daemon-reload
+```
+
+Explication :
+
+- `--user` : communique avec le gestionnaire systemd de l'utilisateur actuel, et non avec le systemd du système.
+- `daemon-reload` : recharge les unités utilisateur.
+
+### 12.3 Activer et démarrer un service utilisateur
+
+```bash
+systemctl --user enable --now mi-tarea.service
+```
+
+Explication :
+
+- `--user` : mode utilisateur.
+- `enable` : active pour les futures sessions de l'utilisateur.
+- `--now` : démarre immédiatement.
+
+### 12.4 Voir les journaux utilisateur
+
+```bash
+journalctl --user -u mi-tarea.service
+```
+
+Explication :
+
+- `--user` : interroge les journaux des unités utilisateur.
+- `-u mi-tarea.service` : filtre par unité.
+
+### 12.5 Permettre aux services utilisateur de persister après la déconnexion
+
+```bash
+loginctl enable-linger usuario
+```
+
+Explication :
+
+- `loginctl` : gère les sessions et les utilisateurs depuis systemd-logind.
+- `enable-linger usuario` : permet au gestionnaire systemd de l'utilisateur de continuer à s'exécuter après la déconnexion.
+
+Exemple :
+
+```bash
+sudo loginctl enable-linger deploy
+```
+
+Utile pour les services utilisateur exécutés par un compte de déploiement.
+
+Désactiver linger :
+
+```bash
+sudo loginctl disable-linger deploy
+```
+
+---
+
+## 13. Timers : remplacement pratique de cron pour les services périodiques
+
+Les timers systemd permettent d'exécuter des services selon un calendrier.
+
+### 13.1 Créer un service exécutable par un timer
+
+Fichier :
+
+```bash
+sudo editor /etc/systemd/system/backup-miapp.service
+```
+
+Contenu :
+
+```ini
+[Unit]
+Description=Sauvegarde de MiApp
+
+[Service]
+Type=oneshot
+User=miapp
+Group=miapp
+ExecStart=/usr/local/bin/backup-miapp
+```
+
+Explication :
+
+- `Type=oneshot` : service d'exécution ponctuelle ; systemd attend que le processus se termine.
+- `ExecStart` : commande exécutée par le timer.
+
+### 13.2 Créer le timer
+
+Fichier :
+
+```bash
+sudo editor /etc/systemd/system/backup-miapp.timer
+```
+
+Contenu :
+
+```ini
+[Unit]
+Description=Exécute la sauvegarde de MiApp quotidiennement
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=backup-miapp.service
+
+[Install]
+WantedBy=timers.target
+```
+
+Explication :
+
+- `OnCalendar=*-*-* 03:30:00` : s'exécute quotidiennement à 03:30.
+- `Persistent=true` : si le système était éteint à l'heure prévue, exécute la tâche au démarrage.
+- `Unit=backup-miapp.service` : service qui sera déclenché.
+- `WantedBy=timers.target` : permet d'activer le timer.
+
+### 13.3 Activer et démarrer le timer
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now backup-miapp.timer
+```
+
+Explication :
+
+- `daemon-reload` : charge les nouveaux fichiers `.service` et `.timer`.
+- `enable --now` : active et démarre le timer.
+
+### 13.4 Lister les timers
+
+```bash
+systemctl list-timers --all
+```
+
+Explication :
+
+- `list-timers` : liste les timers actifs.
+- `--all` : inclut les timers inactifs.
+
+Exemple :
+
+```bash
+systemctl list-timers --all | grep backup-miapp
+```
+
+### 13.5 Exécuter manuellement le service du timer
+
+```bash
+sudo systemctl start backup-miapp.service
+```
+
+Explication :
+
+- Exécute le service immédiatement, sans attendre le prochain déclenchement du timer.
+
+---
+
+## 14. Sécurité et durcissement des services
+
+systemd permet d'appliquer des mesures d'isolation sans modifier l'application.
+
+### 14.1 Protéger le système de fichiers
+
+Exemple de drop-in :
+
+```ini
+[Service]
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/miapp /var/log/miapp
+```
+
+Explication :
+
+- `ProtectSystem=strict` : monte certaines parties du système de fichiers en lecture seule pour le service.
+- `ProtectHome=true` : bloque l'accès à `/home`, `/root` et `/run/user`.
+- `ReadWritePaths=` : permet l'accès en écriture explicite aux chemins nécessaires.
+
+Appliquer :
+
+```bash
+sudo systemctl edit miapp.service
+sudo systemctl daemon-reload
+sudo systemctl restart miapp.service
+```
+
+### 14.2 Restreindre les privilèges
+
+```ini
+[Service]
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+```
+
+Explication :
+
+- `NoNewPrivileges=true` : empêche le processus d'acquérir des privilèges supplémentaires via des mécanismes comme les binaires setuid.
+- `PrivateTmp=true` : fournit un `/tmp` privé pour le service.
+- `PrivateDevices=true` : restreint l'accès aux périphériques.
+
+### 14.3 Restreindre les capacités Linux
+
+```ini
+[Service]
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+```
+
+Explication :
+
+- `CapabilityBoundingSet=` limite les capacités disponibles pour le processus.
+- `CAP_NET_BIND_SERVICE` permet de lier des ports inférieurs à 1024 sans exécuter en tant que root.
+- `AmbientCapabilities=` permet de transmettre des capacités au processus exécuté.
+
+Exemple pour une application écoutant sur le port 80 :
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+ExecStart=/usr/local/bin/miapp --listen :80
+```
+
+### 14.4 Analyser la sécurité d'une unité
+
+```bash
+systemd-analyze security miapp.service
+```
+
+Explication :
+
+- `systemd-analyze security` : évalue l'exposition à la sécurité d'une unité selon les directives d'isolation disponibles.
+- Ne remplace pas un audit de sécurité, mais fournit un guide utile.
+
+Exemple :
+
+```bash
+systemd-analyze security nginx.service
+```
+
+### 14.5 Durcissement raisonnable d'un service personnalisé
+
+Exemple :
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/miapp /var/log/miapp
+Restart=on-failure
+```
+
+Explication :
+
+- Ne pas copier un modèle de durcissement sans le tester.
+- Certaines applications nécessitent l'accès à des chemins, périphériques, réseau, homes d'utilisateurs ou appels système spécifiques.
+- Il est recommandé d'appliquer une restriction à la fois et de vérifier les journaux.
+
+---
+
+## 15. Bonnes pratiques opérationnelles
+
+### 15.1 Utiliser des noms clairs
+
+Pour les services personnalisés, utilisez des noms descriptifs :
+
+```text
+miapp-api.service
+miapp-worker.service
+miapp-scheduler.service
+```
+
+Cela facilite la journalisation, la surveillance et l'administration.
+
+### 15.2 Utiliser des utilisateurs dédiés
+
+Évitez d'exécuter des services en tant que `root` sauf si c'est strictement nécessaire. Utilisez :
+
+```ini
+[Service]
+User=miapp
+Group=miapp
+```
+
+### 15.3 Séparer la configuration, les données et les binaires
+
+Convention courante :
+
+```text
+/usr/local/bin/miapp          # binaire installé manuellement
+/etc/miapp/                   # configuration
+/var/lib/miapp/               # données persistantes
+/var/log/miapp/               # journaux propres, si applicable
+/run/miapp/                   # fichiers runtime temporaires
+```
+
+### 15.4 Valider avant de redémarrer
+
+Exemple avec Nginx :
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx.service
+```
+
+Explication :
+
+- `nginx -t` : valide la configuration.
+- `&&` : exécute la deuxième commande seulement si la première a réussi.
+- `systemctl reload` : recharge sans redémarrer complètement.
+
+Exemple avec une application personnalisée supportant la validation :
+
+```bash
+/usr/local/bin/miapp --check-config /etc/miapp/config.yaml && sudo systemctl restart miapp.service
+```
+
+### 15.5 Utiliser les drop-ins pour les modifications locales
+
+Préférable :
+
+```bash
+sudo systemctl edit miapp.service
+```
+
+Éviter, sauf nécessité justifiée :
+
+```bash
+sudo editor /usr/lib/systemd/system/miapp.service
+```
+
+Raison : les fichiers sous `/usr/lib/systemd/system` ou `/lib/systemd/system` appartiennent généralement à des paquets et peuvent être écrasés par des mises à jour.
+
+### 15.6 Documenter les surcharges
+
+Un drop-in peut inclure des commentaires :
+
+```ini
+[Service]
+# Redémarrage automatique pour tolérer les pannes réseau transitoires.
+Restart=on-failure
+RestartSec=5s
+```
+
+### 15.7 Vérifier les journaux après tout changement
+
+```bash
+sudo systemctl restart miapp.service
+systemctl status miapp.service
+journalctl -u miapp.service -b -n 100 --no-pager
+```
+
+### 15.8 Éviter `rm -rf` sans vérifier les chemins
+
+Avant de supprimer des données :
+
+```bash
+sudo find /var/lib/miapp -maxdepth 2 -print
+```
+
+Ensuite, si confirmé :
+
+```bash
+sudo rm -rf /var/lib/miapp
+```
+
+### 15.9 Utiliser `daemon-reload` quand c'est approprié
+
+Doit être utilisé après :
+
+- La création d'un fichier unit.
+- La suppression d'un fichier unit.
+- La modification d'un fichier unit.
+- La création, suppression ou modification de drop-ins.
+- La modification d'unités `.timer`, `.socket`, `.mount`, etc.
+
+Commande :
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Généralement pas nécessaire après avoir modifié uniquement un fichier chargé avec `EnvironmentFile=`, sauf si le fichier unit lui-même a changé.
+
+### 15.10 Différencier `reload` de `daemon-reload`
+
+```bash
+sudo systemctl reload nginx.service
+```
+
+Recharge la configuration de Nginx.
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Recharge la configuration de systemd, c'est-à-dire les fichiers unit.
+
+Ce sont des opérations distinctes.
+
+---
+
+## 16. Répertoires et fichiers importants
+
+### 16.1 Fichiers unit du système
+
+```text
+/etc/systemd/system/
+```
+
+Utilisation :
+
+- Unités créées par l'administrateur.
+- Surcharges locales.
+- Drop-ins.
+- Liens symboliques créés par `systemctl enable`.
+- Priorité plus élevée que les unités installées par les paquets.
+
+Exemples :
+
+```text
+/etc/systemd/system/miapp.service
+/etc/systemd/system/nginx.service.d/override.conf
+/etc/systemd/system/multi-user.target.wants/nginx.service
+```
+
+---
+
+```text
+/usr/lib/systemd/system/
+```
+
+Utilisation :
+
+- Emplacement courant pour les unités installées par les paquets dans de nombreuses distributions.
+- Dans Debian et dérivés, peut coexister avec `/lib/systemd/system`.
+- La modification directe n'est pas recommandée.
+
+Exemples :
+
+```text
+/usr/lib/systemd/system/sshd.service
+/usr/lib/systemd/system/docker.service
+```
+
+---
+
+```text
+/lib/systemd/system/
+```
+
+Utilisation :
+
+- Emplacement traditionnel dans Debian/Ubuntu pour les unités installées par les paquets.
+- Peut être un lien symbolique ou un équivalent fonctionnel aux chemins sous `/usr` selon la distribution.
+- La modification directe n'est pas recommandée.
+
+Exemples :
+
+```text
+/lib/systemd/system/ssh.service
+/lib/systemd/system/nginx.service
+```
+
+---
+
+```text
+/run/systemd/system/
+```
+
+Utilisation :
+
+- Unités générées ou temporaires au moment de l'exécution.
+- Perdues au redémarrage.
+
+---
+
+### 16.2 Fichiers unit utilisateur
+
+```text
+~/.config/systemd/user/
+```
+
+Utilisation :
+
+- Services de l'utilisateur actuel.
+- Ne nécessite pas de privilèges root.
+
+Exemple :
+
+```text
+/home/usuario/.config/systemd/user/mi-tarea.service
+```
+
+---
+
+```text
+/etc/systemd/user/
+```
+
+Utilisation :
+
+- Unités utilisateur disponibles globalement pour tous les utilisateurs.
+
+---
+
+```text
+/usr/lib/systemd/user/
+```
+
+Utilisation :
+
+- Unités utilisateur installées par les paquets.
+
+---
+
+### 16.3 Configuration générale de systemd
+
+```text
+/etc/systemd/system.conf
+```
+
+Utilisation :
+
+- Configuration globale du gestionnaire systemd du système.
+- Doit être modifié avec précaution.
+
+---
+
+```text
+/etc/systemd/user.conf
+```
+
+Utilisation :
+
+- Configuration globale pour les gestionnaires systemd utilisateur.
+
+---
+
+```text
+/etc/systemd/journald.conf
+```
+
+Utilisation :
+
+- Configuration de `systemd-journald`.
+- Contrôle la persistance, la taille et les politiques de journaux du journal.
+
+---
+
+```text
+/etc/systemd/logind.conf
+```
+
+Utilisation :
+
+- Configuration de `systemd-logind`.
+- Gère les sessions, les sièges, les boutons d'alimentation, la suspension et le linger.
+
+---
+
+### 16.4 Journaux du journal
+
+```text
+/run/log/journal/
+```
+
+Utilisation :
+
+- Journaux volatils du journal.
+- Perdus au redémarrage si la persistance n'est pas configurée.
+
+---
+
+```text
+/var/log/journal/
+```
+
+Utilisation :
+
+- Journaux persistants du journal.
+- S'il existe et que journald est configuré pour utiliser le stockage persistant, les journaux survivent aux redémarrages.
+
+Créer un stockage de journal persistant :
+
+```bash
+sudo mkdir -p /var/log/journal
+sudo systemctl restart systemd-journald.service
+```
+
+Explication :
+
+- `mkdir -p /var/log/journal` : crée le chemin persistant.
+- `restart systemd-journald.service` : redémarre journald pour prendre en compte le changement.
+
+---
+
+### 16.5 Configuration des applications
+
+```text
+/etc/<service>/
+```
+
+Utilisation :
+
+- Configuration persistante spécifique aux services.
+
+Exemples :
+
+```text
+/etc/nginx/
+/etc/ssh/
+/etc/postgresql/
+/etc/miapp/
+```
+
+---
+
+### 16.6 Données persistantes
+
+```text
+/var/lib/<service>/
+```
+
+Utilisation :
+
+- Données persistantes des applications et services.
+
+Exemples :
+
+```text
+/var/lib/postgresql/
+/var/lib/mysql/
+/var/lib/docker/
+/var/lib/miapp/
+```
+
+---
+
+### 16.7 Journaux classiques par fichier
+
+```text
+/var/log/<service>/
+```
+
+Utilisation :
+
+- Journaux écrits directement par l'application.
+- Tous les services n'utilisent pas leurs propres fichiers ; beaucoup écrivent sur stdout/stderr et sont consultés avec `journalctl`.
+
+Exemples :
+
+```text
+/var/log/nginx/
+/var/log/apache2/
+/var/log/miapp/
+```
+
+---
+
+### 16.8 Fichiers runtime
+
+```text
+/run/<service>/
+```
+
+Utilisation :
+
+- Fichiers PID, sockets, verrous et fichiers temporaires runtime.
+- Effacés à chaque redémarrage.
+
+Exemples :
+
+```text
+/run/nginx.pid
+/run/sshd.pid
+/run/miapp/
+```
+
+---
+
+### 16.9 tmpfiles.d
+
+```text
+/etc/tmpfiles.d/
+/usr/lib/tmpfiles.d/
+/run/tmpfiles.d/
+```
+
+Utilisation :
+
+- Règles pour créer, nettoyer ou supprimer des fichiers et répertoires temporaires ou persistants.
+- Utile pour préparer des répertoires sous `/run`, `/var/cache`, `/var/log` ou d'autres chemins.
+
+Exemple de fichier :
+
+```text
+/etc/tmpfiles.d/miapp.conf
+```
+
+Contenu :
+
+```text
+d /run/miapp 0750 miapp miapp -
+d /var/log/miapp 0750 miapp miapp -
+```
+
+Appliquer manuellement :
+
+```bash
+sudo systemd-tmpfiles --create /etc/tmpfiles.d/miapp.conf
+```
+
+Explication :
+
+- `systemd-tmpfiles` : crée, nettoie ou supprime des fichiers selon les règles tmpfiles.d.
+- `--create` : crée les fichiers/répertoires définis dans la configuration.
+- `/etc/tmpfiles.d/miapp.conf` : fichier de règles à appliquer.
+
+---
+
+### 16.10 sysusers.d
+
+```text
+/etc/sysusers.d/
+/usr/lib/sysusers.d/
+/run/sysusers.d/
+```
+
+Utilisation :
+
+- Règles déclaratives pour créer des utilisateurs et groupes système.
+- Très utilisé par les paquets.
+
+Exemple :
+
+```text
+/etc/sysusers.d/miapp.conf
+```
+
+Contenu :
+
+```text
+u miapp - "Utilisateur système pour MiApp" /var/lib/miapp /usr/sbin/nologin
+```
+
+Appliquer manuellement :
+
+```bash
+sudo systemd-sysusers /etc/sysusers.d/miapp.conf
+```
+
+Explication :
+
+- `systemd-sysusers` : crée des utilisateurs et groupes système selon les fichiers `sysusers.d`.
+- Le fichier définit l'utilisateur `miapp`, la description, le home et le shell.
+
+---
+
+### 16.11 Chemins liés à l'activation
+
+Lors de l'exécution :
+
+```bash
+sudo systemctl enable miapp.service
+```
+
+systemd peut créer des liens symboliques tels que :
+
+```text
+/etc/systemd/system/multi-user.target.wants/miapp.service -> /etc/systemd/system/miapp.service
+```
+
+Explication :
+
+- Le répertoire `.wants` représente une dépendance faible de la cible.
+- Ces liens symboliques ne sont normalement pas créés manuellement ; ils sont gérés avec `systemctl enable` et `systemctl disable`.
+
+---
+
+### 16.12 Fichiers d'environnement courants
+
+Il n'existe pas d'emplacement universel unique, mais ceux-ci sont courants :
+
+```text
+/etc/default/<service>       # Debian/Ubuntu dans certains paquets
+/etc/sysconfig/<service>     # RHEL/Fedora dans certains paquets
+/etc/<service>/<service>.env
+```
+
+Exemples :
+
+```text
+/etc/default/nginx
+/etc/sysconfig/sshd
+/etc/miapp/miapp.env
+```
+
+Ces fichiers n'affectent le service que si le fichier unit possède une directive telle que :
+
+```ini
+EnvironmentFile=/etc/miapp/miapp.env
+```
+
+---
+
+## Sources de référence
+
+- systemd.unit — documentation officielle de freedesktop.org : https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+- systemd.service — documentation officielle de freedesktop.org : https://www.freedesktop.org/software/systemd/man/systemd.service.html
+- systemd-tmpfiles — documentation man-pages : https://man7.org/linux/man-pages/man8/systemd-tmpfiles.8.html
+- tmpfiles.d — documentation officielle de freedesktop.org : https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html
+- sysusers.d — documentation man-pages : https://man7.org/linux/man-pages/man5/sysusers.d.5.html
+
+---
+
+## Référence rapide : aide-mémoire des commandes fréquentes
+
+```bash
+# Voir l'état
+systemctl status servicio.service
+
+# Démarrer maintenant
+sudo systemctl start servicio.service
+
+# Arrêter maintenant
+sudo systemctl stop servicio.service
+
+# Redémarrer
+sudo systemctl restart servicio.service
+
+# Recharger la configuration du service
+sudo systemctl reload servicio.service
+
+# Activer au démarrage
+sudo systemctl enable servicio.service
+
+# Activer et démarrer maintenant
+sudo systemctl enable --now servicio.service
+
+# Désactiver au démarrage
+sudo systemctl disable servicio.service
+
+# Désactiver et arrêter maintenant
+sudo systemctl disable --now servicio.service
+
+# Masquer pour empêcher le démarrage
+sudo systemctl mask servicio.service
+
+# Démasquer
+sudo systemctl unmask servicio.service
+
+# Recharger les définitions d'unités
+sudo systemctl daemon-reload
+
+# Voir les journaux
+journalctl -u servicio.service
+
+# Voir les journaux récents
+journalctl -u servicio.service -n 100 --no-pager
+
+# Suivre les journaux en temps réel
+journalctl -u servicio.service -f
+
+# Voir les unités en échec
+systemctl --failed
+
+# Effacer l'état d'échec
+sudo systemctl reset-failed servicio.service
+
+# Voir le fichier unit effectif
+systemctl cat servicio.service
+
+# Créer une surcharge locale
+sudo systemctl edit servicio.service
+
+# Valider l'unité
+systemd-analyze verify /etc/systemd/system/servicio.service
+```

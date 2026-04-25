@@ -126,9 +126,9 @@ export default defineConfig({
     rehypePlugins: [rehypeKatex],
     remarkPlugins: [
       remarkMermaidBypass,
-      [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières" }],
+      [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis" }],
       remarkMath,
-      [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res)$/i, summary: (str: string) => str }],
+      [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis)$/i, summary: (str: string) => str }],
     ],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
