@@ -1,0 +1,293 @@
+---
+export const prerender = true;
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
+import { LANG_NAMES } from "@/utils/langNames";
+
+export async function getStaticPaths() {
+  return SITE.supportedLangs.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const supportedLangs = SITE.supportedLangs;
+const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
+---
+
+<Layout title={`Search | ${SITE.title}`}>
+  <Header />
+  <Main pageTitle="Search" pageDesc="Search any article ...">
+    <div
+      id="pf-root"
+      data-backurl={backUrl}
+      data-lang={lang}
+      data-supported={JSON.stringify(supportedLangs)}
+    >
+      <input
+        id="pf-input"
+        type="search"
+        placeholder="Search ..."
+        autocomplete="off"
+        class="w-full rounded border border-border bg-background px-3 py-2 outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+      />
+
+      <div id="pf-dev-warning" class="mt-4 hidden rounded bg-muted/75 p-4 space-y-2">
+        <p><strong>DEV mode warning!</strong> You need to build the project at least once to see search results during development.</p>
+        <code class="block bg-black text-white px-2 py-1 rounded">make build</code>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-[12rem_1fr]">
+        <aside>
+          <ul id="pf-filters" class="space-y-2">
+            {supportedLangs.map(l => (
+              <li>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    value={l}
+                    checked={l === lang}
+                    class="pf-lang-cb accent-accent"
+                  />
+                  <span>{LANG_NAMES[l] ?? l.toUpperCase()}</span>
+                  <span class="pf-count text-foreground/60" data-lang={l}>(0)</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <section>
+          <p id="pf-status" class="text-sm text-foreground/60"></p>
+          <ol id="pf-results" class="mt-2 space-y-6"></ol>
+        </section>
+      </div>
+    </div>
+  </Main>
+  <Footer />
+</Layout>
+
+<script>
+  type PagefindFilterCounts = Record<string, Record<string, number>>;
+  type PagefindResultData = {
+    url: string;
+    meta?: { title?: string };
+    excerpt?: string;
+    filters?: Record<string, string[]>;
+  };
+  type PagefindResult = { id: string; data: () => Promise<PagefindResultData> };
+  type PagefindResponse = {
+    results: PagefindResult[];
+    filters: PagefindFilterCounts;
+    totalFilters?: PagefindFilterCounts;
+  };
+  type PagefindModule = {
+    options?: (opts: Record<string, unknown>) => Promise<void>;
+    search: (
+      term: string,
+      opts?: { filters?: Record<string, string[] | string> }
+    ) => Promise<PagefindResponse>;
+  };
+
+  const PAGE_SIZE = 20;
+  const DEBOUNCE_MS = 300;
+
+  function debounce<T extends (...args: any[]) => void>(fn: T, ms: number) {
+    let t: ReturnType<typeof setTimeout> | undefined;
+    return (...args: Parameters<T>) => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  let pagefind: PagefindModule | null = null;
+  let pagefindLoadFailed = false;
+  let currentTerm = "";
+
+  async function loadPagefind(): Promise<PagefindModule | null> {
+    if (pagefind) return pagefind;
+    if (pagefindLoadFailed) return null;
+    try {
+      // @ts-expect-error — bundle generated at build time, no types
+      const mod = (await import(/* @vite-ignore */ "/pagefind/pagefind.js")) as PagefindModule;
+      if (mod.options) await mod.options({ baseUrl: "/" });
+      pagefind = mod;
+      return pagefind;
+    } catch (err) {
+      pagefindLoadFailed = true;
+      console.warn("[search] pagefind bundle not available:", err);
+      const warning = document.getElementById("pf-dev-warning");
+      if (warning) warning.classList.remove("hidden");
+      return null;
+    }
+  }
+
+  function getRoot(): HTMLElement | null {
+    return document.getElementById("pf-root");
+  }
+
+  function getSelectedLangs(): string[] {
+    return Array.from(
+      document.querySelectorAll<HTMLInputElement>(".pf-lang-cb:checked")
+    ).map(cb => cb.value);
+  }
+
+  function paintCounts(counts: Record<string, number>) {
+    document.querySelectorAll<HTMLElement>(".pf-count").forEach(el => {
+      const l = el.dataset.lang ?? "";
+      el.textContent = `(${counts[l] ?? 0})`;
+    });
+  }
+
+  function setStatus(msg: string) {
+    const el = document.getElementById("pf-status");
+    if (el) el.textContent = msg;
+  }
+
+  function clearResults() {
+    const list = document.getElementById("pf-results");
+    if (list) list.innerHTML = "";
+  }
+
+  function renderResults(items: PagefindResultData[]) {
+    const list = document.getElementById("pf-results");
+    if (!list) return;
+    if (!items.length) {
+      list.innerHTML = "";
+      return;
+    }
+    list.innerHTML = items
+      .map(d => {
+        const title = escapeHtml(d.meta?.title ?? d.url);
+        const excerpt = d.excerpt ?? "";
+        const url = escapeHtml(d.url);
+        return `
+          <li>
+            <a href="${url}" class="text-accent underline decoration-dashed underline-offset-4 hover:opacity-80">
+              ${title}
+            </a>
+            <div class="text-sm text-foreground/70 mt-1">${excerpt}</div>
+          </li>
+        `;
+      })
+      .join("");
+  }
+
+  async function runSearch(term: string) {
+    currentTerm = term;
+    if (!term.trim()) {
+      paintCounts({});
+      clearResults();
+      setStatus("");
+      return;
+    }
+    const pf = await loadPagefind();
+    if (!pf) return;
+
+    const countsRes = await pf.search(term);
+    const counts: Record<string, number> = {};
+    const filterCounts = countsRes.filters?.lang ?? {};
+    for (const [k, v] of Object.entries(filterCounts)) counts[k] = Number(v);
+    paintCounts(counts);
+
+    if (term !== currentTerm) return; // stale
+
+    const selected = getSelectedLangs();
+    if (selected.length === 0) {
+      clearResults();
+      setStatus("No language selected.");
+      return;
+    }
+
+    const filteredRes = await pf.search(term, { filters: { lang: selected } });
+    if (term !== currentTerm) return; // stale
+
+    const total = filteredRes.results.length;
+    const slice = filteredRes.results.slice(0, PAGE_SIZE);
+    const data = await Promise.all(slice.map(r => r.data()));
+    renderResults(data);
+    setStatus(
+      total === 0
+        ? "No results."
+        : `${total} result${total === 1 ? "" : "s"}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
+    );
+  }
+
+  async function refilterFromSelection() {
+    if (!currentTerm.trim()) return;
+    const pf = await loadPagefind();
+    if (!pf) return;
+    const selected = getSelectedLangs();
+    if (selected.length === 0) {
+      clearResults();
+      setStatus("No language selected.");
+      return;
+    }
+    const res = await pf.search(currentTerm, { filters: { lang: selected } });
+    const total = res.results.length;
+    const slice = res.results.slice(0, PAGE_SIZE);
+    const data = await Promise.all(slice.map(r => r.data()));
+    renderResults(data);
+    setStatus(
+      total === 0
+        ? "No results."
+        : `${total} result${total === 1 ? "" : "s"}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
+    );
+  }
+
+  function syncUrl(term: string) {
+    const params = new URLSearchParams(window.location.search);
+    if (term) {
+      params.set("q", term);
+      history.replaceState(history.state, "", "?" + params.toString());
+    } else {
+      history.replaceState(history.state, "", window.location.pathname);
+    }
+    const root = getRoot();
+    const backUrl = root?.dataset.backurl ?? "/";
+    sessionStorage.setItem(
+      "backUrl",
+      term ? `${backUrl}?${params.toString()}` : backUrl
+    );
+  }
+
+  function init() {
+    const root = getRoot();
+    if (!root || root.dataset.pfInit === "1") return;
+    root.dataset.pfInit = "1";
+
+    const input = document.getElementById("pf-input") as HTMLInputElement | null;
+    if (!input) return;
+
+    const debounced = debounce((term: string) => {
+      syncUrl(term);
+      runSearch(term);
+    }, DEBOUNCE_MS);
+
+    input.addEventListener("input", () => debounced(input.value));
+
+    document.querySelectorAll<HTMLInputElement>(".pf-lang-cb").forEach(cb => {
+      cb.addEventListener("change", () => refilterFromSelection());
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const initial = params.get("q");
+    if (initial) {
+      input.value = initial;
+      runSearch(initial);
+    }
+  }
+
+  document.addEventListener("astro:after-swap", init);
+  init();
+</script>

@@ -1,6 +1,7 @@
 ---
 import IconWorld from "@/assets/icons/IconWorld.svg";
 import { SITE } from "@/config";
+import { LANG_NAMES } from "@/utils/langNames";
 import 'flag-icons/css/flag-icons.min.css';
 
 const { pathname } = Astro.url;
@@ -9,11 +10,11 @@ const currentPath =
 const currentLang =
   currentPath.split("/").filter(Boolean)[0] ?? SITE.defaultLang;
 
-const langNames: Record<string, Record<string, string>> = {
-  es: { icon: "fi fi-es", text: "Español" },
-  en: { icon: "fi fi-us", text: "English" },
-  fr: { icon: "fi fi-fr", text: "Français" },
-  de: { icon: "fi fi-de", text: "Deutsch" },
+const langIcons: Record<string, string> = {
+  es: "fi fi-es",
+  en: "fi fi-us",
+  fr: "fi fi-fr",
+  de: "fi fi-de",
 };
 ---
 
@@ -42,8 +43,8 @@ const langNames: Record<string, Record<string, string>> = {
             { "text-accent font-semibold": lang === currentLang },
           ]}
         >
-          <span class={langNames[lang]?.icon ?? "fi fi-un"} />
-          {langNames[lang]?.text ?? lang.toUpperCase()}
+          <span class={langIcons[lang] ?? "fi fi-un"} />
+          {LANG_NAMES[lang] ?? lang.toUpperCase()}
         </a>
       </li>
     ))}
