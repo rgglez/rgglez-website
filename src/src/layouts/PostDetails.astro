@@ -106,6 +106,7 @@ const nextPost =
     id="main-content"
     class:list={["app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
     data-pagefind-body
+    data-pagefind-filter={`lang:${postLang}`}
   >
     <h1
       transition:name={slugifyStr(title.replaceAll(".", "-"))}
