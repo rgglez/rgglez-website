@@ -160,6 +160,11 @@ export default defineConfig({
     ssr: {
       external: ["@resvg/resvg-js"],
     },
+    build: {
+      rollupOptions: {
+        external: [/^\/pagefind\//],
+      },
+    },
   },
 
   image: {

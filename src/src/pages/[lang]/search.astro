@@ -118,8 +118,8 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     if (pagefind) return pagefind;
     if (pagefindLoadFailed) return null;
     try {
-      // @ts-expect-error — bundle generated at build time, no types
-      const mod = (await import(/* @vite-ignore */ "/pagefind/pagefind.js")) as PagefindModule;
+      const pagefindUrl = "/pagefind/pagefind.js";
+      const mod = (await import(/* @vite-ignore */ pagefindUrl)) as PagefindModule;
       if (mod.options) await mod.options({ baseUrl: "/" });
       pagefind = mod;
       return pagefind;
