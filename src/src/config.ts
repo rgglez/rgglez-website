@@ -1,10 +1,3 @@
-export const LANG_NAMES: Record<string, string> = {
-  es: "Español",
-  en: "English",
-  fr: "Français",
-  de: "Deutsch",
-};
-
 export const SITE = {
   website: "https://rodolfo.gg/",
   author: "Rodolfo González González",

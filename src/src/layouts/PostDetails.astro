@@ -12,7 +12,6 @@ import BackToTopButton from "@/components/BackToTopButton.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { getTranslations, getFileLang } from "@/utils/getTranslations";
-import { LANG_NAMES } from "@/config";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import IconScale from "@/assets/icons/IconScale.svg";
@@ -107,7 +106,6 @@ const nextPost =
     id="main-content"
     class:list={["app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
     data-pagefind-body
-    data-pagefind-filter={`lang:${LANG_NAMES[postLang] ?? postLang}`}
   >
     <h1
       transition:name={slugifyStr(title.replaceAll(".", "-"))}
