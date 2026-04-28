@@ -69,28 +69,19 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 </Layout>
 
 <script>
-  type PagefindFilterCounts = Record<string, Record<string, number>>;
   type PagefindResultData = {
     url: string;
     meta?: { title?: string };
     excerpt?: string;
-    filters?: Record<string, string[]>;
   };
   type PagefindResult = { id: string; data: () => Promise<PagefindResultData> };
-  type PagefindResponse = {
-    results: PagefindResult[];
-    filters: PagefindFilterCounts;
-    totalFilters?: PagefindFilterCounts;
-  };
+  type PagefindResponse = { results: PagefindResult[] };
   type PagefindModule = {
     options?: (opts: Record<string, unknown>) => Promise<void>;
-    search: (
-      term: string,
-      opts?: { filters?: Record<string, string[] | string> }
-    ) => Promise<PagefindResponse>;
+    search: (term: string) => Promise<PagefindResponse>;
   };
 
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 50;
   const DEBOUNCE_MS = 300;
 
   function debounce<T extends (...args: any[]) => void>(fn: T, ms: number) {
@@ -110,9 +101,15 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       .replace(/'/g, "&#39;");
   }
 
+  function langOfUrl(url: string): string {
+    const seg = url.split(/[?#]/)[0].split("/").filter(Boolean)[0] ?? "";
+    return seg;
+  }
+
   let pagefind: PagefindModule | null = null;
   let pagefindLoadFailed = false;
   let currentTerm = "";
+  let cachedData: PagefindResultData[] = [];
 
   async function loadPagefind(): Promise<PagefindModule | null> {
     if (pagefind) return pagefind;
@@ -136,10 +133,12 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     return document.getElementById("pf-root");
   }
 
-  function getSelectedLangs(): string[] {
-    return Array.from(
-      document.querySelectorAll<HTMLInputElement>(".pf-lang-cb:checked")
-    ).map(cb => cb.value);
+  function getSelectedLangs(): Set<string> {
+    return new Set(
+      Array.from(
+        document.querySelectorAll<HTMLInputElement>(".pf-lang-cb:checked")
+      ).map(cb => cb.value)
+    );
   }
 
   function paintCounts(counts: Record<string, number>) {
@@ -183,9 +182,35 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       .join("");
   }
 
+  function paintFromCache() {
+    const counts: Record<string, number> = {};
+    for (const d of cachedData) {
+      const l = langOfUrl(d.url);
+      if (l) counts[l] = (counts[l] ?? 0) + 1;
+    }
+    paintCounts(counts);
+
+    const selected = getSelectedLangs();
+    if (selected.size === 0) {
+      clearResults();
+      setStatus("No language selected.");
+      return;
+    }
+    const filtered = cachedData.filter(d => selected.has(langOfUrl(d.url)));
+    const slice = filtered.slice(0, PAGE_SIZE);
+    renderResults(slice);
+    const total = filtered.length;
+    setStatus(
+      total === 0
+        ? "No results."
+        : `${total} result${total === 1 ? "" : "s"}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
+    );
+  }
+
   async function runSearch(term: string) {
     currentTerm = term;
     if (!term.trim()) {
+      cachedData = [];
       paintCounts({});
       clearResults();
       setStatus("");
@@ -194,55 +219,14 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     const pf = await loadPagefind();
     if (!pf) return;
 
-    const countsRes = await pf.search(term);
-    const counts: Record<string, number> = {};
-    const filterCounts = countsRes.filters?.lang ?? {};
-    for (const [k, v] of Object.entries(filterCounts)) counts[k] = Number(v);
-    paintCounts(counts);
-
+    const res = await pf.search(term);
     if (term !== currentTerm) return; // stale
 
-    const selected = getSelectedLangs();
-    if (selected.length === 0) {
-      clearResults();
-      setStatus("No language selected.");
-      return;
-    }
-
-    const filteredRes = await pf.search(term, { filters: { lang: selected } });
+    const data = await Promise.all(res.results.map(r => r.data()));
     if (term !== currentTerm) return; // stale
 
-    const total = filteredRes.results.length;
-    const slice = filteredRes.results.slice(0, PAGE_SIZE);
-    const data = await Promise.all(slice.map(r => r.data()));
-    renderResults(data);
-    setStatus(
-      total === 0
-        ? "No results."
-        : `${total} result${total === 1 ? "" : "s"}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
-    );
-  }
-
-  async function refilterFromSelection() {
-    if (!currentTerm.trim()) return;
-    const pf = await loadPagefind();
-    if (!pf) return;
-    const selected = getSelectedLangs();
-    if (selected.length === 0) {
-      clearResults();
-      setStatus("No language selected.");
-      return;
-    }
-    const res = await pf.search(currentTerm, { filters: { lang: selected } });
-    const total = res.results.length;
-    const slice = res.results.slice(0, PAGE_SIZE);
-    const data = await Promise.all(slice.map(r => r.data()));
-    renderResults(data);
-    setStatus(
-      total === 0
-        ? "No results."
-        : `${total} result${total === 1 ? "" : "s"}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
-    );
+    cachedData = data;
+    paintFromCache();
   }
 
   function syncUrl(term: string) {
@@ -277,7 +261,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     input.addEventListener("input", () => debounced(input.value));
 
     document.querySelectorAll<HTMLInputElement>(".pf-lang-cb").forEach(cb => {
-      cb.addEventListener("change", () => refilterFromSelection());
+      cb.addEventListener("change", () => paintFromCache());
     });
 
     const params = new URLSearchParams(window.location.search);
