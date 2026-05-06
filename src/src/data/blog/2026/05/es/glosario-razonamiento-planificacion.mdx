@@ -211,6 +211,24 @@ en el índice alfabético final.
 
 ## 1. Fundamentos: toma de decisiones y agentes inteligentes
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((1. Fundamentos: toma de decisiones y agentes inteligentes))
+    Toma de decisiones
+    Decisión de alto nivel vs. decisión de bajo nivel
+    Decisiones programadas vs. no programadas
+    Problema estructurado vs. no estructurado
+    Agente inteligente
+    Racionalidad
+    Arquitectura deliberativa
+    Arquitectura reactiva
+    Arquitectura híbrida
+    Modelo BDI (Belief–Desire–Intention)
+```
+
+
 ### Toma de decisiones
 
 Proceso por el cual un agente —humano o artificial— elige una acción entre un
@@ -289,6 +307,22 @@ Es el fundamento conceptual de muchos sistemas multi-agente.
 
 ## 2. Representación del conocimiento
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((2. Representación del conocimiento))
+    Representación simbólica
+    Marcos (Frames)
+    Reglas de producción
+    Restricciones (CSP)
+    Red bayesiana
+    Ontología
+    Grafo de conocimiento (Knowledge Graph)
+    Conocimiento declarativo vs. procedural
+```
+
+
 ### Representación simbólica
 
 Codificación explícita del conocimiento mediante símbolos, estructuras y
@@ -348,6 +382,23 @@ buen sistema inteligente combina ambos: declara los hechos y procedimentaliza
 las inferencias.
 
 ## 3. Tipos de razonamiento
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((3. Tipos de razonamiento))
+    Razonamiento deductivo
+    Razonamiento inductivo
+    Razonamiento abductivo
+    Silogismo
+    Modus ponens
+    Modus tollens
+    Razonamiento por analogía
+    Razonamiento monótono vs. no monótono
+    Razonamiento por defecto
+```
+
 
 ### Razonamiento deductivo
 
@@ -413,6 +464,25 @@ conclusiones plausibles *en ausencia de evidencia en contra*. Por ejemplo:
 «los pájaros vuelan, salvo que se sepa lo contrario».
 
 ## 4. Tipos de lógica
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((4. Tipos de lógica))
+    Lógica proposicional
+    Lógica de predicados
+    Lógica de primer orden (FOL)
+    Lógica de orden superior (HOL)
+    Lógica modal
+    Lógica temporal
+    Lógica multivaluada
+    Lógica difusa (Fuzzy Logic)
+    Lógica de descripción ALC
+    Lógica computacional
+    Sintaxis vs. semántica
+```
+
 
 ### Lógica proposicional
 
@@ -492,6 +562,26 @@ todo modelo, **satisfacible** si lo es en al menos uno.
 
 ## 5. Búsqueda no informada
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((5. Búsqueda no informada))
+    Espacio de estados
+    Árbol de búsqueda
+    Frontera (lista de abiertos)
+    Factor de ramificación
+    Búsqueda en amplitud (BFS)
+    Búsqueda en profundidad (DFS)
+    Búsqueda de coste uniforme (UCS)
+    Búsqueda en profundidad iterativa (IDS)
+    Búsqueda bidireccional
+    Algoritmo de Dijkstra
+    Completitud y optimalidad
+    Estados repetidos
+```
+
+
 ### Espacio de estados
 
 Modelo del problema como un grafo cuyos nodos son **estados** del mundo y
@@ -569,6 +659,29 @@ evitar ciclos generales (no añadir antecesores) o evitar todos los repetidos
 mediante una tabla *closed*.
 
 ## 6. Heurística y búsqueda informada
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((6. Heurística y búsqueda informada))
+    Función heurística
+    Heurística admisible
+    Heurística consistente (monótona)
+    Heurística dominante
+    Búsqueda voraz primero el mejor (Greedy Best-First)
+    Búsqueda A
+    IDA (Iterative Deepening A)
+    Búsqueda por subobjetivos (subgoaling)
+    Búsqueda por ascenso de colinas (Hill Climbing)
+    Búsqueda con horizonte
+    Recocido simulado (Simulated Annealing)
+    Búsqueda tabú
+    Búsqueda local iterada (ILS)
+    Búsqueda online
+    Algoritmos genéticos
+```
+
 
 ### Función heurística
 
@@ -664,6 +777,23 @@ estructurados.
 
 ## 7. Búsqueda adversarial (teoría de juegos)
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((7. Búsqueda adversarial (teoría de juegos)))
+    Juego de suma cero
+    Información perfecta vs. imperfecta
+    Determinista vs. estocástico
+    Algoritmo Minimax
+    Poda alfa-beta
+    Función de evaluación
+    Búsqueda expectiminimax
+    Equilibrio de Nash
+    Monte Carlo Tree Search (MCTS)
+```
+
+
 ### Juego de suma cero
 
 Aquel en que la ganancia de un jugador es exactamente la pérdida del otro
@@ -730,6 +860,30 @@ selección, expansión, simulación y *backpropagation* — y usa políticas com
 de **AlphaGo** y **AlphaZero**.
 
 ## 8. Planificación clásica
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((8. Planificación clásica))
+    Problema de planificación
+    Plan
+    Estado
+    Acción / operador
+    Precondiciones
+    Efectos
+    Hipótesis del mundo cerrado (CWA)
+    Mutex (mutual exclusion)
+    Anomalía de Sussman
+    Planificación hacia adelante (forward / progression)
+    Planificación hacia atrás (backward / regression)
+    Planificación de orden total
+    Planificación de orden parcial (POP)
+    Planificación deliberativa vs. reactiva
+    Planificación con incertidumbre
+    Planificación generalizada
+```
+
 
 ### Problema de planificación
 
@@ -840,6 +994,29 @@ estructura común, en lugar de un problema individual. Suele expresarse como
 política o programa con bucles y condicionales.
 
 ## 9. Lenguajes y planificadores
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((9. Lenguajes y planificadores))
+    STRIPS
+    PDDL (Planning Domain Definition Language)
+    ADL (Action Description Language)
+    Fluents
+    GOAP (Goal-Oriented Action Planning)
+    FF (Fast-Forward)
+    LAMA
+    Fast Downward
+    Graphplan
+    SHOP / SHOP2 / JSHOP
+    LPG
+    VAL
+    IPC (International Planning Competition)
+    Prolog
+    LLMs como planificadores (NL2PDDL)
+```
+
 
 ### STRIPS
 
@@ -969,6 +1146,21 @@ natural a PDDL) y delegan la búsqueda a planificadores clásicos.
 
 ## 10. Planificación jerárquica (HTN)
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((10. Planificación jerárquica (HTN)))
+    HTN (Hierarchical Task Networks)
+    Tarea primitiva
+    Tarea compuesta (no primitiva)
+    Método
+    Red de tareas
+    Descomposición jerárquica
+    Conocimiento de dominio en HTN
+```
+
+
 ### HTN (Hierarchical Task Networks)
 
 Paradigma de planificación basado en la **descomposición jerárquica** de
@@ -1014,6 +1206,25 @@ ventaja (escalabilidad y eficiencia) y crítica (codificar la solución dentro
 del dominio reduce la generalidad).
 
 ## 11. Planificación multi-agente
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((11. Planificación multi-agente))
+    Sistema multi-agente (MAS)
+    Escenarios cooperativo, parcialmente cooperativo y antagónico
+    Planificación PARA múltiples agentes (PTMA)
+    Planificación POR múltiples agentes (PBMA)
+    Coordinación de planes (plan merging)
+    Asignación de tareas (task allocation)
+    Partial Global Planning (PGP)
+    GRATE
+    FMAP (Forward Multi-Agent Planning)
+    Enlace de orden y enlace causal
+    Protocolos de coordinación
+```
+
 
 ### Sistema multi-agente (MAS)
 
@@ -1092,6 +1303,22 @@ buen protocolo equilibra eficiencia, justicia y robustez ante fallos.
 
 ## 12. Planificación bajo incertidumbre
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((12. Planificación bajo incertidumbre))
+    Entorno parcialmente observable
+    Entorno no determinista
+    Entorno dinámico
+    Proceso de decisión de Markov (MDP)
+    POMDP (Partially Observable MDP)
+    Modelo Oculto de Markov (HMM)
+    Aprendizaje por refuerzo (RL)
+    Planificación reactiva y replanificación
+```
+
+
 ### Entorno parcialmente observable
 
 El agente solo percibe parte del estado del mundo. Requiere mantener una
@@ -1157,6 +1384,23 @@ y reparación reactiva multi-agente exploran este equilibrio.
 
 ## 13. Conceptos transversales
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((13. Conceptos transversales))
+    Espacio de búsqueda
+    Backtracking
+    PSPACE-completitud
+    Benchmark
+    Soundness y completeness
+    Decidibilidad y semidecidibilidad
+    Hipótesis del nombre único (UNA)
+    Heurística vs. metaheurística
+    Trade-off exploración/explotación
+```
+
+
 ### Espacio de búsqueda
 
 Conjunto total de estados o configuraciones que un algoritmo podría
@@ -1217,6 +1461,20 @@ conocidas para maximizar resultados inmediatos. Estrategias clásicas:
 $\varepsilon$-greedy, UCB, softmax.
 
 ## 14. Fundamentos filosóficos del razonamiento y la planificación
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((14. Fundamentos filosóficos del razonamiento y la planificación))
+    14.1 Epistemología (teoría del conocimiento)
+    14.2 Filosofía de la lógica
+    14.3 Filosofía de la mente y de la inteligencia artificial
+    14.4 Ontología y metafísica
+    14.5 Causalidad, modalidad y mundos posibles
+    14.6 Filosofía de la acción
+```
+
 
 La IA simbólica nació en diálogo con la filosofía: con la lógica de
 Aristóteles, la *characteristica universalis* de Leibniz, el debate
@@ -1637,6 +1895,14 @@ los frameworks GRATE y BDI distribuido en sistemas multi-agente.
 
 ## 15. Glosario rápido alfabético
 
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((15. Glosario rápido alfabético))
+```
+
+
 Para consulta rápida, los términos más usados en orden alfabético:
 
 - **A\***: búsqueda informada óptima con $f(n) = g(n) + h(n)$.
@@ -1672,6 +1938,14 @@ Para consulta rápida, los términos más usados en orden alfabético:
 - **VAL**: validador de planes PDDL.
 
 ## 16. Referencias y lecturas recomendadas
+
+#### Mapa mental de la sección
+
+```mermaid
+mindmap
+  root((16. Referencias y lecturas recomendadas))
+```
+
 
 **Textos canónicos:**
 
@@ -1727,3 +2001,69 @@ Para consulta rápida, los términos más usados en orden alfabético:
   general en español, útil como referencia complementaria.
 
 
+
+## Apéndice: mapas mentales integradores
+
+### Mapa global del glosario
+
+```mermaid
+mindmap
+  root((Razonamiento y Planificación Automática))
+    Fundamentos y agentes
+    Representación del conocimiento
+    Razonamiento y lógica
+    Búsqueda
+      No informada
+      Informada y metaheurística
+      Adversarial
+    Planificación
+      Clásica
+      Lenguajes y planificadores
+      HTN
+      Multi-agente
+      Bajo incertidumbre
+    Conceptos transversales
+    Fundamentos filosóficos
+```
+
+### Mapa de flujo conceptual (de teoría a práctica)
+
+```mermaid
+mindmap
+  root((Flujo conceptual))
+    Modelado
+      Representación simbólica
+      Ontologías y grafos
+      Lógica formal
+    Inferencia
+      Deducción
+      Inducción/abducción
+      Razonamiento no monótono
+    Decisión y búsqueda
+      BFS/DFS/UCS
+      A*/IDA*
+      Minimax/MCTS
+    Planificación
+      STRIPS/PDDL
+      POP/HTN
+      PTMA/PBMA
+    Incertidumbre
+      MDP/POMDP
+      Replanificación
+      RL
+```
+
+### Mapa de conexiones críticas
+
+```mermaid
+mindmap
+  root((Conexiones críticas))
+    Heurística <-> planificación
+    Lógica <-> verificación
+    Ontologías <-> razonamiento semántico
+    MCTS/Minimax <-> decisión secuencial
+    HTN/GOAP <-> conocimiento de dominio
+    MDP/POMDP <-> políticas bajo incertidumbre
+    MAS <-> coordinación y asignación
+    Filosofía <-> validez epistémica
+```
