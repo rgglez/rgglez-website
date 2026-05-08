@@ -1,0 +1,753 @@
+---
+title: "Cómo instalar SWI-Prolog en Debian 13 Trixie sin morir en el intento."
+author: "Rodolfo González González"
+pubDatetime: 2026-05-07T12:00:00Z
+modDatetime: 2026-05-07T12:00:00Z
+slug: instalar-swi-prolog-debian-13
+ogImage: "../../../../../assets/posts/2026/05/instalar-swi-prolog-debian/header.webp"
+featured: false
+draft: false
+tags:
+  - prolog
+  - debian
+  - linux
+  - programacion-logica
+description: >
+  Guía exhaustiva para instalar SWI-Prolog en Debian 13 "Trixie" con cuatro
+  métodos ordenados de menor a mayor complejidad: paquete nativo de Debian,
+  Flatpak desde Flathub, compilación desde fuentes con CPack, y el PPA oficial
+  de Ubuntu adaptado para Debian.
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+## Introducción
+
+SWI-Prolog es el intérprete/compilador de Prolog de referencia en el mundo
+académico y de producción. Es software libre (licencia BSD-2), activamente
+mantenido, y tiene una biblioteca estándar muy rica que cubre desde
+programación lógica con restricciones (CLP), procesamiento de lenguaje
+natural y web semántica, hasta interfaces HTTP, SSL, JSON, YAML, Python
+(mediante Janus) y Java (mediante JPL).
+
+Esta guía cubre **cuatro métodos de instalación** en Debian 13 "Trixie",
+ordenados de menor a mayor complejidad operativa. Elige el que mejor se
+ajuste a tu caso de uso.
+
+| Método | Versión que obtienes | Complejidad | Actualizaciones automáticas |
+|--------|---------------------|-------------|----------------------------|
+| Paquete nativo de Debian | 9.2.9 | ⭐ Mínima | Sí, con `apt` |
+| Flatpak (Flathub) | 10.x (última estable) | ⭐⭐ Baja | Sí, con `flatpak update` |
+| Compilación + CPack | La que tú elijas | ⭐⭐⭐ Media | Manual |
+| PPA de Ubuntu | 10.x (última estable) | ⭐⭐⭐⭐ Alta | Sí, con `apt` |
+
+---
+
+## Tabla de contenido
+
+
+---
+
+## Método 1 — Paquete nativo de Debian 13
+
+**El más sencillo.** Un solo comando. Sin configuración adicional. Sin claves
+GPG. Sin repositorios externos. APT descarga los `.deb` desde los mirrors
+oficiales de Debian y los instala junto con todas las dependencias.
+
+### Cuándo usarlo
+
+- Quieres algo que funcione en menos de un minuto.
+- La versión 9.2.9 (la que incluye Trixie) cubre tus necesidades; es
+  perfectamente funcional para aprender Prolog, escribir reglas de negocio,
+  trabajar con CLP(FD), usar las bibliotecas HTTP, RDF, etc.
+- Prefieres un sistema 100 % gestionado por Debian, sin fuentes externas.
+
+### Instalación
+
+```bash
+# Actualiza el índice de paquetes para que APT conozca las últimas versiones
+# disponibles en los repositorios configurados.
+sudo apt update
+
+# Instala el metapaquete principal. Trae consigo:
+#   swi-prolog-core        — el núcleo del compilador
+#   swi-prolog-core-packages — paquetes base (clib, ssl, http, etc.)
+#   swi-prolog-nox         — binarios sin dependencias X11
+#   swi-prolog-x           — XPCE, la GUI legacy basada en X11
+# Si solo trabajas en servidor o terminal, usa swi-prolog-nox en su lugar.
+sudo apt install swi-prolog
+```
+
+#### Variantes del paquete
+
+```bash
+# Solo el intérprete, sin ninguna dependencia de entorno gráfico.
+# Ideal para servidores, scripts, o contenedores.
+sudo apt install swi-prolog-nox
+
+# Todo incluido: núcleo + GUI + Java (JPL) + ODBC + BerkeleyDB + documentación.
+sudo apt install swi-prolog-full
+
+# Documentación HTML y ejemplos (puede instalarse junto con cualquier variante).
+sudo apt install swi-prolog-doc
+
+# Interface Java↔Prolog (JPL). Requiere JDK instalado.
+sudo apt install swi-prolog-java
+```
+
+### Verificación
+
+```bash
+# Muestra la versión instalada y sale.
+swipl --version
+
+# Abre el intérprete interactivo. Escribe halt. para salir.
+swipl
+```
+
+Dentro del intérprete, ejecuta el predicado de diagnóstico:
+
+```prolog
+% Verifica que todos los componentes compilados estén cargables:
+% SSL, archive, http, pcre, yaml, etc. Informa qué falta o está mal enlazado.
+?- check_installation.
+
+% Cierra el intérprete limpiamente.
+?- halt.
+```
+
+### Actualización y desinstalación
+
+```bash
+# Actualizar (se hace con el sistema completo normalmente).
+sudo apt update && sudo apt upgrade
+
+# Desinstalar el intérprete y sus paquetes relacionados.
+# El patrón 'swi-prolog*' cubre todos los sub-paquetes.
+sudo apt purge 'swi-prolog*'
+
+# Limpia las dependencias que quedaron huérfanas tras la desinstalación.
+sudo apt autoremove
+```
+
+---
+
+## Método 2 — Flatpak desde Flathub
+
+Flatpak es un sistema de distribución de aplicaciones que empaqueta el
+software junto con todas sus dependencias en un entorno aislado (sandbox).
+Desde la versión 9.3.26, SWI-Prolog reemplazó su paquete Snap por Flatpak
+como canal portable oficial.
+
+**Ventaja principal:** obtienes la última versión estable (10.x) con una
+sola orden, sin configurar repositorios, claves GPG ni codenames de Ubuntu.
+
+### Advertencia: `swipl` lanza la GUI por defecto
+
+Hay un comportamiento conocido del Flatpak de SWI-Prolog: al escribir
+`swipl` en la terminal, el launcher arranca `swipl-win` (la ventana GUI
+separada) en lugar del intérprete en la misma consola. Esto se soluciona
+con un alias, que se detalla más adelante.
+
+### Instalación de Flatpak y Flathub
+
+Si Flatpak no está instalado en tu sistema:
+
+```bash
+# Instala el cliente de Flatpak desde los repositorios de Debian.
+sudo apt install flatpak
+
+# Agrega Flathub como repositorio remoto.
+# --if-not-exists evita un error si ya estaba configurado.
+# El archivo .flatpakrepo descarga la clave GPG de Flathub y lo registra.
+flatpak remote-add --if-not-exists flathub \
+    https://dl.flathub.org/repo/flathub.flatpakrepo
+```
+
+> Es posible que necesites cerrar sesión y volver a entrar (o reiniciar)
+> para que los portales de Flatpak queden correctamente integrados con tu
+> entorno de escritorio.
+
+### Instalación de SWI-Prolog
+
+```bash
+# Instala SWI-Prolog desde Flathub.
+# El identificador de la app es org.swi_prolog.swipl.
+# Esto descarga el runtime de Freedesktop SDK si no lo tienes ya,
+# más los archivos propios de SWI-Prolog (varios cientos de MB en total
+# en la primera instalación).
+flatpak install flathub org.swi_prolog.swipl
+```
+
+### Ejecutar el intérprete en la terminal
+
+```bash
+# Forma explícita: lanza swipl (intérprete de consola) dentro del sandbox.
+# --command=swipl selecciona el binario dentro del Flatpak
+# en lugar del launcher por defecto (que abre swipl-win).
+flatpak run --command=swipl org.swi_prolog.swipl
+
+# Para la ventana GUI:
+flatpak run org.swi_prolog.swipl
+```
+
+Para no tener que recordar la sintaxis larga cada vez, agrega un alias
+permanente a tu shell:
+
+```bash
+# Abre tu archivo de configuración de Bash con tu editor.
+# Cambia ~/.bashrc por ~/.zshrc si usas Zsh.
+nano ~/.bashrc
+```
+
+Agrega al final del archivo:
+
+```bash
+# Alias para invocar SWI-Prolog (Flatpak) en la terminal actual,
+# sin que abra una ventana GUI separada.
+alias swipl='flatpak run --command=swipl org.swi_prolog.swipl'
+
+# Alias opcional para la ventana GUI cuando sí la quieras.
+alias swipl-win='flatpak run org.swi_prolog.swipl'
+```
+
+Recarga la configuración sin cerrar la terminal:
+
+```bash
+source ~/.bashrc
+```
+
+### Verificación
+
+```bash
+# Con el alias activo, esto ya funciona como se espera.
+swipl --version
+```
+
+### Actualización y desinstalación
+
+```bash
+# Actualiza todos los Flatpaks instalados en el sistema, incluyendo SWI-Prolog.
+flatpak update
+
+# Desinstala solo SWI-Prolog.
+flatpak uninstall org.swi_prolog.swipl
+
+# Elimina también los runtimes que quedaron sin usar.
+flatpak uninstall --unused
+```
+
+---
+
+## Método 3 — Compilar desde fuentes y generar `.deb` con CPack
+
+Este método compila SWI-Prolog directamente desde el código fuente y usa
+**CPack** (la herramienta de empaquetado integrada en CMake) para producir
+un archivo `.deb` que APT puede instalar y gestionar. No requiere
+`checkinstall` ni ninguna herramienta externa: el sistema de build ya lo
+tiene todo incorporado.
+
+**Ventajas:**
+- Obtienes exactamente la versión que eliges (cualquier tag de Git).
+- El build PGO (Profile Guided Optimization) produce un intérprete entre
+  un 30 y un 40 % más rápido que el de los repositorios de Debian.
+- El `.deb` resultante puede copiarse y reutilizarse en otras máquinas
+  con Debian 13.
+
+**Desventaja:** el proceso tarda varios minutos y necesitas instalar un
+buen número de dependencias de desarrollo.
+
+### Paso 1 — Instalar dependencias de compilación
+
+```bash
+# Herramientas base: compilador C/C++, CMake, Ninja (alternativa más rápida
+# a make), pkg-config para localizar bibliotecas del sistema.
+sudo apt install -y \
+    build-essential cmake ninja-build pkg-config git
+
+# Bibliotecas de interfaz de terminal y edición de línea.
+# ncurses-dev  — terminales y menús en modo texto.
+# libedit-dev  — edición de línea (alternativa a readline).
+sudo apt install -y \
+    ncurses-dev libedit-dev
+
+# tcmalloc: asignador de memoria de Google. Reduce el uso de memoria en
+# aplicaciones multihilo. Mejora el rendimiento en servidores.
+# libgmp-dev: aritmética de precisión arbitraria (enteros grandes,
+# números racionales). Sin esta dependencia, SWI usa LibBF interna (más lenta).
+sudo apt install -y \
+    libgoogle-perftools-dev libgmp-dev
+
+# SSL/TLS para el módulo library(ssl) y las conexiones HTTPS.
+sudo apt install -y libssl-dev
+
+# ODBC: interface para bases de datos relacionales via library(odbc) / CQL.
+sudo apt install -y unixodbc-dev
+
+# Compresión y formatos de archivo.
+# zlib1g-dev    — compresión básica.
+# libarchive-dev — lectura/escritura de .tar.gz, .zip, etc. (library(archive))
+#                  requerido también por pack_install/1.
+sudo apt install -y zlib1g-dev libarchive-dev
+
+# UUID, BerkeleyDB y PCRE2.
+# libossp-uuid-dev — library(uuid). Sin esto usa implementación Prolog pura.
+# libdb-dev        — library(bdb), interfaz a BerkeleyDB.
+# libpcre2-dev     — library(pcre), expresiones regulares PCRE2.
+sudo apt install -y libossp-uuid-dev libdb-dev libpcre2-dev
+
+# YAML y procesamiento de texto Unicode.
+# libyaml-dev      — library(yaml).
+# libutf8proc-dev  — library(unicode), normalización Unicode.
+sudo apt install -y libyaml-dev libutf8proc-dev
+
+# Python 3 e interfaz de embedding (Janus: llama a Python desde Prolog
+# y viceversa). Requerido también para el servidor MQI de Python.
+sudo apt install -y python3 libpython3-dev
+
+# Dependencias para la GUI (XPCE con SDL3 + Cairo + Pango).
+# A partir de SWI-Prolog 9.3.26 la GUI ya no usa X11 directamente:
+# usa SDL3 para ventanas, Cairo para dibujo vectorial, Pango para texto.
+# libsdl3-dev       — ventanas, eventos de teclado/ratón.
+# libsdl3-image-dev — carga de imágenes en la GUI.
+# libcairo2-dev     — renderizado 2D vectorial.
+# libpango1.0-dev   — renderizado de texto con tipografías.
+# Debian 13 incluye SDL3 de forma nativa, a diferencia de Debian 12.
+sudo apt install -y libcairo2-dev libpango1.0-dev libsdl3-dev libsdl3-image-dev
+
+# Java (JPL: interface bidireccional Java↔Prolog) y su test suite.
+# junit4 se requiere desde la versión 8.1.29 para las pruebas de JPL.
+sudo apt install -y default-jdk junit4
+```
+
+> Si solo te interesa un build para servidor (sin GUI, sin Java), puedes
+> omitir los grupos de `libcairo2-dev …` y `default-jdk junit4`.
+> CMake detectará automáticamente qué componentes construir según las
+> bibliotecas disponibles.
+
+### Paso 2 — Clonar el repositorio
+
+```bash
+# Clona el repositorio de desarrollo. --recurse-submodules es obligatorio:
+# SWI-Prolog tiene sus paquetes como submódulos Git independientes
+# (clib, ssl, http, pengines, etc.) y sin esta opción quedarían vacíos.
+git clone --recurse-submodules https://github.com/SWI-Prolog/swipl-devel.git
+
+cd swipl-devel
+```
+
+Si prefieres una versión estable específica en lugar del HEAD de desarrollo:
+
+```bash
+# Lista los últimos tags de versiones estables (número de versión par = estable).
+# Las versiones con número menor impar (9.1.x, 9.3.x) son de desarrollo.
+git tag -l 'V*' | grep -E 'V[0-9]+\.[02468]+\.' | sort -V | tail -10
+
+# Haz checkout del tag elegido. Sustituye V9.2.9 por la versión que prefieras.
+git checkout V9.2.9
+
+# Actualiza los submódulos al estado que corresponde a ese tag.
+git submodule update --init --recursive
+```
+
+### Paso 3 — Configurar con CMake
+
+```bash
+# Crea el directorio de build. Por convención se llama "build".
+# CMake nunca toca el árbol de fuentes: todos los archivos generados
+# (Makefiles, objetos, binarios) van dentro de este directorio.
+mkdir build && cd build
+
+# Configura el build.
+#
+# -DCMAKE_BUILD_TYPE=PGO
+#   Profile Guided Optimization: compila el sistema dos veces.
+#   Primera pasada: instrumentado para recolectar estadísticas de ejecución.
+#   Segunda pasada: usa esas estadísticas para optimizar predicción de ramas,
+#   inlining, etc. Produce un intérprete ~30-40 % más rápido que Release.
+#
+# -DCMAKE_INSTALL_PREFIX=/usr
+#   Define dónde se instalarán los archivos (binarios en /usr/bin,
+#   bibliotecas en /usr/lib, etc.). Este valor queda registrado en el .deb
+#   que genera CPack, así que cuando APT instale el paquete los archivos
+#   irán exactamente a /usr. Usa /usr/local si prefieres no mezclar con
+#   los paquetes del sistema.
+#
+# -G Ninja
+#   Usa Ninja como backend de compilación en lugar de make clásico.
+#   Ninja paraleliza mejor las dependencias y da una salida de progreso
+#   más legible. Si prefieres make, simplemente omite este flag.
+cmake -DCMAKE_BUILD_TYPE=PGO \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -G Ninja \
+      ..
+```
+
+### Paso 4 — Compilar
+
+```bash
+# Compila con todos los núcleos disponibles.
+# Ninja ya paraleliza automáticamente; no necesitas -j $(nproc) explícito,
+# aunque puedes pasarlo si quieres ajustar la carga.
+ninja
+```
+
+La compilación tarda entre 5 y 15 minutos dependiendo de tu hardware.
+
+### Paso 5 — Ejecutar las pruebas (opcional pero recomendado)
+
+```bash
+# Ejecuta la suite de pruebas con todos los núcleos disponibles.
+# --output-on-failure muestra la salida completa de cualquier prueba
+# que falle, lo cual facilita el diagnóstico.
+# Cada "prueba" de ctest en realidad carga un archivo Prolog que puede
+# ejecutar cientos de aserciones internamente.
+ctest -j $(nproc) --output-on-failure
+```
+
+### Paso 6 — Generar el `.deb` con CPack
+
+```bash
+# Genera el paquete. CPack detecta automáticamente que apt está disponible
+# y produce un .deb. Si quieres ser explícito:
+#   cpack -G DEB   → fuerza formato Debian
+#   cpack -G RPM   → fuerza formato Red Hat (para Fedora/RHEL)
+cpack
+
+# El archivo resultante tendrá un nombre similar a:
+#   swipl-10.1.5-1.amd64.deb
+# y se encuentra en el directorio build/ actual.
+ls -lh swipl-*.deb
+```
+
+### Paso 7 — Instalar el `.deb`
+
+Si tienes el paquete de Debian (`swi-prolog`) instalado previamente,
+elimínalo primero para evitar conflictos:
+
+```bash
+sudo apt purge 'swi-prolog*' && sudo apt autoremove
+```
+
+Instala el paquete generado:
+
+```bash
+# Usar 'apt install ./archivo.deb' en lugar de 'dpkg -i' tiene una ventaja
+# importante: APT resuelve automáticamente las dependencias que pudieran
+# faltar, en lugar de fallar con un error de dpkg y obligarte a hacer
+# 'apt -f install' a continuación.
+# El './' inicial es obligatorio para que apt interprete el argumento
+# como una ruta local y no como un nombre de paquete del repositorio.
+sudo apt install ./swipl-*.deb
+```
+
+### Actualización
+
+Para actualizar a una versión más nueva, vuelve al directorio del repositorio:
+
+```bash
+cd swipl-devel
+
+# Trae los últimos cambios del repositorio remoto.
+git pull
+
+# Actualiza los submódulos a las versiones que referencia el nuevo HEAD.
+git submodule update --init --recursive
+
+# Vuelve al directorio de build y reconfigura si es necesario.
+cd build
+cmake ..
+ninja
+cpack
+
+# Instala el nuevo .deb sobre el anterior. APT lo gestiona como una
+# actualización normal (reemplaza el paquete anterior).
+sudo apt install ./swipl-*.deb
+```
+
+### Desinstalación
+
+```bash
+# Como el .deb fue instalado via APT, se desinstala igual que cualquier
+# otro paquete. El nombre del paquete generado por CPack es "swipl".
+sudo apt purge swipl
+sudo apt autoremove
+```
+
+---
+
+## Método 4 — PPA oficial de SWI-Prolog (Ubuntu PPA en Debian)
+
+Este es el método más elaborado porque el PPA de SWI-Prolog está publicado
+para Ubuntu, no para Debian. Los "PPAs" (Personal Package Archives) son
+repositorios hospedados en Launchpad de Canonical y sus paquetes llevan
+codenames de Ubuntu (`jammy`, `noble`, `plucky`…), no de Debian (`trixie`,
+`bookworm`…).
+
+La guía oficial de swi-prolog.org usa `apt-add-repository ppa:…`, que
+**no funciona en Debian** porque intenta registrar el codename `trixie`
+como suite del PPA, y esa suite no existe en Launchpad. El resultado es
+un 404 al hacer `apt update`.
+
+La solución correcta en 2026 es registrar el repositorio manualmente con:
+- La **clave GPG** descargada y guardada en formato binario en `/etc/apt/keyrings/`.
+- Un **archivo DEB822** en `/etc/apt/sources.list.d/` que apunte a un
+  codename de Ubuntu compatible con Debian 13.
+
+### Por qué usarlo
+
+- Obtienes la versión 10.x más reciente actualizada con cada release,
+  sin compilar nada, directamente via `apt`.
+- Es lo más parecido al paquete nativo de Debian en cuanto a integración
+  con el sistema, pero con la versión del PPA en lugar de la congelada.
+
+### Elegir el codename de Ubuntu correcto
+
+Esta es la decisión más importante. Debian 13 Trixie usa **glibc 2.41**.
+Los binarios del PPA están enlazados contra el glibc del codename Ubuntu
+correspondiente, así que la regla es: el glibc del codename elegido debe
+ser **menor o igual** al de tu Debian.
+
+| Codename | Ubuntu | glibc | ¿Funciona en Trixie? |
+|----------|--------|-------|----------------------|
+| `jammy`  | 22.04 LTS | 2.35 | Sí (versión 9.x, más antigua) |
+| `noble`  | 24.04 LTS | 2.39 | ✅ **Recomendado** |
+| `plucky` | 25.04 | 2.41 | Sí (coincidencia exacta) |
+| `questing` | 25.10 | 2.42 | ❌ No (glibc más nuevo que Trixie) |
+
+Se recomienda **`noble`** (Ubuntu 24.04 LTS): el equipo mantenedor del PPA
+lo soportará durante años, y su glibc 2.39 es estrictamente más antiguo
+que el de Trixie, eliminando cualquier riesgo de incompatibilidad.
+
+En los comandos siguientes se usa `noble`. Si eliges otro codename,
+simplemente sustituye la palabra en el archivo `.sources`.
+
+### Paso 1 — Pre-requisitos
+
+```bash
+# curl: descargará la clave GPG desde el keyserver de Ubuntu.
+# gnupg: procesará (dearmoreará) la clave del formato ASCII al binario.
+# ca-certificates: certificados raíz para que curl valide HTTPS.
+sudo apt update
+sudo apt install -y curl gnupg ca-certificates
+```
+
+### Paso 2 — Descargar y guardar la clave GPG
+
+La clave del PPA de SWI-Prolog tiene el fingerprint completo
+`73E75048FF27533C0D8DC521EF8406856DBFCA18`.
+
+```bash
+# Crea el directorio de keyrings si no existe.
+# -d  → crea el directorio (y los padres necesarios).
+# -m 0755 → permisos: legible y ejecutable por todos, escribible solo por root.
+sudo install -d -m 0755 /etc/apt/keyrings
+
+# Descarga la clave pública del PPA desde el keyserver de Ubuntu y la
+# convierte del formato ASCII-armored (el que emiten los keyservers) al
+# formato binario que apt espera en /etc/apt/keyrings/.
+#
+# curl -fsSL:
+#   -f → falla silenciosamente si el servidor devuelve un error HTTP.
+#   -s → modo silencioso (no muestra progreso).
+#   -S → sí muestra errores aunque -s esté activo.
+#   -L → sigue redirecciones HTTP.
+#
+# gpg --dearmor:
+#   Convierte la clave de PEM/ASCII a formato binario OpenPGP.
+#
+# -o /etc/apt/keyrings/swi-prolog.gpg:
+#   Escribe directamente al destino final con sudo.
+curl -fsSL \
+  "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x73E75048FF27533C0D8DC521EF8406856DBFCA18" \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/swi-prolog.gpg
+
+# Ajusta los permisos: legible por todos (apt lo lee como root pero
+# es buena práctica dejarlo legible).
+sudo chmod 0644 /etc/apt/keyrings/swi-prolog.gpg
+```
+
+Verifica que la clave quedó bien importada:
+
+```bash
+# Lista las claves del keyring recién creado.
+# Debes ver el fingerprint 73E7 5048 FF27 533C … y el uid
+# "Launchpad PPA for SWI Prolog".
+gpg --no-default-keyring \
+    --keyring /etc/apt/keyrings/swi-prolog.gpg \
+    --list-keys
+```
+
+### Paso 3 — Crear el archivo de fuente DEB822
+
+El formato DEB822 (un campo por línea, con clave: valor) reemplaza la línea
+`deb https://…` del formato clásico. Es el estándar en Debian 12+ y el único
+método fiable en Trixie.
+
+```bash
+# Crea el archivo de fuente. Aquí se usa tee para escribir con sudo.
+# El heredoc (<<EOF … EOF) pasa el contenido multi-línea como stdin.
+sudo tee /etc/apt/sources.list.d/swi-prolog.sources > /dev/null <<EOF
+# Repositorio: PPA estable de SWI-Prolog
+# Fuente: https://launchpad.net/~swi-prolog/+archive/ubuntu/stable
+# Documentación del formato DEB822: man sources.list
+
+# Types: deb → paquetes binarios. Añade "deb-src" si quieres las fuentes.
+Types: deb
+
+# URIs: la URL base del PPA. Nota que es /stable/ubuntu, no /trixie.
+# Para la rama de desarrollo, cambia "stable" por "devel".
+URIs: https://ppa.launchpadcontent.net/swi-prolog/stable/ubuntu
+
+# Suites: el codename de Ubuntu con glibc compatible con Debian 13 Trixie.
+# NO escribas "trixie" aquí: ese codename no existe en el PPA.
+Suites: noble
+
+# Components: "main" es el componente estándar del PPA.
+# Añade "main/debug" si también quieres los paquetes -dbgsym.
+Components: main
+
+# Architectures: limita la descarga de índices a tu arquitectura.
+# Evita que apt intente bajar listas para i386, arm64, etc. innecesariamente.
+# Cámbialo por "arm64" si estás en una Raspberry Pi 4/5 o similar.
+Architectures: amd64
+
+# Signed-By: vincula ESTA fuente a ESTA clave. La clave solo es válida
+# para este repositorio y no se convierte en una clave de confianza global.
+# Este es el mecanismo de seguridad correcto en Debian 12+.
+Signed-By: /etc/apt/keyrings/swi-prolog.gpg
+EOF
+```
+
+### Paso 4 — Actualizar índices e instalar
+
+```bash
+# Descarga los índices de todos los repositorios configurados, incluyendo
+# el PPA recién agregado. Debes ver una línea como:
+#   Get:N https://ppa.launchpadcontent.net/swi-prolog/stable/ubuntu noble InRelease
+# Si ves un 404 o "does not have a Release file", revisa el valor de Suites:.
+sudo apt update
+
+# Instala SWI-Prolog desde el PPA. APT seleccionará automáticamente la
+# versión más alta disponible entre el PPA y los repositorios de Debian.
+# Como el PPA tiene la 10.x y Debian tiene la 9.2.9, ganará el PPA.
+sudo apt install swi-prolog
+```
+
+### Paso 5 — Pinning (recomendado)
+
+Debian 13 tiene su propio `swi-prolog` (9.2.9). Hoy el PPA gana por número
+de versión, pero en el futuro Debian podría actualizar el suyo y crear
+ambigüedad. El *pinning* garantiza que el PPA siempre tenga prioridad:
+
+```bash
+sudo tee /etc/apt/preferences.d/swi-prolog.pref > /dev/null <<EOF
+# Fija la preferencia del PPA de SWI-Prolog sobre cualquier otra fuente.
+#
+# Package: el patrón 'swi-prolog*' cubre el metapaquete y todos los
+# sub-paquetes: swi-prolog-core, swi-prolog-nox, swi-prolog-x, etc.
+Package: swi-prolog*
+
+# Pin: identifica la fuente por hostname. launchpadcontent.net es el
+# dominio de todos los PPAs alojados en Launchpad.
+Pin: origin "ppa.launchpadcontent.net"
+
+# Pin-Priority: 1001
+#   > 1000 → este paquete se prefiere incluso sobre versiones más nuevas
+#             en otros repositorios, y permite hacer downgrade al PPA
+#             si fuera necesario.
+#   Sin este archivo, la prioridad por defecto es 500.
+Pin-Priority: 1001
+EOF
+```
+
+Verifica que el pinning está activo:
+
+```bash
+# Muestra de dónde viene el candidato de instalación y con qué prioridad.
+# La línea del PPA debe aparecer primero con prioridad 1001.
+apt-cache policy swi-prolog
+```
+
+### Verificación
+
+```bash
+swipl --version
+```
+
+```prolog
+?- check_installation.
+?- halt.
+```
+
+### Símbolos de debug (opcional)
+
+Útil si vas a embeber SWI-Prolog en aplicaciones C/C++ o depurar crashes:
+
+```bash
+# Edita el archivo de fuente y agrega "main/debug" a Components.
+sudo nano /etc/apt/sources.list.d/swi-prolog.sources
+# Cambia la línea:
+#   Components: main
+# por:
+#   Components: main main/debug
+
+sudo apt update
+
+# Instala los símbolos de debug del núcleo.
+# Los paquetes -dbgsym están disponibles para todos los sub-paquetes.
+sudo apt install swi-prolog-nox-dbgsym
+```
+
+### Cambiar a la rama de desarrollo
+
+```bash
+# Edita el archivo de fuente y cambia "stable" por "devel" en URIs.
+sudo nano /etc/apt/sources.list.d/swi-prolog.sources
+
+sudo apt update
+
+# Reinstala para obtener la versión de desarrollo.
+sudo apt install --reinstall swi-prolog
+```
+
+### Desinstalación y limpieza completa
+
+```bash
+# Elimina SWI-Prolog y sus archivos de configuración.
+sudo apt purge 'swi-prolog*'
+sudo apt autoremove
+
+# Elimina el archivo de fuente del PPA.
+sudo rm /etc/apt/sources.list.d/swi-prolog.sources
+
+# Elimina la clave GPG del PPA.
+sudo rm /etc/apt/keyrings/swi-prolog.gpg
+
+# Elimina el archivo de pinning (si lo creaste).
+sudo rm -f /etc/apt/preferences.d/swi-prolog.pref
+
+# Actualiza los índices para reflejar la eliminación del PPA.
+sudo apt update
+```
+
+---
+
+## Resumen y recomendación
+
+- **Aprendizaje o uso general:** Método 1. Un comando, todo listo, la versión
+  9.2.9 cubre el 99 % de los casos de uso.
+
+- **Quieres la versión más reciente sin complicaciones:** Método 2 (Flatpak),
+  recuerda el alias para `swipl`.
+
+- **Necesitas rendimiento máximo o una versión muy específica:** Método 3
+  (CPack). El build PGO marca diferencia en benchmarks intensivos.
+
+- **Quieres la versión más reciente pero integrada con apt:**
+  Método 4 (PPA). La opción más completa si te sientes cómodo con la
+  configuración inicial.
+
+Los cuatro métodos son compatibles entre sí siempre que no los mezcles en
+la misma máquina (desinstala uno antes de probar otro).

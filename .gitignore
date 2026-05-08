@@ -1,3 +1,6 @@
 .codex
 .claude/
 src/.wrangler/
+.venv/
+.agents
+.vscode/
