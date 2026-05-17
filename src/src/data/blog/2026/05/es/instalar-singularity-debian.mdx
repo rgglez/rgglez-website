@@ -77,6 +77,8 @@ soporte SIF muy parecidos, pero con mantenedores y hojas de ruta diferentes.
   - [Qué hace `mconfig`](#que-hace-mconfig)
   - [Compilar SingularityCE](#compilar-singularityce)
   - [Instalar SingularityCE](#instalar-singularityce-1)
+    - [Instalación directa con `make install`](#instalacion-directa-con-make-install)
+    - [Instalación con `checkinstall` para generar `.deb`](#instalacion-con-checkinstall-para-generar-deb)
   - [Revisar la configuración instalada](#revisar-la-configuracion-instalada)
   - [Prueba básica de ejecución](#prueba-basica-de-ejecucion)
   - [Descargar una imagen SIF local](#descargar-una-imagen-sif-local)
@@ -92,6 +94,8 @@ soporte SIF muy parecidos, pero con mantenedores y hojas de ruta diferentes.
   - [Integración con GPU NVIDIA](#integracion-con-gpu-nvidia)
   - [Integración con SLURM o entornos HPC](#integracion-con-slurm-o-entornos-hpc)
   - [Desinstalar SingularityCE instalado desde fuente](#desinstalar-singularityce-instalado-desde-fuente)
+    - [Desinstalar instalación directa (`make install`)](#desinstalar-instalacion-directa-make-install)
+    - [Desinstalar instalación con paquete `.deb` de `checkinstall`](#desinstalar-instalacion-con-paquete-deb-de-checkinstall)
   - [Problemas comunes](#problemas-comunes)
   - [Checklist final](#checklist-final)
   - [Recomendaciones operativas](#recomendaciones-operativas)
@@ -542,6 +546,8 @@ consumir bastante memoria. Si estás en una VM con poca RAM, usa simplemente
 
 ### Instalar SingularityCE
 
+#### Instalación directa con `make install`
+
 Instala:
 
 ```bash
@@ -570,6 +576,43 @@ Ejemplo esperado:
 
 ```text
 singularity-ce version 4.3.6
+```
+
+#### Instalación con `checkinstall` para generar `.deb`
+
+Si quieres poder desinstalar con `dpkg`/`apt` en lugar de borrar rutas a mano,
+puedes generar e instalar un paquete `.deb` local desde el mismo `builddir`.
+
+Instala `checkinstall`:
+
+```bash
+sudo apt update
+sudo apt install -y checkinstall
+```
+
+Desde `builddir` (donde ya ejecutaste `make`), genera e instala el `.deb`:
+
+```bash
+sudo checkinstall \
+  --type=debian \
+  --pkgname=singularity-ce \
+  --pkgversion="${SINGULARITY_VERSION}" \
+  --pkglicense="BSD-3-Clause" \
+  --maintainer="admin@localhost" \
+  --requires="libseccomp2,uidmap,squashfs-tools,cryptsetup" \
+  --nodoc \
+  --install=yes \
+  make install
+```
+
+Al terminar, `checkinstall` dejará también el paquete `.deb` en el directorio
+actual para reutilizarlo en otras máquinas compatibles.
+
+Verifica:
+
+```bash
+dpkg -l | grep singularity-ce
+singularity --version
 ```
 
 ### Revisar la configuración instalada
@@ -917,6 +960,8 @@ lectura o en un directorio de proyecto.
 
 ### Desinstalar SingularityCE instalado desde fuente
 
+#### Desinstalar instalación directa (`make install`)
+
 Si instalaste bajo `/usr/local`, puedes revisar primero la configuración:
 
 ```bash
@@ -949,6 +994,35 @@ Si compilaste en `/usr/local/src`, también puedes eliminar el árbol de código
 ```bash
 sudo rm -rf "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}"
 sudo rm -f "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}.tar.gz"
+```
+
+#### Desinstalar instalación con paquete `.deb` de `checkinstall`
+
+Si instalaste con `checkinstall`, primero identifica el nombre exacto del
+paquete:
+
+```bash
+dpkg -l | grep singularity
+```
+
+Normalmente bastará con:
+
+```bash
+sudo apt remove --purge -y singularity-ce
+sudo apt autoremove -y
+```
+
+Si `apt` no lo encuentra por nombre, usa `dpkg` con el identificador real:
+
+```bash
+sudo dpkg -r singularity-ce
+```
+
+Verifica:
+
+```bash
+which singularity || true
+singularity --version || true
 ```
 
 ### Problemas comunes
