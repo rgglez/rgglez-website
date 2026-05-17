@@ -293,7 +293,9 @@ sudo apt install -y \
 ### Instalar dependencias de compilación de SingularityCE
 
 Instala las dependencias indicadas por la documentación de SingularityCE para
-sistemas Debian/Ubuntu, añadiendo `libsubid-dev`, conveniente en Debian 13:
+sistemas Debian/Ubuntu, añadiendo `libsubid-dev`, conveniente en Debian 13.
+Esta combinación evita instalar `runc` para no forzar la eliminación de
+`docker-ce`/`containerd.io` en sistemas que ya usan Docker CE:
 
 ```bash
 sudo apt install -y \
@@ -302,11 +304,10 @@ sudo apt install -y \
   cryptsetup \
   fuse \
   fuse2fs \
-  libfuse-dev \
+  libfuse3-dev \
   libseccomp-dev \
   libtool \
   pkg-config \
-  runc \
   squashfs-tools \
   squashfs-tools-ng \
   uidmap \
@@ -328,11 +329,14 @@ Permite soporte para contenedores cifrados. Puedes compilar SingularityCE sin
 `cryptsetup`, pero si planeas usar imágenes cifradas, conviene instalarlo desde
 el inicio.
 
-#### `fuse`, `fuse2fs`, `libfuse-dev`
+#### `fuse`, `fuse2fs`, `libfuse3-dev`
 
 FUSE permite montar sistemas de archivos en espacio de usuario. En el contexto
 de SingularityCE y herramientas similares, FUSE es importante para varios modos
 de montaje y ejecución no privilegiada.
+
+> Nota: en versiones antiguas de Debian/Ubuntu o en guías viejas puede aparecer
+> `libfuse-dev`. En Debian 13 el paquete correcto es `libfuse3-dev`.
 
 #### `libseccomp-dev`
 
@@ -342,8 +346,16 @@ de aislamiento y control de seguridad en runtimes de contenedores.
 #### `runc`
 
 `runc` es un runtime OCI. SingularityCE puede operar con modo OCI en algunas
-situaciones. Si no usarás comandos `singularity oci`, podrías no necesitarlo,
-pero instalarlo evita sorpresas.
+situaciones. Si no usarás comandos `singularity oci`, puedes omitirlo.
+
+OCI significa **Open Container Initiative**: un conjunto de especificaciones
+abiertas para formatos de imagen y ejecución de contenedores. En términos
+prácticos, "modo OCI" se refiere a trabajar con ese estándar (imágenes y
+runtimes compatibles con OCI).
+
+> Nota: en Debian 13, instalar `runc` desde repos Debian puede entrar en
+> conflicto con `containerd.io`/`docker-ce` del repositorio oficial de Docker y
+> provocar su desinstalación.
 
 #### `squashfs-tools` y `squashfs-tools-ng`
 
@@ -437,6 +449,35 @@ Conviene instalar una versión etiquetada, no la rama `main`.
 Una versión etiquetada es más estable porque corresponde a un release. En
 cambio, la rama `main` puede cambiar rápidamente y no es la mejor opción para
 una máquina de producción.
+
+Para localizar versiones disponibles:
+
+1. Revisa la página oficial de releases:
+   <a href="https://github.com/sylabs/singularity/releases" target="_blank">https://github.com/sylabs/singularity/releases</a>
+2. Desde terminal, lista tags recientes:
+
+```bash
+curl -fsSL "https://api.github.com/repos/sylabs/singularity/releases" \
+  | grep -E '"tag_name":' \
+  | head -n 10
+```
+
+Salida típica:
+
+```text
+"tag_name": "v4.3.6"
+"tag_name": "v4.3.5"
+```
+
+3. Verifica que exista el tarball del release elegido:
+
+```bash
+export SINGULARITY_VERSION="4.3.6"
+wget --spider "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz"
+```
+
+Si `wget --spider` responde `200 OK`, esa versión está disponible con ese
+formato de archivo.
 
 Define la versión en una variable:
 
@@ -594,6 +635,7 @@ Desde `builddir` (donde ya ejecutaste `make`), genera e instala el `.deb`:
 
 ```bash
 sudo checkinstall \
+  --fstrans=no \
   --type=debian \
   --pkgname=singularity-ce \
   --pkgversion="${SINGULARITY_VERSION}" \
@@ -614,6 +656,9 @@ Verifica:
 dpkg -l | grep singularity-ce
 singularity --version
 ```
+
+> Nota: `--fstrans=no` evita fallos conocidos de `checkinstall`/`installwatch`
+> en algunos sistemas Debian actuales durante `make install`.
 
 ### Revisar la configuración instalada
 
@@ -652,6 +697,9 @@ singularity exec docker://debian:13 cat /etc/os-release
 
 La primera vez, SingularityCE descargará capas desde el registro Docker/OCI y
 construirá una imagen local en caché.
+
+> Nota: esta prueba básica no requiere `runc`. `runc` se vuelve relevante sobre
+> todo para flujos de modo OCI explícito (`singularity oci ...`).
 
 También puedes hacer una prueba con Alpine:
 
@@ -1131,6 +1179,72 @@ sudo singularity build imagen.sif receta.def
 ```
 
 O configura `fakeroot` correctamente con `/etc/subuid` y `/etc/subgid`.
+
+#### Docker fue removido al instalar `runc` (cómo restaurarlo)
+
+Si al instalar dependencias viste algo como:
+
+```text
+ELIMINANDO:
+  containerd.io docker-ce
+```
+
+entonces `apt` resolvió un conflicto entre `runc` (repos Debian) y paquetes de
+Docker CE (repositorio oficial de Docker).
+
+Para restaurar Docker:
+
+```bash
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+sudo docker version
+sudo docker run --rm hello-world
+```
+
+Si falla porque falta el repositorio de Docker, vuelve a configurarlo:
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo $VERSION_CODENAME) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+Para evitar repetir el problema, omite `runc` en la instalación base de
+dependencias de SingularityCE y úsalo sólo si realmente necesitas el modo OCI.
+
+#### `checkinstall` falla con `mkdir ... El fichero ya existe`
+
+Si `checkinstall` falla durante `make install` con un error similar a:
+
+```text
+mkdir: cannot create directory '...': El fichero ya existe
+```
+
+y ya verificaste que el directorio realmente no existe, suele ser un problema
+de `installwatch` (interno de `checkinstall`), no del `Makefile`.
+
+Ejecuta `checkinstall` con:
+
+```bash
+--fstrans=no
+```
+
+Ejemplo completo:
+
+```bash
+sudo checkinstall --fstrans=no --type=debian ... make -j1 install
+```
 
 #### Problemas descargando desde Docker Hub
 
