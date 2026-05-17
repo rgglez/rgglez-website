@@ -1,0 +1,1252 @@
+---
+title: "Cómo instalar SingularityCE (y Apptainer) en Debian 13 sin morir en el intento."
+description: >
+    Guía de instalación de SingularityCE en Debian 13 Trixie. Compilación
+    desde código fuente, verificación, configuración y solución de problemas.
+    Cubre también la instalación de Apptainer.
+pubDatetime: 2026-05-16T12:00:00Z
+modDatetime: 2026-05-16T12:00:00Z
+lang: "es"
+slug: instalar-singularity-apptainer-debian-13
+ogImage: "../../../../../assets/posts/2026/05/instalar-singularity-debian/header.webp"
+featured: true
+draft: false
+tags:
+  - Debian 13
+  - SingularityCE
+  - Apptainer
+  - contenedores
+  - HPC
+  - Linux
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+## Introducción
+
+**Singularity** es un runtime de contenedores orientado sobre todo a entornos
+cientificos y HPC (*High Performance Computing*, computación de alto desempeño);
+se usa para ejecutar software empaquetado de forma reproducible, aislada y
+portable entre estaciones de trabajo, servidores y clusters, sin romper
+facilmente la integracion con el sistema anfitrion.
+
+**SIF** (*Singularity Image Format*) es el formato de imagen usado por <a
+href="https://sylabs.io" target="_blank">Singularity</a> para empaquetar
+contenedores en un único archivo portable, verificable y fácil de compartir.
+
+Comparativamente con **Docker**, en términos prácticos, éste está más orientado
+a microservicios y despliegues tipo DevOps (daemon, imágenes OCI, orquestación),
+mientras que **Singularity** prioriza ejecución científica/HPC con integración
+más directa con el host y sin exigir el mismo modelo de privilegios que Docker
+clásico.
+
+**Singularity** fue creado originalmente por <a
+href="https://gmkurtzer.github.io/" target="_blank">Gregory M. Kurtzer</a>. No
+nació como proyecto "cerrado" ni puramente comercial: durante años se usó como
+software abierto en academia y HPC. Con el tiempo cambiaron la gobernanza y la
+propiedad de marca cuando Sylabs impulsó su oferta comercial (soporte
+empresarial y productos asociados). A partir de ahí, los caminos se separaron:
+<a href="https://sylabs.io/singularity/" target="_blank">**SingularityCE**</a>
+(Community Edition) continuó bajo Sylabs, mientras que <a
+href="https://apptainer.org/" target="_blank">**Apptainer**</a> surgió en 2021
+como fork comunitario en la Linux Foundation para mantener una gobernanza
+abierta y neutral. En la práctica, hoy conviven ambos runtimes, con CLI y
+soporte SIF muy parecidos, pero con mantenedores y hojas de ruta diferentes.
+
+---
+
+## Tabla de contenido
+
+- [Introducción](#introduccion)
+- [Objetivos](#objetivos)
+- [SingularityCE vs Apptainer](#singularityce-vs-apptainer)
+- [Estrategia de instalación recomendada en Debian 13](#estrategia-de-instalacion-recomendada-en-debian-13)
+- [1. Instalación de SingularityCE](#1-instalacion-de-singularityce)
+  - [Cuándo elegir SingularityCE](#cuando-elegir-singularityce)
+  - [Esquema de directorios](#esquema-de-directorios)
+  - [Requisitos previos](#requisitos-previos)
+  - [Preparar el sistema](#preparar-el-sistema)
+  - [Instalar dependencias de compilación de SingularityCE](#instalar-dependencias-de-compilacion-de-singularityce)
+  - [Dependencias a detalle](#dependencias-a-detalle)
+  - [Instalar Go](#instalar-go)
+  - [Nota sobre Debian y Go](#nota-sobre-debian-y-go)
+  - [Elegir la versión de SingularityCE](#elegir-la-version-de-singularityce)
+  - [Descargar el tarball correcto](#descargar-el-tarball-correcto)
+  - [Configurar la compilación](#configurar-la-compilacion)
+  - [Qué hace `mconfig`](#que-hace-mconfig)
+  - [Compilar SingularityCE](#compilar-singularityce)
+  - [Instalar SingularityCE](#instalar-singularityce-1)
+  - [Revisar la configuración instalada](#revisar-la-configuracion-instalada)
+  - [Prueba básica de ejecución](#prueba-basica-de-ejecucion)
+  - [Descargar una imagen SIF local](#descargar-una-imagen-sif-local)
+  - [Por qué conviene usar imágenes locales](#por-que-conviene-usar-imagenes-locales)
+  - [Caché de SingularityCE](#cache-de-singularityce)
+  - [Directorio temporal](#directorio-temporal)
+  - [Ejecutar comandos dentro de un contenedor](#ejecutar-comandos-dentro-de-un-contenedor)
+  - [Ejecutar una imagen como programa](#ejecutar-una-imagen-como-programa)
+  - [Montar directorios del host](#montar-directorios-del-host)
+  - [Construir una imagen desde una receta `.def`](#construir-una-imagen-desde-una-receta-def)
+  - [Por qué usamos `sudo` para construir](#por-que-usamos-sudo-para-construir)
+  - [Construcción sin root y fakeroot](#construccion-sin-root-y-fakeroot)
+  - [Integración con GPU NVIDIA](#integracion-con-gpu-nvidia)
+  - [Integración con SLURM o entornos HPC](#integracion-con-slurm-o-entornos-hpc)
+  - [Desinstalar SingularityCE instalado desde fuente](#desinstalar-singularityce-instalado-desde-fuente)
+  - [Problemas comunes](#problemas-comunes)
+  - [Checklist final](#checklist-final)
+  - [Recomendaciones operativas](#recomendaciones-operativas)
+  - [Fuentes consultadas](#fuentes-consultadas)
+  - [Resumen ejecutivo](#resumen-ejecutivo)
+- [2. Instalación de Apptainer](#2-instalacion-de-apptainer)
+  - [Alternativa: instalar Apptainer en Debian 13](#alternativa-instalar-apptainer-en-debian-13)
+  - [Cuándo elegir Apptainer](#cuando-elegir-apptainer)
+  - [Instalar desde repositorios Debian](#instalar-desde-repositorios-debian)
+  - [Verificación básica](#verificacion-basica)
+  - [Configuración recomendada de caché y temporales](#configuracion-recomendada-de-cache-y-temporales)
+  - [¿Cuándo usar esta vía?](#cuando-usar-esta-via)
+
+---
+
+## Objetivos
+
+Esta guía explica cómo instalar **SingularityCE** en **Debian 13 Trixie** de
+forma controlada, reproducible y razonablemente segura. El enfoque principal
+será compilar SingularityCE desde código fuente, porque los paquetes `.deb`
+oficiales de SingularityCE publicados por Sylabs están orientados principalmente
+a Ubuntu LTS, no específicamente a Debian 13.
+
+También se incluye la instalación de **Apptainer**, porque en muchos entornos
+académicos, científicos y HPC se usa el nombre *Singularity* de forma genérica,
+aunque hoy (2026) existen dos proyectos relacionados pero distintos, como se
+mencionó:
+
+- **SingularityCE**, mantenido por Sylabs.
+- **Apptainer**, el proyecto comunitario derivado de Singularity.
+
+> Si tu clúster, universidad, laboratorio o proveedor HPC te pide explícitamente
+> *Singularity*, normalmente conviene preguntar si se refieren a **SingularityCE**
+> o a **Apptainer**. Ambos ejecutan imágenes SIF y tienen una interfaz muy
+> parecida, pero no son exactamente el mismo proyecto.
+
+## SingularityCE vs Apptainer
+
+Históricamente, **Singularity** fue una herramienta muy usada en HPC porque
+permitía ejecutar contenedores de forma más compatible con entornos multiusuario
+que Docker. En particular, Singularity se volvió popular porque facilitaba
+ejecutar cargas científicas, pipelines bioinformáticos, software de machine
+learning y aplicaciones empaquetadas sin requerir que cada usuario tuviera
+privilegios administrativos.
+
+Con el tiempo, el ecosistema se dividió:
+
+| Proyecto | Comando principal | Comentario |
+| --- | --- | --- |
+| SingularityCE | `singularity` | Continuación comunitaria mantenida por Sylabs. |
+| Apptainer | `apptainer` | Proyecto derivado, muy común en HPC y con paquetes específicos para Debian 13. |
+
+En la práctica:
+
+```bash
+singularity exec imagen.sif comando
+```
+
+Y:
+
+```bash
+apptainer exec imagen.sif comando
+```
+
+son comandos conceptualmente muy similares.
+
+## Estrategia de instalación recomendada en Debian 13
+
+En Debian 13 hay tres caminos razonables:
+
+| Método | Recomendación | Comentario |
+| --- | --- | --- |
+| Compilar SingularityCE desde código fuente | Recomendado para SingularityCE en Debian 13 | Da mayor control y evita usar paquetes `.deb` destinados a Ubuntu. |
+| Usar paquetes `.deb` de SingularityCE para Ubuntu | No recomendado salvo pruebas controladas | Puede funcionar, pero no es lo ideal en Debian puro. |
+| Instalar Apptainer con paquetes para Debian 13 | Alternativa razonable si no necesitas Sylabs SingularityCE específicamente | Apptainer publica paquetes `.deb` específicos para Trixie. |
+
+## 1. Instalación de SingularityCE
+
+En esta guía instalaremos **SingularityCE** desde una versión publicada en
+GitHub por Sylabs.
+
+### Cuándo elegir SingularityCE
+
+Elige SingularityCE si:
+
+- Tu documentación interna pide explícitamente SingularityCE.
+- Quieres mantener compatibilidad con flujos Sylabs.
+- Tu equipo ya usa SingularityCE y quiere evitar diferencias entre runtimes.
+- Necesitas reproducir exactamente el comportamiento de una instalación
+  SingularityCE existente.
+
+Si no necesitas SingularityCE de Sylabs de forma estricta, Apptainer suele ser
+la opción más directa en Debian 13 porque se integra bien con `apt`.
+
+### Esquema de directorios
+
+La instalación quedará, por defecto, bajo:
+
+```text
+/usr/local
+```
+
+Por tanto, el binario principal quedará normalmente en:
+
+```text
+/usr/local/bin/singularity
+```
+
+Y la configuración global quedará bajo una ruta similar a:
+
+```text
+/usr/local/etc/singularity/
+```
+
+Este esquema tiene una ventaja importante: mantiene separada la instalación
+manual de los paquetes gestionados por `apt`. En Debian, los archivos instalados
+por el administrador local suelen vivir bajo `/usr/local`, mientras que los
+paquetes del sistema suelen instalarse bajo `/usr`.
+
+### Requisitos previos
+
+Esta guía asume lo siguiente:
+
+- Tienes **Debian 13 Trixie** instalado.
+- Tienes acceso a una cuenta con permisos de `sudo`.
+- Tienes conexión a Internet para descargar dependencias y código fuente.
+- Estás en una arquitectura `amd64` / `x86_64`, que es la más habitual en
+  servidores y estaciones de trabajo.
+- Vas a instalar SingularityCE para uso local o para un servidor administrado
+  por ti.
+
+Verifica la versión de Debian:
+
+```bash
+cat /etc/os-release
+```
+
+En Debian 13 deberías ver algo parecido a:
+
+```text
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+VERSION_ID="13"
+VERSION_CODENAME=trixie
+```
+
+Verifica también la arquitectura:
+
+```bash
+uname -m
+```
+
+Lo más común es que el resultado sea:
+
+```text
+x86_64
+```
+
+### Preparar el sistema
+
+Actualiza los índices de paquetes:
+
+```bash
+sudo apt update
+```
+
+Actualiza el sistema base si tienes paquetes pendientes:
+
+```bash
+sudo apt full-upgrade -y
+```
+
+Instala herramientas básicas:
+
+```bash
+sudo apt install -y \
+  ca-certificates \
+  curl \
+  wget \
+  git \
+  gnupg \
+  lsb-release \
+  build-essential
+```
+
+### Comentario
+
+- `ca-certificates` permite validar certificados TLS al descargar desde HTTPS.
+- `curl` y `wget` sirven para descargar archivos.
+- `git` será necesario si decides clonar el repositorio en vez de usar un
+  tarball de release.
+- `gnupg` es útil para verificar firmas o manejar llaves.
+- `build-essential` instala compilador C/C++, `make` y herramientas básicas de
+  compilación.
+
+### Instalar dependencias de compilación de SingularityCE
+
+Instala las dependencias indicadas por la documentación de SingularityCE para
+sistemas Debian/Ubuntu, añadiendo `libsubid-dev`, conveniente en Debian 13:
+
+```bash
+sudo apt install -y \
+  autoconf \
+  automake \
+  cryptsetup \
+  fuse \
+  fuse2fs \
+  libfuse-dev \
+  libseccomp-dev \
+  libtool \
+  pkg-config \
+  runc \
+  squashfs-tools \
+  squashfs-tools-ng \
+  uidmap \
+  zlib1g-dev \
+  libsubid-dev
+```
+
+### Dependencias a detalle
+
+#### `autoconf`, `automake`, `libtool`, `pkg-config`
+
+Estas herramientas participan en el proceso clásico de generación de scripts de
+configuración y compilación. SingularityCE usa un proceso de construcción que
+necesita preparar un árbol de compilación antes de ejecutar `make`.
+
+#### `cryptsetup`
+
+Permite soporte para contenedores cifrados. Puedes compilar SingularityCE sin
+`cryptsetup`, pero si planeas usar imágenes cifradas, conviene instalarlo desde
+el inicio.
+
+#### `fuse`, `fuse2fs`, `libfuse-dev`
+
+FUSE permite montar sistemas de archivos en espacio de usuario. En el contexto
+de SingularityCE y herramientas similares, FUSE es importante para varios modos
+de montaje y ejecución no privilegiada.
+
+#### `libseccomp-dev`
+
+`seccomp` permite aplicar filtros de llamadas al sistema. Es una pieza relevante
+de aislamiento y control de seguridad en runtimes de contenedores.
+
+#### `runc`
+
+`runc` es un runtime OCI. SingularityCE puede operar con modo OCI en algunas
+situaciones. Si no usarás comandos `singularity oci`, podrías no necesitarlo,
+pero instalarlo evita sorpresas.
+
+#### `squashfs-tools` y `squashfs-tools-ng`
+
+Las imágenes SIF suelen incluir sistemas de archivos comprimidos basados en
+SquashFS. Estas herramientas permiten crear, inspeccionar y manipular ese tipo
+de contenido.
+
+#### `uidmap` y `libsubid-dev`
+
+Estos paquetes están relacionados con mapeo de usuarios y grupos subordinados,
+importante para escenarios rootless, fakeroot y user namespaces.
+
+### Instalar Go
+
+SingularityCE está escrito en Go. La documentación oficial recomienda usar una
+versión reciente de Go desde los binarios oficiales, especialmente porque la
+versión disponible en los repositorios de una distribución puede no ser
+suficientemente reciente para compilar la versión actual de SingularityCE.
+
+Consulta primero si ya tienes Go instalado:
+
+```bash
+go version || true
+```
+
+Si tienes una instalación manual previa bajo `/usr/local/go`, elimínala antes de
+instalar otra versión encima:
+
+```bash
+sudo rm -rf /usr/local/go
+```
+
+Instala Go desde los binarios oficiales. Ajusta `GO_VERSION` a una versión
+estable reciente soportada por el release concreto que vas a compilar:
+
+```bash
+cd /tmp
+
+export GO_VERSION="1.25.5"
+export GO_OS="linux"
+export GO_ARCH="amd64"
+
+wget "https://go.dev/dl/go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
+
+sudo tar -C /usr/local -xzf "go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
+
+rm "go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
+```
+
+Agrega Go al `PATH` para tu usuario:
+
+```bash
+cat <<'BASHRC_GO' >> ~/.bashrc
+
+# Go instalado manualmente en /usr/local/go
+export GOPATH="$HOME/go"
+export PATH="/usr/local/go/bin:$GOPATH/bin:$PATH"
+BASHRC_GO
+
+source ~/.bashrc
+```
+
+Verifica:
+
+```bash
+go version
+```
+
+Deberías ver algo como:
+
+```text
+go version go1.25.5 linux/amd64
+```
+
+### Nota sobre Debian y Go
+
+En Debian también podrías instalar Go con:
+
+```bash
+sudo apt install golang-go
+```
+
+Ese método es más fácil de mantener con `apt`, pero para compilar SingularityCE
+suele ser más prudente instalar la versión de Go esperada por el release
+concreto que vas a construir.
+
+### Elegir la versión de SingularityCE
+
+Conviene instalar una versión etiquetada, no la rama `main`.
+
+Una versión etiquetada es más estable porque corresponde a un release. En
+cambio, la rama `main` puede cambiar rápidamente y no es la mejor opción para
+una máquina de producción.
+
+Define la versión en una variable:
+
+```bash
+export SINGULARITY_VERSION="4.3.6"
+```
+
+Puedes cambiar ese valor por la versión estable más reciente publicada por
+Sylabs.
+
+### Descargar el tarball correcto
+
+Descarga el tarball de release de SingularityCE:
+
+```bash
+cd /usr/local/src
+
+sudo wget "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz"
+```
+
+Extrae el archivo:
+
+```bash
+sudo tar -xzf "singularity-ce-${SINGULARITY_VERSION}.tar.gz"
+```
+
+Cambia la propiedad del árbol de código a tu usuario para compilar sin usar
+`sudo` todo el tiempo:
+
+```bash
+sudo chown -R "$USER:$USER" "singularity-ce-${SINGULARITY_VERSION}"
+```
+
+Entra al directorio:
+
+```bash
+cd "singularity-ce-${SINGULARITY_VERSION}"
+```
+
+### Comentario importante
+
+Usa el archivo llamado aproximadamente:
+
+```text
+singularity-ce-X.Y.Z.tar.gz
+```
+
+No uses el código fuente generado automáticamente por GitHub, porque esos
+archivos pueden no incluir todos los componentes o dependencias vendorizadas que
+espera el proceso de compilación del release.
+
+### Configurar la compilación
+
+Genera el árbol de compilación:
+
+```bash
+./mconfig --prefix=/usr/local
+```
+
+### Qué hace `mconfig`
+
+`mconfig` prepara el directorio de compilación, detecta dependencias y define
+las rutas finales de instalación.
+
+Con:
+
+```bash
+--prefix=/usr/local
+```
+
+indicamos que SingularityCE se instalará bajo `/usr/local`.
+
+Eso normalmente implica:
+
+```text
+/usr/local/bin/singularity
+/usr/local/etc/singularity/singularity.conf
+/usr/local/libexec/singularity/
+/usr/local/var/singularity/
+```
+
+### Compilar SingularityCE
+
+Entra al directorio de compilación:
+
+```bash
+cd builddir
+```
+
+Compila:
+
+```bash
+make
+```
+
+Si quieres usar más núcleos de CPU:
+
+```bash
+make -j"$(nproc)"
+```
+
+### Comentario
+
+Usar `make -j$(nproc)` acelera la compilación, pero en máquinas pequeñas puede
+consumir bastante memoria. Si estás en una VM con poca RAM, usa simplemente
+`make`.
+
+### Instalar SingularityCE
+
+Instala:
+
+```bash
+sudo make install
+```
+
+Verifica que el binario exista:
+
+```bash
+which singularity
+```
+
+Debería responder:
+
+```text
+/usr/local/bin/singularity
+```
+
+Verifica la versión:
+
+```bash
+singularity --version
+```
+
+Ejemplo esperado:
+
+```text
+singularity-ce version 4.3.6
+```
+
+### Revisar la configuración instalada
+
+SingularityCE incluye un comando útil para mostrar cómo fue construido:
+
+```bash
+singularity buildcfg
+```
+
+Ese comando muestra rutas relevantes como:
+
+```text
+PREFIX=/usr/local
+BINDIR=/usr/local/bin
+SYSCONFDIR=/usr/local/etc
+SINGULARITY_CONFDIR=/usr/local/etc/singularity
+SINGULARITY_CONF_FILE=/usr/local/etc/singularity/singularity.conf
+```
+
+La configuración principal suele estar en:
+
+```bash
+sudo less /usr/local/etc/singularity/singularity.conf
+```
+
+No edites esta configuración a ciegas. Primero confirma qué comportamiento
+necesitas cambiar.
+
+### Prueba básica de ejecución
+
+Ejecuta una prueba simple usando una imagen remota:
+
+```bash
+singularity exec docker://debian:13 cat /etc/os-release
+```
+
+La primera vez, SingularityCE descargará capas desde el registro Docker/OCI y
+construirá una imagen local en caché.
+
+También puedes hacer una prueba con Alpine:
+
+```bash
+singularity exec docker://alpine:latest echo "Hola desde SingularityCE"
+```
+
+Salida esperada:
+
+```text
+Hola desde SingularityCE
+```
+
+### Descargar una imagen SIF local
+
+En HPC suele ser preferible descargar una imagen una vez y luego ejecutarla
+muchas veces.
+
+```bash
+mkdir -p ~/containers
+cd ~/containers
+
+singularity pull debian-13.sif docker://debian:13
+```
+
+Ejecuta la imagen local:
+
+```bash
+singularity exec ~/containers/debian-13.sif cat /etc/os-release
+```
+
+### Por qué conviene usar imágenes locales
+
+Cuando ejecutas directamente una URL remota, SingularityCE puede necesitar
+acceder al registro remoto y usar caché. En servidores compartidos, NFS o
+clústeres, esto puede causar problemas de concurrencia o rendimiento.
+
+Con una imagen `.sif` local controlas mejor cuándo descargas y cuándo ejecutas.
+
+### Caché de SingularityCE
+
+Puedes inspeccionar la caché:
+
+```bash
+singularity cache list
+```
+
+Puedes limpiarla:
+
+```bash
+singularity cache clean
+```
+
+O limpiar sin pedir confirmación:
+
+```bash
+singularity cache clean --force
+```
+
+Normalmente la caché está bajo tu `$HOME`, en una ruta similar a:
+
+```text
+~/.singularity/cache
+```
+
+Puedes moverla usando la variable de entorno:
+
+```bash
+mkdir -p /var/tmp/$USER/singularity-cache
+export SINGULARITY_CACHEDIR="/var/tmp/$USER/singularity-cache"
+```
+
+Para hacerlo permanente:
+
+```bash
+cat <<'BASHRC_CACHE' >> ~/.bashrc
+
+# Caché de SingularityCE en disco local
+export SINGULARITY_CACHEDIR="/var/tmp/$USER/singularity-cache"
+BASHRC_CACHE
+```
+
+### Directorio temporal
+
+SingularityCE también usa directorios temporales al construir o ejecutar
+contenedores.
+
+```bash
+export SINGULARITY_TMPDIR="/var/tmp/$USER/singularity-tmp"
+mkdir -p "$SINGULARITY_TMPDIR"
+```
+
+Para hacerlo permanente:
+
+```bash
+cat <<'BASHRC_TMP' >> ~/.bashrc
+
+# Directorio temporal de SingularityCE
+export SINGULARITY_TMPDIR="/var/tmp/$USER/singularity-tmp"
+BASHRC_TMP
+```
+
+### Comentario para HPC y NFS
+
+Evita usar NFS, Lustre, GPFS o sistemas compartidos como directorio temporal
+para operaciones que requieran overlay, fakeroot o construcción intensiva. Es
+mejor usar almacenamiento local del nodo cuando sea posible.
+
+### Ejecutar comandos dentro de un contenedor
+
+La forma más común de uso es:
+
+```bash
+singularity exec imagen.sif comando
+```
+
+Ejemplo:
+
+```bash
+singularity exec ~/containers/debian-13.sif uname -a
+```
+
+También puedes abrir una shell:
+
+```bash
+singularity shell ~/containers/debian-13.sif
+```
+
+Dentro de la shell verás un prompt de SingularityCE. Para salir:
+
+```bash
+exit
+```
+
+### Ejecutar una imagen como programa
+
+Algunas imágenes tienen un `runscript`. En ese caso puedes usar:
+
+```bash
+singularity run imagen.sif
+```
+
+Si la imagen no define un comportamiento por defecto interesante, suele ser más
+explícito usar `exec`.
+
+### Montar directorios del host
+
+Para montar un directorio de forma explícita usa `--bind` o `-B`:
+
+```bash
+singularity exec \
+  --bind /datos:/datos \
+  ~/containers/debian-13.sif \
+  ls -lah /datos
+```
+
+La sintaxis general es:
+
+```text
+--bind ruta_host:ruta_contenedor
+```
+
+Ejemplo con una ruta de trabajo:
+
+```bash
+mkdir -p ~/trabajo-singularity
+
+echo "archivo desde el host" > ~/trabajo-singularity/prueba.txt
+
+singularity exec \
+  --bind "$HOME/trabajo-singularity:/work" \
+  ~/containers/debian-13.sif \
+  cat /work/prueba.txt
+```
+
+### Construir una imagen desde una receta `.def`
+
+SingularityCE usa archivos de definición, normalmente con extensión `.def`.
+
+Crea un ejemplo:
+
+```bash
+mkdir -p ~/singularity-recipes
+cd ~/singularity-recipes
+
+cat > debian-python.def <<'RECIPE'
+Bootstrap: docker
+From: debian:13
+
+%post
+    apt-get update
+    apt-get install -y python3 python3-pip ca-certificates
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    echo "Python dentro del contenedor:"
+    exec python3 --version
+RECIPE
+```
+
+Construye la imagen:
+
+```bash
+sudo singularity build debian-python.sif debian-python.def
+```
+
+Ejecuta:
+
+```bash
+singularity run debian-python.sif
+```
+
+### Por qué usamos `sudo` para construir
+
+Dependiendo de la configuración de SingularityCE, construir imágenes puede
+requerir privilegios. En estaciones personales o servidores propios, usar `sudo
+singularity build` es común.
+
+En un clúster HPC administrado, normalmente los usuarios no tienen `sudo`; en
+esos casos se suele construir la imagen en otra máquina y luego copiar el `.sif`
+al clúster.
+
+### Construcción sin root y fakeroot
+
+SingularityCE puede soportar modos como `--fakeroot`, dependiendo de la
+configuración del sistema.
+
+Verifica que tu usuario tenga rangos en `/etc/subuid` y `/etc/subgid`:
+
+```bash
+grep "^$USER:" /etc/subuid /etc/subgid || true
+```
+
+Si no aparecen entradas, puedes agregarlas con:
+
+```bash
+sudo usermod --add-subuids 100000-165535 "$USER"
+sudo usermod --add-subgids 100000-165535 "$USER"
+```
+
+Cierra sesión y vuelve a entrar para que algunos cambios se apliquen
+correctamente.
+
+Luego prueba:
+
+```bash
+singularity build --fakeroot debian-python.sif debian-python.def
+```
+
+### Comentario
+
+`fakeroot` no significa que seas root real en el host. Significa que dentro del
+contexto del contenedor o del proceso de construcción se simula un entorno donde
+pareces root, usando user namespaces y rangos subordinados de UID/GID.
+
+### Integración con GPU NVIDIA
+
+Si tienes GPU NVIDIA y drivers instalados en el host, SingularityCE puede
+exponerlos dentro del contenedor con:
+
+```bash
+singularity exec --nv imagen.sif nvidia-smi
+```
+
+Ejemplo:
+
+```bash
+singularity exec --nv docker://nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
+```
+
+`--nv` no instala el driver dentro del contenedor. Lo que hace es enlazar
+bibliotecas y dispositivos relevantes del host para que el contenedor pueda usar
+la GPU.
+
+El driver NVIDIA debe estar funcionando en el host:
+
+```bash
+nvidia-smi
+```
+
+Si `nvidia-smi` no funciona en el host, tampoco esperes que funcione dentro del
+contenedor.
+
+### Integración con SLURM o entornos HPC
+
+En un clúster con SLURM, normalmente usarías SingularityCE dentro de un job
+script.
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=singularity-test
+#SBATCH --output=singularity-test.out
+#SBATCH --error=singularity-test.err
+#SBATCH --time=00:10:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=2G
+
+singularity exec /ruta/a/imagen.sif hostname
+singularity exec /ruta/a/imagen.sif python3 --version
+```
+
+En un clúster real, evita que cada job descargue imágenes desde Internet. Es
+mejor preparar el `.sif` antes y guardarlo en una ruta compartida de solo
+lectura o en un directorio de proyecto.
+
+### Desinstalar SingularityCE instalado desde fuente
+
+Si instalaste bajo `/usr/local`, puedes revisar primero la configuración:
+
+```bash
+singularity buildcfg
+```
+
+Como la instalación manual no queda registrada en `apt`, la desinstalación no se
+hace con `apt remove`.
+
+Una estrategia conservadora es eliminar los archivos principales:
+
+```bash
+sudo rm -f /usr/local/bin/singularity
+sudo rm -rf /usr/local/etc/singularity
+sudo rm -rf /usr/local/libexec/singularity
+sudo rm -rf /usr/local/var/singularity
+sudo rm -rf /usr/local/share/doc/singularity-ce
+sudo rm -rf /usr/local/share/man/man1/singularity*.1
+```
+
+Después verifica:
+
+```bash
+which singularity || true
+singularity --version || true
+```
+
+Si compilaste en `/usr/local/src`, también puedes eliminar el árbol de código:
+
+```bash
+sudo rm -rf "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}"
+sudo rm -f "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}.tar.gz"
+```
+
+### Problemas comunes
+
+#### `go: command not found`
+
+Tu shell no tiene Go en el `PATH`.
+
+```bash
+echo "$PATH"
+```
+
+Asegúrate de tener esto en `~/.bashrc`:
+
+```bash
+export GOPATH="$HOME/go"
+export PATH="/usr/local/go/bin:$GOPATH/bin:$PATH"
+```
+
+Recarga:
+
+```bash
+source ~/.bashrc
+```
+
+#### Error por versión vieja de Go
+
+Si la compilación falla indicando que la versión de Go es insuficiente, instala
+una versión más reciente desde los binarios oficiales de Go.
+
+No extraigas una versión nueva encima de `/usr/local/go` sin borrar la anterior.
+Haz:
+
+```bash
+sudo rm -rf /usr/local/go
+```
+
+Y luego instala la nueva.
+
+#### Falta `libsubid-dev`
+
+En Debian 13 conviene instalarlo:
+
+```bash
+sudo apt install -y libsubid-dev
+```
+
+Luego vuelve a ejecutar:
+
+```bash
+./mconfig --prefix=/usr/local
+```
+
+#### `singularity: command not found` después de instalar
+
+Verifica si el binario existe:
+
+```bash
+ls -l /usr/local/bin/singularity
+```
+
+Si existe, probablemente `/usr/local/bin` no está en tu `PATH`.
+
+Temporalmente:
+
+```bash
+export PATH="/usr/local/bin:$PATH"
+```
+
+Permanentemente:
+
+```bash
+cat <<'BASHRC_LOCALBIN' >> ~/.bashrc
+
+# Binarios locales
+export PATH="/usr/local/bin:$PATH"
+BASHRC_LOCALBIN
+
+source ~/.bashrc
+```
+
+#### Problemas con NFS, Lustre, GPFS o PanFS
+
+Si estás en HPC, evita usar sistemas de archivos compartidos para:
+
+- `SINGULARITY_TMPDIR`
+- `SINGULARITY_CACHEDIR`
+- overlays de escritura
+- sandboxes con `--fakeroot`
+- builds intensivos
+
+Usa almacenamiento local del nodo cuando esté disponible.
+
+```bash
+export SINGULARITY_TMPDIR="/scratch/$USER/singularity-tmp"
+export SINGULARITY_CACHEDIR="/scratch/$USER/singularity-cache"
+mkdir -p "$SINGULARITY_TMPDIR" "$SINGULARITY_CACHEDIR"
+```
+
+#### Error al construir imágenes sin `sudo`
+
+Prueba construir con `sudo`:
+
+```bash
+sudo singularity build imagen.sif receta.def
+```
+
+O configura `fakeroot` correctamente con `/etc/subuid` y `/etc/subgid`.
+
+#### Problemas descargando desde Docker Hub
+
+Docker Hub aplica límites de descarga. Si haces muchas pruebas, puedes encontrar
+errores por rate limit.
+
+Soluciones:
+
+- Autenticarse contra Docker Hub si corresponde.
+- Usar un registry propio.
+- Descargar una vez con `singularity pull` y reutilizar el `.sif`.
+- Evitar que muchos jobs de SLURM descarguen la misma imagen al mismo tiempo.
+
+### Checklist final
+
+Ejecuta este bloque para verificar la instalación:
+
+```bash
+set -e
+
+printf '\n[1] Binario:\n'
+which singularity
+
+printf '\n[2] Versión:\n'
+singularity --version
+
+printf '\n[3] Configuración de build:\n'
+singularity buildcfg | sed -n '1,25p'
+
+printf '\n[4] Prueba con Alpine:\n'
+singularity exec docker://alpine:latest echo "SingularityCE funciona"
+
+printf '\n[5] Caché:\n'
+singularity cache list || true
+```
+
+Si todo funciona, la instalación está lista para uso básico.
+
+### Recomendaciones operativas
+
+Para una estación de trabajo personal:
+
+- Instala bajo `/usr/local`.
+- Usa imágenes `.sif` locales.
+- Mantén una carpeta `~/containers`.
+- Limpia la caché periódicamente.
+
+Para un servidor multiusuario:
+
+- Documenta la versión instalada.
+- Evita instalar desde la rama `main`.
+- Usa almacenamiento local para caché y temporales.
+- Evalúa cuidadosamente si necesitas instalación setuid.
+- Define políticas de bind mounts.
+- Considera cuotas de disco para cachés de usuarios.
+
+Para HPC:
+
+- No descargues imágenes dentro de cada job.
+- Construye imágenes fuera del clúster o en nodos designados.
+- Publica imágenes `.sif` versionadas.
+- Usa rutas locales para temporales.
+- Evita overlays de escritura sobre NFS/Lustre/GPFS.
+- Coordina con el administrador del clúster antes de cambiar configuración
+  global.
+
+### Fuentes consultadas
+
+- Documentación oficial de instalación de SingularityCE: <a
+  href="https://docs.sylabs.io/guides/main/admin-guide/installation.html"
+  target="_blank">https://docs.sylabs.io/guides/main/admin-guide/installation.html</a>
+- Releases oficiales de SingularityCE en GitHub: <a
+  href="https://github.com/sylabs/singularity/releases"
+  target="_blank">https://github.com/sylabs/singularity/releases</a>
+- Documentación oficial de instalación de Apptainer: <a
+  href="https://apptainer.org/docs/admin/main/installation.html"
+  target="_blank">https://apptainer.org/docs/admin/main/installation.html</a>
+- Búsqueda de paquetes Debian para Apptainer: <a
+  href="https://packages.debian.org/apptainer"
+  target="_blank">https://packages.debian.org/apptainer</a>
+
+### Resumen ejecutivo
+
+En Debian 13, la vía más limpia para instalar **SingularityCE** es compilar
+desde código fuente usando una versión etiquetada. El proceso consiste en:
+
+1. Instalar dependencias con `apt`.
+2. Instalar una versión reciente de Go.
+3. Descargar el tarball oficial `singularity-ce-X.Y.Z.tar.gz`.
+4. Ejecutar `./mconfig --prefix=/usr/local`.
+5. Compilar con `make`.
+6. Instalar con `sudo make install`.
+7. Verificar con `singularity --version` y `singularity exec
+   docker://alpine:latest ...`.
+
+Si tu prioridad no es usar Sylabs SingularityCE específicamente, sino tener una
+herramienta compatible tipo Singularity en Debian 13, considera seriamente
+**Apptainer**, porque publica paquetes `.deb` específicos para Trixie.
+
+---
+
+## 2. Instalación de Apptainer
+
+### Alternativa: instalar Apptainer en Debian 13
+
+Si no necesitas específicamente SingularityCE de Sylabs, Apptainer puede ser una
+alternativa más directa en Debian 13.
+
+Apptainer publica paquetes `.deb` específicos para Trixie. Un ejemplo de
+instalación no setuid sería:
+
+```bash
+sudo apt update
+sudo apt install -y wget
+cd /tmp
+
+wget https://github.com/apptainer/apptainer/releases/download/v1.5.0/apptainer_1.5.0-trixie+_amd64.deb
+
+sudo apt install -y ./apptainer_1.5.0-trixie+_amd64.deb
+```
+
+Verifica:
+
+```bash
+apptainer --version
+```
+
+Prueba:
+
+```bash
+apptainer exec docker://alpine:latest echo "Hola desde Apptainer"
+```
+
+### Cuándo elegir Apptainer
+
+Elige Apptainer si:
+
+- Tu entorno HPC ya lo usa.
+- Quieres paquetes `.deb` específicamente publicados para Debian 13.
+- No dependes de funcionalidades o integración específica de Sylabs.
+- Te da igual usar `apptainer` en vez de `singularity` como comando principal.
+
+### Instalar desde repositorios Debian
+
+Primero, actualiza índices e instala Apptainer:
+
+```bash
+sudo apt update
+sudo apt install -y apptainer
+```
+
+Si en tu entorno necesitas modo setuid (depende de tu política de seguridad y
+del clúster), instala también el paquete correspondiente si está disponible:
+
+```bash
+sudo apt install -y apptainer-suid
+```
+
+### Verificación básica
+
+Comprueba versión y prueba de ejecución:
+
+```bash
+apptainer --version
+apptainer exec docker://alpine:latest echo "Apptainer funciona"
+```
+
+### Configuración recomendada de caché y temporales
+
+Para evitar problemas en sistemas compartidos (NFS/Lustre/GPFS), usa rutas
+locales para caché y temporales:
+
+```bash
+mkdir -p "$HOME/.cache/apptainer" "$HOME/.apptainer/tmp"
+export APPTAINER_CACHEDIR="$HOME/.cache/apptainer"
+export APPTAINER_TMPDIR="$HOME/.apptainer/tmp"
+```
+
+Si quieres hacerlo persistente en Bash:
+
+```bash
+cat <<'BASHRC_APPTAINER' >> ~/.bashrc
+export APPTAINER_CACHEDIR="$HOME/.cache/apptainer"
+export APPTAINER_TMPDIR="$HOME/.apptainer/tmp"
+BASHRC_APPTAINER
+```
+
+### ¿Cuándo usar esta vía?
+
+- Usa **Apptainer** si priorizas paquetes nativos de Debian y mantenimiento
+  sencillo con `apt`.
+- Usa **SingularityCE** si tu organización exige explícitamente Sylabs
+  SingularityCE por compatibilidad o política interna.
