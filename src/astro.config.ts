@@ -161,6 +161,7 @@ export default defineConfig({
       external: ["@resvg/resvg-js"],
     },
     build: {
+      chunkSizeWarningLimit: 700,
       rollupOptions: {
         external: [/^\/pagefind\//],
       },

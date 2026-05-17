@@ -16,6 +16,7 @@ type Props = {
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
   hreflangAlternates?: { hreflang: string; href: string }[];
+  lang?: string;
 };
 
 const {
@@ -29,7 +30,13 @@ const {
   modDatetime,
   scrollSmooth = false,
   hreflangAlternates,
+  lang,
 } = Astro.props;
+
+const pathLang = Astro.url.pathname.split("/")[1];
+const supported = SITE.supportedLangs as readonly string[] | undefined;
+const resolvedLang =
+  lang ?? (supported?.includes(pathLang) ? pathLang : (SITE.lang ?? "en"));
 
 const socialImageURL = new URL(ogImage, Astro.url);
 
@@ -53,7 +60,7 @@ const structuredData = {
 <!doctype html>
 <html
   dir={SITE.dir}
-  lang=`${SITE.lang ?? "en"}`
+  lang={resolvedLang}
   class={`${scrollSmooth && "scroll-smooth"}`}
 >
   <head>

@@ -352,8 +352,6 @@ const nextPost =
 </script>
 
 <script>
-  import mermaid from "mermaid";
-
   let themeObserver: MutationObserver | null = null;
 
   function getTheme() {
@@ -373,6 +371,7 @@ const nextPost =
     const blocks = Array.from(document.querySelectorAll<HTMLPreElement>("pre.mermaid"));
     if (!blocks.length) return;
 
+    const { default: mermaid } = await import("mermaid");
     mermaid.initialize({ startOnLoad: false, theme: getTheme() });
 
     await Promise.all(blocks.map(async pre => {
