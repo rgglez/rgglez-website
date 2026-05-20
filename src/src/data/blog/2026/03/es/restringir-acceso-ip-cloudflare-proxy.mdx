@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 import { Image } from 'astro:assets';
 import proxy_inverso from '@/assets/posts/2026/03/restringir-acceso-ip-cloudflare-proxy/proxy_inverso_es.webp';
 
@@ -90,7 +92,11 @@ adelante necesitas agregar otra IP, la expresión sería algo como:
 
 `(ip.src ne a.b.c.d and ip.src ne e.f.g.h)`.
 
-> Nota importante: ¡estas reglas se aplican a **todo** el dominio!
+<Aside type="note">
+
+Nota importante: ¡estas reglas se aplican a **todo** el dominio!
+
+</Aside>
 
 Si se quiere aplicar una regla **a hosts específicos**, se puede hacer algo como:
 
@@ -99,7 +105,11 @@ Si se quiere aplicar una regla **a hosts específicos**, se puede hacer algo com
 Así, `www.example.com` u otros subdominios que apunten a servidores sin
 restricción quedan libres.
 
-> Obviamente las direcciones IP también pueden ser IPv6.
+<Aside type="note">
+
+Obviamente las direcciones IP también pueden ser IPv6.
+
+</Aside>
 
 3. Selecciona la acción deseada, en este caso *Block*:
 
@@ -152,7 +162,11 @@ chmod 644 "$RAW"
 echo "Lista actualizada ($LINES rangos)."
 ```
 
-> No olvides ajustar las rutas según tus preferencias.
+<Aside type="note">
+
+No olvides ajustar las rutas según tus preferencias.
+
+</Aside>
 
 Este script puede ejecutarse con cron o systemd. Como no soy fan de systemd,
 aquí está el procedimiento para cron:
@@ -184,7 +198,11 @@ Ahora, hay que indicarle al servidor web en el origen lo siguiente:
 1. La dirección IP permitida.
 1. La restricción de acceso para todas las direcciones IP menos la permitida.
 
-> Pueden ser una o varias direcciones IP permitidas, por supuesto.
+<Aside type="note">
+
+Pueden ser una o varias direcciones IP permitidas, por supuesto.
+
+</Aside>
 
 ---
 
@@ -235,8 +253,12 @@ Luego, hay que aplicar la restricción para la IP fuente:
 </VirtualHost>
 ```
 
-> Recuerda que aquí deben incluirse todas las direcciones IP de tu salida,
-> incluyendo las IPv6.
+<Aside type="note">
+
+Recuerda que aquí deben incluirse todas las direcciones IP de tu salida,
+incluyendo las IPv6.
+
+</Aside>
 
 ```bash
 sudo apache2ctl configtest
@@ -371,8 +393,12 @@ echo "ufw actualizado con $(echo "$CIDRS" | wc -l) rangos."
 Esto evita que alguien que descubra la IP de tu servidor pueda conectarse
 directamente, saltándose Cloudflare.
 
-> Nótese que se ha estado trabajando con Linux, pero en otros sistemas, como
-> FreeBSD, los pasos no deberían cambiar mucho.
+<Aside type="note">
+
+Nótese que se ha estado trabajando con Linux, pero en otros sistemas, como
+FreeBSD, los pasos no deberían cambiar mucho.
+
+</Aside>
 
 ---
 

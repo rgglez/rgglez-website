@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 import { Image } from 'astro:assets';
 import proxy_inverso from '@/assets/posts/2026/03/restringir-acceso-ip-cloudflare-proxy/proxy_inverso_en.webp';
 
@@ -89,7 +91,11 @@ to add another IP, the expression would look something like:
 
 `(ip.src ne a.b.c.d and ip.src ne e.f.g.h)`.
 
-> Important note: these rules apply to the **entire** domain!
+<Aside type="note">
+
+Important note: these rules apply to the **entire** domain!
+
+</Aside>
 
 To apply a rule **to specific hosts**, you can do something like:
 
@@ -98,7 +104,11 @@ To apply a rule **to specific hosts**, you can do something like:
 This way, `www.example.com` or other subdomains pointing to unrestricted servers
 remain unaffected.
 
-> IP addresses can obviously be IPv6 as well.
+<Aside type="note">
+
+IP addresses can obviously be IPv6 as well.
+
+</Aside>
 
 3. Select the desired action, in this case *Block*:
 
@@ -150,7 +160,11 @@ chmod 644 "$RAW"
 echo "List updated ($LINES ranges)."
 ```
 
-> Remember to adjust the paths to your preferences.
+<Aside type="note">
+
+Remember to adjust the paths to your preferences.
+
+</Aside>
 
 This script can be run with cron or systemd. Since I'm not a fan of systemd,
 here is the procedure for cron:
@@ -182,7 +196,11 @@ Now, you need to tell the origin web server the following:
 1. The allowed IP address.
 1. The access restriction for all IP addresses except the allowed one.
 
-> There can be one or several allowed IP addresses, of course.
+<Aside type="note">
+
+There can be one or several allowed IP addresses, of course.
+
+</Aside>
 
 ---
 
@@ -232,7 +250,11 @@ Then, apply the restriction for the source IP:
 </VirtualHost>
 ```
 
-> Remember to include all your outgoing IP addresses here, including IPv6.
+<Aside type="note">
+
+Remember to include all your outgoing IP addresses here, including IPv6.
+
+</Aside>
 
 ```bash
 sudo apache2ctl configtest
@@ -367,8 +389,12 @@ echo "ufw updated with $(echo "$CIDRS" | wc -l) ranges."
 This prevents anyone who discovers your server's IP from connecting directly,
 bypassing Cloudflare.
 
-> Note that we have been working with Linux, but on other systems such as
-> FreeBSD, the steps should not differ much.
+<Aside type="note">
+
+Note that we have been working with Linux, but on other systems such as
+FreeBSD, the steps should not differ much.
+
+</Aside>
 
 ---
 

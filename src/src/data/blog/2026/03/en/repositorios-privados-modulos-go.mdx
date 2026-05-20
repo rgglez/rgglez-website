@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 The following tutorial explains how to use Go modules located in private
 repositories (e.g. GitHub).
 
@@ -199,9 +201,13 @@ runs the steps on their own machine.
 | CI/CD | Simpler: a string in a secret | Requires mounting key file | Ideal: minimal access to one repo | Uncommon in CI/CD |
 | Who configures | Each developer creates their token | Each developer creates their key | Admin adds the public key; dev generates the pair | Admin adds deploy key; dev configures both channels |
 
-> **Fine-grained vs Classic token**: a fine-grained token allows selecting
-> specific repositories and has mandatory expiration; a classic token with
-> scope `repo` covers all user repos and expiration is optional.
+<Aside type="note">
+
+**Fine-grained vs Classic token**: a fine-grained token allows selecting
+specific repositories and has mandatory expiration; a classic token with
+scope `repo` covers all user repos and expiration is optional.
+
+</Aside>
 
 **Choose a flow and follow only that section.** Each one is self-contained.
 
@@ -234,10 +240,14 @@ you use for `github.com` must cover **all** repositories you work
 with (public and private), not just `my-go-module`. Otherwise, Git
 will present the restricted token for any other repo and you'll get 403.
 
-> **Important**: the token does not expand user permissions. It can only
-> access repositories the user already has access to through team membership.
-> The organization administrator still controls access
-> centrally.
+<Aside type="caution">
+
+the token does not expand user permissions. It can only
+access repositories the user already has access to through team membership.
+The organization administrator still controls access
+centrally.
+
+</Aside>
 
 ### If you already have a Classic PAT with scope `repo`
 
@@ -378,11 +388,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # All three should show github.com/myorg/my-go-module
 ```
 
-> **Multiple private modules**: separate them with commas, no spaces:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
-> ```
-> Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+<Aside type="note">
+
+**Multiple private modules**: separate them with commas, no spaces:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+```
+Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -558,8 +572,12 @@ AGENT
 source ~/.bashrc
 ```
 
-> **Alternative**: in GNOME or KDE, the system keyring usually acts as
-> SSH agent automatically.
+<Aside type="note">
+
+**Alternative**: in GNOME or KDE, the system keyring usually acts as
+SSH agent automatically.
+
+</Aside>
 
 ---
 
@@ -601,11 +619,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # All three should show github.com/myorg/my-go-module
 ```
 
-> **Multiple private modules**: separate them with commas, no spaces:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
-> ```
-> Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+<Aside type="note">
+
+**Multiple private modules**: separate them with commas, no spaces:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+```
+Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -741,9 +763,13 @@ ssh-keygen -t ed25519 -C "deploy-my-go-module" \
 Set a passphrase if desired (recommended on development machines;
 in CI/CD it is usually left empty).
 
-> **GitHub restriction**: the same public key cannot be a deploy key
-> for more than one repository. If you need deploy keys for several repos,
-> generate a separate pair for each one.
+<Aside type="note">
+
+**GitHub restriction**: the same public key cannot be a deploy key
+for more than one repository. If you need deploy keys for several repos,
+generate a separate pair for each one.
+
+</Aside>
 
 ---
 
@@ -766,9 +792,13 @@ On GitHub:
      Leave it unchecked if you only need to consume the module with `go get`.
 3. Click **Add key**.
 
-> **Note for admin**: only users with **admin** permission on the
-> repository can add deploy keys. You can add, view and delete
-> deploy keys from the repo settings.
+<Aside type="note">
+
+**Note for admin**: only users with **admin** permission on the
+repository can add deploy keys. You can add, view and delete
+deploy keys from the repo settings.
+
+</Aside>
 
 ---
 
@@ -799,8 +829,12 @@ chmod 600 ~/.ssh/config
 | `IdentityFile` | The private key of the deploy key. |
 | `IdentitiesOnly yes` | Prevents `ssh-agent` from offering other keys. |
 
-> **Multiple deploy keys**: add a `Host` block for each repo with a
-> different alias and its own `IdentityFile`.
+<Aside type="note">
+
+**Multiple deploy keys**: add a `Host` block for each repo with a
+different alias and its own `IdentityFile`.
+
+</Aside>
 
 ---
 
@@ -848,8 +882,12 @@ git config --global --get-regexp url
 # url.git@github-my-go-module:myorg/my-go-module.insteadof https://github.com/myorg/my-go-module
 ```
 
-> **Other repos**: this rule only affects `my-go-module`. Other
-> repositories continue using whichever protocol you already have configured.
+<Aside type="note">
+
+**Other repos**: this rule only affects `my-go-module`. Other
+repositories continue using whichever protocol you already have configured.
+
+</Aside>
 
 ---
 
@@ -874,11 +912,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # All three should show github.com/myorg/my-go-module
 ```
 
-> **Multiple private modules**: separate them with commas, no spaces:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
-> ```
-> Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+<Aside type="note">
+
+**Multiple private modules**: separate them with commas, no spaces:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+```
+Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -917,8 +959,12 @@ git commit -m "feat: new function XYZ"
 git push origin feature/new-function
 ```
 
-> If the deploy key is read-only, the push will fail. In that case you need
-> Flow D (hybrid) or ask the admin to enable **Allow write access**.
+<Aside type="note">
+
+If the deploy key is read-only, the push will fail. In that case you need
+Flow D (hybrid) or ask the admin to enable **Allow write access**.
+
+</Aside>
 
 ---
 
@@ -1183,11 +1229,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # All three should show github.com/myorg/my-go-module
 ```
 
-> **Multiple private modules**: separate them with commas, no spaces:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
-> ```
-> Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+<Aside type="note">
+
+**Multiple private modules**: separate them with commas, no spaces:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+```
+Repeat the same pattern for `GONOSUMDB` and `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -1235,8 +1285,12 @@ git commit -m "feat: new function XYZ"
 git push origin feature/new-function
 ```
 
-> The developer doesn't need to think about protocols. They use normal HTTPS URLs
-> and Git takes care of routing each operation to the correct channel.
+<Aside type="note">
+
+The developer doesn't need to think about protocols. They use normal HTTPS URLs
+and Git takes care of routing each operation to the correct channel.
+
+</Aside>
 
 ---
 
@@ -1387,9 +1441,13 @@ ssh-keygen -t ed25519 -C "deploy-my-go-module" \
   -f ~/.ssh/deploy_my-go-module
 ```
 
-> **GitHub restriction**: the same public key cannot be a deploy key
-> for more than one repository. Generate a separate pair for each repo that
-> needs one.
+<Aside type="note">
+
+**GitHub restriction**: the same public key cannot be a deploy key
+for more than one repository. Generate a separate pair for each repo that
+needs one.
+
+</Aside>
 
 ---
 
@@ -1565,19 +1623,23 @@ type go
 If it says `go is /usr/bin/go` or similar, the wrapper was not loaded. Run
 `source ~/.bashrc`.
 
-> **Multiple private modules with deploy key**: increment `GIT_CONFIG_COUNT` and
-> add additional `KEY_N`/`VALUE_N` pairs. Each module needs its own
-> deploy key, SSH alias, and pair of variables:
-> ```bash
-> go() {
->     GIT_CONFIG_COUNT=2 \
->     GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
->     GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
->     GIT_CONFIG_KEY_1="url.git@github-another-module:myorg/another-module.insteadOf" \
->     GIT_CONFIG_VALUE_1="https://github.com/myorg/another-module" \
->     command go "$@"
-> }
-> ```
+<Aside type="note">
+
+**Multiple private modules with deploy key**: increment `GIT_CONFIG_COUNT` and
+add additional `KEY_N`/`VALUE_N` pairs. Each module needs its own
+deploy key, SSH alias, and pair of variables:
+```bash
+go() {
+    GIT_CONFIG_COUNT=2 \
+    GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
+    GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
+    GIT_CONFIG_KEY_1="url.git@github-another-module:myorg/another-module.insteadOf" \
+    GIT_CONFIG_VALUE_1="https://github.com/myorg/another-module" \
+    command go "$@"
+}
+```
+
+</Aside>
 
 ---
 
@@ -1607,11 +1669,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # All three should show github.com/myorg/my-go-module
 ```
 
-> **Multiple private modules**: separate them with commas, no spaces:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
-> ```
-> Repeat the same pattern in `GONOSUMDB` and `GONOSUMCHECK`.
+<Aside type="note">
+
+**Multiple private modules**: separate them with commas, no spaces:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/another-module"
+```
+Repeat the same pattern in `GONOSUMDB` and `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 

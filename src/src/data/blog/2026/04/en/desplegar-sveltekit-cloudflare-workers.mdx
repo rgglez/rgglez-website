@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introduction
 
 According to Wikipedia:
@@ -26,12 +28,16 @@ According to Wikipedia:
 > services, sitting between the visitor and the Cloudflare user's hosting
 > provider, acting as a reverse proxy for websites.
 
-> In 2017, Cloudflare launched Cloudflare Workers, a serverless computing
-> platform that allows creating new applications entirely or augmenting existing
-> ones without having to configure or maintain infrastructure. Since then, the
-> product has expanded to include Workers KV, a low-latency key-value database,
-> Cron Triggers for scheduling cron scripts, and additional developer tools to
-> deploy and scale code across the world.
+<Aside type="note">
+
+In 2017, Cloudflare launched Cloudflare Workers, a serverless computing
+platform that allows creating new applications entirely or augmenting existing
+ones without having to configure or maintain infrastructure. Since then, the
+product has expanded to include Workers KV, a low-latency key-value database,
+Cron Triggers for scheduling cron scripts, and additional developer tools to
+deploy and scale code across the world.
+
+</Aside>
 
 Workers is based on a lightweight execution engine built on Node.js (not Node.js
 directly). It is much faster and more practical than using a FaaS on Aliyun FC or
@@ -57,7 +63,11 @@ Workers (free).
   4. Select the `Zone Resources` according to the zones the token will cover.
 4. Click Continue to summary → Create Token.
 
-> **Important: copy the token and store it in a safe place, because you will not see it again.**
+<Aside type="caution">
+
+copy the token and store it in a safe place, because you will not see it again.**
+
+</Aside>
 
 5. If using a custom domain:
    - Have the zone (`yourdomain.com`) in Cloudflare.
@@ -218,7 +228,11 @@ If using an OIDC provider such as Zitadel, you must register the required endpoi
 2. **Post-logout redirect URI(s)**.
 3. **Web origins** of the frontend.
 
-> Also, in your app review `csrf.trustedOrigins` in `svelte.config.js` to include the domain, if you use this security measure.
+<Aside type="note">
+
+Also, in your app review `csrf.trustedOrigins` in `svelte.config.js` to include the domain, if you use this security measure.
+
+</Aside>
 
 ## 6) Post-deploy checks
 

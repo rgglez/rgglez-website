@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.de"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Einführung
 
 Laut Wikipedia:
@@ -26,13 +28,17 @@ Laut Wikipedia:
 > bereitstellt, die zwischen dem Besucher und dem Hosting-Anbieter des
 > Cloudflare-Nutzers stehen und als Reverse Proxy für Websites fungieren.
 
-> Im Jahr 2017 startete Cloudflare Workers, eine Serverless-Computing-Plattform,
-> die es ermöglicht, neue Anwendungen vollständig zu erstellen oder bestehende zu
-> erweitern, ohne Infrastruktur konfigurieren oder warten zu müssen. Seitdem hat
-> sich das Produkt erweitert und umfasst nun Workers KV, eine latenzarme
-> Schlüssel-Wert-Datenbank, Cron Triggers zur Planung von Cron-Skripten und
-> zusätzliche Entwicklertools zum Deployen und Skalieren von Code auf der ganzen
-> Welt.
+<Aside type="note">
+
+Im Jahr 2017 startete Cloudflare Workers, eine Serverless-Computing-Plattform,
+die es ermöglicht, neue Anwendungen vollständig zu erstellen oder bestehende zu
+erweitern, ohne Infrastruktur konfigurieren oder warten zu müssen. Seitdem hat
+sich das Produkt erweitert und umfasst nun Workers KV, eine latenzarme
+Schlüssel-Wert-Datenbank, Cron Triggers zur Planung von Cron-Skripten und
+zusätzliche Entwicklertools zum Deployen und Skalieren von Code auf der ganzen
+Welt.
+
+</Aside>
 
 Workers basiert auf einer leichtgewichtigen Ausführungsumgebung auf Basis von
 Node.js (nicht Node.js direkt). Es ist viel schneller und praktischer als die
@@ -59,7 +65,11 @@ Workers (free) deployt.
   4. Die `Zone-Ressourcen` entsprechend den Zonen auswählen, die der Token abdecken soll.
 4. Auf Continue to summary → Create Token klicken.
 
-> **Wichtig: Kopieren Sie den Token und bewahren Sie ihn an einem sicheren Ort auf, da Sie ihn nicht mehr sehen werden.**
+<Aside type="note">
+
+**Wichtig: Kopieren Sie den Token und bewahren Sie ihn an einem sicheren Ort auf, da Sie ihn nicht mehr sehen werden.**
+
+</Aside>
 
 5. Bei Verwendung einer eigenen Domain:
    - Die Zone (`ihredomain.com`) in Cloudflare haben.
@@ -220,7 +230,11 @@ Bei Verwendung eines OIDC-Anbieters wie Zitadel müssen die erforderlichen Endpu
 2. **Post-logout redirect URI(s)**.
 3. **Web origins** des Frontends.
 
-> Überprüfen Sie außerdem in Ihrer App `csrf.trustedOrigins` in `svelte.config.js`, um die Domain einzuschließen, falls Sie diese Sicherheitsmaßnahme verwenden.
+<Aside type="note">
+
+Überprüfen Sie außerdem in Ihrer App `csrf.trustedOrigins` in `svelte.config.js`, um die Domain einzuschließen, falls Sie diese Sicherheitsmaßnahme verwenden.
+
+</Aside>
 
 ## 6) Post-Deploy-Überprüfungen
 

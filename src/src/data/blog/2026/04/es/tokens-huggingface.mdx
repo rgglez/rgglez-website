@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introducción
 
 De acuerdo con Wikipedia:
@@ -35,10 +37,14 @@ De acuerdo con Wikipedia:
 1. Ponle un nombre, selecciona tipo "`Write`" (necesario para subir datasets) o "`Read`" (solo lectura).
 1. Clic en "*Generate a token*" y cópialo. Cuidado: **solo se muestra una vez**.
 
-> Importante: la variable de ambiente `HF_TOKEN` puede ser exportada con el valor del token generado. En caso de necesitar usar otro token, basta con cambiar la exportación:
-> ```bash
-> export HF_TOKEN=my_token
-> ```
+<Aside type="caution">
+
+la variable de ambiente `HF_TOKEN` puede ser exportada con el valor del token generado. En caso de necesitar usar otro token, basta con cambiar la exportación:
+```bash
+export HF_TOKEN=my_token
+```
+
+</Aside>
 
 ## Comandos útiles en CLI
 
@@ -46,7 +52,11 @@ De acuerdo con Wikipedia:
 * `hf auth list` lista los tokens autorizados.
 * `hf auth whoami` muestra qué usuario está conectado.
 
-> Nota: algunas guías en la web dicen que el comando de CLI es `huggingface-cli`, lo cual parece ser antiguo.
+<Aside type="note">
+
+algunas guías en la web dicen que el comando de CLI es `huggingface-cli`, lo cual parece ser antiguo.
+
+</Aside>
 
 ## Bonus
 

@@ -19,6 +19,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introducción
 
 <a href="https://argilla.io/" target="_blank">Argilla</a> es una plataforma
@@ -205,7 +207,11 @@ echo 'JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' | sudo tee /etc/environment
 source /etc/environment
 ```
 
-> **Nota:** Verificar la ruta exacta con `update-java-alternatives --list` en caso de duda.
+<Aside type="note">
+
+** Verificar la ruta exacta con `update-java-alternatives --list` en caso de duda.
+
+</Aside>
 
 ---
 
@@ -229,8 +235,12 @@ wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensear
 dpkg -i opensearch-2.19.0-linux-x64.deb
 ```
 
-> **Requisito de contraseña:** La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y algún símbolo especial. De preferencia use algún generador de contraseñas seguras.
-> Si la variable no está definida, la instalación falla. Si se ejecuta `sudo dpkg -i`, la instalación falla.
+<Aside type="caution">
+
+** La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y algún símbolo especial. De preferencia use algún generador de contraseñas seguras.
+Si la variable no está definida, la instalación falla. Si se ejecuta `sudo dpkg -i`, la instalación falla.
+
+</Aside>
 
 Para instalar una versión específica (por ejemplo, la última de la serie 2.x estable):
 
@@ -304,7 +314,11 @@ sudo nano /etc/opensearch/jvm.options.d/heap.options
 -Xmx1g
 ```
 
-> **Regla general:** No asignar más del 50% de la RAM total del servidor a OpenSearch.
+<Aside type="note">
+
+**Regla general:** No asignar más del 50% de la RAM total del servidor a OpenSearch.
+
+</Aside>
 
 ### 4.5 Ajustar límites del sistema operativo
 
@@ -375,11 +389,19 @@ La respuesta debe ser un JSON similar a:
 }
 ```
 
-> **Importante:** La propiedad `"distribution": "opensearch"` confirma que Argilla usará el cliente `opensearch-py` para conectarse correctamente, evitando el `UnsupportedProductError` que ocurriría con el cliente de Elasticsearch.
+<Aside type="caution">
+
+** La propiedad `"distribution": "opensearch"` confirma que Argilla usará el cliente `opensearch-py` para conectarse correctamente, evitando el `UnsupportedProductError` que ocurriría con el cliente de Elasticsearch.
+
+</Aside>
 
 ### 4.8 Solución de problemas
 
-> Al probar la conexión, OpenSearch regresa valor vacío: `curl -s http://localhost:9200/`
+<Aside type="note">
+
+Al probar la conexión, OpenSearch regresa valor vacío: `curl -s http://localhost:9200/`
+
+</Aside>
 
 Hay varias causas posibles. Verifícalas en este orden:
 
@@ -466,8 +488,12 @@ GRANT ALL PRIVILEGES ON DATABASE argilla TO argilla_user;
 \q
 ```
 
-> **Seguridad:** Reemplaza `argilla_secret_password` por una contraseña segura:
-> `openssl rand -base64 24` por ejemplo.
+<Aside type="note">
+
+**Seguridad:** Reemplaza `argilla_secret_password` por una contraseña segura:
+`openssl rand -base64 24` por ejemplo.
+
+</Aside>
 
 ### 5.4 Verificar la conexión
 
@@ -531,7 +557,11 @@ source /opt/argilla/venv/bin/activate
 pip install --upgrade pip setuptools wheel
 ```
 
-> O bien `source /opt/argilla/venv/bin/activate.fish` si usas fish.
+<Aside type="note">
+
+O bien `source /opt/argilla/venv/bin/activate.fish` si usas fish.
+
+</Aside>
 
 ---
 
@@ -631,11 +661,23 @@ BACKGROUND_NUM_WORKERS=2
 # HF_HUB_DISABLE_TELEMETRY=1
 ```
 
-> **Nota sobre `ARGILLA_SEARCH_ENGINE`:** El valor `opensearch` es lo que le indica a Argilla que use el cliente `opensearch-py` en lugar del cliente de Elasticsearch, evitando el error de producto no soportado.
+<Aside type="note">
 
-> *Importante*: no olvides cambiar las contraseñas en `ARGILLA_DATABASE_URL` y `PASSWORD` por las que creaste en el proceso de instalación.
+**Nota sobre `ARGILLA_SEARCH_ENGINE`:** El valor `opensearch` es lo que le indica a Argilla que use el cliente `opensearch-py` en lugar del cliente de Elasticsearch, evitando el error de producto no soportado.
 
-> *Importante*: si la contraseña contiene caracteres reservados o usados por el shell, como un signo de igual, habría que rodear el valor de `ARGILLA_DATABASE_URL` entre comillas.
+</Aside>
+
+<Aside type="note">
+
+*Importante*: no olvides cambiar las contraseñas en `ARGILLA_DATABASE_URL` y `PASSWORD` por las que creaste en el proceso de instalación.
+
+</Aside>
+
+<Aside type="note">
+
+*Importante*: si la contraseña contiene caracteres reservados o usados por el shell, como un signo de igual, habría que rodear el valor de `ARGILLA_DATABASE_URL` entre comillas.
+
+</Aside>
 
 Proteger el archivo:
 
@@ -915,7 +957,11 @@ sudo apt install --only-upgrade opensearch
 sudo systemctl restart opensearch
 ```
 
-> Verificar siempre la compatibilidad entre la versión de OpenSearch y Argilla antes de actualizar. Argilla requiere OpenSearch ≥ 2.4.0.
+<Aside type="note">
+
+Verificar siempre la compatibilidad entre la versión de OpenSearch y Argilla antes de actualizar. Argilla requiere OpenSearch ≥ 2.4.0.
+
+</Aside>
 
 ### Respaldo de datos
 

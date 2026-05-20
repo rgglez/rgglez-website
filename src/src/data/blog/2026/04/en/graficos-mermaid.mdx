@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introduction
 
 <a href="https://mermaid.js.org/" target="_blank">Mermaid</a> is a markup
@@ -69,10 +71,14 @@ community *wrappers*:
 - **VitePress:** `vitepress-plugin-mermaid`
 - **Astro:** `astro-mermaid` or client-side rendering with `mermaid`
 
-> When choosing a library, check its maintenance status and compatibility with
-> the version of Mermaid and the framework you are using. You also need to
-> verify how to integrate it without causing conflicts with other syntax
-> highlighting libraries.
+<Aside type="note">
+
+When choosing a library, check its maintenance status and compatibility with
+the version of Mermaid and the framework you are using. You also need to
+verify how to integrate it without causing conflicts with other syntax
+highlighting libraries.
+
+</Aside>
 
 ---
 
@@ -362,14 +368,22 @@ gitGraph
 bun add mermaid
 ```
 
-> I use `bun`, but it works the same with `npm`, `yarn`, `pnpm`, etc.
+<Aside type="note">
+
+I use `bun`, but it works the same with `npm`, `yarn`, `pnpm`, etc.
+
+</Aside>
 
 ### 2. Remark plugin in `astro.config.ts`
 
-> The following is **very important**. When I first tried the integration
-> using `astro-mermaid`, all syntax highlighting blocks disappeared. This
-> is due to how the highlighting plugin pipeline works in Astro. Something
-> similar could happen in other frameworks like Svelte.
+<Aside type="note">
+
+The following is **very important**. When I first tried the integration
+using `astro-mermaid`, all syntax highlighting blocks disappeared. This
+is due to how the highlighting plugin pipeline works in Astro. Something
+similar could happen in other frameworks like Svelte.
+
+</Aside>
 
 The problem with build-time rendering solutions (such as `astro-mermaid`
 or `rehype-mermaid`) is that they conflict with `astro-expressive-code`,
@@ -430,8 +444,12 @@ If you pass `rehypePlugins` or `remarkPlugins` directly to `mdx()`, they
 
 ### 3. Rendering script in the post layout
 
-> I use Mermaid diagrams in blog posts, but the same approach applies
-> elsewhere. By the way, I use Astro Paper.
+<Aside type="note">
+
+I use Mermaid diagrams in blog posts, but the same approach applies
+elsewhere. By the way, I use Astro Paper.
+
+</Aside>
 
 In the layout that renders posts
 (in <a href="https://astro-paper.pages.dev/" target="_blank">Astro Paper</a>: `PostDetails.astro`),
@@ -491,9 +509,13 @@ document.addEventListener("astro:page-load", () => {
 });
 ```
 
-> **Important note:** If the *layout* also includes *"Copy"* buttons for code
-> blocks, make sure to exclude `pre.mermaid` from the selector, as the button
-> text gets concatenated to the source and causes parse errors:
+<Aside type="note">
+
+**Important note:** If the *layout* also includes *"Copy"* buttons for code
+blocks, make sure to exclude `pre.mermaid` from the selector, as the button
+text gets concatenated to the source and causes parse errors:
+
+</Aside>
 
 ```javascript
 // wrong

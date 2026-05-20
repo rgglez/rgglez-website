@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.fr"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introduction
 
 <a href="https://mermaid.js.org/" target="_blank">Mermaid</a> est un langage
@@ -73,10 +75,14 @@ des *wrappers* communautaires :
 - **VitePress :** `vitepress-plugin-mermaid`
 - **Astro :** `astro-mermaid` ou rendu côté client avec `mermaid`
 
-> Pour choisir une bibliothèque, il convient de vérifier la maintenance et la
-> compatibilité avec la version de Mermaid et du framework utilisé. Il est
-> également nécessaire de vérifier comment l'intégrer sans créer de conflits
-> avec d'autres bibliothèques de coloration syntaxique.
+<Aside type="note">
+
+Pour choisir une bibliothèque, il convient de vérifier la maintenance et la
+compatibilité avec la version de Mermaid et du framework utilisé. Il est
+également nécessaire de vérifier comment l'intégrer sans créer de conflits
+avec d'autres bibliothèques de coloration syntaxique.
+
+</Aside>
 
 ---
 
@@ -366,15 +372,23 @@ gitGraph
 bun add mermaid
 ```
 
-> J'utilise `bun`, mais cela fonctionne de la même façon avec `npm`, `yarn`, `pnpm`, etc.
+<Aside type="note">
+
+J'utilise `bun`, mais cela fonctionne de la même façon avec `npm`, `yarn`, `pnpm`, etc.
+
+</Aside>
 
 ### 2. Plugin remark dans `astro.config.ts`
 
-> Ce qui suit est **très important**. Lors de ma première tentative
-> d'intégration avec `astro-mermaid`, tous les blocs de coloration syntaxique
-> ont disparu. C'est dû au fonctionnement du pipeline de plugins de coloration
-> dans Astro. Quelque chose de similaire pourrait se produire avec d'autres
-> frameworks comme Svelte.
+<Aside type="note">
+
+Ce qui suit est **très important**. Lors de ma première tentative
+d'intégration avec `astro-mermaid`, tous les blocs de coloration syntaxique
+ont disparu. C'est dû au fonctionnement du pipeline de plugins de coloration
+dans Astro. Quelque chose de similaire pourrait se produire avec d'autres
+frameworks comme Svelte.
+
+</Aside>
 
 Le problème avec les solutions de rendu en temps de compilation (comme
 `astro-mermaid` ou `rehype-mermaid`) est qu'elles créent des conflits avec

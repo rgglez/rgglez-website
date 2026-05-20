@@ -26,6 +26,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introducción
 
 Este documento es una guía de referencia para Razonamiento y Planificación
@@ -215,7 +217,7 @@ en el índice alfabético final.
 
 ```mermaid
 mindmap
-  root((1. Fundamentos: toma de decisiones y agentes inteligentes))
+  root(("Fundamentos: toma de decisiones y agentes inteligentes"))
     Toma de decisiones
     Decisión de alto nivel vs. decisión de bajo nivel
     Decisiones programadas vs. no programadas
@@ -311,7 +313,7 @@ Es el fundamento conceptual de muchos sistemas multi-agente.
 
 ```mermaid
 mindmap
-  root((2. Representación del conocimiento))
+  root(("Representación del conocimiento"))
     Representación simbólica
     Marcos (Frames)
     Reglas de producción
@@ -387,7 +389,7 @@ las inferencias.
 
 ```mermaid
 mindmap
-  root((3. Tipos de razonamiento))
+  root(("Tipos de razonamiento"))
     Razonamiento deductivo
     Razonamiento inductivo
     Razonamiento abductivo
@@ -407,8 +409,12 @@ si las premisas son verdaderas, la conclusión también lo es. Va de lo general
 a lo particular. Es el fundamento del **método deductivo** que Euclides aplicó
 a la geometría.
 
-> *Ejemplo.* «Todos los humanos son mortales. Sócrates es humano. Por tanto,
-> Sócrates es mortal.»
+<Aside type="note">
+
+*Ejemplo.* «Todos los humanos son mortales. Sócrates es humano. Por tanto,
+Sócrates es mortal.»
+
+</Aside>
 
 ### Razonamiento inductivo
 
@@ -416,8 +422,12 @@ Genera conclusiones *probables* a partir de observaciones específicas;
 generaliza de lo particular a lo general. La conclusión no se sigue
 necesariamente de las premisas: añadir una nueva observación puede invalidarla.
 
-> *Ejemplo.* «Todos los cisnes que he visto son blancos, luego todos los
-> cisnes son blancos.» (Falsado por la existencia de cisnes negros.)
+<Aside type="note">
+
+*Ejemplo.* «Todos los cisnes que he visto son blancos, luego todos los
+cisnes son blancos.» (Falsado por la existencia de cisnes negros.)
+
+</Aside>
 
 ### Razonamiento abductivo
 
@@ -425,8 +435,12 @@ Inferencia hacia la **mejor explicación**: dado un efecto observado, se
 postula la causa más plausible. Es no deductivo y se utiliza para diagnóstico
 médico, depuración de sistemas y razonamiento causal.
 
-> *Ejemplo.* «Si llueve, el suelo se moja. El suelo está mojado. *Tal vez* ha
-> llovido.» (Pero también pudo regarse, romperse una tubería, etc.)
+<Aside type="note">
+
+*Ejemplo.* «Si llueve, el suelo se moja. El suelo está mojado. *Tal vez* ha
+llovido.» (Pero también pudo regarse, romperse una tubería, etc.)
+
+</Aside>
 
 ### Silogismo
 
@@ -469,7 +483,7 @@ conclusiones plausibles *en ausencia de evidencia en contra*. Por ejemplo:
 
 ```mermaid
 mindmap
-  root((4. Tipos de lógica))
+  root(("Tipos de lógica"))
     Lógica proposicional
     Lógica de predicados
     Lógica de primer orden (FOL)
@@ -566,7 +580,7 @@ todo modelo, **satisfacible** si lo es en al menos uno.
 
 ```mermaid
 mindmap
-  root((5. Búsqueda no informada))
+  root(("Búsqueda no informada"))
     Espacio de estados
     Árbol de búsqueda
     Frontera (lista de abiertos)
@@ -664,7 +678,7 @@ mediante una tabla *closed*.
 
 ```mermaid
 mindmap
-  root((6. Heurística y búsqueda informada))
+  root(("Heurística y búsqueda informada"))
     Función heurística
     Heurística admisible
     Heurística consistente (monótona)
@@ -781,7 +795,7 @@ estructurados.
 
 ```mermaid
 mindmap
-  root((7. Búsqueda adversarial - teoría de juegos))
+  root(("Búsqueda adversarial - teoría de juegos"))
     Juego de suma cero
     Información perfecta vs. imperfecta
     Determinista vs. estocástico
@@ -865,7 +879,7 @@ de **AlphaGo** y **AlphaZero**.
 
 ```mermaid
 mindmap
-  root((8. Planificación clásica))
+  root(("Planificación clásica"))
     Problema de planificación
     Plan
     Estado
@@ -999,7 +1013,7 @@ política o programa con bucles y condicionales.
 
 ```mermaid
 mindmap
-  root((9. Lenguajes y planificadores))
+  root(("Lenguajes y planificadores"))
     STRIPS
     PDDL (Planning Domain Definition Language)
     ADL (Action Description Language)
@@ -1150,7 +1164,7 @@ natural a PDDL) y delegan la búsqueda a planificadores clásicos.
 
 ```mermaid
 mindmap
-  root((10. Planificación jerárquica - HTN))
+  root(("Planificación jerárquica - HTN"))
     HTN (Hierarchical Task Networks)
     Tarea primitiva
     Tarea compuesta (no primitiva)
@@ -1211,7 +1225,7 @@ del dominio reduce la generalidad).
 
 ```mermaid
 mindmap
-  root((11. Planificación multi-agente))
+  root(("Planificación multi-agente"))
     Sistema multi-agente (MAS)
     Escenarios cooperativo, parcialmente cooperativo y antagónico
     Planificación PARA múltiples agentes (PTMA)
@@ -1307,7 +1321,7 @@ buen protocolo equilibra eficiencia, justicia y robustez ante fallos.
 
 ```mermaid
 mindmap
-  root((12. Planificación bajo incertidumbre))
+  root(("Planificación bajo incertidumbre"))
     Entorno parcialmente observable
     Entorno no determinista
     Entorno dinámico
@@ -1388,7 +1402,7 @@ y reparación reactiva multi-agente exploran este equilibrio.
 
 ```mermaid
 mindmap
-  root((13. Conceptos transversales))
+  root(("Conceptos transversales"))
     Espacio de búsqueda
     Backtracking
     PSPACE-completitud
@@ -1466,7 +1480,7 @@ $\varepsilon$-greedy, UCB, softmax.
 
 ```mermaid
 mindmap
-  root((14. Fundamentos filosóficos del razonamiento y la planificación))
+  root(("Fundamentos filosóficos del razonamiento y la planificación"))
     14.1 Epistemología (teoría del conocimiento)
     14.2 Filosofía de la lógica
     14.3 Filosofía de la mente y de la inteligencia artificial
@@ -1992,7 +2006,7 @@ Para consulta rápida, los términos más usados en orden alfabético:
 
 ```mermaid
 mindmap
-  root((Razonamiento y Planificación Automática))
+  root(("Razonamiento y Planificación Automática"))
     Fundamentos y agentes
     Representación del conocimiento
     Razonamiento y lógica
@@ -2014,7 +2028,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((Flujo conceptual))
+  root(("Flujo conceptual"))
     Modelado
       Representación simbólica
       Ontologías y grafos
@@ -2041,7 +2055,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((Conexiones críticas))
+  root(("Conexiones críticas"))
     Heurística y planificación
     Lógica y verificación
     Ontologías y razonamiento semántico

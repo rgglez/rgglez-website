@@ -17,6 +17,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 El siguiente tutorial explica cómo utilizar módulos de Go ubicados en repositorios
 privados (p. ej. de GitHub).
 
@@ -200,9 +202,13 @@ ejecuta los pasos en su propia máquina.
 | Quién configura | Cada desarrollador crea su token | Cada desarrollador crea su llave | El admin agrega la llave pública; el dev genera el par | El admin agrega deploy key; el dev configura ambos canales | El admin agrega deploy key; el dev configura wrapper + PAT |
 | Separación Go / git | No (mismo canal) | No (mismo canal) | No (mismo canal) | Parcial (`pushInsteadOf`) | **Total** (wrapper aísla Go de git) |
 
-> **Fine-grained vs Classic token**: un fine-grained token permite seleccionar
-> repositorios específicos y tiene expiración obligatoria; un classic token con
-> scope `repo` cubre todos los repos del usuario y la expiración es opcional.
+<Aside type="note">
+
+**Fine-grained vs Classic token**: un fine-grained token permite seleccionar
+repositorios específicos y tiene expiración obligatoria; un classic token con
+scope `repo` cubre todos los repos del usuario y la expiración es opcional.
+
+</Aside>
 
 **Elige un flujo y sigue solo esa sección.** Cada una es autocontenida.
 
@@ -256,10 +262,14 @@ restringido a un solo repo, ese token sería el que git presente para todos los
 demás repos en `github.com`, y obtendrás errores 403 en los que antes
 funcionaban.
 
-> **Importante**: el token no amplía los permisos del usuario. Solo puede
-> acceder a repositorios que el usuario ya tiene permitidos por su membresía
-> en teams. El administrador de la organización sigue controlando el acceso
-> de forma centralizada desde GitHub.
+<Aside type="caution">
+
+el token no amplía los permisos del usuario. Solo puede
+acceder a repositorios que el usuario ya tiene permitidos por su membresía
+en teams. El administrador de la organización sigue controlando el acceso
+de forma centralizada desde GitHub.
+
+</Aside>
 
 ### Si ya tienes un Classic PAT con scope `repo`
 
@@ -468,11 +478,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # Las tres deben mostrar github.com/myorg/my-go-module
 ```
 
-> **Varios módulos privados**: sepáralos con comas, sin espacios:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
-> ```
-> Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+<Aside type="note">
+
+**Varios módulos privados**: sepáralos con comas, sin espacios:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
+```
+Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -620,8 +634,12 @@ go version      # ≥ 1.21
 ssh -V          # OpenSSH ≥ 9.x
 ```
 
-> `openssh-client` normalmente ya viene instalado en Debian 13. Se incluye
-> en el comando por completitud.
+<Aside type="note">
+
+`openssh-client` normalmente ya viene instalado en Debian 13. Se incluye
+en el comando por completitud.
+
+</Aside>
 
 ---
 
@@ -723,9 +741,13 @@ source ~/.bashrc
 La condición `[ -z "$SSH_AUTH_SOCK" ]` evita lanzar múltiples agentes si
 ya hay uno corriendo (por ejemplo, si abres una segunda terminal).
 
-> **Alternativa**: en entornos de escritorio con GNOME o KDE, el keyring del
-> sistema suele actuar como agente SSH automáticamente. Te pide el passphrase
-> con un diálogo gráfico la primera vez y lo recuerda hasta que cierras sesión.
+<Aside type="note">
+
+**Alternativa**: en entornos de escritorio con GNOME o KDE, el keyring del
+sistema suele actuar como agente SSH automáticamente. Te pide el passphrase
+con un diálogo gráfico la primera vez y lo recuerda hasta que cierras sesión.
+
+</Aside>
 
 ---
 
@@ -781,11 +803,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # Las tres deben mostrar github.com/myorg/my-go-module
 ```
 
-> **Varios módulos privados**: sepáralos con comas, sin espacios:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
-> ```
-> Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+<Aside type="note">
+
+**Varios módulos privados**: sepáralos con comas, sin espacios:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
+```
+Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -960,9 +986,13 @@ El flag `-f` especifica la ruta de salida. Se crean dos archivos:
 Establece un passphrase si lo deseas (recomendado en máquinas de desarrollo;
 en CI/CD normalmente se deja vacío para permitir ejecución no-interactiva).
 
-> **Restricción de GitHub**: una misma llave pública no puede ser deploy key
-> de más de un repositorio. Si intentas registrar la misma llave en otro repo,
-> GitHub responderá `Key already in use`. Genera un par distinto por cada repo.
+<Aside type="note">
+
+**Restricción de GitHub**: una misma llave pública no puede ser deploy key
+de más de un repositorio. Si intentas registrar la misma llave en otro repo,
+GitHub responderá `Key already in use`. Genera un par distinto por cada repo.
+
+</Aside>
 
 ---
 
@@ -991,10 +1021,14 @@ En GitHub:
      (solo lectura).
 3. Haz clic en **Add key**.
 
-> **Para el admin**: puedes ver, agregar y eliminar deploy keys de cualquier
-> desarrollador desde **Settings → Deploy keys** del repo. Eliminar una deploy
-> key corta el acceso inmediatamente, sin importar que la llave siga en la
-> máquina del desarrollador.
+<Aside type="note">
+
+**Para el admin**: puedes ver, agregar y eliminar deploy keys de cualquier
+desarrollador desde **Settings → Deploy keys** del repo. Eliminar una deploy
+key corta el acceso inmediatamente, sin importar que la llave siga en la
+máquina del desarrollador.
+
+</Aside>
 
 ---
 
@@ -1035,8 +1069,12 @@ Cada directiva tiene un propósito específico:
 | `IdentityFile` | La llave privada que SSH usará para este alias. Así cada alias usa su propia deploy key. |
 | `IdentitiesOnly yes` | **Crítico**: le dice a SSH que use **solo** la llave especificada en `IdentityFile`, y que no ofrezca otras llaves que pueda tener cargadas en el agente. Sin esto, el agente podría ofrecer tu llave personal primero, GitHub te identificaría como tu usuario en vez del repo, y la deploy key no se usaría. |
 
-> **Múltiples deploy keys**: agrega un bloque `Host` por cada repo con un
-> alias distinto (p.ej. `github-otro-modulo`) y su propio `IdentityFile`.
+<Aside type="note">
+
+**Múltiples deploy keys**: agrega un bloque `Host` por cada repo con un
+alias distinto (p.ej. `github-otro-modulo`) y su propio `IdentityFile`.
+
+</Aside>
 
 Verifica que el alias funciona:
 
@@ -1105,8 +1143,12 @@ git config --global --get-regexp url
 # url.git@github-my-go-module:myorg/my-go-module.insteadof https://github.com/myorg/my-go-module
 ```
 
-> **Otros repos**: esta regla solo afecta a `my-go-module`. Los demás
-> repositorios siguen usando el protocolo que ya tengas configurado.
+<Aside type="note">
+
+**Otros repos**: esta regla solo afecta a `my-go-module`. Los demás
+repositorios siguen usando el protocolo que ya tengas configurado.
+
+</Aside>
 
 ---
 
@@ -1134,11 +1176,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # Las tres deben mostrar github.com/myorg/my-go-module
 ```
 
-> **Varios módulos privados**: sepáralos con comas, sin espacios:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
-> ```
-> Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+<Aside type="note">
+
+**Varios módulos privados**: sepáralos con comas, sin espacios:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
+```
+Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -1180,9 +1226,13 @@ git commit -m "feat: nueva función XYZ"
 git push origin feature/nueva-funcion
 ```
 
-> Si la deploy key es de solo lectura, el push fallará con `Write access
-> denied`. En ese caso necesitas el Flujo D (híbrido) o el Flujo E (deploy
-> key solo para Go), o pedir al admin que habilite **Allow write access**.
+<Aside type="note">
+
+Si la deploy key es de solo lectura, el push fallará con `Write access
+denied`. En ese caso necesitas el Flujo D (híbrido) o el Flujo E (deploy
+key solo para Go), o pedir al admin que habilite **Allow write access**.
+
+</Aside>
 
 ---
 
@@ -1309,8 +1359,12 @@ ssh-keygen -t ed25519 -C "deploy-my-go-module" \
   -f ~/.ssh/deploy_my-go-module
 ```
 
-> **Restricción de GitHub**: una misma llave pública no puede ser deploy key
-> de más de un repositorio.
+<Aside type="note">
+
+**Restricción de GitHub**: una misma llave pública no puede ser deploy key
+de más de un repositorio.
+
+</Aside>
 
 ---
 
@@ -1488,11 +1542,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # Las tres deben mostrar github.com/myorg/my-go-module
 ```
 
-> **Varios módulos privados**: sepáralos con comas, sin espacios:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
-> ```
-> Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+<Aside type="note">
+
+**Varios módulos privados**: sepáralos con comas, sin espacios:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
+```
+Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 
@@ -1695,9 +1753,13 @@ ssh-keygen -t ed25519 -C "deploy-my-go-module" \
   -f ~/.ssh/deploy_my-go-module
 ```
 
-> **Restricción de GitHub**: una misma llave pública no puede ser deploy key
-> de más de un repositorio. Genera un par distinto para cada repo que lo
-> necesite.
+<Aside type="note">
+
+**Restricción de GitHub**: una misma llave pública no puede ser deploy key
+de más de un repositorio. Genera un par distinto para cada repo que lo
+necesite.
+
+</Aside>
 
 ---
 
@@ -1873,19 +1935,23 @@ type go
 Si dice `go is /usr/bin/go` o similar, el wrapper no se cargó. Ejecuta
 `source ~/.bashrc`.
 
-> **Varios módulos privados con deploy key**: incrementa `GIT_CONFIG_COUNT` y
-> agrega pares `KEY_N`/`VALUE_N` adicionales. Cada módulo necesita su propia
-> deploy key, alias SSH y par de variables:
-> ```bash
-> go() {
->     GIT_CONFIG_COUNT=2 \
->     GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
->     GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
->     GIT_CONFIG_KEY_1="url.git@github-otro-modulo:myorg/otro-modulo.insteadOf" \
->     GIT_CONFIG_VALUE_1="https://github.com/myorg/otro-modulo" \
->     command go "$@"
-> }
-> ```
+<Aside type="note">
+
+**Varios módulos privados con deploy key**: incrementa `GIT_CONFIG_COUNT` y
+agrega pares `KEY_N`/`VALUE_N` adicionales. Cada módulo necesita su propia
+deploy key, alias SSH y par de variables:
+```bash
+go() {
+    GIT_CONFIG_COUNT=2 \
+    GIT_CONFIG_KEY_0="url.git@github-my-go-module:myorg/my-go-module.insteadOf" \
+    GIT_CONFIG_VALUE_0="https://github.com/myorg/my-go-module" \
+    GIT_CONFIG_KEY_1="url.git@github-otro-modulo:myorg/otro-modulo.insteadOf" \
+    GIT_CONFIG_VALUE_1="https://github.com/myorg/otro-modulo" \
+    command go "$@"
+}
+```
+
+</Aside>
 
 ---
 
@@ -1915,11 +1981,15 @@ go env GOPRIVATE GONOSUMDB GONOSUMCHECK
 # Las tres deben mostrar github.com/myorg/my-go-module
 ```
 
-> **Varios módulos privados**: sepáralos con comas, sin espacios:
-> ```
-> export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
-> ```
-> Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+<Aside type="note">
+
+**Varios módulos privados**: sepáralos con comas, sin espacios:
+```
+export GOPRIVATE="github.com/myorg/my-go-module,github.com/myorg/otro-modulo"
+```
+Repite el mismo patrón en `GONOSUMDB` y `GONOSUMCHECK`.
+
+</Aside>
 
 ---
 

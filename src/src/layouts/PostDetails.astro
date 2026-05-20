@@ -371,8 +371,22 @@ const nextPost =
     const blocks = Array.from(document.querySelectorAll<HTMLPreElement>("pre.mermaid"));
     if (!blocks.length) return;
 
-    const { default: mermaid } = await import("mermaid");
-    mermaid.initialize({ startOnLoad: false, theme: getTheme() });
+    const mermaidMod = await import("mermaid");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mermaid: any = (mermaidMod as any).default ?? mermaidMod;
+    const theme = getTheme();
+    const isDark = theme === "dark";
+    mermaid.initialize({
+      startOnLoad: false,
+      theme,
+      themeVariables: {
+        primaryTextColor: isDark ? "#f3f4f6" : "#111827",
+        secondaryTextColor: isDark ? "#f3f4f6" : "#111827",
+        tertiaryTextColor: isDark ? "#f3f4f6" : "#111827",
+        textColor: isDark ? "#f3f4f6" : "#111827",
+        nodeTextColor: isDark ? "#f3f4f6" : "#111827",
+      },
+    });
 
     await Promise.all(blocks.map(async pre => {
       const source = (pre.textContent ?? "").trim();

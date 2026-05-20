@@ -21,6 +21,9 @@ timezone: "America/Mexico_City"
 license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
+
+import Aside from "@/components/Aside.astro";
+
 ## Einführung
 
 SWI-Prolog ist der weltweit führende Prolog-Interpreter/Compiler
@@ -158,9 +161,13 @@ sudo apt install flatpak
 flatpak remote-add --if-not-exists flathub \
     https://dl.flathub.org/repo/flathub.flatpakrepo
 ```
-> Möglicherweise müssen Sie sich abmelden und erneut anmelden (oder neu starten).
-> damit Flatpak-Portale korrekt in Ihr integriert werden
-> Desktop-Umgebung.
+<Aside type="note">
+
+Möglicherweise müssen Sie sich abmelden und erneut anmelden (oder neu starten).
+damit Flatpak-Portale korrekt in Ihr integriert werden
+Desktop-Umgebung.
+
+</Aside>
 
 ### SWI-Prolog-Installation
 
@@ -306,10 +313,14 @@ sudo apt install -y libcairo2-dev libpango1.0-dev libsdl3-dev libsdl3-image-dev
 # junit4 ist seit Version 8.1.29 für JPL-Tests erforderlich.
 sudo apt install -y default-jdk junit4
 ```
-> Wenn Sie nur an einem Server-Build interessiert sind (keine GUI, kein Java), können Sie dies tun
-> Überspringen Sie die Gruppen „libcairo2-dev…“ und „default-jdk junit4“.
-> CMake erkennt automatisch, welche Komponenten erstellt werden sollen
-> Verfügbare Bibliotheken.
+<Aside type="note">
+
+Wenn Sie nur an einem Server-Build interessiert sind (keine GUI, kein Java), können Sie dies tun
+Überspringen Sie die Gruppen „libcairo2-dev…“ und „default-jdk junit4“.
+CMake erkennt automatisch, welche Komponenten erstellt werden sollen
+Verfügbare Bibliotheken.
+
+</Aside>
 
 ### Schritt 2 – Klonen Sie das Repository
 

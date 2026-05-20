@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introducción
 
 <a href="https://mermaid.js.org/" target="_blank">Mermaid</a> es un lenguaje de
@@ -71,10 +73,14 @@ de la comunidad:
 - **VitePress:** `vitepress-plugin-mermaid`
 - **Astro:** `astro-mermaid` o renderizado en cliente con `mermaid`
 
-> Para elegir librería conviene revisar mantenimiento y compatibilidad con la
-> versión de Mermaid y del framework que uses. También es necesario revisar
-> cómo integrarlo sin causar conflictos con otras librerías de resaltado de
-> sintaxis.
+<Aside type="note">
+
+Para elegir librería conviene revisar mantenimiento y compatibilidad con la
+versión de Mermaid y del framework que uses. También es necesario revisar
+cómo integrarlo sin causar conflictos con otras librerías de resaltado de
+sintaxis.
+
+</Aside>
 
 ---
 
@@ -364,14 +370,22 @@ gitGraph
 bun add mermaid
 ```
 
-> Yo uso `bun`, pero funciona igual con `npm`, `yarn`, `pnpm`, etc.
+<Aside type="note">
+
+Yo uso `bun`, pero funciona igual con `npm`, `yarn`, `pnpm`, etc.
+
+</Aside>
 
 ### 2. Plugin remark en `astro.config.ts`
 
-> Lo siguiente es **muy importante**. Cuando intenté la integración por primera
-> vez usando `astro-mermaid`, los bloques de resaltado desaparecieron. Esto es
-> por cómo funciona el flujo de los plugins de resaltado en Astro. Supongo que
-> en otros sistemas como Svelte podría suceder algo similar.
+<Aside type="note">
+
+Lo siguiente es **muy importante**. Cuando intenté la integración por primera
+vez usando `astro-mermaid`, los bloques de resaltado desaparecieron. Esto es
+por cómo funciona el flujo de los plugins de resaltado en Astro. Supongo que
+en otros sistemas como Svelte podría suceder algo similar.
+
+</Aside>
 
 El problema con soluciones de renderizado en tiempo de compilación (como `astro-mermaid`
 o `rehype-mermaid`) es que crean conflictos con `astro-expressive-code`,
@@ -432,8 +446,12 @@ Si se pasan `rehypePlugins` o `remarkPlugins` directamente a `mdx()`, estos
 
 ### 3. Script de renderizado en el layout del post
 
-> Yo uso gráficos Mermaid en las publicaciones del blog, pero aplicaría lo
-> mismo para otros lugares. Por cierto, uso Astro Paper.
+<Aside type="note">
+
+Yo uso gráficos Mermaid en las publicaciones del blog, pero aplicaría lo
+mismo para otros lugares. Por cierto, uso Astro Paper.
+
+</Aside>
 
 En el layout que renderiza los posts
 (en <a href="https://astro-paper.pages.dev/" target="_blank">Astro Paper</a>: `PostDetails.astro`),
@@ -494,9 +512,13 @@ document.addEventListener("astro:page-load", () => {
 });
 ```
 
-> **Nota importante:** Si el *layout* también incluye botones *"Copy"* para bloques
-> de código, asegurarse de excluir `pre.mermaid` del selector, ya que el texto
-> del botón se concatena al código fuente y causa errores de *parseo*:
+<Aside type="note">
+
+**Nota importante:** Si el *layout* también incluye botones *"Copy"* para bloques
+de código, asegurarse de excluir `pre.mermaid` del selector, ya que el texto
+del botón se concatena al código fuente y causa errores de *parseo*:
+
+</Aside>
 
 ```javascript
 // mal

@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introduction
 
 According to Wikipedia:
@@ -35,10 +37,14 @@ According to Wikipedia:
 1. Give it a name, select type "`Write`" (required for uploading datasets) or "`Read`" (read-only).
 1. Click "*Generate a token*" and copy it. Note: **it is only shown once**.
 
-> Important: the `HF_TOKEN` environment variable can be exported with the value of the generated token. If you need to use a different token, simply change the export:
-> ```bash
-> export HF_TOKEN=my_token
-> ```
+<Aside type="caution">
+
+the `HF_TOKEN` environment variable can be exported with the value of the generated token. If you need to use a different token, simply change the export:
+```bash
+export HF_TOKEN=my_token
+```
+
+</Aside>
 
 ## Useful CLI Commands
 
@@ -46,7 +52,11 @@ According to Wikipedia:
 * `hf auth list` lists authorized tokens.
 * `hf auth whoami` shows which user is currently logged in.
 
-> Note: some guides online state that the CLI command is `huggingface-cli`, which appears to be outdated.
+<Aside type="note">
+
+some guides online state that the CLI command is `huggingface-cli`, which appears to be outdated.
+
+</Aside>
 
 ## Bonus
 

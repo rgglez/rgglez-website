@@ -18,6 +18,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.de"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Einleitung
 
 <a href="https://mermaid.js.org/" target="_blank">Mermaid</a> ist eine
@@ -71,10 +73,14 @@ verwenden:
 - **VitePress:** `vitepress-plugin-mermaid`
 - **Astro:** `astro-mermaid` oder clientseitiges Rendering mit `mermaid`
 
-> Bei der Wahl einer Bibliothek empfiehlt es sich, Wartungsstand und
-> Kompatibilität mit der verwendeten Mermaid- und Framework-Version zu prüfen.
-> Außerdem sollte geprüft werden, wie sie sich ohne Konflikte mit anderen
-> Syntax-Highlighting-Bibliotheken integrieren lässt.
+<Aside type="note">
+
+Bei der Wahl einer Bibliothek empfiehlt es sich, Wartungsstand und
+Kompatibilität mit der verwendeten Mermaid- und Framework-Version zu prüfen.
+Außerdem sollte geprüft werden, wie sie sich ohne Konflikte mit anderen
+Syntax-Highlighting-Bibliotheken integrieren lässt.
+
+</Aside>
 
 ---
 
@@ -364,14 +370,22 @@ gitGraph
 bun add mermaid
 ```
 
-> Ich verwende `bun`, aber es funktioniert genauso mit `npm`, `yarn`, `pnpm` usw.
+<Aside type="note">
+
+Ich verwende `bun`, aber es funktioniert genauso mit `npm`, `yarn`, `pnpm` usw.
+
+</Aside>
 
 ### 2. Remark-Plugin in `astro.config.ts`
 
-> Das Folgende ist **sehr wichtig**. Als ich die Integration zum ersten Mal
-> mit `astro-mermaid` versuchte, verschwand die gesamte Syntaxhervorhebung.
-> Das liegt an der Funktionsweise der Highlighting-Plugin-Pipeline in Astro.
-> Ähnliches könnte auch in anderen Frameworks wie Svelte passieren.
+<Aside type="note">
+
+Das Folgende ist **sehr wichtig**. Als ich die Integration zum ersten Mal
+mit `astro-mermaid` versuchte, verschwand die gesamte Syntaxhervorhebung.
+Das liegt an der Funktionsweise der Highlighting-Plugin-Pipeline in Astro.
+Ähnliches könnte auch in anderen Frameworks wie Svelte passieren.
+
+</Aside>
 
 Das Problem mit Build-Zeit-Rendering-Lösungen (wie `astro-mermaid` oder
 `rehype-mermaid`) ist, dass sie Konflikte mit `astro-expressive-code`
@@ -433,8 +447,12 @@ verschwindet.
 
 ### 3. Rendering-Skript im Post-Layout
 
-> Ich verwende Mermaid-Diagramme in Blog-Beiträgen, aber dasselbe gilt auch
-> für andere Stellen. Ich benutze Astro Paper.
+<Aside type="note">
+
+Ich verwende Mermaid-Diagramme in Blog-Beiträgen, aber dasselbe gilt auch
+für andere Stellen. Ich benutze Astro Paper.
+
+</Aside>
 
 Im Layout, das die Beiträge rendert
 (in <a href="https://astro-paper.pages.dev/" target="_blank">Astro Paper</a>: `PostDetails.astro`),
@@ -495,10 +513,14 @@ document.addEventListener("astro:page-load", () => {
 });
 ```
 
-> **Wichtiger Hinweis:** Wenn das *Layout* auch *„Copy"*-Schaltflächen für
-> Code-Blöcke enthält, sicherstellen, dass `pre.mermaid` vom Selektor
-> ausgeschlossen wird, da der Button-Text an den Quellcode angehängt wird
-> und Parse-Fehler verursacht:
+<Aside type="note">
+
+**Wichtiger Hinweis:** Wenn das *Layout* auch *„Copy"*-Schaltflächen für
+Code-Blöcke enthält, sicherstellen, dass `pre.mermaid` vom Selektor
+ausgeschlossen wird, da der Button-Text an den Quellcode angehängt wird
+und Parse-Fehler verursacht:
+
+</Aside>
 
 ```javascript
 // falsch

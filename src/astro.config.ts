@@ -115,6 +115,9 @@ export default defineConfig({
     }),
     expressiveCode({
         themes: ['dracula', 'github-light'],
+        themeCssSelector: (theme) =>
+          `[data-theme="${theme.type === 'dark' ? 'dark' : 'light'}"]`,
+        useDarkModeMediaQuery: false,
     }),
     mdx({
         extendMarkdownConfig: true,

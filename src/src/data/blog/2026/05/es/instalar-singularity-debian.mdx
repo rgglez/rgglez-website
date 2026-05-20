@@ -23,6 +23,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
+import Aside from "@/components/Aside.astro";
+
 ## Introducción
 
 **Singularity** es un runtime de contenedores orientado sobre todo a entornos
@@ -127,10 +129,14 @@ mencionó:
 - **SingularityCE**, mantenido por Sylabs.
 - **Apptainer**, el proyecto comunitario derivado de Singularity.
 
-> Si tu clúster, universidad, laboratorio o proveedor HPC te pide explícitamente
-> *Singularity*, normalmente conviene preguntar si se refieren a **SingularityCE**
-> o a **Apptainer**. Ambos ejecutan imágenes SIF y tienen una interfaz muy
-> parecida, pero no son exactamente el mismo proyecto.
+<Aside type="note">
+
+Si tu clúster, universidad, laboratorio o proveedor HPC te pide explícitamente
+*Singularity*, normalmente conviene preguntar si se refieren a **SingularityCE**
+o a **Apptainer**. Ambos ejecutan imágenes SIF y tienen una interfaz muy
+parecida, pero no son exactamente el mismo proyecto.
+
+</Aside>
 
 ## SingularityCE vs Apptainer
 
@@ -335,8 +341,12 @@ FUSE permite montar sistemas de archivos en espacio de usuario. En el contexto
 de SingularityCE y herramientas similares, FUSE es importante para varios modos
 de montaje y ejecución no privilegiada.
 
-> Nota: en versiones antiguas de Debian/Ubuntu o en guías viejas puede aparecer
-> `libfuse-dev`. En Debian 13 el paquete correcto es `libfuse3-dev`.
+<Aside type="note">
+
+en versiones antiguas de Debian/Ubuntu o en guías viejas puede aparecer
+`libfuse-dev`. En Debian 13 el paquete correcto es `libfuse3-dev`.
+
+</Aside>
 
 #### `libseccomp-dev`
 
@@ -353,9 +363,13 @@ abiertas para formatos de imagen y ejecución de contenedores. En términos
 prácticos, "modo OCI" se refiere a trabajar con ese estándar (imágenes y
 runtimes compatibles con OCI).
 
-> Nota: en Debian 13, instalar `runc` desde repos Debian puede entrar en
-> conflicto con `containerd.io`/`docker-ce` del repositorio oficial de Docker y
-> provocar su desinstalación.
+<Aside type="note">
+
+en Debian 13, instalar `runc` desde repos Debian puede entrar en
+conflicto con `containerd.io`/`docker-ce` del repositorio oficial de Docker y
+provocar su desinstalación.
+
+</Aside>
 
 #### `squashfs-tools` y `squashfs-tools-ng`
 
@@ -657,8 +671,12 @@ dpkg -l | grep singularity-ce
 singularity --version
 ```
 
-> Nota: `--fstrans=no` evita fallos conocidos de `checkinstall`/`installwatch`
-> en algunos sistemas Debian actuales durante `make install`.
+<Aside type="note">
+
+`--fstrans=no` evita fallos conocidos de `checkinstall`/`installwatch`
+en algunos sistemas Debian actuales durante `make install`.
+
+</Aside>
 
 ### Revisar la configuración instalada
 
@@ -698,8 +716,12 @@ singularity exec docker://debian:13 cat /etc/os-release
 La primera vez, SingularityCE descargará capas desde el registro Docker/OCI y
 construirá una imagen local en caché.
 
-> Nota: esta prueba básica no requiere `runc`. `runc` se vuelve relevante sobre
-> todo para flujos de modo OCI explícito (`singularity oci ...`).
+<Aside type="note">
+
+esta prueba básica no requiere `runc`. `runc` se vuelve relevante sobre
+todo para flujos de modo OCI explícito (`singularity oci ...`).
+
+</Aside>
 
 También puedes hacer una prueba con Alpine:
 
