@@ -37,7 +37,7 @@ const langIcons: Record<string, string> = {
     {SITE.supportedLangs.map(lang => (
       <li>
         <a
-          href={`/${lang}/`}
+          href={`/${lang}`}
           class:list={[
             "block px-4 py-2 text-sm hover:text-accent hover:bg-accent/10",
             { "text-accent font-semibold": lang === currentLang },

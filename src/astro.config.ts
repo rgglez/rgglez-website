@@ -107,6 +107,7 @@ export default defineConfig({
   output: 'server',
 
   site: SITE.website,
+  trailingSlash: 'never',
 
   integrations: [
     fontPreloadIntegration(),
