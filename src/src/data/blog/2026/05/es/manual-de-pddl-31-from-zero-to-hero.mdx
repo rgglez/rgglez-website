@@ -276,6 +276,8 @@ El primer dominio funciona, pero permite instanciaciones absurdas. Por ejemplo, 
   )
 
   ; Declara relaciones booleanas que pueden ser verdaderas o falsas en un estado.
+  ; ?r - robot indica que la variable ?r solo puede ser instanciada con objetos del tipo `robot`.
+  ; ?room - room indica que las variables ?room solo pueden ser instanciadas con objetos del tipo `room`.
   (:predicates
     (at ?r - robot ?room - room)
     ; Declara o usa el predicado `connected` con variables; el planificador lo instanciará con objetos concretos.

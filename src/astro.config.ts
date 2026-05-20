@@ -22,7 +22,7 @@ import type { AstroIntegration } from "astro";
 
 import react from "@astrojs/react";
 
-import pddlGrammar from "./src/grammars/pddl.tmLanguage.json" with { type: "json" };
+import pddlGrammar from "@rgglez/shiki-pddl";
 
 function fontPreloadIntegration(): AstroIntegration {
   return {
