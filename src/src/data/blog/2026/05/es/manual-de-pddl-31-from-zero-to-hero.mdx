@@ -106,14 +106,14 @@ La separación dominio/problema es una de las razones por las que PDDL es útil:
 
 PDDL usa una sintaxis tipo Lisp/S-expression:
 
-```lisp
+```pddl
 ; Afirma el hecho `nombre` para objetos concretos de esta instancia.
 (nombre arg1 arg2 ...)
 ```
 
 Todo se agrupa con paréntesis. Las palabras clave suelen comenzar con dos puntos:
 
-```lisp
+```pddl
 :action
 ; Define las variables de la acción y, cuando aplica, sus tipos.
 :parameters
@@ -127,7 +127,7 @@ Todo se agrupa con paréntesis. Las palabras clave suelen comenzar con dos punto
 
 Los nombres de variables empiezan con `?`:
 
-```lisp
+```pddl
 ?r
 ?from
 ?to
@@ -136,7 +136,7 @@ Los nombres de variables empiezan con `?`:
 
 Los comentarios comienzan con punto y coma `;`:
 
-```lisp
+```pddl
 ; Esto es un comentario de una línea
 ```
 
@@ -150,7 +150,7 @@ Comencemos con un dominio muy pequeño: un robot se mueve entre habitaciones con
 
 ### 4.1 `domain.pddl`
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain robot-simple)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -195,7 +195,7 @@ Este dominio declara:
 
 ### 4.2 `problem.pddl`
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem robot-simple-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -234,14 +234,14 @@ Un plan posible es:
 
 En la práctica, en planificación clásica se usa una suposición de mundo cerrado: lo que no aparece en `:init` se asume falso. En el problema anterior:
 
-```lisp
+```pddl
 ; Afirma el hecho `connected` para objetos concretos de esta instancia.
 (connected room-c room-b)
 ```
 
 no es verdadero, porque no fue declarado. Si quieres conexiones bidireccionales, debes poner ambas direcciones o modelar la conectividad de otra forma.
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   (at robot1 room-a)
@@ -264,7 +264,7 @@ El primer dominio funciona, pero permite instanciaciones absurdas. Por ejemplo, 
 
 ### 5.1 Dominio tipado
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain robot-typed)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -304,7 +304,7 @@ El primer dominio funciona, pero permite instanciaciones absurdas. Por ejemplo, 
 
 ### 5.2 Problema tipado
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem robot-typed-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -340,32 +340,32 @@ Los tipos no solo mejoran la legibilidad; también reducen el espacio de búsque
 
 Un **predicado** es una plantilla booleana:
 
-```lisp
+```pddl
 (at ?r - robot ?room - room)
 ```
 
 Un **hecho** o átomo instanciado es una aplicación concreta:
 
-```lisp
+```pddl
 (at robot1 room-a)
 ```
 
 Un **literal positivo** es un hecho afirmado:
 
-```lisp
+```pddl
 (at robot1 room-a)
 ```
 
 Un **literal negativo** niega un hecho:
 
-```lisp
+```pddl
 ; Niega un hecho; en efectos suele borrar un hecho del estado.
 (not (at robot1 room-a))
 ```
 
 En efectos, los literales negativos eliminan hechos del estado:
 
-```lisp
+```pddl
 ; Establece cómo cambia el estado después de ejecutar la acción.
 :effect (and
   ; Niega un hecho; en efectos suele borrar un hecho del estado.
@@ -382,7 +382,7 @@ Esto no significa “guardar una variable booleana en falso” como en programac
 
 La forma general de una acción es:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action nombre
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -396,7 +396,7 @@ La forma general de una acción es:
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action open-door
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -426,7 +426,7 @@ Una acción describe una transición de estado. Si sus precondiciones se cumplen
 
 Incorrecto:
 
-```lisp
+```pddl
 ; Establece cómo cambia el estado después de ejecutar la acción.
 :effect (at ?r ?to)
 ```
@@ -435,7 +435,7 @@ Si no eliminas `(at ?r ?from)`, el robot terminará estando en dos habitaciones 
 
 Correcto:
 
-```lisp
+```pddl
 ; Establece cómo cambia el estado después de ejecutar la acción.
 :effect (and
   ; Niega un hecho; en efectos suele borrar un hecho del estado.
@@ -448,7 +448,7 @@ Correcto:
 
 Incorrecto:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -466,7 +466,7 @@ Incorrecto:
 
 Incorrecto:
 
-```lisp
+```pddl
 ; Lista los objetos concretos disponibles en esta instancia del problema.
 (:objects
   at - predicate
@@ -483,7 +483,7 @@ Ahora agreguemos cajas. El robot puede moverse, recoger una caja y soltarla.
 
 ### 8.1 Dominio `delivery-basic.pddl`
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain delivery-basic)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -578,7 +578,7 @@ Ahora agreguemos cajas. El robot puede moverse, recoger una caja y soltarla.
 
 ### 8.2 Problema `delivery-basic-01.pddl`
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem delivery-basic-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -643,22 +643,22 @@ PDDL no deduce automáticamente todos los invariantes semánticos que tienes en 
 
 La sección `:requirements` declara qué fragmentos del lenguaje usa el dominio. Ejemplos comunes:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing)
 ```
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :negative-preconditions)
 ```
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :adl :typing)
 ```
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :numeric-fluents :action-costs)
 ```
@@ -698,7 +698,7 @@ Si un dominio no declara `:requirements`, PDDL 3.1 asume `:strips`. Aun así, po
 
 Con `:negative-preconditions`, puedes exigir que algo no sea verdadero.
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain doors)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -744,14 +744,14 @@ Precondición negativa no es lo mismo que efecto negativo. El efecto negativo bo
 
 Con `:equality`, puedes usar `(= ?x ?y)`. Para expresar desigualdad se usa negación:
 
-```lisp
+```pddl
 ; Niega un hecho; en efectos suele borrar un hecho del estado.
 (not (= ?from ?to))
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -783,7 +783,7 @@ Esto evita movimientos degenerados de una habitación hacia sí misma.
 
 Con `:disjunctive-preconditions` puedes usar `or` e `imply`.
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action enter-lab
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -807,7 +807,7 @@ Con `:disjunctive-preconditions` puedes usar `or` e `imply`.
 
 La implicación tiene esta forma:
 
-```lisp
+```pddl
 ; Modela una implicación lógica: si se cumple el antecedente, debe cumplirse el consecuente.
 (imply A B)
 ```
@@ -816,7 +816,7 @@ Se lee: si `A`, entonces `B`.
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action use-machine
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -843,7 +843,7 @@ Los cuantificadores permiten expresar condiciones sobre conjuntos de objetos.
 
 ### 13.1 Existencial `exists`
 
-```lisp
+```pddl
 ; Cuantifica existencialmente: debe existir al menos un objeto que satisfaga la fórmula.
 (exists (?b - battery)
   ; Agrupa varias condiciones o efectos que deben considerarse conjuntamente.
@@ -860,7 +860,7 @@ Se lee: existe alguna batería disponible y cargada.
 
 Ejemplo en una acción:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action start-robot
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -882,7 +882,7 @@ Ejemplo en una acción:
 
 ### 13.2 Universal `forall`
 
-```lisp
+```pddl
 ; Cuantifica sobre todos los objetos de un tipo o conjunto de parámetros.
 (forall (?b - box)
   ; Declara o usa el predicado `delivered` con variables; el planificador lo instanciará con objetos concretos.
@@ -894,7 +894,7 @@ Se lee: todas las cajas están entregadas.
 
 Ejemplo de objetivo:
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal
   ; Cuantifica sobre todos los objetos de un tipo o conjunto de parámetros.
@@ -920,14 +920,14 @@ Los efectos condicionales se activan solo si una condición se cumple en el mome
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :conditional-effects)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action clean-room
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -956,7 +956,7 @@ Si la habitación tiene basura, además de quedar limpia, se marca que la basura
 
 ### 14.1 Efectos condicionales con `forall`
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action scan-room
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -982,14 +982,14 @@ Se marcan como vistas todas las cajas que estén en la habitación.
 
 `:adl` se usa como una abreviatura para un conjunto expresivo de características: tipos, precondiciones negativas, disyunción, cuantificadores, igualdad y efectos condicionales, entre otras.
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :adl)
 ```
 
 Aunque `:adl` es cómodo, en modelos portables a veces es mejor declarar requisitos específicos:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements
   :strips
@@ -1011,14 +1011,14 @@ Los predicados booleanos no bastan para modelar combustible, energía, distancia
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :numeric-fluents)
 ```
 
 ### 16.1 Declarar funciones numéricas
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `battery-level` con variables; el planificador lo instanciará con objetos concretos.
@@ -1034,7 +1034,7 @@ En PDDL 3.1, el tipo por defecto de los fluents es numérico, pero es recomendab
 
 ### 16.2 Inicializar valores numéricos
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   ; Expresa igualdad o inicializa una función con un valor concreto.
@@ -1050,14 +1050,14 @@ En PDDL 3.1, el tipo por defecto de los fluents es numérico, pero es recomendab
 
 ### 16.3 Comparaciones numéricas en precondiciones
 
-```lisp
+```pddl
 ; Compara valores numéricos; aquí exige un mínimo permitido.
 (>= (battery-level ?r) (distance ?from ?to))
 ```
 
 Operadores de comparación:
 
-```lisp
+```pddl
 >
 <
 =
@@ -1069,7 +1069,7 @@ Operadores de comparación:
 
 PDDL permite varios operadores de asignación:
 
-```lisp
+```pddl
 ; Asigna un nuevo valor a una función del estado.
 (assign f expr)
 ; Incrementa un fluent numérico; se usa para costos o recursos acumulados.
@@ -1084,7 +1084,7 @@ PDDL permite varios operadores de asignación:
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1118,7 +1118,7 @@ Ejemplo:
 
 ### 17.1 `delivery-energy.pddl`
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain delivery-energy)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -1252,7 +1252,7 @@ Ejemplo:
 
 ### 17.2 `delivery-energy-01.pddl`
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem delivery-energy-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -1322,14 +1322,14 @@ Esto es útil: un buen modelo no solo produce planes; también detecta imposibil
 
 La sección `:metric` indica qué se desea minimizar o maximizar.
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (total-cost))
 ```
 
 También se puede optimizar una expresión:
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (+ (* 10 (total-cost)) total-time))
 ```
@@ -1340,7 +1340,7 @@ En planificación temporal, `total-time` representa la duración total del plan,
 
 Un patrón común es usar una función especial llamada `(total-cost)`:
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Afirma el hecho `total-cost` para objetos concretos de esta instancia.
@@ -1350,21 +1350,21 @@ Un patrón común es usar una función especial llamada `(total-cost)`:
 
 Inicialización:
 
-```lisp
+```pddl
 ; Expresa igualdad o inicializa una función con un valor concreto.
 (= (total-cost) 0)
 ```
 
 Efectos:
 
-```lisp
+```pddl
 ; Incrementa un fluent numérico; se usa para costos o recursos acumulados.
 (increase (total-cost) 5)
 ```
 
 Métrica:
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (total-cost))
 ```
@@ -1379,14 +1379,14 @@ Los predicados derivados permiten definir hechos que se infieren a partir de otr
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :derived-predicates)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 (:derived (reachable ?from - room ?to - room)
   ; Permite alternativas lógicas: basta con que una sea verdadera.
   (or
@@ -1410,7 +1410,7 @@ Este ejemplo intenta definir alcanzabilidad transitiva, pero debe usarse con cui
 
 Un uso más seguro:
 
-```lisp
+```pddl
 (:derived (occupied ?room - room)
   ; Cuantifica existencialmente: debe existir al menos un objeto que satisfaga la fórmula.
   (exists (?r - robot)
@@ -1430,14 +1430,14 @@ PDDL 2.1 introdujo acciones durativas; PDDL 3.1 conserva esa línea expresiva. U
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :durative-actions)
 ```
 
 Forma general:
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action nombre
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1453,7 +1453,7 @@ Forma general:
 
 ### 20.1 Ejemplo: movimiento temporal
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1488,7 +1488,7 @@ Se lee así:
 
 En acciones durativas, las condiciones pueden referirse a momentos o intervalos:
 
-```lisp
+```pddl
 ; Condición o efecto que aplica exactamente al inicio de una acción durativa.
 (at start condición)
 ; Condición invariante que debe mantenerse durante toda la acción durativa.
@@ -1499,7 +1499,7 @@ En acciones durativas, las condiciones pueden referirse a momentos o intervalos:
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Define condiciones temporales: al inicio, durante toda la acción o al final.
 :condition (and
   ; Condición o efecto que aplica exactamente al inicio de una acción durativa.
@@ -1517,7 +1517,7 @@ Ejemplo:
 
 ### 20.3 Efectos `at start` y `at end`
 
-```lisp
+```pddl
 ; Establece cómo cambia el estado después de ejecutar la acción.
 :effect (and
   ; Condición o efecto que aplica exactamente al inicio de una acción durativa.
@@ -1535,14 +1535,14 @@ El robot queda no disponible mientras dura la acción, y vuelve a estar disponib
 
 Con `:duration-inequalities`, puedes expresar duraciones flexibles:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :durative-actions :duration-inequalities)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action wait
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1563,14 +1563,14 @@ Ejemplo:
 
 También se pueden usar expresiones numéricas:
 
-```lisp
+```pddl
 ; Define cuánto dura la acción o cómo se calcula su duración.
 :duration (= ?duration (travel-time ?from ?to))
 ```
 
 Dominio:
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `travel-time` con variables; el planificador lo instanciará con objetos concretos.
@@ -1580,7 +1580,7 @@ Dominio:
 
 Problema:
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   ; Expresa igualdad o inicializa una función con un valor concreto.
@@ -1596,7 +1596,7 @@ Los efectos continuos modelan cambios durante la duración de una acción. Usan 
 
 Requisitos:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements
   :strips
@@ -1609,7 +1609,7 @@ Requisitos:
 
 Ejemplo conceptual: una batería se descarga continuamente mientras el robot se mueve.
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1647,14 +1647,14 @@ Los *Timed Initial Literals* permiten declarar que un hecho se vuelve verdadero 
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :timed-initial-literals)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   ; Afirma el hecho `robot-at` para objetos concretos de esta instancia.
@@ -1679,14 +1679,14 @@ PDDL 3 agregó restricciones de trayectoria (*state trajectory constraints*). No
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :constraints)
 ```
 
 Se colocan normalmente en el problema:
 
-```lisp
+```pddl
 ; Declara restricciones globales que deben cumplirse durante el plan.
 (:constraints
   ; Restricción temporal: la fórmula debe mantenerse en todos los estados del plan.
@@ -1711,7 +1711,7 @@ Se colocan normalmente en el problema:
 
 ### 24.2 Ejemplo: seguridad
 
-```lisp
+```pddl
 ; Declara restricciones globales que deben cumplirse durante el plan.
 (:constraints
   ; Restricción temporal: la fórmula debe mantenerse en todos los estados del plan.
@@ -1723,7 +1723,7 @@ El robot nunca puede entrar a `forbidden-room`, aunque el objetivo final no lo m
 
 ### 24.3 Ejemplo: entrega con condición temporal
 
-```lisp
+```pddl
 ; Declara restricciones globales que deben cumplirse durante el plan.
 (:constraints
   ; Afirma el hecho `within` para objetos concretos de esta instancia.
@@ -1737,7 +1737,7 @@ La caja debe llegar a `room-c` dentro de 30 unidades de tiempo.
 
 Una restricción mal formulada puede volver irresoluble un problema. Por ejemplo:
 
-```lisp
+```pddl
 ; Restricción temporal: la fórmula debe mantenerse en todos los estados del plan.
 (always (handempty robot1))
 ```
@@ -1752,14 +1752,14 @@ Las restricciones duras deben cumplirse siempre. Las preferencias, en cambio, so
 
 Requisito:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :preferences)
 ```
 
 ### 25.1 Preferencias en objetivos
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal
   ; Agrupa varias condiciones o efectos que deben considerarse conjuntamente.
@@ -1779,7 +1779,7 @@ El objetivo duro es que `box1` esté en `room-c`. La limpieza de `room-c` es des
 
 ### 25.2 Penalización con `is-violated`
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize
   ; Afirma el hecho `+` para objetos concretos de esta instancia.
@@ -1796,7 +1796,7 @@ Si la preferencia se viola, se agrega una penalización de 100 al costo.
 
 ### 25.3 Preferencias en restricciones
 
-```lisp
+```pddl
 ; Declara restricciones globales que deben cumplirse durante el plan.
 (:constraints
   ; Agrupa varias condiciones o efectos que deben considerarse conjuntamente.
@@ -1838,21 +1838,21 @@ La característica distintiva de PDDL 3.1 es el soporte de **object fluents**. U
 
 Ejemplo numérico:
 
-```lisp
+```pddl
 ; Afirma el hecho `battery-level` para objetos concretos de esta instancia.
 (battery-level robot1) = 80
 ```
 
 Ejemplo con objeto:
 
-```lisp
+```pddl
 ; Afirma el hecho `current-room` para objetos concretos de esta instancia.
 (current-room robot1) = room-a
 ```
 
 En vez de representar la ubicación con un predicado booleano:
 
-```lisp
+```pddl
 ; Afirma el hecho `robot-at` para objetos concretos de esta instancia.
 (robot-at robot1 room-a)
 ; Afirma el hecho `robot-at` para objetos concretos de esta instancia.
@@ -1863,7 +1863,7 @@ En vez de representar la ubicación con un predicado booleano:
 
 puedes representarla como una función cuyo valor es un objeto:
 
-```lisp
+```pddl
 ; Afirma el hecho `current-room` para objetos concretos de esta instancia.
 (current-room robot1) -> room
 ```
@@ -1872,14 +1872,14 @@ Esto se parece más a variables de estado finitas, al estilo SAS+.
 
 ### 26.1 Requisito
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :object-fluents)
 ```
 
 O bien:
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing :fluents)
 ```
@@ -1888,7 +1888,7 @@ En PDDL 3.1, `:fluents` equivale a `:numeric-fluents` + `:object-fluents`.
 
 ### 26.2 Declarar object fluents
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `current-room` con variables; el planificador lo instanciará con objetos concretos.
@@ -1902,7 +1902,7 @@ En PDDL 3.1, `:fluents` equivale a `:numeric-fluents` + `:object-fluents`.
 
 ### 26.3 Inicializar object fluents
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   ; Expresa igualdad o inicializa una función con un valor concreto.
@@ -1914,14 +1914,14 @@ En PDDL 3.1, `:fluents` equivale a `:numeric-fluents` + `:object-fluents`.
 
 Con `:equality`, puedes comparar términos:
 
-```lisp
+```pddl
 ; Expresa igualdad o inicializa una función con un valor concreto.
 (= (current-room ?r) ?from)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action move
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -1940,7 +1940,7 @@ Ejemplo:
 
 ### 26.5 Dominio con object fluent para ubicación
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain robot-object-fluents)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -1982,7 +1982,7 @@ Ejemplo:
 
 Problema:
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem robot-object-fluents-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -2016,7 +2016,7 @@ Problema:
 
 Los object fluents pueden tomar el valor especial `undefined`.
 
-```lisp
+```pddl
 ; Asigna un nuevo valor a una función del estado.
 (assign (loaded-box ?r) undefined)
 ```
@@ -2041,7 +2041,7 @@ Evítalos si necesitas máxima compatibilidad, porque muchos planificadores clá
 
 ### 27.1 Ubicación con predicados
 
-```lisp
+```pddl
 ; Afirma el hecho `robot-at` para objetos concretos de esta instancia.
 (robot-at robot1 room-a)
 ```
@@ -2059,7 +2059,7 @@ Desventajas:
 
 ### 27.2 Ubicación con object fluent
 
-```lisp
+```pddl
 ; Expresa igualdad o inicializa una función con un valor concreto.
 (= (current-room robot1) room-a)
 ```
@@ -2083,7 +2083,7 @@ Regla práctica: si estás aprendiendo o participando en entornos con soporte in
 
 Puedes definir tipos jerárquicos:
 
-```lisp
+```pddl
 ; Declara tipos para clasificar objetos y restringir parámetros de acciones.
 (:types
   location vehicle package - object
@@ -2099,7 +2099,7 @@ Esto significa:
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara relaciones booleanas que pueden ser verdaderas o falsas en un estado.
 (:predicates
   (at ?v - vehicle ?l - location)
@@ -2110,7 +2110,7 @@ Ejemplo:
 
 Una acción que acepta `vehicle` puede recibir un `truck` o un `drone`.
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action move-vehicle
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2132,7 +2132,7 @@ Una acción que acepta `vehicle` puede recibir un `truck` o un `drone`.
 
 Las constantes son objetos definidos en el dominio, compartidos por todos los problemas.
 
-```lisp
+```pddl
 ; Declara objetos fijos que existen en todas las instancias del dominio.
 (:constants
   normal urgent - priority
@@ -2141,7 +2141,7 @@ Las constantes son objetos definidos en el dominio, compartidos por todos los pr
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara tipos para clasificar objetos y restringir parámetros de acciones.
 (:types package priority)
 
@@ -2165,14 +2165,14 @@ Ejemplo:
 
 PDDL permite tipos disyuntivos con `either`, aunque no todos los planificadores los soportan igual de bien.
 
-```lisp
+```pddl
 ; Declara o usa el predicado `?x` con variables; el planificador lo instanciará con objetos concretos.
 (?x - (either truck drone))
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action inspect
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2192,7 +2192,7 @@ En muchos casos, una jerarquía de tipos limpia es preferible a abusar de `eithe
 
 El objetivo no tiene que ser un único átomo. Puede ser una fórmula.
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal
   ; Agrupa varias condiciones o efectos que deben considerarse conjuntamente.
@@ -2209,7 +2209,7 @@ El objetivo no tiene que ser un único átomo. Puede ser una fórmula.
 
 Con ADL, puede usar cuantificadores:
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal
   ; Cuantifica sobre todos los objetos de un tipo o conjunto de parámetros.
@@ -2222,7 +2222,7 @@ Con ADL, puede usar cuantificadores:
 
 O disyunción:
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal
   ; Permite alternativas lógicas: basta con que una sea verdadera.
@@ -2243,7 +2243,7 @@ Ten cuidado: metas muy expresivas pueden reducir compatibilidad con planificador
 
 Supón que un robot puede cargar hasta dos cajas. Una forma es usar numeric fluents:
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `load` con variables; el planificador lo instanciará con objetos concretos.
@@ -2255,28 +2255,28 @@ Supón que un robot puede cargar hasta dos cajas. Una forma es usar numeric flue
 
 Precondición para recoger:
 
-```lisp
+```pddl
 ; Compara valores numéricos; aquí exige que el lado izquierdo sea menor.
 (< (load ?r) (capacity ?r))
 ```
 
 Efectos:
 
-```lisp
+```pddl
 ; Incrementa un fluent numérico; se usa para costos o recursos acumulados.
 (increase (load ?r) 1)
 ```
 
 Al soltar:
 
-```lisp
+```pddl
 ; Disminuye un fluent numérico; se usa para consumir recursos.
 (decrease (load ?r) 1)
 ```
 
 Ejemplo:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action pick
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2308,7 +2308,7 @@ Ejemplo:
 
 Para modelar combustible:
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `fuel` con variables; el planificador lo instanciará con objetos concretos.
@@ -2320,7 +2320,7 @@ Para modelar combustible:
 
 Acción:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action drive
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2346,7 +2346,7 @@ Acción:
 
 Recarga:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action refuel
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2364,7 +2364,7 @@ Recarga:
 
 Mejor aún: usa `(fuel-capacity ?v)`.
 
-```lisp
+```pddl
 ; Establece cómo cambia el estado después de ejecutar la acción.
 :effect (assign (fuel ?v) (fuel-capacity ?v))
 ```
@@ -2375,7 +2375,7 @@ Mejor aún: usa `(fuel-capacity ?v)`.
 
 Para evitar que dos robots usen el mismo recurso al mismo tiempo:
 
-```lisp
+```pddl
 ; Declara relaciones booleanas que pueden ser verdaderas o falsas en un estado.
 (:predicates
   ; Declara o usa el predicado `available` con variables; el planificador lo instanciará con objetos concretos.
@@ -2387,7 +2387,7 @@ Para evitar que dos robots usen el mismo recurso al mismo tiempo:
 
 Acción de inicio:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action start-use
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2406,7 +2406,7 @@ Acción de inicio:
 
 Acción de fin:
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action finish-use
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2431,7 +2431,7 @@ En planificación temporal, esta idea suele modelarse con acciones durativas y c
 
 Puedes modelar una ventana de disponibilidad con Timed Initial Literals:
 
-```lisp
+```pddl
 ; Describe el estado inicial: hechos verdaderos y valores iniciales de funciones.
 (:init
   (at 9 (open warehouse))
@@ -2441,14 +2441,14 @@ Puedes modelar una ventana de disponibilidad con Timed Initial Literals:
 
 Y luego exigir:
 
-```lisp
+```pddl
 ; Condición invariante que debe mantenerse durante toda la acción durativa.
 (over all (open warehouse))
 ```
 
 En una acción durativa:
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action load-at-warehouse
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -2488,7 +2488,7 @@ Cuando un planificador dice que no hay plan, puede significar varias cosas:
 
 Usa el menor número de objetos posible:
 
-```lisp
+```pddl
 ; Lista los objetos concretos disponibles en esta instancia del problema.
 (:objects
   robot1 - robot
@@ -2500,7 +2500,7 @@ Usa el menor número de objetos posible:
 
 Crea un problema cuyo objetivo sea alcanzable con una acción.
 
-```lisp
+```pddl
 ; Define la condición que debe cumplirse al final del plan.
 (:goal (robot-at robot1 room-b))
 ```
@@ -2513,14 +2513,14 @@ Primero movimiento. Luego carga. Luego energía. Luego tiempo. Luego preferencia
 
 Si una precondición requiere:
 
-```lisp
+```pddl
 ; Afirma el hecho `connected` para objetos concretos de esta instancia.
 (connected room-a room-b)
 ```
 
 debe aparecer exactamente así en `:init`. No basta con:
 
-```lisp
+```pddl
 ; Afirma el hecho `connected` para objetos concretos de esta instancia.
 (connected room-b room-a)
 ```
@@ -2529,7 +2529,7 @@ debe aparecer exactamente así en `:init`. No basta con:
 
 PDDL no corregirá typos semánticos por ti:
 
-```lisp
+```pddl
 room-a
 room_a
 Room-A
@@ -2567,7 +2567,7 @@ La validación es importante porque:
 
 Bueno:
 
-```lisp
+```pddl
 ; Declara o usa el predicado `robot-at` con variables; el planificador lo instanciará con objetos concretos.
 (robot-at ?r ?room)
 ; Declara o usa el predicado `box-at` con variables; el planificador lo instanciará con objetos concretos.
@@ -2576,7 +2576,7 @@ Bueno:
 
 Malo:
 
-```lisp
+```pddl
 ; Declara o usa el predicado `p` con variables; el planificador lo instanciará con objetos concretos.
 (p ?x ?y)
 ; Declara o usa el predicado `q` con variables; el planificador lo instanciará con objetos concretos.
@@ -2587,7 +2587,7 @@ Malo:
 
 Aunque PDDL permite dominios no tipados, los tipos casi siempre ayudan.
 
-```lisp
+```pddl
 ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
 (:requirements :strips :typing)
 ```
@@ -2596,7 +2596,7 @@ Aunque PDDL permite dominios no tipados, los tipos casi siempre ayudan.
 
 Si una caja no puede estar en dos lugares, asegúrate de borrar la ubicación anterior.
 
-```lisp
+```pddl
 ; Niega un hecho; en efectos suele borrar un hecho del estado.
 (not (box-at ?b ?from))
 ; Declara o usa el predicado `box-at` con variables; el planificador lo instanciará con objetos concretos.
@@ -2623,7 +2623,7 @@ Blocks World es el “hola mundo” de planificación.
 
 ### 39.1 Dominio
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain blocks-world)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -2749,7 +2749,7 @@ Blocks World es el “hola mundo” de planificación.
 
 ### 39.2 Problema
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem bw-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -2799,7 +2799,7 @@ Ejercicio: agrega costo a cada acción y minimiza el número de movimientos.
 
 ### 40.1 Dominio simplificado
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain logistics-mini)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -2886,7 +2886,7 @@ Ejercicio: agrega costo a cada acción y minimiza el número de movimientos.
 
 ### 40.2 Problema
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem logistics-mini-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -2949,7 +2949,7 @@ Ejercicios:
 
 Este dominio modela una máquina que debe procesar trabajos y requiere mantenimiento.
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain machine-temporal)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -3033,7 +3033,7 @@ Este dominio modela una máquina que debe procesar trabajos y requiere mantenimi
 
 Problema:
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem machine-temporal-01)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -3081,7 +3081,7 @@ Problema:
 
 Nota: según el planificador, puede ser necesario escribir `(total-cost)` en la métrica:
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (+ total-time (total-cost)))
 ```
@@ -3184,7 +3184,7 @@ Practica:
 
 Características:
 
-```lisp
+```pddl
 :requirements :strips :typing
 ```
 
@@ -3201,7 +3201,7 @@ Practica:
 
 Características:
 
-```lisp
+```pddl
 :negative-preconditions
 :equality
 ; Define condiciones temporales: al inicio, durante toda la acción o al final.
@@ -3223,7 +3223,7 @@ Practica:
 
 Características:
 
-```lisp
+```pddl
 :numeric-fluents
 :action-costs
 ```
@@ -3241,7 +3241,7 @@ Practica:
 
 Características:
 
-```lisp
+```pddl
 :durative-actions
 ; Define cuánto dura la acción o cómo se calcula su duración.
 :duration-inequalities
@@ -3260,7 +3260,7 @@ Practica:
 
 Características:
 
-```lisp
+```pddl
 :constraints
 :preferences
 :object-fluents
@@ -3272,7 +3272,7 @@ Características:
 
 ### Dominio mínimo
 
-```lisp
+```pddl
 ; Define el nombre del dominio; aquí empiezan las reglas generales reutilizables.
 (define (domain nombre)
   ; Declara las características de PDDL que el dominio necesita que el planificador soporte.
@@ -3301,7 +3301,7 @@ Características:
 
 ### Problema mínimo
 
-```lisp
+```pddl
 ; Define una instancia concreta del problema que usará un dominio.
 (define (problem nombre-problema)
   ; Indica qué dominio contiene las acciones y predicados que este problema puede usar.
@@ -3328,7 +3328,7 @@ Características:
 
 ### Acción clásica
 
-```lisp
+```pddl
 ; Declara una acción instantánea que el planificador puede incluir en un plan.
 (:action nombre
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -3342,7 +3342,7 @@ Características:
 
 ### Acción durativa
 
-```lisp
+```pddl
 ; Declara una acción con duración y condiciones/efectos temporales.
 (:durative-action nombre
   ; Define las variables de la acción y, cuando aplica, sus tipos.
@@ -3370,7 +3370,7 @@ Características:
 
 ### Numeric fluent
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `fuel` con variables; el planificador lo instanciará con objetos concretos.
@@ -3378,19 +3378,19 @@ Características:
 )
 ```
 
-```lisp
+```pddl
 ; Expresa igualdad o inicializa una función con un valor concreto.
 (= (fuel truck1) 100)
 ```
 
-```lisp
+```pddl
 ; Disminuye un fluent numérico; se usa para consumir recursos.
 (decrease (fuel ?v) 10)
 ```
 
 ### Object fluent
 
-```lisp
+```pddl
 ; Declara funciones numéricas u object fluents que almacenan valores del estado.
 (:functions
   ; Declara o usa el predicado `current-location` con variables; el planificador lo instanciará con objetos concretos.
@@ -3398,36 +3398,36 @@ Características:
 )
 ```
 
-```lisp
+```pddl
 ; Expresa igualdad o inicializa una función con un valor concreto.
 (= (current-location truck1) depot)
 ```
 
-```lisp
+```pddl
 ; Asigna un nuevo valor a una función del estado.
 (assign (current-location ?v) ?to)
 ```
 
 ### Métrica
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (total-cost))
 ```
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize (+ total-time (total-cost)))
 ```
 
 ### Preferencia
 
-```lisp
+```pddl
 ; Declara una preferencia blanda; puede violarse con penalización si la métrica lo permite.
 (preference nombre-preferencia condición)
 ```
 
-```lisp
+```pddl
 ; Indica qué valor debe minimizarse o maximizarse al comparar planes.
 (:metric minimize
   ; Afirma el hecho `+` para objetos concretos de esta instancia.
@@ -3442,7 +3442,7 @@ Características:
 
 ### Restricción
 
-```lisp
+```pddl
 ; Declara restricciones globales que deben cumplirse durante el plan.
 (:constraints
   ; Restricción temporal: la fórmula debe mantenerse en todos los estados del plan.
@@ -3520,7 +3520,7 @@ En PDDL, la sección `:requirements` aparece dentro del archivo de **dominio** y
 
 La forma general es:
 
-```lisp
+```pddl
 (:requirements
   :strips              ; Activa el núcleo clásico de acciones con precondiciones y efectos simples.
   :typing              ; Permite declarar tipos para organizar objetos y parámetros.
@@ -3568,7 +3568,7 @@ Algunas características aparecen en la literatura o en implementaciones concret
 
 Sirve para modelar dominios discretos simples: mover robots, abrir puertas, transportar paquetes, cambiar estados booleanos, etc.
 
-```lisp
+```pddl
 (define (domain robot-basico)
   (:requirements :strips) ; Declara que se usará el núcleo clásico de PDDL.
 
@@ -3601,7 +3601,7 @@ Usa `:strips` cuando el problema pueda representarse con hechos booleanos y acci
 
 Sirve para decir, por ejemplo, que `?r` debe ser un `robot`, `?p` debe ser un `package` y `?l` debe ser una `location`.
 
-```lisp
+```pddl
 (define (domain reparto-tipado)
   (:requirements :strips :typing) ; STRIPS para acciones básicas y typing para restringir objetos.
 
@@ -3637,7 +3637,7 @@ Usa tipos siempre que el dominio tenga clases naturales de objetos. En la práct
 
 `:negative-preconditions` permite exigir que un hecho sea falso antes de ejecutar una acción. Esto es útil cuando una acción sólo puede ocurrir si algo **no** está ocupado, **no** está bloqueado o **no** se ha hecho todavía.
 
-```lisp
+```pddl
 (define (domain puertas)
   (:requirements :strips :negative-preconditions) ; Habilita precondiciones con not.
 
@@ -3665,7 +3665,7 @@ Conviene usarla con moderación. A veces una precondición negativa revela que c
 
 `:disjunctive-preconditions` permite usar `or` en precondiciones. Sirve cuando una acción puede aplicarse por varias razones alternativas.
 
-```lisp
+```pddl
 (:action enter-room
   :parameters (?r ?room ?door)
   :precondition (and
@@ -3687,7 +3687,7 @@ Es útil, pero puede dificultar la planificación. Si el dominio crece, muchas d
 
 `:equality` habilita el uso de `=` para comparar términos. Sirve para impedir que dos parámetros sean el mismo objeto o para expresar casos especiales.
 
-```lisp
+```pddl
 (:action move
   :parameters (?r - robot ?from - location ?to - location)
   :precondition (and
@@ -3712,7 +3712,7 @@ Los cuantificadores permiten hablar de conjuntos de objetos sin enumerarlos manu
 
 `exists` dice que debe existir al menos un objeto que satisfaga una fórmula.
 
-```lisp
+```pddl
 (:action call-elevator
   :parameters (?f - floor)
   :precondition (exists (?e - elevator)
@@ -3724,7 +3724,7 @@ Los cuantificadores permiten hablar de conjuntos de objetos sin enumerarlos manu
 
 `forall` dice que una fórmula debe cumplirse para todos los objetos de cierto tipo.
 
-```lisp
+```pddl
 (:action close-building
   :parameters (?b - building)
   :precondition (forall (?d - door)
@@ -3745,7 +3745,7 @@ Los cuantificadores permiten hablar de conjuntos de objetos sin enumerarlos manu
 
 Los efectos condicionales permiten que una acción tenga efectos distintos dependiendo del estado en que se aplica.
 
-```lisp
+```pddl
 (:action inspect-room
   :parameters (?r - robot ?room - room)
   :precondition (at ?r ?room) ; El robot sólo puede inspeccionar el cuarto donde está.
@@ -3766,13 +3766,13 @@ Sirven para evitar duplicar acciones casi idénticas. Sin embargo, si se abusa d
 
 `:adl` es una etiqueta histórica que agrupa varias extensiones expresivas sobre STRIPS: tipado, negación, disyunción, igualdad, cuantificadores y efectos condicionales.
 
-```lisp
+```pddl
 (:requirements :adl) ; Declara un dominio más expresivo que STRIPS básico.
 ```
 
 En dominios modernos suele ser más claro declarar explícitamente las características usadas:
 
-```lisp
+```pddl
 (:requirements
   :strips
   :typing
@@ -3792,7 +3792,7 @@ Los predicados derivados permiten definir hechos calculados. No se agregan ni el
 
 Sirven para expresar reglas como “un lugar es accesible si hay una ruta directa o indirecta” o “un paquete está disponible si no está bloqueado y está en una zona habilitada”.
 
-```lisp
+```pddl
 (define (domain accesibilidad)
   (:requirements :strips :typing :derived-predicates) ; Habilita axiomas derivados.
 
@@ -3825,7 +3825,7 @@ Sirven para expresar reglas como “un lugar es accesible si hay una ruta direct
 
 `:numeric-fluents` permite declarar funciones numéricas y modificarlas con efectos aritméticos. Es esencial para costos, recursos, capacidades, energía, combustible, inventario o distancia acumulada.
 
-```lisp
+```pddl
 (define (domain robot-bateria)
   (:requirements :strips :typing :numeric-fluents) ; Habilita funciones numéricas.
 
@@ -3861,7 +3861,7 @@ Sirven para expresar reglas como “un lugar es accesible si hay una ruta direct
 
 En el problema se inicializan los valores:
 
-```lisp
+```pddl
 (:init
   (at r1 a)                 ; Estado inicial lógico.
   (connected a b)           ; Arista del mapa.
@@ -3881,7 +3881,7 @@ Usa fluents numéricos cuando la cantidad sea realmente relevante para la valide
 
 `:object-fluents` es una característica importante de PDDL 3.1. Permite que una función devuelva un objeto en vez de un número. Es útil para modelar relaciones funcionales: la ubicación actual de un robot, el dueño de un paquete, la herramienta asignada a una tarea, etc.
 
-```lisp
+```pddl
 (define (domain object-fluents-demo)
   (:requirements :strips :typing :object-fluents :equality) ; Object fluents requieren funciones con retorno objeto.
 
@@ -3905,7 +3905,7 @@ Usa fluents numéricos cuando la cantidad sea realmente relevante para la valide
 
 El problema inicializa la función con un objeto:
 
-```lisp
+```pddl
 (:init
   (= (loc r1) room-a)       ; La función loc aplicada a r1 devuelve inicialmente room-a.
   (connected room-a room-b) ; Movimiento permitido desde room-a hacia room-b.
@@ -3920,19 +3920,19 @@ Son expresivos, pero el soporte práctico es más limitado que para STRIPS o num
 
 En PDDL 3.1, `:fluents` funciona como una forma amplia de declarar el uso de fluents. Conceptualmente cubre tanto fluents numéricos como object fluents.
 
-```lisp
+```pddl
 (:requirements :strips :typing :fluents) ; Declara uso de funciones cambiantes del estado.
 ```
 
 En muchos dominios prácticos es preferible declarar de forma específica:
 
-```lisp
+```pddl
 (:requirements :strips :typing :numeric-fluents) ; Sólo se usarán valores numéricos.
 ```
 
 O bien:
 
-```lisp
+```pddl
 (:requirements :strips :typing :object-fluents :equality) ; Se usarán funciones con retorno objeto.
 ```
 
@@ -3944,7 +3944,7 @@ La declaración específica hace más claro qué soporte necesita el planificado
 
 `:durative-actions` permite modelar acciones temporales con duración. Una acción deja de ser instantánea y pasa a tener inicio, intervalo y final.
 
-```lisp
+```pddl
 (:durative-action drive
   :parameters (?r - robot ?from - location ?to - location)
   :duration (= ?duration 5) ; La acción dura exactamente 5 unidades de tiempo.
@@ -3968,7 +3968,7 @@ Usa acciones durativas cuando el solapamiento temporal, la duración o los recur
 
 `:duration-inequalities` permite especificar duraciones mediante desigualdades. Esto representa acciones con duración variable o acotada.
 
-```lisp
+```pddl
 (:durative-action charge
   :parameters (?r - robot)
   :duration (and
@@ -3988,7 +3988,7 @@ Es útil para dominios de calendarización, manufactura, transporte o ventanas t
 
 `:continuous-effects` permite modelar cambios que ocurren gradualmente durante una acción durativa. En vez de aplicar todo el cambio al inicio o al final, la magnitud cambia conforme pasa el tiempo.
 
-```lisp
+```pddl
 (:durative-action consume-fuel
   :parameters (?v - vehicle)
   :duration (= ?duration 10) ; La acción dura 10 unidades de tiempo.
@@ -4007,7 +4007,7 @@ Los *timed initial literals* permiten declarar hechos que se vuelven verdaderos 
 
 Sirven para eventos externos conocidos: una tienda abre a las 9, una carretera se bloquea a las 12, un paquete llega al almacén en el minuto 30.
 
-```lisp
+```pddl
 (:init
   (at truck1 depot)              ; Hecho verdadero desde el inicio.
   (at 10 (road-open a b))        ; En el tiempo 10, la carretera a-b se abre.
@@ -4023,7 +4023,7 @@ Sirven para eventos externos conocidos: una tienda abre a las 9, una carretera s
 
 `:preferences` permite definir condiciones deseables pero no estrictamente obligatorias. Si una preferencia se viola, el plan puede seguir siendo válido, pero su calidad disminuye mediante una penalización en la métrica.
 
-```lisp
+```pddl
 (:goal
   (and
     (delivered package1) ; Esta meta sí es obligatoria.
@@ -4049,7 +4049,7 @@ Sirven para modelar objetivos blandos: evitar zonas peligrosas, terminar tempran
 
 `:constraints` permite expresar restricciones sobre la trayectoria completa del plan. No describen sólo el estado inicial, una acción o la meta final, sino propiedades que deben cumplirse a lo largo de la ejecución.
 
-```lisp
+```pddl
 (:constraints
   (and
     (always (not (robot-in restricted-zone))) ; Nunca se permite entrar en zona restringida.
@@ -4082,7 +4082,7 @@ Operadores frecuentes:
 
 Aunque se implementa mediante una función numérica `total-cost`, suele declararse explícitamente para indicar que el dominio sigue el patrón estándar de costos de acción.
 
-```lisp
+```pddl
 (define (domain costos)
   (:requirements :strips :typing :action-costs) ; Declara que las acciones tendrán costo acumulado.
 
@@ -4114,7 +4114,7 @@ Aunque se implementa mediante una función numérica `total-cost`, suele declara
 
 En el problema:
 
-```lisp
+```pddl
 (:init
   (at a)              ; Ubicación inicial.
   (connected a b)     ; Conexión disponible.
@@ -4132,7 +4132,7 @@ Usa este patrón cuando todas las acciones tienen costos discretos y quieres opt
 
 Un error común es comenzar todos los dominios con una lista enorme de características:
 
-```lisp
+```pddl
 (:requirements
   :strips
   :typing
@@ -4158,13 +4158,13 @@ Aunque parezca cómodo, esto tiene desventajas:
 
 Una mejor estrategia es comenzar con lo mínimo:
 
-```lisp
+```pddl
 (:requirements :strips :typing) ; Base recomendable para muchos dominios clásicos.
 ```
 
 Luego agregar características sólo cuando el modelo lo requiera:
 
-```lisp
+```pddl
 (:requirements
   :strips
   :typing

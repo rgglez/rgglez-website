@@ -22,6 +22,8 @@ import type { AstroIntegration } from "astro";
 
 import react from "@astrojs/react";
 
+import pddlGrammar from "./src/grammars/pddl.tmLanguage.json" with { type: "json" };
+
 function fontPreloadIntegration(): AstroIntegration {
   return {
     name: 'font-preload',
@@ -119,6 +121,8 @@ export default defineConfig({
         themeCssSelector: (theme) =>
           `[data-theme="${theme.type === 'dark' ? 'dark' : 'light'}"]`,
         useDarkModeMediaQuery: false,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        shiki: { langs: [pddlGrammar as any] },
     }),
     mdx({
         extendMarkdownConfig: true,
@@ -158,6 +162,9 @@ export default defineConfig({
     // This will be fixed in Astro 6 with Vite 7 support
     // See: https://github.com/withastro/astro/issues/14030
     plugins: [tailwindcss()],
+    resolve: {
+      dedupe: ["react", "react-dom"],
+    },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
