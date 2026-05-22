@@ -32,7 +32,7 @@
     }
 
     a {
-      @apply wrap-break-word text-foreground decoration-dashed underline-offset-4 hover:text-accent focus-visible:no-underline;
+      @apply wrap-break-word text-[#161d2e] decoration-dashed underline-offset-4 decoration-[#a1bfef] hover:text-foreground/75 hover:decoration-accent focus-visible:no-underline dark:text-white dark:decoration-[#234c77];
     }
 
     ul {

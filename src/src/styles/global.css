@@ -45,6 +45,9 @@ html[data-theme="dark"] {
   button {
     @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
   }
+  a:not(.link-exempt) {
+    @apply text-[#161d2e] underline decoration-dashed underline-offset-4 decoration-[#a1bfef] hover:text-foreground/75 hover:decoration-accent dark:text-white dark:decoration-[#234c77];
+  }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -118,4 +121,3 @@ svg.mindmapDiagram [class*="section-"]:not(.section-root) span {
 [id^="mermaid-"] .actor-line {
   stroke: var(--border) !important;
 }
-

@@ -29,7 +29,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
     href={getPath(id, filePath)}
     class:list={[
       "inline-block text-lg font-medium text-[#161d2e] dark:text-white",
-      "decoration-dashed underline-offset-4 underline decoration-[#a1bfef] dark:decoration-[#234c77]",
+      "decoration-dashed underline-offset-4 underline decoration-[#a1bfef] dark:decoration-[#234c77] hover:decoration-accent",
       "focus-visible:no-underline focus-visible:underline-offset-0",
     ]}
   >
@@ -54,7 +54,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
           ) : (
             <a
               href={href}
-              class="rounded border border-border px-1.5 py-0.5 text-xs text-foreground/70 hover:border-accent hover:text-accent"
+              class="link-exempt rounded border border-border px-1.5 py-0.5 text-xs text-foreground/70 hover:border-accent hover:text-accent"
               hreflang={lang}
             >
               {lang}
