@@ -2,7 +2,7 @@
 export const prerender = true;
 import { SITE } from "@/config";
 const { supportedLangs, defaultLang } = SITE;
-const defaultUrl = new URL(`/${defaultLang}/`, SITE.website).href;
+const defaultUrl = new URL(`/${defaultLang}`, SITE.website).href;
 const ogImageUrl = new URL(SITE.ogImage, SITE.website).href;
 const ogTitle = `${SITE.title} — Música, Programación, Electrónica e IA`;
 ---
@@ -29,7 +29,7 @@ const ogTitle = `${SITE.title} — Música, Programación, Electrónica e IA`;
     <script is:inline define:vars={{ supportedLangs, defaultLang }}>
       const lang = (navigator.language ?? "").split("-")[0].toLowerCase();
       const target = supportedLangs.includes(lang) ? lang : defaultLang;
-      window.location.pathname = `/${target}/`;
+      window.location.pathname = `/${target}`;
     </script>
   </body>
 </html>

@@ -33,12 +33,23 @@ Selon Wikipedia :
 
 ## Étape par étape
 
-1. Allez sur <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
-1. Cliquez sur "*New token*".
-1. Donnez-lui un nom, sélectionnez le type "`Write`" (nécessaire pour téléverser des datasets) ou "`Read`" (lecture seule).
-1. Cliquez sur "*Generate a token*" et copiez-le. Attention : **il n'est affiché qu'une seule fois**.
+1. Allez sur <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> et connectez-vous à votre compte. Si vous n'en avez pas, inscrivez-vous.
+1. Allez dans *Settings* :
+    ![Image de la page settings](../../../../../assets/posts/2026/04/tokens-huggingface/step1.png)
+1. Dans le menu latéral, sélectionnez "*Access Tokens*" :
+    ![Image de la page access tokens](../../../../../assets/posts/2026/04/tokens-huggingface/step2.png)
+1. Cliquez sur "*Create new token*" :
+    ![Image de la page new token](../../../../../assets/posts/2026/04/tokens-huggingface/step3.png)
+1. Donnez-lui un nom, sélectionnez le type "`Write`" (nécessaire pour téléverser des datasets) ou "`Read`" (lecture seule). Vous pouvez aussi créer un token *Fine grained* avec des permissions spécifiques, mais dans la plupart des cas ce n'est pas nécessaire.
+1. Cliquez sur "*Generate a token*" et copiez-le.
 
 <Aside type="caution">
+
+le token **n'est affiché qu'une seule fois**.
+
+</Aside>
+
+<Aside type="note">
 
 la variable d'environnement `HF_TOKEN` peut être exportée avec la valeur du token généré. Si vous avez besoin d'utiliser un autre token, il suffit de modifier l'export :
 ```bash
@@ -55,7 +66,7 @@ export HF_TOKEN=my_token
 
 <Aside type="note">
 
-Remarque : certains guides en ligne indiquent que la commande CLI est `huggingface-cli`, ce qui semble être obsolète.
+certains guides en ligne indiquent que la commande CLI est `huggingface-cli`, ce qui semble être obsolète.
 
 </Aside>
 

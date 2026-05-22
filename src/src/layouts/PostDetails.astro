@@ -110,7 +110,7 @@ const nextPost =
   >
     <h1
       transition:name={slugifyStr(title.replaceAll(".", "-"))}
-      class="inline-block text-2xl font-bold text-accent sm:text-3xl"
+      class="inline-block text-2xl font-bold text-[#161d2e] dark:text-white sm:text-3xl"
     >
       {title}
     </h1>
@@ -150,7 +150,7 @@ const nextPost =
             <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">|</span>
             {translations.map(({ lang, href, isCurrent }) =>
               isCurrent ? (
-                <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">
+                <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent dark:text-white dark:border-white">
                   {lang}
                 </span>
               ) : (

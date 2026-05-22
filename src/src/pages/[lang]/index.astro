@@ -94,17 +94,16 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 </Layout>
 
 
-<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+<script is:inline define:vars={{ supportedLangs, defaultLang, lang }}>
   document.addEventListener("astro:page-load", () => {
     const indexLayout = document.querySelector("#main-content")?.dataset?.layout;
     if (indexLayout) {
       sessionStorage.setItem("backUrl", "/");
     }
 
-    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
-    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+    const routeLang = supportedLangs.includes(lang) ? lang : defaultLang;
 
-    document.documentElement.lang = lang;
+    document.documentElement.lang = routeLang;
 
     // Group cards by article key, then pick the best version per article:
     // priority: browser language > "en" > first available
@@ -120,7 +119,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
     Object.values(groups).forEach(group => {
       const best =
-        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === routeLang) ||
         group.find(el => el.dataset.lang === "en") ||
         group[0];
       group.forEach(el => {

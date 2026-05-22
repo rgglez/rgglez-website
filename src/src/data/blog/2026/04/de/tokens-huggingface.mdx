@@ -32,14 +32,25 @@ Laut Wikipedia:
 
 ## Schritt für Schritt
 
-1. Gehen Sie zu <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
-1. Klicken Sie auf "*New token*".
-1. Vergeben Sie einen Namen, wählen Sie den Typ "`Write`" (erforderlich zum Hochladen von Datasets) oder "`Read`" (nur Lesezugriff).
-1. Klicken Sie auf "*Generate a token*" und kopieren Sie ihn. Achtung: **er wird nur einmal angezeigt**.
+1. Gehen Sie zu <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> und melden Sie sich bei Ihrem Konto an. Falls Sie noch keines haben, registrieren Sie sich.
+1. Gehen Sie zu *Settings*:
+    ![Bild der Settings-Seite](../../../../../assets/posts/2026/04/tokens-huggingface/step1.png)
+1. Wählen Sie im Seitenmenü "*Access Tokens*":
+    ![Bild der Access-Tokens-Seite](../../../../../assets/posts/2026/04/tokens-huggingface/step2.png)
+1. Klicken Sie auf "*Create new token*":
+    ![Bild der New-Token-Seite](../../../../../assets/posts/2026/04/tokens-huggingface/step3.png)
+1. Geben Sie einen Namen ein, wählen Sie den Typ "`Write`" (erforderlich zum Hochladen von Datasets) oder "`Read`" (nur Lesezugriff). Sie können auch ein *Fine grained*-Token mit spezifischen Berechtigungen erstellen, aber in den meisten Fällen ist das nicht notwendig.
+1. Klicken Sie auf "*Generate a token*" und kopieren Sie ihn.
+
+<Aside type="caution">
+
+der Token **wird nur einmal angezeigt**.
+
+</Aside>
 
 <Aside type="note">
 
-Wichtig: Die Umgebungsvariable `HF_TOKEN` kann mit dem Wert des generierten Tokens exportiert werden. Falls ein anderer Token benötigt wird, reicht es, den Export zu ändern:
+die Umgebungsvariable `HF_TOKEN` kann mit dem Wert des generierten Tokens exportiert werden. Falls ein anderer Token benötigt wird, reicht es, den Export zu ändern:
 ```bash
 export HF_TOKEN=my_token
 ```
@@ -54,7 +65,7 @@ export HF_TOKEN=my_token
 
 <Aside type="note">
 
-Hinweis: Einige Anleitungen im Internet geben an, dass der CLI-Befehl `huggingface-cli` lautet, was jedoch veraltet zu sein scheint.
+einige Anleitungen im Internet geben an, dass der CLI-Befehl `huggingface-cli` lautet, was jedoch veraltet zu sein scheint.
 
 </Aside>
 

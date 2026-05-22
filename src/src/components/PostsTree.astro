@@ -79,10 +79,9 @@ const years = [...grouped.entries()].sort(([a], [b]) => b - a);
   src="https://cdn.jsdelivr.net/npm/@astrouxds/astro-web-components/dist/astro-web-components/astro-web-components.esm.js"
 ></script>
 
-<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+<script is:inline define:vars={{ supportedLangs, defaultLang, lang }}>
   document.addEventListener("astro:page-load", () => {
-    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
-    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+    const routeLang = supportedLangs.includes(lang) ? lang : defaultLang;
 
     const wrapper = document.querySelector(".posts-tree-wrapper");
     if (!wrapper) return;
@@ -100,7 +99,7 @@ const years = [...grouped.entries()].sort(([a], [b]) => b - a);
 
     Object.values(groups).forEach(group => {
       const best =
-        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === routeLang) ||
         group.find(el => el.dataset.lang === "en") ||
         group[0];
       group.forEach(el => {

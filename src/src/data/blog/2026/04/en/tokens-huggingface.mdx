@@ -32,14 +32,25 @@ According to Wikipedia:
 
 ## Step by Step
 
-1. Go to <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
-1. Click "*New token*".
-1. Give it a name, select type "`Write`" (required for uploading datasets) or "`Read`" (read-only).
-1. Click "*Generate a token*" and copy it. Note: **it is only shown once**.
+1. Go to <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> and sign in to your account. If you do not have one, sign up.
+1. Go to *Settings*:
+    ![Image of the settings page](../../../../../assets/posts/2026/04/tokens-huggingface/step1.png)
+1. In the side menu, select "*Access Tokens*":
+    ![Image of the access tokens page](../../../../../assets/posts/2026/04/tokens-huggingface/step2.png)
+1. Click "*Create new token*":
+    ![Image of the new token page](../../../../../assets/posts/2026/04/tokens-huggingface/step3.png)
+1. Give it a name, select type "`Write`" (required for uploading datasets) or "`Read`" (read-only). You can also create a *Fine grained* token with specific permissions, but for most use cases this is not necessary.
+1. Click "*Generate a token*" and copy it.
 
 <Aside type="caution">
 
-the `HF_TOKEN` environment variable can be exported with the value of the generated token. If you need to use a different token, simply change the export:
+the token **is shown only once**.
+
+</Aside>
+
+<Aside type="note">
+
+the `HF_TOKEN` environment variable can be exported with the generated token value. If you need to use a different token, simply change the export:
 ```bash
 export HF_TOKEN=my_token
 ```

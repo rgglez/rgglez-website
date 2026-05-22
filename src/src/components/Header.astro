@@ -18,8 +18,11 @@ const currentPath =
   pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname;
 
 // Derive current lang from URL first segment, fallback to default
+const firstSegment = currentPath.split("/").filter(Boolean)[0];
 const currentLang =
-  currentPath.split("/").filter(Boolean)[0] ?? SITE.defaultLang;
+  firstSegment && SITE.supportedLangs.includes(firstSegment)
+    ? firstSegment
+    : SITE.defaultLang;
 
 // Compare second segment (index 1) after lang prefix
 const isActive = (path: string) => {
@@ -51,7 +54,7 @@ const isActive = (path: string) => {
     ]}
   >
     <a
-      href="/"
+      href={`/${currentLang}`}
       class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
         {SITE.title}

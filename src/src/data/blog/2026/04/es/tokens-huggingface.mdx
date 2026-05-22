@@ -32,12 +32,23 @@ De acuerdo con Wikipedia:
 
 ## Paso a paso
 
-1. Ve a <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> → *settings* → *tokens*.
-1. Clic en "*New token*".
-1. Ponle un nombre, selecciona tipo "`Write`" (necesario para subir datasets) o "`Read`" (solo lectura).
-1. Clic en "*Generate a token*" y cópialo. Cuidado: **solo se muestra una vez**.
+1. Ve a <a href="https://huggingface.co" target="_blank">`huggingface.co`</a> e ingresa a tu cuenta. Si no tienes una, regístrate.
+1. Ve a *Settings*:
+    ![Imagen de la página de settings](../../../../../assets/posts/2026/04/tokens-huggingface/step1.png)
+1. En el menú lateral, selecciona "*Access Tokens*":
+    ![Imagen de la página de access tokens](../../../../../assets/posts/2026/04/tokens-huggingface/step2.png)
+1. Clic en "*Create new token*":
+    ![Imagen de la página de new token](../../../../../assets/posts/2026/04/tokens-huggingface/step3.png)
+1. Ponle un nombre, selecciona tipo "`Write`" (necesario para subir datasets) o "`Read`" (solo lectura). También puedes crear un token *Fine grained* con permisos específicos, pero para la mayoría de los casos no es necesario.
+1. Clic en "*Generate a token*" y cópialo.
 
 <Aside type="caution">
+
+el token **solo se muestra una vez**.
+
+</Aside>
+
+<Aside type="note">
 
 la variable de ambiente `HF_TOKEN` puede ser exportada con el valor del token generado. En caso de necesitar usar otro token, basta con cambiar la exportación:
 ```bash

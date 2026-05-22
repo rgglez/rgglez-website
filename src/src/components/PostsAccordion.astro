@@ -87,10 +87,9 @@ function yearCount(byMonth: Map<number, PostLeaf[]>): number {
   }
 </div>
 
-<script is:inline define:vars={{ supportedLangs, defaultLang }}>
+<script is:inline define:vars={{ supportedLangs, defaultLang, lang }}>
   document.addEventListener("astro:page-load", () => {
-    const browserLang = (navigator.language ?? "").slice(0, 2).toLowerCase();
-    const lang = supportedLangs.includes(browserLang) ? browserLang : defaultLang;
+    const routeLang = supportedLangs.includes(lang) ? lang : defaultLang;
 
     const wrapper = document.querySelector(".posts-accordion");
     if (!wrapper) return;
@@ -107,7 +106,7 @@ function yearCount(byMonth: Map<number, PostLeaf[]>): number {
 
     Object.values(groups).forEach(group => {
       const best =
-        group.find(el => el.dataset.lang === lang) ||
+        group.find(el => el.dataset.lang === routeLang) ||
         group.find(el => el.dataset.lang === "en") ||
         group[0];
       group.forEach(el => {

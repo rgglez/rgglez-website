@@ -28,8 +28,8 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
   <a
     href={getPath(id, filePath)}
     class:list={[
-      "inline-block text-lg font-medium text-accent",
-      "decoration-dashed underline-offset-4 hover:underline",
+      "inline-block text-lg font-medium text-[#161d2e] dark:text-white",
+      "decoration-dashed underline-offset-4 underline decoration-[#a1bfef] dark:decoration-[#234c77]",
       "focus-visible:no-underline focus-visible:underline-offset-0",
     ]}
   >
@@ -48,7 +48,7 @@ const translations = allPosts ? getTranslations(Astro.props, allPosts) : [];
       <div class="flex justify-start gap-1 mt-1">
         {translations.map(({ lang, href, isCurrent }) =>
           isCurrent ? (
-            <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent">
+            <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent dark:text-white dark:border-white">
               {lang}
             </span>
           ) : (

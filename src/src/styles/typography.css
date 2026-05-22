@@ -10,7 +10,11 @@
     h3,
     h4,
     th {
-      @apply mb-3 text-foreground;
+      @apply mb-3 text-[#161d2e] dark:text-foreground;
+    }
+
+    h1 {
+      @apply dark:text-white;
     }
 
     h3 {
@@ -36,7 +40,7 @@
     }
 
     li {
-      @apply marker:text-accent;
+      @apply marker:text-[#74869b] dark:marker:text-[#7d90a7];
     }
 
     hr {

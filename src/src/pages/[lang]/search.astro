@@ -172,7 +172,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
         const url = escapeHtml(d.url);
         return `
           <li>
-            <a href="${url}" class="text-accent underline decoration-dashed underline-offset-4 hover:opacity-80">
+            <a href="${url}" class="text-[#161d2e] dark:text-white underline decoration-dashed underline-offset-4 decoration-[#a1bfef] dark:decoration-[#234c77] hover:opacity-80">
               ${title}
             </a>
             <div class="text-sm text-foreground/70 mt-1">${excerpt}</div>
