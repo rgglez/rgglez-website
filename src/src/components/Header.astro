@@ -55,9 +55,9 @@ const isActive = (path: string) => {
   >
     <a
       href={`/${currentLang}`}
-      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
+      class="link-exempt absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[#161d2e] no-underline hover:text-[#161d2e] sm:static sm:my-auto sm:text-2xl sm:leading-none dark:text-white dark:hover:text-white"
     >
-        {SITE.title}
+      {SITE.title}
     </a>
     <nav
       id="nav-menu"
@@ -83,12 +83,18 @@ const isActive = (path: string) => {
         ]}
       >
         <li class="col-span-2">
-          <a href={`/${currentLang}/about`} class:list={{ "active-nav": isActive(`/${currentLang}/about`) }}>
+          <a
+            href={`/${currentLang}/about`}
+            class:list={{ "active-nav": isActive(`/${currentLang}/about`) }}
+          >
             About
           </a>
         </li>
         <li class="col-span-2">
-          <a href={`/${currentLang}/posts`} class:list={{ "active-nav": isActive(`/${currentLang}/posts`) }}>
+          <a
+            href={`/${currentLang}/posts`}
+            class:list={{ "active-nav": isActive(`/${currentLang}/posts`) }}
+          >
             Blog
           </a>
         </li>
@@ -107,44 +113,44 @@ const isActive = (path: string) => {
           </LinkButton>
         </li>
         <li class="col-span-1 flex items-center justify-center">
-            <a
-                target="_blank"
-                href="/rss.xml"
-                class="link-exempt inline-block"
-                aria-label="rss feed"
-                title="RSS Feed"
-            >
-                <IconRss
-                width={16}
-                height={16}
-                class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
-                />
-                <span class="sr-only">Linkedin</span>
-            </a>
+          <a
+            target="_blank"
+            href="/rss.xml"
+            class="link-exempt inline-block"
+            aria-label="rss feed"
+            title="RSS Feed"
+          >
+            <IconRss
+              width={16}
+              height={16}
+              class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
+            />
+            <span class="sr-only">Linkedin</span>
+          </a>
         </li>
         <li class="col-span-1 flex items-center justify-center">
-            <a
-                target="_blank"
-                href="https://github.com/rgglez"
-                class="link-exempt inline-block"
-                aria-label="github.com/rgglez"
-                title="github.com/rgglez"
-            >
-                <IconGitHub/>
-                <span class="sr-only">RSS Feed</span>
-            </a>
+          <a
+            target="_blank"
+            href="https://github.com/rgglez"
+            class="link-exempt inline-block"
+            aria-label="github.com/rgglez"
+            title="github.com/rgglez"
+          >
+            <IconGitHub />
+            <span class="sr-only">RSS Feed</span>
+          </a>
         </li>
         <li class="col-span-1 flex items-center justify-center">
-            <a
-                target="_blank"
-                href="https://linkedin.com/in/rggonzalez"
-                class="link-exempt inline-block"
-                aria-label="linkedin.com/in/rggonzalez"
-                title="linkedin.com/in/rggonzalez"
-            >
-                <IconLinkedin/>
-                <span class="sr-only">RSS Feed</span>
-            </a>
+          <a
+            target="_blank"
+            href="https://linkedin.com/in/rggonzalez"
+            class="link-exempt inline-block"
+            aria-label="linkedin.com/in/rggonzalez"
+            title="linkedin.com/in/rggonzalez"
+          >
+            <IconLinkedin />
+            <span class="sr-only">RSS Feed</span>
+          </a>
         </li>
         <LangMenu />
         {

@@ -3,7 +3,6 @@ export const prerender = true;
 import { type CollectionEntry, getCollection } from "astro:content";
 import PostDetails from "@/layouts/PostDetails.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
-import { getPath } from "@/utils/getPath";
 import { getFileLang } from "@/utils/getTranslations";
 import { SITE } from "@/config";
 
@@ -13,13 +12,21 @@ type Props = {
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
-  return posts.map(post => ({
-    params: {
-      lang: getFileLang(post.filePath),
-      slug: getPath(post.id, post.filePath, false),
-    },
-    props: { post },
-  }));
+  return posts.map(post => {
+    const parts = (post.filePath ?? "").split("/");
+    const year = parts[parts.length - 4] ?? "";
+    const month = parts[parts.length - 3] ?? "";
+
+    return {
+      params: {
+        lang: getFileLang(post.filePath),
+        year,
+        month,
+        slug: post.id,
+      },
+      props: { post },
+    };
+  });
 }
 
 const { post } = Astro.props;

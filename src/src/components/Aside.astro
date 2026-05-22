@@ -1,5 +1,5 @@
 ---
-type AsideType = "note" | "tip" | "caution" | "danger";
+type AsideType = "note" | "tip" | "caution" | "warning" | "danger";
 
 interface Props {
   type?: AsideType;
@@ -14,8 +14,7 @@ const variants: Record<
 > = {
   note: {
     label: "Note",
-    container:
-      "border-sky-500/40 bg-sky-500/5 text-sky-900 dark:text-sky-100",
+    container: "border-sky-500/40 bg-sky-500/5 text-sky-900 dark:text-sky-100",
     icon: "text-sky-600 dark:text-sky-400",
     svg: `<path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25h.008v.008H11.25v-.008zM12 15.75h.008v.008H12v-.008zm9-3.75a9 9 0 11-18 0 9 9 0 0118 0z"/>`,
   },
@@ -33,16 +32,22 @@ const variants: Record<
     icon: "text-amber-600 dark:text-amber-400",
     svg: `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M3.75 18.75h16.5a1.5 1.5 0 001.299-2.25L13.299 3.75a1.5 1.5 0 00-2.598 0L2.451 16.5a1.5 1.5 0 001.299 2.25z"/>`,
   },
+  warning: {
+    label: "Warning",
+    container:
+      "border-amber-500/40 bg-amber-500/5 text-amber-900 dark:text-amber-100",
+    icon: "text-amber-600 dark:text-amber-400",
+    svg: `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M3.75 18.75h16.5a1.5 1.5 0 001.299-2.25L13.299 3.75a1.5 1.5 0 00-2.598 0L2.451 16.5a1.5 1.5 0 001.299 2.25z"/>`,
+  },
   danger: {
     label: "Danger",
-    container:
-      "border-red-500/40 bg-red-500/5 text-red-900 dark:text-red-100",
+    container: "border-red-500/40 bg-red-500/5 text-red-900 dark:text-red-100",
     icon: "text-red-600 dark:text-red-400",
     svg: `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>`,
   },
 };
 
-const v = variants[type];
+const v = variants[type] ?? variants.note;
 const heading = title ?? v.label;
 ---
 
