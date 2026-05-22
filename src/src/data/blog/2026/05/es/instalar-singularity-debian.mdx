@@ -124,10 +124,7 @@ a Ubuntu LTS, no específicamente a Debian 13.
 También se incluye la instalación de **Apptainer**, porque en muchos entornos
 académicos, científicos y HPC se usa el nombre *Singularity* de forma genérica,
 aunque hoy (2026) existen dos proyectos relacionados pero distintos, como se
-mencionó:
-
-- **SingularityCE**, mantenido por Sylabs.
-- **Apptainer**, el proyecto comunitario derivado de Singularity.
+mencionó.
 
 <Aside type="note">
 
@@ -286,7 +283,7 @@ sudo apt install -y \
   build-essential
 ```
 
-### 1.5 Comentario
+Donde:
 
 - `ca-certificates` permite validar certificados TLS al descargar desde HTTPS.
 - `curl` y `wget` sirven para descargar archivos.
@@ -296,7 +293,7 @@ sudo apt install -y \
 - `build-essential` instala compilador C/C++, `make` y herramientas básicas de
   compilación.
 
-### 1.6 Instalar dependencias de compilación de SingularityCE
+### 1.5 Instalar dependencias de compilación de SingularityCE
 
 Instala las dependencias indicadas por la documentación de SingularityCE para
 sistemas Debian/Ubuntu, añadiendo `libsubid-dev`, conveniente en Debian 13.
@@ -321,21 +318,21 @@ sudo apt install -y \
   libsubid-dev
 ```
 
-### 1.7 Dependencias a detalle
+### 1.6 Dependencias a detalle
 
-#### 1.7.1 `autoconf`, `automake`, `libtool`, `pkg-config`
+#### 1.6.1 `autoconf`, `automake`, `libtool`, `pkg-config`
 
 Estas herramientas participan en el proceso clásico de generación de scripts de
 configuración y compilación. SingularityCE usa un proceso de construcción que
 necesita preparar un árbol de compilación antes de ejecutar `make`.
 
-#### 1.7.2 `cryptsetup`
+#### 1.6.2 `cryptsetup`
 
 Permite soporte para contenedores cifrados. Puedes compilar SingularityCE sin
 `cryptsetup`, pero si planeas usar imágenes cifradas, conviene instalarlo desde
 el inicio.
 
-#### 1.7.3 `fuse`, `fuse2fs`, `libfuse3-dev`
+#### 1.6.3 `fuse`, `fuse2fs`, `libfuse3-dev`
 
 FUSE permite montar sistemas de archivos en espacio de usuario. En el contexto
 de SingularityCE y herramientas similares, FUSE es importante para varios modos
@@ -348,12 +345,12 @@ en versiones antiguas de Debian/Ubuntu o en guías viejas puede aparecer
 
 </Aside>
 
-#### 1.7.4 `libseccomp-dev`
+#### 1.6.4 `libseccomp-dev`
 
 `seccomp` permite aplicar filtros de llamadas al sistema. Es una pieza relevante
 de aislamiento y control de seguridad en runtimes de contenedores.
 
-#### 1.7.5 `runc`
+#### 1.6.5 `runc`
 
 `runc` es un runtime OCI. SingularityCE puede operar con modo OCI en algunas
 situaciones. Si no usarás comandos `singularity oci`, puedes omitirlo.
@@ -371,18 +368,18 @@ provocar su desinstalación.
 
 </Aside>
 
-#### 1.7.6 `squashfs-tools` y `squashfs-tools-ng`
+#### 1.6.6 `squashfs-tools` y `squashfs-tools-ng`
 
 Las imágenes SIF suelen incluir sistemas de archivos comprimidos basados en
 SquashFS. Estas herramientas permiten crear, inspeccionar y manipular ese tipo
 de contenido.
 
-#### 1.7.7 `uidmap` y `libsubid-dev`
+#### 1.6.7 `uidmap` y `libsubid-dev`
 
 Estos paquetes están relacionados con mapeo de usuarios y grupos subordinados,
 importante para escenarios rootless, fakeroot y user namespaces.
 
-### 1.8 Instalar Go
+### 1.7 Instalar Go
 
 SingularityCE está escrito en Go. La documentación oficial recomienda usar una
 versión reciente de Go desde los binarios oficiales, especialmente porque la
@@ -444,7 +441,7 @@ Deberías ver algo como:
 go version go1.25.5 linux/amd64
 ```
 
-### 1.9 Nota sobre Debian y Go
+### 1.8 Nota sobre Debian y Go
 
 En Debian también podrías instalar Go con:
 
@@ -456,7 +453,7 @@ Ese método es más fácil de mantener con `apt`, pero para compilar Singularity
 suele ser más prudente instalar la versión de Go esperada por el release
 concreto que vas a construir.
 
-### 1.10 Elegir la versión de SingularityCE
+### 1.9 Elegir la versión de SingularityCE
 
 Conviene instalar una versión etiquetada, no la rama `main`.
 
@@ -502,7 +499,7 @@ export SINGULARITY_VERSION="4.3.6"
 Puedes cambiar ese valor por la versión estable más reciente publicada por
 Sylabs.
 
-### 1.11 Descargar el tarball correcto
+### 1.10 Descargar el tarball correcto
 
 Descarga el tarball de release de SingularityCE:
 
@@ -531,7 +528,7 @@ Entra al directorio:
 cd "singularity-ce-${SINGULARITY_VERSION}"
 ```
 
-### 1.12 Comentario importante
+<Aside type="warning">
 
 Usa el archivo llamado aproximadamente:
 
@@ -543,7 +540,9 @@ No uses el código fuente generado automáticamente por GitHub, porque esos
 archivos pueden no incluir todos los componentes o dependencias vendorizadas que
 espera el proceso de compilación del release.
 
-### 1.13 Configurar la compilación
+</Aside>
+
+### 1.11 Configurar la compilación
 
 Genera el árbol de compilación:
 
@@ -551,7 +550,7 @@ Genera el árbol de compilación:
 ./mconfig --prefix=/usr/local
 ```
 
-### 1.14 Qué hace `mconfig`
+### 1.12 Qué hace `mconfig`
 
 `mconfig` prepara el directorio de compilación, detecta dependencias y define
 las rutas finales de instalación.
@@ -573,7 +572,7 @@ Eso normalmente implica:
 /usr/local/var/singularity/
 ```
 
-### 1.15 Compilar SingularityCE
+### 1.13 Compilar SingularityCE
 
 Entra al directorio de compilación:
 
@@ -593,15 +592,17 @@ Si quieres usar más núcleos de CPU:
 make -j"$(nproc)"
 ```
 
-### 1.16 Comentario
+<Aside type="note">
 
-Usar `make -j$(nproc)` acelera la compilación, pero en máquinas pequeñas puede
+usar `make -j$(nproc)` acelera la compilación, pero en máquinas pequeñas puede
 consumir bastante memoria. Si estás en una VM con poca RAM, usa simplemente
 `make`.
 
-### 1.17 Instalar SingularityCE
+</Aside>
 
-#### 1.17.1 Instalación directa con `make install`
+### 1.14 Instalar SingularityCE
+
+#### 1.14.1 Instalación directa con `make install`
 
 Instala:
 
@@ -633,7 +634,7 @@ Ejemplo esperado:
 singularity-ce version 4.3.6
 ```
 
-#### 1.17.2 Instalación con `checkinstall` para generar `.deb`
+#### 1.14.2 Instalación con `checkinstall` para generar `.deb`
 
 Si quieres poder desinstalar con `dpkg`/`apt` en lugar de borrar rutas a mano,
 puedes generar e instalar un paquete `.deb` local desde el mismo `builddir`.
@@ -678,7 +679,7 @@ en algunos sistemas Debian actuales durante `make install`.
 
 </Aside>
 
-### 1.18 Revisar la configuración instalada
+### 1.15 Revisar la configuración instalada
 
 SingularityCE incluye un comando útil para mostrar cómo fue construido:
 
@@ -705,7 +706,7 @@ sudo less /usr/local/etc/singularity/singularity.conf
 No edites esta configuración a ciegas. Primero confirma qué comportamiento
 necesitas cambiar.
 
-### 1.19 Prueba básica de ejecución
+### 1.16 Prueba básica de ejecución
 
 Ejecuta una prueba simple usando una imagen remota:
 
@@ -735,7 +736,7 @@ Salida esperada:
 Hola desde SingularityCE
 ```
 
-### 1.20 Descargar una imagen SIF local
+### 1.17 Descargar una imagen SIF local
 
 En HPC suele ser preferible descargar una imagen una vez y luego ejecutarla
 muchas veces.
@@ -753,7 +754,7 @@ Ejecuta la imagen local:
 singularity exec ~/containers/debian-13.sif cat /etc/os-release
 ```
 
-### 1.21 Por qué conviene usar imágenes locales
+### 1.18 Por qué conviene usar imágenes locales
 
 Cuando ejecutas directamente una URL remota, SingularityCE puede necesitar
 acceder al registro remoto y usar caché. En servidores compartidos, NFS o
@@ -761,7 +762,7 @@ clústeres, esto puede causar problemas de concurrencia o rendimiento.
 
 Con una imagen `.sif` local controlas mejor cuándo descargas y cuándo ejecutas.
 
-### 1.22 Caché de SingularityCE
+### 1.19 Caché de SingularityCE
 
 Puedes inspeccionar la caché:
 
@@ -804,7 +805,7 @@ export SINGULARITY_CACHEDIR="/var/tmp/$USER/singularity-cache"
 BASHRC_CACHE
 ```
 
-### 1.23 Directorio temporal
+### 1.20 Directorio temporal
 
 SingularityCE también usa directorios temporales al construir o ejecutar
 contenedores.
@@ -824,13 +825,13 @@ export SINGULARITY_TMPDIR="/var/tmp/$USER/singularity-tmp"
 BASHRC_TMP
 ```
 
-### 1.24 Comentario para HPC y NFS
+### 1.21 HPC y NFS
 
 Evita usar NFS, Lustre, GPFS o sistemas compartidos como directorio temporal
 para operaciones que requieran overlay, fakeroot o construcción intensiva. Es
 mejor usar almacenamiento local del nodo cuando sea posible.
 
-### 1.25 Ejecutar comandos dentro de un contenedor
+### 1.22 Ejecutar comandos dentro de un contenedor
 
 La forma más común de uso es:
 
@@ -856,7 +857,7 @@ Dentro de la shell verás un prompt de SingularityCE. Para salir:
 exit
 ```
 
-### 1.26 Ejecutar una imagen como programa
+### 1.23 Ejecutar una imagen como programa
 
 Algunas imágenes tienen un `runscript`. En ese caso puedes usar:
 
@@ -867,7 +868,7 @@ singularity run imagen.sif
 Si la imagen no define un comportamiento por defecto interesante, suele ser más
 explícito usar `exec`.
 
-### 1.27 Montar directorios del host
+### 1.24 Montar directorios del host
 
 Para montar un directorio de forma explícita usa `--bind` o `-B`:
 
@@ -897,7 +898,7 @@ singularity exec \
   cat /work/prueba.txt
 ```
 
-### 1.28 Construir una imagen desde una receta `.def`
+### 1.25 Construir una imagen desde una receta `.def`
 
 SingularityCE usa archivos de definición, normalmente con extensión `.def`.
 
@@ -935,7 +936,7 @@ Ejecuta:
 singularity run debian-python.sif
 ```
 
-### 1.29 Por qué usamos `sudo` para construir
+### 1.26 Por qué usamos `sudo` para construir
 
 Dependiendo de la configuración de SingularityCE, construir imágenes puede
 requerir privilegios. En estaciones personales o servidores propios, usar `sudo
@@ -945,7 +946,7 @@ En un clúster HPC administrado, normalmente los usuarios no tienen `sudo`; en
 esos casos se suele construir la imagen en otra máquina y luego copiar el `.sif`
 al clúster.
 
-### 1.30 Construcción sin root y fakeroot
+### 1.27 Construcción sin root y fakeroot
 
 SingularityCE puede soportar modos como `--fakeroot`, dependiendo de la
 configuración del sistema.
@@ -972,13 +973,15 @@ Luego prueba:
 singularity build --fakeroot debian-python.sif debian-python.def
 ```
 
-### 1.31 Comentario
+<Aside type="note">
 
 `fakeroot` no significa que seas root real en el host. Significa que dentro del
 contexto del contenedor o del proceso de construcción se simula un entorno donde
 pareces root, usando user namespaces y rangos subordinados de UID/GID.
 
-### 1.32 Integración con GPU NVIDIA
+</Aside>
+
+### 1.28 Integración con GPU NVIDIA
 
 Si tienes GPU NVIDIA y drivers instalados en el host, SingularityCE puede
 exponerlos dentro del contenedor con:
@@ -1006,7 +1009,7 @@ nvidia-smi
 Si `nvidia-smi` no funciona en el host, tampoco esperes que funcione dentro del
 contenedor.
 
-### 1.33 Integración con SLURM o entornos HPC
+### 1.29 Integración con SLURM o entornos HPC
 
 En un clúster con SLURM, normalmente usarías SingularityCE dentro de un job
 script.
@@ -1028,9 +1031,9 @@ En un clúster real, evita que cada job descargue imágenes desde Internet. Es
 mejor preparar el `.sif` antes y guardarlo en una ruta compartida de solo
 lectura o en un directorio de proyecto.
 
-### 1.34 Desinstalar SingularityCE instalado desde fuente
+### 1.30 Desinstalar SingularityCE instalado desde fuente
 
-#### 1.34.1 Desinstalar instalación directa (`make install`)
+#### 1.30.1 Desinstalar instalación directa (`make install`)
 
 Si instalaste bajo `/usr/local`, puedes revisar primero la configuración:
 
@@ -1066,7 +1069,7 @@ sudo rm -rf "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}"
 sudo rm -f "/usr/local/src/singularity-ce-${SINGULARITY_VERSION}.tar.gz"
 ```
 
-#### 1.34.2 Desinstalar instalación con paquete `.deb` de `checkinstall`
+#### 1.30.2 Desinstalar instalación con paquete `.deb` de `checkinstall`
 
 Si instalaste con `checkinstall`, primero identifica el nombre exacto del
 paquete:
@@ -1095,9 +1098,9 @@ which singularity || true
 singularity --version || true
 ```
 
-### 1.35 Problemas comunes
+### 1.31 Problemas comunes
 
-#### 1.35.1 `go: command not found`
+#### 1.31.1 `go: command not found`
 
 Tu shell no tiene Go en el `PATH`.
 
@@ -1118,7 +1121,7 @@ Recarga:
 source ~/.bashrc
 ```
 
-#### 1.35.2 Error por versión vieja de Go
+#### 1.31.2 Error por versión vieja de Go
 
 Si la compilación falla indicando que la versión de Go es insuficiente, instala
 una versión más reciente desde los binarios oficiales de Go.
@@ -1132,7 +1135,7 @@ sudo rm -rf /usr/local/go
 
 Y luego instala la nueva.
 
-#### 1.35.3 Falta `libsubid-dev`
+#### 1.31.3 Falta `libsubid-dev`
 
 En Debian 13 conviene instalarlo:
 
@@ -1146,7 +1149,7 @@ Luego vuelve a ejecutar:
 ./mconfig --prefix=/usr/local
 ```
 
-#### 1.35.4 `singularity: command not found` después de instalar
+#### 1.31.4 `singularity: command not found` después de instalar
 
 Verifica si el binario existe:
 
@@ -1174,7 +1177,7 @@ BASHRC_LOCALBIN
 source ~/.bashrc
 ```
 
-#### 1.35.5 Problemas con NFS, Lustre, GPFS o PanFS
+#### 1.31.5 Problemas con NFS, Lustre, GPFS o PanFS
 
 Si estás en HPC, evita usar sistemas de archivos compartidos para:
 
@@ -1192,7 +1195,7 @@ export SINGULARITY_CACHEDIR="/scratch/$USER/singularity-cache"
 mkdir -p "$SINGULARITY_TMPDIR" "$SINGULARITY_CACHEDIR"
 ```
 
-#### 1.35.6 Error al construir imágenes sin `sudo`
+#### 1.31.6 Error al construir imágenes sin `sudo`
 
 Prueba construir con `sudo`:
 
@@ -1202,7 +1205,7 @@ sudo singularity build imagen.sif receta.def
 
 O configura `fakeroot` correctamente con `/etc/subuid` y `/etc/subgid`.
 
-#### 1.35.7 Docker fue removido al instalar `runc` (cómo restaurarlo)
+#### 1.31.7 Docker fue removido al instalar `runc` (cómo restaurarlo)
 
 Si al instalar dependencias viste algo como:
 
@@ -1245,7 +1248,7 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 Para evitar repetir el problema, omite `runc` en la instalación base de
 dependencias de SingularityCE y úsalo sólo si realmente necesitas el modo OCI.
 
-#### 1.35.8 `checkinstall` falla con `mkdir ... El fichero ya existe`
+#### 1.31.8 `checkinstall` falla con `mkdir ... El fichero ya existe`
 
 Si `checkinstall` falla durante `make install` con un error similar a:
 
@@ -1268,7 +1271,7 @@ Ejemplo completo:
 sudo checkinstall --fstrans=no --type=debian ... make -j1 install
 ```
 
-#### 1.35.9 Problemas descargando desde Docker Hub
+#### 1.31.9 Problemas descargando desde Docker Hub
 
 Docker Hub aplica límites de descarga. Si haces muchas pruebas, puedes encontrar
 errores por rate limit.
@@ -1280,7 +1283,7 @@ Soluciones:
 - Descargar una vez con `singularity pull` y reutilizar el `.sif`.
 - Evitar que muchos jobs de SLURM descarguen la misma imagen al mismo tiempo.
 
-### 1.36 Checklist final
+### 1.32 Checklist final
 
 Ejecuta este bloque para verificar la instalación:
 
@@ -1305,7 +1308,7 @@ singularity cache list || true
 
 Si todo funciona, la instalación está lista para uso básico.
 
-### 1.37 Recomendaciones operativas
+### 1.33 Recomendaciones operativas
 
 Para una estación de trabajo personal:
 
@@ -1333,7 +1336,7 @@ Para HPC:
 - Coordina con el administrador del clúster antes de cambiar configuración
   global.
 
-### 1.38 Fuentes consultadas
+### 1.34 Fuentes consultadas
 
 - Documentación oficial de instalación de SingularityCE: <a
   href="https://docs.sylabs.io/guides/main/admin-guide/installation.html"
@@ -1348,7 +1351,7 @@ Para HPC:
   href="https://packages.debian.org/apptainer"
   target="_blank">https://packages.debian.org/apptainer</a>
 
-### 1.39 Resumen ejecutivo
+### 1.35 Resumen ejecutivo
 
 En Debian 13, la vía más limpia para instalar **SingularityCE** es compilar
 desde código fuente usando una versión etiquetada. El proceso consiste en:
