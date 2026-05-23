@@ -47,7 +47,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
                   <input
                     type="checkbox"
                     value={l}
-                    checked={l === lang}
+                    checked={true}
                     class="pf-lang-cb accent-accent"
                   />
                   <span>{LANG_NAMES[l] ?? l.toUpperCase()}</span>
@@ -76,9 +76,10 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
   };
   type PagefindResult = { id: string; data: () => Promise<PagefindResultData> };
   type PagefindResponse = { results: PagefindResult[] };
+  type PagefindSearchOptions = { language?: string; filters?: Record<string, string | string[]> };
   type PagefindModule = {
     options?: (opts: Record<string, unknown>) => Promise<void>;
-    search: (term: string) => Promise<PagefindResponse>;
+    search: (term: string, opts?: PagefindSearchOptions) => Promise<PagefindResponse>;
   };
 
   const PAGE_SIZE = 50;
@@ -114,6 +115,12 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
   async function loadPagefind(): Promise<PagefindModule | null> {
     if (pagefind) return pagefind;
     if (pagefindLoadFailed) return null;
+    if (import.meta.env.DEV) {
+      pagefindLoadFailed = true;
+      const warning = document.getElementById("pf-dev-warning");
+      if (warning) warning.classList.remove("hidden");
+      return null;
+    }
     try {
       const pagefindUrl = "/pagefind/pagefind.js";
       const mod = (await import(/* @vite-ignore */ pagefindUrl)) as PagefindModule;
@@ -219,13 +226,29 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     const pf = await loadPagefind();
     if (!pf) return;
 
-    const res = await pf.search(term);
-    if (term !== currentTerm) return; // stale
+    const root = getRoot();
+    const allLangs: string[] = JSON.parse(root?.dataset.supported ?? "[]");
 
-    const data = await Promise.all(res.results.map(r => r.data()));
-    if (term !== currentTerm) return; // stale
+    // Each language has its own index bucket; search each separately and merge.
+    const searches = await Promise.all(
+      allLangs.map(lang =>
+        pf.search(term, { language: lang }).catch(() => ({ results: [] as PagefindResult[] }))
+      )
+    );
+    if (term !== currentTerm) return;
 
-    cachedData = data;
+    const allResults = searches.flatMap(s => s.results);
+    const data = await Promise.all(allResults.map(r => r.data()));
+    if (term !== currentTerm) return;
+
+    // Deduplicate by URL in case the same page appears in multiple buckets.
+    const seen = new Set<string>();
+    cachedData = data.filter(d => {
+      if (seen.has(d.url)) return false;
+      seen.add(d.url);
+      return true;
+    });
+
     paintFromCache();
   }
 
