@@ -74,12 +74,12 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     meta?: { title?: string };
     excerpt?: string;
   };
-  type PagefindResult = { id: string; data: () => Promise<PagefindResultData> };
+  type PagefindResult = { id: string; score: number; data: () => Promise<PagefindResultData> };
   type PagefindResponse = { results: PagefindResult[] };
-  type PagefindSearchOptions = { language?: string; filters?: Record<string, string | string[]> };
   type PagefindModule = {
     options?: (opts: Record<string, unknown>) => Promise<void>;
-    search: (term: string, opts?: PagefindSearchOptions) => Promise<PagefindResponse>;
+    mergeIndex: (path: string, opts?: Record<string, unknown>) => Promise<void>;
+    search: (term: string) => Promise<PagefindResponse>;
   };
 
   const PAGE_SIZE = 50;
@@ -117,21 +117,34 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     if (pagefindLoadFailed) return null;
     if (import.meta.env.DEV) {
       pagefindLoadFailed = true;
-      const warning = document.getElementById("pf-dev-warning");
-      if (warning) warning.classList.remove("hidden");
+      document.getElementById("pf-dev-warning")?.classList.remove("hidden");
       return null;
     }
     try {
-      const pagefindUrl = "/pagefind/pagefind.js";
-      const mod = (await import(/* @vite-ignore */ pagefindUrl)) as PagefindModule;
+      const pfUrl = "/pagefind/pagefind.js";
+      const mod = (await import(/* @vite-ignore */ pfUrl)) as PagefindModule;
       if (mod.options) await mod.options({ baseUrl: "/" });
+
+      // pagefind stores each language in a separate index bucket and by default only
+      // searches the bucket matching html[lang]. To cover all languages we use mergeIndex,
+      // which adds extra PagefindInstance objects that pf.search() queries in parallel.
+      // We pass the full origin URL so pagefind's same-path guard ("/pagefind/" startsWith
+      // check) does NOT fire and skip us.
+      const primaryLang = (document.documentElement.lang || "").toLowerCase();
+      const root = getRoot();
+      const allLangs: string[] = JSON.parse(root?.dataset.supported ?? "[]");
+      const indexBase = `${window.location.origin}/pagefind/`;
+      for (const lang of allLangs) {
+        if (lang === primaryLang) continue; // primary already loaded
+        try { await mod.mergeIndex(indexBase, { language: lang }); } catch { /* not in index */ }
+      }
+
       pagefind = mod;
       return pagefind;
     } catch (err) {
       pagefindLoadFailed = true;
       console.warn("[search] pagefind bundle not available:", err);
-      const warning = document.getElementById("pf-dev-warning");
-      if (warning) warning.classList.remove("hidden");
+      document.getElementById("pf-dev-warning")?.classList.remove("hidden");
       return null;
     }
   }
@@ -226,22 +239,13 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     const pf = await loadPagefind();
     if (!pf) return;
 
-    const root = getRoot();
-    const allLangs: string[] = JSON.parse(root?.dataset.supported ?? "[]");
-
-    // Each language has its own index bucket; search each separately and merge.
-    const searches = await Promise.all(
-      allLangs.map(lang =>
-        pf.search(term, { language: lang }).catch(() => ({ results: [] as PagefindResult[] }))
-      )
-    );
+    // loadPagefind already merged all language buckets; pf.search() covers them all.
+    const res = await pf.search(term);
     if (term !== currentTerm) return;
 
-    const allResults = searches.flatMap(s => s.results);
-    const data = await Promise.all(allResults.map(r => r.data()));
+    const data = await Promise.all(res.results.map(r => r.data()));
     if (term !== currentTerm) return;
 
-    // Deduplicate by URL in case the same page appears in multiple buckets.
     const seen = new Set<string>();
     cachedData = data.filter(d => {
       if (seen.has(d.url)) return false;
