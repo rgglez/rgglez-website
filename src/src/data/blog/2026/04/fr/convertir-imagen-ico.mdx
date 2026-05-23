@@ -1,0 +1,43 @@
+---
+title: "Comment convertir un JPEG ou PNG en ICO dans la CLI Linux"
+description: "Comment convertir un JPEG ou PNG en ICO dans la CLI Linux avec ImageMagick."
+author: "Rodolfo González González"
+pubDatetime: 2026-04-27T00:00:00Z
+lang: "fr"
+slug: convertir-image-ico
+ogImage: "../../../../../assets/posts/2026/04/convertir-imagen-ico/header.webp"
+featured: false
+draft: false
+tags:
+  - imagemagick
+  - images
+  - convert
+  - seo
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+## Introduction
+
+Lors de la préparation des images OpenGraph et FavIcon de ce blog de confiance, j'ai eu besoin de convertir un PNG en ICO. Sous Linux, c'est très facile à faire avec <a href="https://imagemagick.org/#gsc.tab=0" target="_blank">ImageMagick</a>.
+
+## Étapes
+
+Installer ImageMagick :
+
+```bash
+sudo apt install imagemagick
+```
+
+Convertir le PNG ou JPEG (256x256px) en ICO :
+
+```bash
+convert input.png -define icon:auto-resize=256,64,48,32,16 favicon.ico
+```
+
+Où :
+
+* `-define icon:auto-resize=256,64,48,32,16` enregistre plusieurs icônes de ces tailles dans le fichier `.ico`.
+
+Et voilà, c'est tout.

@@ -1,0 +1,736 @@
+---
+title: "Google Authenticator en dos o más dispositivos: guía técnica para no perder acceso."
+description: >
+    Guía técnica y práctica para usar Google Authenticator en más de un dispositivo, entender los riesgos de sincronización, preparar códigos de respaldo y evitar quedar bloqueado si se pierde o daña el móvil.
+author: "Rodolfo González González"
+pubDatetime: 2026-05-22T00:00:00-06:00
+modDatetime: 2026-05-22T00:00:00-06:00
+lang: "es"
+slug: google-authenticator-dos-o-mas-dispositivos
+ogImage: "../../../../../assets/posts/2026/05/google-authenticator-multiples-dispositivos/header.webp"
+tags:
+  - seguridad
+  - 2fa
+  - totp
+  - google-authenticator
+  - autenticacion
+featured: false
+draft: false
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@/components/Aside.astro";
+import DownloadChecklist from "@/components/DownloadChecklist.astro";
+import DownloadTable from "@/components/DownloadTable.astro";
+
+## Introducción
+
+Si usas **Google Authenticator** como segundo factor de autenticación, **no deberías depender de un único teléfono**. Si ese móvil se daña, se pierde, se restablece de fábrica o queda inaccesible, puedes quedar bloqueado fuera de servicios importantes: correo, hosting, bancos, paneles de nube, GitHub, redes sociales, dominios, gestores de DNS, etc.
+
+La solución no consiste simplemente en "copiar la app". Lo importante es entender que Google Authenticator almacena **semillas TOTP**: secretos criptográficos compartidos entre el servicio y tu autenticador. Cualquier dispositivo que tenga la misma semilla puede generar los mismos códigos temporales. Por eso puedes tener los mismos códigos en dos o más dispositivos, pero también por eso debes proteger esos dispositivos con mucho cuidado.
+
+En esta guía veremos tres estrategias:
+
+1. **Sincronización con cuenta de Google**, cómoda y adecuada para muchos usuarios.
+2. **Transferencia local entre dispositivos mediante QR**, útil si prefieres no depender de la nube.
+3. **Alta manual del segundo dispositivo al configurar 2FA**, la opción más limpia cuando todavía estás activando el segundo factor en un sitio.
+
+También veremos qué hacer con **códigos de respaldo**, qué riesgos existen, cómo documentar tus cuentas, cómo probar la recuperación y qué procedimiento seguir si pierdes el móvil principal.
+
+<Aside type="note">
+
+esta guía se centra en Google Authenticator, pero muchas ideas aplican también a apps TOTP compatibles como Aegis, 2FAS, Ente Auth, Microsoft Authenticator, Bitwarden Authenticator, 1Password, KeePassXC, FreeOTP y similares.
+
+</Aside>
+
+---
+
+## Tabla de contenido
+
+---
+
+## 1. Conceptos básicos: qué estás protegiendo realmente
+
+Google Authenticator normalmente implementa **TOTP**, siglas de *Time-Based One-Time Password*. TOTP está definido en el <a href="https://datatracker.ietf.org/doc/html/rfc6238" target="_blank" rel="noopener noreferrer">RFC 6238</a> y es una extensión de HOTP, definido en el <a href="https://datatracker.ietf.org/doc/html/rfc4226" target="_blank" rel="noopener noreferrer">RFC 4226</a>. La diferencia práctica es que HOTP avanza por contador, mientras que TOTP avanza por tiempo.
+
+Un código TOTP típico tiene estas propiedades:
+
+- suele tener **6 dígitos**;
+- cambia cada **30 segundos**;
+- se calcula localmente en el dispositivo;
+- no requiere conexión a Internet para generar el código;
+- depende de una **semilla secreta** y de la hora actual.
+
+De forma simplificada:
+
+```text
+codigo = TOTP(semilla_secreta, tiempo_actual)
+```
+
+El servidor del sitio y tu aplicación autenticadora conocen la misma semilla. Cuando introduces un código, el servidor calcula cuál debería ser el código válido para ese intervalo de tiempo y lo compara con el que escribiste.
+
+La consecuencia importante es esta:
+
+**Si dos dispositivos tienen la misma semilla TOTP y sus relojes están razonablemente sincronizados, ambos generarán el mismo código válido para la misma cuenta.**
+
+Por eso es técnicamente posible tener Google Authenticator en dos o más dispositivos.
+
+---
+
+## 2. Modelo mental: contraseña, segundo factor y semilla TOTP
+
+En una autenticación clásica con TOTP intervienen tres elementos:
+
+| Elemento | Ejemplo | Qué pasa si se compromete |
+|---|---|---|
+| Algo que sabes | contraseña | un atacante aún necesitaría el segundo factor |
+| Algo que tienes | aplicación autenticadora con la semilla TOTP | un atacante aún necesitaría la contraseña |
+| Códigos de recuperación | backup codes del sitio | pueden saltarse temporalmente el autenticador |
+
+El segundo factor no es "la aplicación" en abstracto. El segundo factor es el acceso operativo a la **semilla** que permite generar códigos.
+
+Esto tiene dos implicaciones:
+
+1. Si tienes la semilla en más dispositivos, reduces el riesgo de bloqueo.
+2. Si tienes la semilla en demasiados lugares o en lugares mal protegidos, aumentas la superficie de ataque.
+
+La meta es equilibrar **disponibilidad** y **seguridad**.
+
+---
+
+## 3. Estrategias posibles
+
+### Estrategia A: sincronizar Google Authenticator con tu cuenta de Google
+
+Desde 2023, Google Authenticator permite sincronizar códigos con una cuenta de Google. Esto permite restaurar los códigos en otro dispositivo al iniciar sesión con la misma cuenta de Google dentro de la app.
+
+#### Ventajas
+
+- Es la opción más sencilla para usuarios no técnicos.
+- Permite recuperar códigos si pierdes o dañas el móvil.
+- Facilita usar varios dispositivos, por ejemplo teléfono principal y tablet.
+- Evita tener que reconfigurar manualmente todos los servicios uno por uno.
+
+#### Desventajas
+
+- Tu cuenta de Google se convierte en un punto crítico de recuperación.
+- Si alguien compromete tu cuenta de Google y además logra pasar sus protecciones, podría intentar acceder a los secretos sincronizados.
+- Dependes del mecanismo de sincronización de Google.
+- En entornos de alta seguridad puede ser preferible mantener las semillas fuera de sincronización en nube.
+
+#### Cuándo usarla
+
+Recomendada si:
+
+- quieres máxima comodidad;
+- no administras cuentas extremadamente sensibles;
+- proteges bien tu cuenta de Google;
+- tienes passkeys, llaves de seguridad o métodos fuertes para recuperar la cuenta de Google;
+- prefieres reducir el riesgo de bloqueo sobre el riesgo de centralización.
+
+No es la primera recomendación si proteges activos críticos como:
+
+- cuentas raíz de cloud provider;
+- paneles de dominios y DNS;
+- cuentas bancarias o bursátiles;
+- exchanges de criptomonedas;
+- cuentas administrativas corporativas;
+- cuentas de correo que sirven para recuperación de muchas otras cuentas.
+
+En esos casos, considera una estrategia más controlada: segundo dispositivo offline, llaves FIDO2/WebAuthn y códigos de recuperación impresos.
+
+---
+
+### Estrategia B: transferir cuentas mediante QR entre dispositivos
+
+Google Authenticator permite exportar cuentas desde el dispositivo viejo e importarlas en otro dispositivo mediante códigos QR.
+
+Esta opción es útil cuando no quieres o no puedes usar sincronización con cuenta de Google.
+
+#### Flujo general
+
+En el dispositivo actual:
+
+1. Abre **Google Authenticator**.
+2. Abre el menú de la app.
+3. Selecciona **Transferir cuentas**.
+4. Selecciona **Exportar cuentas**.
+5. Desbloquea el dispositivo si la app lo solicita.
+6. Elige las cuentas que quieres exportar.
+7. La app generará uno o más códigos QR.
+
+En el segundo dispositivo:
+
+1. Instala **Google Authenticator**.
+2. Abre la app.
+3. Selecciona **Transferir cuentas**.
+4. Selecciona **Importar cuentas**.
+5. Escanea los QR mostrados en el primer dispositivo.
+6. Verifica que las cuentas aparezcan y generen códigos.
+
+#### Ventajas
+
+- No necesitas sincronización en la nube.
+- Puedes clonar los códigos en otro teléfono o tablet.
+- Mantienes control manual sobre dónde existen las semillas.
+
+#### Desventajas
+
+- Necesitas tener acceso al dispositivo original.
+- Si el teléfono ya se dañó o se perdió, esta ruta ya no sirve.
+- Durante la exportación, los QR representan material sensible.
+- No debes guardar capturas de esos QR en la galería, nube, chats o correo.
+
+<Aside type="note">
+
+regla práctica: trata los QR de exportación como si fueran tus contraseñas maestras de 2FA. Quien los pueda escanear puede generar tus códigos.
+
+</Aside>
+
+---
+
+### Estrategia C: escanear el mismo QR de alta en dos dispositivos
+
+Cuando activas 2FA en un servicio, normalmente el sitio muestra un QR inicial. Ese QR contiene la semilla TOTP. Antes de confirmar la activación, puedes escanear ese mismo QR con dos dispositivos.
+
+Ejemplo:
+
+1. Entras al sitio `example.com`.
+2. Vas a **Security → Two-Factor Authentication → Authenticator app**.
+3. El sitio muestra un QR.
+4. Lo escaneas con tu teléfono principal.
+5. Lo escaneas también con tu teléfono secundario o tablet.
+6. Compruebas que ambos generan el mismo código.
+7. Confirmas el código en el sitio.
+8. Guardas los códigos de respaldo que el sitio te entregue.
+
+#### Ventajas
+
+- Es el método más limpio al configurar una cuenta nueva.
+- No dependes de exportaciones posteriores.
+- No dependes necesariamente de sincronización en nube.
+- Puedes validar desde el inicio que hay redundancia.
+
+#### Desventajas
+
+- Solo sirve cómodamente durante la configuración inicial.
+- Si ya configuraste 2FA, muchos sitios no vuelven a mostrar la misma semilla.
+- En algunos servicios tendrás que desactivar y reactivar 2FA para repetir el alta.
+
+#### Recomendación
+
+Para cuentas nuevas, este es mi método preferido:
+
+- teléfono principal;
+- segundo dispositivo guardado en casa o en oficina;
+- códigos de respaldo impresos o almacenados en un gestor seguro.
+
+---
+
+## 4. Diseño recomendado para un usuario técnico
+
+Una configuración robusta y razonable sería la siguiente:
+
+| Capa | Recomendación |
+|---|---|
+| Dispositivo principal | Google Authenticator en tu móvil diario |
+| Dispositivo secundario | Google Authenticator en un móvil viejo, tablet o segundo teléfono |
+| Recuperación de emergencia | Códigos de respaldo por cada servicio |
+| Protección adicional | Bloqueo biométrico/PIN fuerte en cada dispositivo |
+| Cuentas críticas | Preferir llaves FIDO2/WebAuthn cuando el servicio lo permita |
+| Inventario | Lista privada de servicios con 2FA activado |
+
+### Dispositivo secundario
+
+El segundo dispositivo no tiene que tener SIM. Puede ser:
+
+- un teléfono Android anterior;
+- un iPhone anterior;
+- una tablet;
+- un teléfono barato dedicado a autenticación;
+- un dispositivo que permanezca apagado y guardado en un lugar seguro.
+
+Lo importante es que:
+
+- tenga bloqueo de pantalla;
+- tenga cifrado de almacenamiento activo;
+- tenga hora automática o una forma fiable de mantener el reloj correcto;
+- no esté rooteado o comprometido;
+- no lo uses para instalar apps innecesarias;
+- no lo prestes.
+
+---
+
+## 5. Procedimiento paso a paso: tener Google Authenticator en dos dispositivos
+
+### Escenario 1: ya tienes Google Authenticator funcionando en tu móvil actual
+
+Este es el caso más común.
+
+#### Paso 1: prepara el segundo dispositivo
+
+En el segundo dispositivo:
+
+1. Actualiza el sistema operativo.
+2. Configura bloqueo de pantalla con PIN largo, contraseña o biometría.
+3. Instala Google Authenticator desde la tienda oficial.
+4. Verifica que la hora y zona horaria estén en automático.
+5. No instales apps innecesarias.
+
+#### Paso 2: decide si usarás sincronización con cuenta de Google
+
+Tienes dos caminos.
+
+##### Camino A: con sincronización
+
+1. Abre Google Authenticator en el móvil principal.
+2. Toca tu foto de perfil o iniciales.
+3. Inicia sesión con tu cuenta de Google si no lo has hecho.
+4. Permite guardar los códigos en la cuenta de Google.
+5. Abre Google Authenticator en el segundo dispositivo.
+6. Inicia sesión con la misma cuenta de Google.
+7. Verifica que aparezcan las mismas cuentas.
+
+##### Camino B: sin sincronización
+
+1. En el móvil principal, abre Google Authenticator.
+2. Ve a **Transferir cuentas → Exportar cuentas**.
+3. Selecciona las cuentas que quieres copiar.
+4. En el segundo dispositivo, ve a **Transferir cuentas → Importar cuentas**.
+5. Escanea los QR generados por el primer dispositivo.
+6. Repite hasta transferir todas las cuentas.
+
+#### Paso 3: compara códigos
+
+Para cada cuenta importante:
+
+1. Espera a que ambos dispositivos estén en el mismo intervalo de 30 segundos.
+2. Compara el código mostrado en ambos.
+3. Debe ser igual o cambiar al mismo tiempo.
+4. Si difiere, revisa la hora del dispositivo.
+
+#### Paso 4: prueba un inicio de sesión real
+
+No basta con ver que los códigos aparecen. Haz una prueba real:
+
+1. Abre una ventana privada/incógnito en tu navegador.
+2. Inicia sesión en el servicio.
+3. Introduce usuario y contraseña.
+4. Cuando pida el código 2FA, usa el segundo dispositivo.
+5. Confirma que puedes entrar.
+6. Cierra sesión.
+
+Haz esto al menos con tus cuentas críticas.
+
+---
+
+## 6. Procedimiento recomendado por tipo de cuenta
+
+No todas las cuentas merecen el mismo nivel de protección. Conviene clasificarlas.
+
+### Cuentas críticas
+
+Ejemplos:
+
+- correo principal;
+- cuenta de Google;
+- Apple ID;
+- gestor de contraseñas;
+- registrador de dominios;
+- Cloudflare;
+- AWS, Google Cloud, Azure, Aliyun;
+- GitHub/GitLab con repositorios privados;
+- banco;
+- exchange de criptomonedas;
+- cuenta raíz de servidores.
+
+Para estas cuentas:
+
+- usa dos dispositivos autenticadores;
+- guarda códigos de respaldo offline;
+- habilita passkeys o llaves FIDO2 si están disponibles;
+- evita depender solo de SMS;
+- documenta fecha de última prueba de recuperación;
+- revisa métodos de recuperación cada 3 o 6 meses.
+
+### Cuentas importantes pero no críticas
+
+Ejemplos:
+
+- redes sociales;
+- tiendas;
+- herramientas SaaS no administrativas;
+- cuentas de foros;
+- plataformas de cursos.
+
+Para estas cuentas:
+
+- Google Authenticator sincronizado puede ser suficiente;
+- conserva códigos de respaldo si el servicio los ofrece;
+- revisa que el correo de recuperación esté actualizado.
+
+### Cuentas de bajo impacto
+
+Ejemplos:
+
+- servicios temporales;
+- cuentas de prueba;
+- entornos sandbox.
+
+Para estas cuentas:
+
+- puedes usar sincronización normal;
+- puedes aceptar menor formalidad en respaldo;
+- aun así, evita SMS si hay TOTP disponible.
+
+---
+
+## 7. Códigos de respaldo: la pieza que muchos ignoran
+
+Muchos servicios, al activar 2FA, entregan un conjunto de **códigos de respaldo** o **backup codes**. Estos códigos suelen ser de un solo uso. Sirven para entrar si no tienes acceso al autenticador.
+
+Debes tratarlos como credenciales altamente sensibles.
+
+### Buenas prácticas
+
+- Descárgalos o imprímelos inmediatamente al activar 2FA.
+- Guárdalos fuera del móvil principal.
+- No los guardes como captura de pantalla en la galería.
+- No los envíes por WhatsApp, Telegram, correo o Slack.
+- No los dejes en texto plano en `~/Documents`.
+- No los subas sin cifrar a Google Drive, iCloud, Dropbox, OneDrive, etc.
+- Marca como usado cada código que utilices.
+- Regenera un nuevo set si sospechas exposición.
+
+### Opciones razonables de almacenamiento
+
+| Método | Comentario |
+|---|---|
+| Impresión en papel | Bueno si lo guardas en caja fuerte o lugar controlado |
+| Gestor de contraseñas | Adecuado si el gestor está bien protegido |
+| Archivo cifrado | Adecuado para usuarios técnicos |
+| USB cifrado | Bueno como respaldo offline |
+| Sobre sellado | Útil para recuperación familiar o empresarial |
+
+### Ejemplo con archivo cifrado usando GPG
+
+Puedes guardar los códigos en un archivo de texto y cifrarlo:
+
+```bash
+gpg --symmetric --cipher-algo AES256 backup-codes.txt
+```
+
+Esto generará:
+
+```text
+backup-codes.txt.gpg
+```
+
+Luego elimina el archivo en texto claro:
+
+```bash
+shred -u backup-codes.txt
+```
+
+En sistemas donde `shred` no sea fiable por usar SSD, snapshots o journaling, lo más seguro es crear el archivo directamente dentro de un volumen cifrado o usar un gestor de contraseñas.
+
+---
+
+## 8. La cuenta de Google como punto crítico
+
+Si decides sincronizar Google Authenticator con tu cuenta de Google, esa cuenta se vuelve parte esencial de tu estrategia de recuperación.
+
+Por tanto, la cuenta de Google debe estar más protegida que las cuentas promedio.
+
+### Recomendaciones mínimas
+
+1. Usa una contraseña única y larga.
+2. Activa 2FA en la cuenta de Google.
+3. Configura passkeys.
+4. Añade al menos una llave de seguridad física si administras cuentas importantes.
+5. Revisa correo y teléfono de recuperación.
+6. Genera backup codes de Google.
+7. Guarda esos backup codes fuera del móvil.
+8. Revisa dispositivos conectados periódicamente.
+9. No compartas la cuenta de Google con nadie.
+
+### Recomendación fuerte
+
+Para una cuenta de Google que centraliza recuperación de otros servicios, considera usar:
+
+- passkeys;
+- llaves FIDO2/WebAuthn;
+- Advanced Protection Program si tu perfil de riesgo lo amerita;
+- una cuenta de recuperación separada y también protegida.
+
+---
+
+## 9. Riesgos de tener Authenticator en múltiples dispositivos
+
+Tener redundancia reduce el riesgo de bloqueo, pero aumenta los puntos donde la semilla existe.
+
+### Riesgo 1: robo físico de un dispositivo secundario
+
+Si el segundo dispositivo no tiene bloqueo, alguien podría abrir Google Authenticator y generar códigos.
+
+Mitigaciones:
+
+- PIN largo o contraseña;
+- biometría;
+- bloqueo automático rápido;
+- cifrado de almacenamiento;
+- mantener el dispositivo apagado cuando no se use;
+- guardar el dispositivo en lugar seguro.
+
+### Riesgo 2: malware o dispositivo comprometido
+
+Un dispositivo rooteado, con apps dudosas o sin parches puede ser mala idea para almacenar semillas TOTP.
+
+Mitigaciones:
+
+- no usar dispositivos rooteados;
+- actualizar sistema;
+- instalar apps solo desde fuentes confiables;
+- dedicar el segundo dispositivo solo a autenticación;
+- evitar navegar o abrir correo en el dispositivo secundario.
+
+### Riesgo 3: nube comprometida
+
+Si usas sincronización, dependes de la seguridad de la cuenta asociada.
+
+Mitigaciones:
+
+- asegurar la cuenta de Google;
+- usar llaves de seguridad;
+- revisar sesiones activas;
+- revocar dispositivos desconocidos;
+- usar contraseñas únicas;
+- activar alertas de seguridad.
+
+### Riesgo 4: guardar QR o semillas en lugares inseguros
+
+El QR de alta o exportación puede permitir generar los códigos.
+
+Mitigaciones:
+
+- no tomar capturas;
+- no imprimir QR de semillas salvo que tengas un procedimiento seguro;
+- no subir QR a servicios de almacenamiento sin cifrado;
+- no compartir pantalla mientras exportas cuentas;
+- cerrar la exportación en cuanto termines.
+
+---
+
+## 10. Qué hacer si ya perdiste el móvil
+
+La respuesta depende de si preparaste redundancia antes.
+
+### Caso A: tenías sincronización con cuenta de Google
+
+1. Consigue un nuevo dispositivo.
+2. Instala Google Authenticator.
+3. Inicia sesión con la cuenta de Google usada para sincronizar.
+4. Verifica que aparezcan tus códigos.
+5. Entra a tus servicios críticos.
+6. Revisa actividad reciente de la cuenta de Google.
+7. Cambia contraseñas si sospechas robo.
+8. Revoca sesiones del dispositivo perdido.
+
+### Caso B: tenías segundo dispositivo
+
+1. Usa el segundo dispositivo para iniciar sesión en tus cuentas.
+2. Desactiva o reemplaza 2FA en los servicios si sospechas que el móvil perdido puede estar comprometido.
+3. Configura un nuevo móvil principal.
+4. Transfiere o reconfigura las semillas.
+5. Prueba el nuevo dispositivo.
+
+### Caso C: solo tenías códigos de respaldo
+
+1. Usa un backup code para entrar al servicio.
+2. Desactiva y reactiva 2FA.
+3. Escanea el nuevo QR con al menos dos dispositivos.
+4. Genera nuevos backup codes.
+5. Invalida los códigos antiguos si el servicio lo permite.
+
+### Caso D: no tenías sincronización, segundo dispositivo ni backup codes
+
+Tendrás que usar el proceso de recuperación de cada servicio. Esto puede incluir:
+
+- verificación por correo;
+- verificación por documento;
+- contacto con soporte;
+- espera de varios días;
+- pérdida definitiva de la cuenta si el servicio no ofrece recuperación.
+
+Esta es precisamente la situación que se intenta evitar.
+
+---
+
+## 11. Procedimiento de auditoría personal
+
+Haz un inventario de tus cuentas con 2FA. Puedes usar una tabla privada como esta:
+
+<DownloadTable filename="inventario-2fa.csv">
+| Servicio | Usuario/correo | 2FA activo | Método | Segundo dispositivo | Backup codes | Última prueba | Notas |
+|---|---|---:|---|---|---|---|---|
+| Google | usuario@example.com | sí | TOTP/passkey | sí | sí | 2026-05-10 | Cuenta crítica |
+| GitHub | usuario | sí | TOTP/FIDO2 | sí | sí | 2026-05-10 | Repos privados |
+| Cloudflare | usuario@example.com | sí | TOTP/FIDO2 | sí | sí | 2026-05-10 | DNS dominios |
+</DownloadTable>
+
+No guardes esta tabla en un lugar inseguro si contiene detalles sensibles. Idealmente, guárdala dentro de tu gestor de contraseñas o en un volumen cifrado.
+
+### Campos recomendados
+
+- Servicio.
+- URL de login.
+- Usuario o correo asociado.
+- Tipo de 2FA.
+- Dónde está configurado el TOTP.
+- Si hay passkey.
+- Si hay llave física.
+- Si existen backup codes.
+- Dónde están guardados los backup codes.
+- Fecha de última prueba.
+- Procedimiento de recuperación.
+
+---
+
+## 12. Recomendación para cuentas de máxima criticidad: FIDO2/WebAuthn
+
+TOTP es mucho mejor que no tener segundo factor, pero no es perfecto. El problema principal es que sigue siendo vulnerable a phishing en tiempo real: si introduces usuario, contraseña y TOTP en un sitio falso, el atacante puede reenviar esos datos inmediatamente al sitio real.
+
+Las llaves FIDO2/WebAuthn y passkeys resisten mejor este ataque porque están vinculadas criptográficamente al dominio legítimo.
+
+Para cuentas críticas, el orden de preferencia suele ser:
+
+1. **Llave física FIDO2/WebAuthn**, con al menos dos llaves registradas.
+2. **Passkeys**, con estrategia clara de recuperación.
+3. **TOTP en dos dispositivos**, más backup codes.
+4. **SMS**, solo como último recurso o recuperación secundaria si no hay alternativa.
+
+Si un servicio permite tener varias llaves físicas, registra al menos dos:
+
+- una de uso diario;
+- una guardada en lugar seguro.
+
+---
+
+## 13. Checklist de configuración inicial
+
+Usa esta lista para configurar tu esquema de recuperación.
+
+<DownloadChecklist filename="checklist-configuracion-inicial.csv">
+- [ ] Identifiqué mis cuentas críticas.
+- [ ] Instalé Google Authenticator en el dispositivo principal.
+- [ ] Instalé Google Authenticator en el dispositivo secundario.
+- [ ] Activé bloqueo fuerte en ambos dispositivos.
+- [ ] Decidí si usaré sincronización con cuenta de Google.
+- [ ] Copié las cuentas TOTP al segundo dispositivo.
+- [ ] Comparé códigos en ambos dispositivos.
+- [ ] Probé login real con el segundo dispositivo.
+- [ ] Descargué o imprimí backup codes por cada servicio crítico.
+- [ ] Guardé backup codes fuera del móvil principal.
+- [ ] Revisé métodos de recuperación de mi cuenta de Google.
+- [ ] Revisé sesiones activas y dispositivos conectados.
+- [ ] Registré passkeys o llaves físicas donde fue posible.
+- [ ] Documenté fecha de última prueba.
+</DownloadChecklist>
+
+---
+
+## 14. Checklist semestral de mantenimiento
+
+Cada 3 o 6 meses, revisa lo siguiente:
+
+<DownloadChecklist filename="checklist-mantenimiento-semestral.csv">
+- [ ] El segundo dispositivo enciende correctamente.
+- [ ] Google Authenticator abre correctamente.
+- [ ] La hora del segundo dispositivo es correcta.
+- [ ] Los códigos coinciden con el dispositivo principal.
+- [ ] Puedo iniciar sesión en mis cuentas críticas.
+- [ ] Los backup codes siguen disponibles.
+- [ ] No he usado backup codes sin regenerarlos.
+- [ ] No hay dispositivos desconocidos conectados a mi cuenta de Google.
+- [ ] Mis correos y teléfonos de recuperación siguen vigentes.
+- [ ] Mis llaves físicas siguen funcionando.
+- [ ] Mis cuentas críticas no dependen solo de SMS.
+</DownloadChecklist>
+
+---
+
+## 15. Preguntas frecuentes
+
+### ¿Puedo tener el mismo Google Authenticator en dos teléfonos?
+
+Sí. Puedes hacerlo mediante sincronización con cuenta de Google, transferencia por QR o escaneando el mismo QR de alta con ambos dispositivos cuando configuras 2FA.
+
+### ¿El segundo teléfono necesita SIM?
+
+No. Google Authenticator genera códigos localmente. No necesita SMS, datos móviles ni conexión permanente a Internet. Sí necesita que la hora del dispositivo sea correcta.
+
+### ¿Puedo guardar capturas del QR de configuración?
+
+Técnicamente sí, pero no es recomendable. Ese QR contiene la semilla TOTP. Si alguien obtiene la imagen, puede generar tus códigos. Si decides guardar una copia, hazlo solo dentro de un contenedor cifrado o gestor de secretos confiable.
+
+### ¿Es suficiente con tener sincronización de Google Authenticator?
+
+Para muchas personas, sí. Para cuentas críticas, yo no lo dejaría como único mecanismo. Añadiría backup codes offline y, cuando sea posible, llaves FIDO2/WebAuthn.
+
+### ¿Qué pasa si cambio de teléfono?
+
+Si usas sincronización, instalas Google Authenticator en el nuevo teléfono e inicias sesión con tu cuenta de Google. Si no usas sincronización, debes exportar desde el teléfono viejo e importar en el nuevo antes de borrar o vender el anterior.
+
+### ¿Qué pasa si vendo mi teléfono viejo?
+
+Antes de venderlo:
+
+1. Verifica que el nuevo dispositivo ya tenga todos los códigos.
+2. Prueba login en cuentas críticas.
+3. Borra Google Authenticator del teléfono viejo.
+4. Cierra sesión de cuentas.
+5. Restablece el teléfono de fábrica.
+6. Elimina el dispositivo viejo de tus cuentas conectadas.
+
+### ¿Puedo usar un gestor de contraseñas para TOTP?
+
+Sí, algunos gestores permiten guardar TOTP. Es cómodo, pero tiene una desventaja: la contraseña y el segundo factor pueden quedar en el mismo lugar. Para algunas cuentas está bien; para cuentas críticas, prefiero separar contraseña y segundo factor o usar llaves FIDO2.
+
+### ¿SMS es mejor que Google Authenticator?
+
+Normalmente no. SMS puede ser vulnerable a SIM swapping, portabilidad fraudulenta, interceptación o ingeniería social con la operadora. TOTP suele ser preferible a SMS. FIDO2/WebAuthn suele ser preferible a TOTP.
+
+---
+
+## 16. Procedimiento recomendado final
+
+Para una persona técnica que quiere evitar perder acceso, mi recomendación concreta sería:
+
+1. Mantén Google Authenticator en tu teléfono principal.
+2. Añade Google Authenticator a un segundo dispositivo.
+3. Para cuentas nuevas, escanea el QR inicial con ambos dispositivos.
+4. Para cuentas existentes, usa transferencia por QR o sincronización.
+5. Guarda backup codes de cada cuenta crítica.
+6. Protege especialmente tu cuenta de Google.
+7. Usa passkeys o llaves FIDO2 en servicios críticos.
+8. Prueba recuperación al menos dos veces al año.
+
+
+La regla fundamental es sencilla:
+
+**No descubras tu estrategia de recuperación el día que pierdes el móvil.**
+
+Configúrala antes, pruébala y documenta lo mínimo necesario para que puedas recuperar acceso incluso bajo estrés.
+
+---
+
+## 17. Referencias
+
+- Google Account Help. "Get verification codes with Google Authenticator". Disponible en: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener">https://support.google.com/accounts/answer/1066447</a>
+- Google Account Help. "Sign in with backup codes". Disponible en: <a href="https://support.google.com/accounts/answer/1187538" target="_blank" rel="noopener">https://support.google.com/accounts/answer/1187538</a>
+- Google Account Help. "Turn on 2-Step Verification". Disponible en: <a href="https://support.google.com/accounts/answer/185839" target="_blank" rel="noopener">https://support.google.com/accounts/answer/185839</a>
+- Google Online Security Blog. "Google Authenticator now supports Google Account synchronization". 2023-04-24. Disponible en: <a href="https://security.googleblog.com/2023/04/google-authenticator-now-supports.html" target="_blank" rel="noopener">https://security.googleblog.com/2023/04/google-authenticator-now-supports.html</a>
+- IETF RFC 6238. "TOTP: Time-Based One-Time Password Algorithm". Disponible en: <a href="https://datatracker.ietf.org/doc/html/rfc6238" target="_blank" rel="noopener">https://datatracker.ietf.org/doc/html/rfc6238</a>
+- IETF RFC 4226. "HOTP: An HMAC-Based One-Time Password Algorithm". Disponible en: <a href="https://datatracker.ietf.org/doc/html/rfc4226" target="_blank" rel="noopener">https://datatracker.ietf.org/doc/html/rfc4226</a>
