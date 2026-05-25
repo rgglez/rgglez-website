@@ -136,6 +136,10 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       .map(cb => cb.value);
   }
 
+  function langOfUrl(url: string): string {
+    return url.split(/[?#]/)[0].split("/").filter(Boolean)[0] ?? "";
+  }
+
   function esc(s: string): string {
     return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
             .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
