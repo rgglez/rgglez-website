@@ -22,7 +22,6 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     <div
       id="pf-root"
       data-backurl={backUrl}
-      data-lang={lang}
       data-supported={JSON.stringify(supportedLangs)}
     >
       <input
@@ -51,7 +50,6 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
                     class="pf-lang-cb accent-accent"
                   />
                   <span>{LANG_NAMES[l] ?? l.toUpperCase()}</span>
-                  <span class="pf-count text-foreground/60" data-lang={l}>(0)</span>
                 </label>
               </li>
             ))}
@@ -69,32 +67,33 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 </Layout>
 
 <script>
-  // ── types ──────────────────────────────────────────────────────────────────
-  type PFResultData = { url: string; meta?: { title?: string }; excerpt?: string };
-  type PFResult    = { id: string; data: () => Promise<PFResultData> };
-  type PFResponse  = { results: PFResult[] };
-  type PFModule    = {
+  // ── types ────────────────────────────────────────────────────────────────────
+  type PFData     = { url: string; meta?: { title?: string }; excerpt?: string };
+  type PFResult   = { id: string; data: () => Promise<PFData> };
+  type PFResponse = { results: PFResult[] };
+  type PFModule   = {
     options?:    (opts: Record<string, unknown>) => Promise<void>;
     mergeIndex:  (path: string, opts?: Record<string, unknown>) => Promise<void>;
-    search:      (term: string) => Promise<PFResponse>;
+    search:      (term: string, opts?: { filters?: Record<string, string[]> }) => Promise<PFResponse>;
   };
 
-  // ── state ──────────────────────────────────────────────────────────────────
-  const PAGE_SIZE  = 50;
-  const DEBOUNCE   = 300;
+  // ── constants ────────────────────────────────────────────────────────────────
+  const PAGE_SIZE = 50;
+  const DEBOUNCE  = 300;
 
+  // ── module-level state ───────────────────────────────────────────────────────
   let pf: PFModule | null = null;
   let pfFailed = false;
-  let activeTerm = "";
-  let cache: PFResultData[] = [];
+  let searchSeq = 0; // incremented each search; used to discard stale results
 
-  // ── pagefind init ──────────────────────────────────────────────────────────
+  // ── pagefind loader ──────────────────────────────────────────────────────────
   // Pagefind puts each language in its own index bucket and by default only
-  // searches the bucket matching html[lang]. We use mergeIndex to register all
-  // remaining language buckets so pf.search() covers every language.
-  // The full-origin URL is required to bypass pagefind's same-path dedup guard
-  // (it skips mergeIndex when basePath.startsWith(indexPath), which would fire
-  // for a plain "/pagefind/" path but not for "https://host/pagefind/").
+  // searches the bucket matching html[lang]. mergeIndex registers the remaining
+  // language buckets so pf.search() fans out to all of them.
+  //
+  // The full-origin URL bypasses pagefind's same-path dedup guard:
+  //   primary.basePath = "/pagefind/"
+  //   guard: primary.basePath.startsWith(indexPath)  →  "/pagefind/".startsWith("https://host/pagefind/") = false ✓
   async function loadPf(): Promise<PFModule | null> {
     if (pf)       return pf;
     if (pfFailed) return null;
@@ -115,9 +114,9 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       const primary   = (document.documentElement.lang ?? "").toLowerCase();
       const indexBase = `${window.location.origin}/pagefind/`;
 
-      for (const lang of langs) {
-        if (lang === primary) continue;           // primary bucket loaded automatically
-        try { await mod.mergeIndex(indexBase, { language: lang }); }
+      for (const l of langs) {
+        if (l === primary) continue; // primary bucket loaded automatically
+        try { await mod.mergeIndex(indexBase, { language: l }); }
         catch { /* language absent from this index */ }
       }
 
@@ -131,22 +130,15 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     }
   }
 
-  // ── helpers ────────────────────────────────────────────────────────────────
-  function langOfUrl(url: string): string {
-    // URL pattern: /{lang}/posts/... → first path segment = language code
-    return url.split(/[?#]/)[0].split("/").filter(Boolean)[0] ?? "";
-  }
-
-  function checkedLangs(): Set<string> {
-    return new Set(
-      Array.from(document.querySelectorAll<HTMLInputElement>(".pf-lang-cb:checked"))
-        .map(cb => cb.value)
-    );
+  // ── helpers ──────────────────────────────────────────────────────────────────
+  function checkedLangs(): string[] {
+    return Array.from(document.querySelectorAll<HTMLInputElement>(".pf-lang-cb:checked"))
+      .map(cb => cb.value);
   }
 
   function esc(s: string): string {
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
   }
 
   function setStatus(msg: string) {
@@ -154,16 +146,12 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     if (el) el.textContent = msg;
   }
 
-  function setCounts(counts: Record<string, number>) {
-    document.querySelectorAll<HTMLElement>(".pf-count").forEach(el => {
-      el.textContent = `(${counts[el.dataset.lang ?? ""] ?? 0})`;
-    });
+  function clearResults() {
+    document.getElementById("pf-results")!.innerHTML = "";
   }
 
-  function renderResults(items: PFResultData[]) {
-    const list = document.getElementById("pf-results");
-    if (!list) return;
-    list.innerHTML = items.map(d => `
+  function renderResults(items: PFData[]) {
+    document.getElementById("pf-results")!.innerHTML = items.map(d => `
       <li>
         <a href="${esc(d.url)}" class="text-[#161d2e] dark:text-white underline decoration-dashed underline-offset-4 decoration-[#a1bfef] dark:decoration-[#234c77] hover:decoration-accent">
           ${esc(d.meta?.title ?? d.url)}
@@ -172,83 +160,71 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       </li>`).join("");
   }
 
-  // ── display cache filtered by checked language checkboxes ──────────────────
-  function paintFromCache() {
-    // Compute per-language hit counts from the full result set
-    const counts: Record<string, number> = {};
-    for (const d of cache) {
-      const l = langOfUrl(d.url);
-      if (l) counts[l] = (counts[l] ?? 0) + 1;
-    }
-    setCounts(counts);
+  // ── search ───────────────────────────────────────────────────────────────────
+  // Spec:
+  //   - Run when input changes (debounced) or when a language checkbox changes.
+  //   - Search only the checked languages using pagefind's native filter API.
+  //     Each merged bucket receives `filters: { lang: [checked…] }` and returns
+  //     only pages whose data-pagefind-filter matches — no client-side URL
+  //     parsing needed.
+  async function doSearch() {
+    const seq  = ++searchSeq;
+    const input = document.getElementById("pf-input") as HTMLInputElement | null;
+    const term  = input?.value.trim() ?? "";
+    const langs = checkedLangs();
 
-    const selected = checkedLangs();
-    if (selected.size === 0) {
-      document.getElementById("pf-results")!.innerHTML = "";
-      setStatus("No language selected.");
-      return;
-    }
-
-    const filtered = cache.filter(d => selected.has(langOfUrl(d.url)));
-    const slice    = filtered.slice(0, PAGE_SIZE);
-    renderResults(slice);
-
-    const total = filtered.length;
-    setStatus(
-      total === 0
-        ? "No results."
-        : `${total} result${total !== 1 ? "s" : ""}${total > slice.length ? ` (showing ${slice.length})` : ""}.`
-    );
-  }
-
-  // ── search ─────────────────────────────────────────────────────────────────
-  async function doSearch(term: string) {
-    activeTerm = term;
-
-    if (!term.trim()) {
-      cache = [];
-      setCounts({});
-      document.getElementById("pf-results")!.innerHTML = "";
+    if (!term) {
+      clearResults();
       setStatus("");
       return;
     }
 
-    const mod = await loadPf();
-    if (!mod) return;
+    if (langs.length === 0) {
+      clearResults();
+      setStatus("No language selected.");
+      return;
+    }
 
-    const res = await mod.search(term);
-    if (term !== activeTerm) return; // stale — newer search in flight
+    const mod = await loadPf();
+    if (!mod || seq !== searchSeq) return;
+
+    const res = await mod.search(term, { filters: { lang: langs } });
+    if (seq !== searchSeq) return;
 
     const data = await Promise.all(res.results.map(r => r.data()));
-    if (term !== activeTerm) return;
+    if (seq !== searchSeq) return;
 
-    // Deduplicate by URL (same page can appear in multiple merged buckets)
-    const seen = new Set<string>();
-    cache = data.filter(d => {
-      if (seen.has(d.url)) return false;
-      seen.add(d.url);
-      return true;
-    });
+    // Deduplicate by URL (a page can appear in multiple merged buckets)
+    const seen   = new Set<string>();
+    const unique = data.filter(d => !seen.has(d.url) && seen.add(d.url));
+    const slice  = unique.slice(0, PAGE_SIZE);
 
-    paintFromCache();
+    renderResults(slice);
+    const total = unique.length;
+    setStatus(
+      total === 0
+        ? "No results."
+        : `${total} result${total !== 1 ? "s" : ""}${total > PAGE_SIZE ? ` (showing ${PAGE_SIZE})` : ""}.`
+    );
   }
 
-  // ── URL sync ───────────────────────────────────────────────────────────────
+  // ── URL sync ─────────────────────────────────────────────────────────────────
   function syncUrl(term: string) {
     const params = new URLSearchParams(window.location.search);
     if (term) { params.set("q", term); }
     else      { params.delete("q"); }
-    history.replaceState(history.state, "", term ? `?${params}` : window.location.pathname);
+    const qs = params.toString();
+    history.replaceState(history.state, "", qs ? `?${qs}` : window.location.pathname);
 
     const root    = document.getElementById("pf-root");
     const backUrl = root?.dataset.backurl ?? "/";
-    sessionStorage.setItem("backUrl", term ? `${backUrl}?${params}` : backUrl);
+    sessionStorage.setItem("backUrl", qs ? `${backUrl}?${qs}` : backUrl);
   }
 
-  // ── init ───────────────────────────────────────────────────────────────────
-  function debounce<T extends (...a: unknown[]) => void>(fn: T, ms: number) {
+  // ── init ─────────────────────────────────────────────────────────────────────
+  function debounce(fn: () => void, ms: number): () => void {
     let t: ReturnType<typeof setTimeout> | undefined;
-    return (...a: Parameters<T>) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+    return () => { clearTimeout(t); t = setTimeout(fn, ms); };
   }
 
   function init() {
@@ -259,21 +235,22 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     const input = document.getElementById("pf-input") as HTMLInputElement | null;
     if (!input) return;
 
-    const debouncedSearch = debounce((term: string) => {
-      syncUrl(term);
-      doSearch(term);
+    const debouncedSearch = debounce(() => {
+      syncUrl(input.value.trim());
+      doSearch();
     }, DEBOUNCE);
 
-    input.addEventListener("input", () => debouncedSearch(input.value));
+    // Spec 5: input change → re-search (debounced)
+    input.addEventListener("input", () => debouncedSearch());
 
-    // Checkbox toggle: re-filter from cache, no new pagefind search needed
+    // Spec 4: checkbox change → re-search (debounced)
     document.querySelectorAll<HTMLInputElement>(".pf-lang-cb").forEach(cb => {
-      cb.addEventListener("change", () => paintFromCache());
+      cb.addEventListener("change", () => debouncedSearch());
     });
 
-    // Restore search from URL ?q=
+    // Restore search from ?q= in URL
     const q = new URLSearchParams(window.location.search).get("q");
-    if (q) { input.value = q; doSearch(q); }
+    if (q) { input.value = q; doSearch(); }
   }
 
   document.addEventListener("astro:after-swap", init);
