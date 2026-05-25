@@ -74,7 +74,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
   type PFModule   = {
     options?:    (opts: Record<string, unknown>) => Promise<void>;
     mergeIndex:  (path: string, opts?: Record<string, unknown>) => Promise<void>;
-    search:      (term: string) => Promise<PFResponse>;
+    search:      (term: string, opts?: { filters?: Record<string, string[]> }) => Promise<PFResponse>;
   };
 
   // ── constants ────────────────────────────────────────────────────────────────
@@ -136,10 +136,6 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
       .map(cb => cb.value);
   }
 
-  function langOfUrl(url: string): string {
-    return url.split(/[?#]/)[0].split("/").filter(Boolean)[0] ?? "";
-  }
-
   function esc(s: string): string {
     return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
             .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
@@ -192,23 +188,24 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
     const mod = await loadPf();
     if (!mod || seq !== searchSeq) return;
 
-    const res = await mod.search(term);
-    if (seq !== searchSeq) return;
+    // One search per checked language (single-element filter array works;
+    // multi-element array is broken in pagefind). Sequential to avoid WASM corruption.
+    const allData: PFData[] = [];
+    for (const l of langs) {
+      const res = await mod.search(term, { filters: { lang: [l] } });
+      if (seq !== searchSeq) return;
+      const data = await Promise.all(res.results.map(r => r.data()));
+      if (seq !== searchSeq) return;
+      allData.push(...data);
+    }
 
-    const data = await Promise.all(res.results.map(r => r.data()));
-    if (seq !== searchSeq) return;
-
-    // Deduplicate by URL (a page can appear in multiple merged buckets)
+    // Deduplicate by URL
     const seen   = new Set<string>();
-    const unique = data.filter(d => !seen.has(d.url) && seen.add(d.url));
-
-    // Client-side language filter (pagefind filter API broken for arrays)
-    const checkedSet = new Set(langs);
-    const filtered   = unique.filter(d => checkedSet.has(langOfUrl(d.url)));
-    const slice      = filtered.slice(0, PAGE_SIZE);
+    const unique = allData.filter(d => !seen.has(d.url) && seen.add(d.url));
+    const slice  = unique.slice(0, PAGE_SIZE);
 
     renderResults(slice);
-    const total = filtered.length;
+    const total = unique.length;
     setStatus(
       total === 0
         ? "No results."
