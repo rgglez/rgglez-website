@@ -189,14 +189,18 @@ const nextPost =
 
     <BackToTopButton />
 
-    <ShareLinks />
+    <div id="share-links">
+      <ShareLinks />
+    </div>
 
-    <Comments client:only="react" />
+    <div id="post-comments">
+      <Comments client:only="react" />
+    </div>
 
     <hr class="my-6 border-dashed" />
 
     <!-- Previous/Next Post Buttons -->
-    <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div id="post-nav" data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
       {
         prevPost && (
           <a

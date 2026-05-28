@@ -72,6 +72,66 @@ html[data-theme="dark"] {
   scroll-margin-block: 1rem;
 }
 
+@media print {
+  /* Hide chrome */
+  header,
+  footer,
+  #back-button,
+  #btt-btn-container,
+  .progress-container,
+  #share-links,
+  #post-comments,
+  #post-nav {
+    display: none !important;
+  }
+
+  /* White background, black text everywhere */
+  *,
+  *::before,
+  *::after {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Code blocks: force shiki light theme */
+  .astro-code {
+    border: 1px solid #ccc !important;
+  }
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-light) !important;
+    background: var(--shiki-light-bg) !important;
+  }
+
+  /* Full width, no horizontal padding */
+  #main-content,
+  #article {
+    max-width: 100% !important;
+    padding-inline: 0 !important;
+  }
+
+  /* Page breaks */
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+  }
+  pre, figure, img, table {
+    break-inside: avoid;
+  }
+
+  /* URLs after links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    opacity: 0.6;
+  }
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+}
+
 /* KaTeX: dark mode contrast fix */
 [data-theme="dark"] .katex {
   color: var(--foreground);
