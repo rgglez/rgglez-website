@@ -199,6 +199,8 @@ en el índice alfabético final.
   - [Hipótesis del nombre único (UNA)](#hipotesis-del-nombre-unico)
   - [Heurística vs. metaheurística](#heuristica-vs-metaheuristica)
   - [Trade-off exploración/explotación](#trade-off-exploracionexplotacion)
+  - [Agéntica moderna](#agentica-moderna)
+  - [MCP (Model Context Protocol)](#mcp-model-context-protocol)
 - [14. Fundamentos filosóficos del razonamiento y la planificación](#14-fundamentos-filosoficos-del-razonamiento-y-la-planificacion)
   - [14.1 Epistemología (teoría del conocimiento)](#141-epistemologia)
   - [14.2 Filosofía de la lógica](#142-filosofia-de-la-logica)
@@ -1496,6 +1498,8 @@ mindmap
     Hipótesis del nombre único (UNA)
     Heurística vs. metaheurística
     Trade-off exploración/explotación
+    Agéntica moderna
+    MCP (Model Context Protocol)
 ```
 
 
@@ -1557,6 +1561,36 @@ Dilema fundamental en RL, MCTS y búsqueda local: **explorar** opciones poco
 conocidas para descubrir mejores soluciones vs. **explotar** las mejores
 conocidas para maximizar resultados inmediatos. Estrategias clásicas:
 $\varepsilon$-greedy, UCB, softmax.
+
+### Agéntica moderna
+
+En IA aplicada (2024-2026), **agéntica moderna** se refiere al diseño de
+sistemas basados en LLMs que no solo responden texto, sino que **perciben
+estado, planifican, usan herramientas, ejecutan acciones y replanifican**.
+Suele modelarse como un bucle:
+
+1. Interpretar objetivo y contexto.
+2. Proponer un plan (explícito o implícito).
+3. Llamar herramientas (búsqueda, código, bases de datos, APIs).
+4. Verificar resultados.
+5. Actualizar memoria/estado y decidir siguiente paso.
+
+Conceptualmente, conecta con BDI (creencias/objetivos/intenciones), con
+planificación reactiva y con arquitecturas híbridas deliberativo-reactivas.
+
+### MCP (Model Context Protocol)
+
+**MCP** es un protocolo abierto para estandarizar cómo un modelo o agente
+consume contexto externo y herramientas. En vez de integrar cada fuente de
+datos con adaptadores ad hoc, MCP define una interfaz común para exponer:
+
+- **Resources**: datos/contexto legible (documentos, tablas, estado).
+- **Tools**: acciones invocables por el modelo (consultar, transformar, actuar).
+- **Prompts**: plantillas o flujos reutilizables de interacción.
+
+En términos de planificación, MCP reduce el coste de integración del entorno
+del agente y facilita arquitecturas modulares multi-herramienta, mejorando
+trazabilidad, gobernanza y reproducibilidad de ejecuciones agénticas.
 
 ## 14. Fundamentos filosóficos del razonamiento y la planificación
 
@@ -2028,6 +2062,7 @@ Para consulta rápida, los términos más usados en orden alfabético:
 - **IPC**: International Planning Competition.
 - **LAMA**: planificador basado en landmarks.
 - **MAS**: Multi-Agent System.
+- **MCP**: Model Context Protocol.
 - **MCTS**: Monte Carlo Tree Search.
 - **MDP**: Markov Decision Process.
 - **PBMA**: Planificación POR Múltiples Agentes.
