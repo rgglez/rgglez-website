@@ -414,3 +414,66 @@ const nextPost =
     });
   });
 </script>
+
+<script>
+  // ── reading-position persistence ─────────────────────────────────────────────
+  const RP_PREFIX   = "rp:";
+  const THROTTLE_MS = 400;
+
+  function rpKey(): string {
+    return RP_PREFIX + window.location.pathname;
+  }
+
+  function articleHeadings(): HTMLElement[] {
+    return Array.from(
+      document.querySelectorAll<HTMLElement>(
+        "#article h2, #article h3, #article h4, #article h5, #article h6"
+      )
+    ).filter(h => h.id);
+  }
+
+  function activeHeading(headings: HTMLElement[]): HTMLElement | null {
+    const mid = window.innerHeight / 2;
+    let active: HTMLElement | null = null;
+    for (const h of headings) {
+      if (h.getBoundingClientRect().top <= mid) active = h;
+      else break;
+    }
+    return active;
+  }
+
+  function savePosition() {
+    const headings = articleHeadings();
+    if (!headings.length) return;
+    const h = activeHeading(headings);
+    if (h) localStorage.setItem(rpKey(), h.id);
+  }
+
+  function restorePosition() {
+    const id = localStorage.getItem(rpKey());
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "instant", block: "start" });
+    } else {
+      localStorage.removeItem(rpKey());
+    }
+  }
+
+  function setupTracking() {
+    if (!document.getElementById("article")) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    window.addEventListener("scroll", () => {
+      clearTimeout(timer);
+      timer = setTimeout(savePosition, THROTTLE_MS);
+    }, { passive: true });
+  }
+
+  function initReadingPos() {
+    restorePosition();
+    setupTracking();
+  }
+
+  document.addEventListener("astro:page-load", initReadingPos);
+  initReadingPos();
+</script>

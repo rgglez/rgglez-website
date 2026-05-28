@@ -409,6 +409,7 @@ si las premisas son verdaderas, la conclusión también lo es. Va de lo general
 a lo particular. Es el fundamento del **método deductivo** que Euclides aplicó
 a la geometría.
 
+
 <Aside type="note">
 
 *Ejemplo.* «Todos los humanos son mortales. Sócrates es humano. Por tanto,
@@ -422,6 +423,7 @@ Genera conclusiones *probables* a partir de observaciones específicas;
 generaliza de lo particular a lo general. La conclusión no se sigue
 necesariamente de las premisas: añadir una nueva observación puede invalidarla.
 
+
 <Aside type="note">
 
 *Ejemplo.* «Todos los cisnes que he visto son blancos, luego todos los
@@ -434,6 +436,7 @@ cisnes son blancos.» (Falsado por la existencia de cisnes negros.)
 Inferencia hacia la **mejor explicación**: dado un efecto observado, se
 postula la causa más plausible. Es no deductivo y se utiliza para diagnóstico
 médico, depuración de sistemas y razonamiento causal.
+
 
 <Aside type="note">
 
@@ -452,10 +455,22 @@ premisas (mayor y menor) y una conclusión que se deduce lógicamente de ambas.
 Regla de inferencia: dado $P \rightarrow Q$ y $P$, se concluye $Q$. Es el
 ladrillo fundamental del encadenamiento hacia adelante.
 
+<Aside type="note">
+
+En esta regla, $P$ y $Q$ son proposiciones; $\rightarrow$ significa «implica».
+
+</Aside>
+
 ### Modus tollens
 
 Regla de inferencia: dado $P \rightarrow Q$ y $\neg Q$, se concluye $\neg P$.
 Es la base lógica de la falsación científica.
+
+<Aside type="note">
+
+En esta regla, $\neg$ significa «no» (negación lógica).
+
+</Aside>
 
 ### Razonamiento por analogía
 
@@ -634,6 +649,13 @@ Expande siempre el nodo más profundo de la frontera. Memoria $O(bm)$ donde
 $m$ es la profundidad máxima. **No** es completa en espacios infinitos ni
 óptima, pero su consumo de memoria es muy inferior al de BFS.
 
+<Aside type="note">
+
+En $O(bm)$, $b$ es el factor de ramificación y $m$ la profundidad máxima
+explorada.
+
+</Aside>
+
 ### Búsqueda de coste uniforme (UCS)
 
 Generalización de BFS que expande el nodo con menor coste acumulado $g(n)$.
@@ -710,6 +732,12 @@ $h$ es **admisible** si nunca sobrestima el coste real:
 $h(n) \leq h^*(n)$ para todo nodo $n$, donde $h^*$ es el coste óptimo
 verdadero. La admisibilidad es condición suficiente para que A* sea óptimo.
 
+<Aside type="note">
+
+En esta desigualdad, $\leq$ significa «menor o igual que».
+
+</Aside>
+
 ### Heurística consistente (monótona)
 
 $h$ es **consistente** si para toda transición $n \rightarrow n'$ por
@@ -717,6 +745,13 @@ acción $a$:
 $$h(n) \leq c(n, a, n') + h(n')$$
 La consistencia implica admisibilidad. Con A* y heurística consistente,
 ningún nodo necesita reabrirse.
+
+<Aside type="note">
+
+Aquí, $c(n,a,n')$ es el coste inmediato de aplicar la acción $a$ y pasar de
+$n$ a $n'$.
+
+</Aside>
 
 ### Heurística dominante
 
@@ -734,6 +769,14 @@ Combina coste pasado y futuro estimado: $f(n) = g(n) + h(n)$. Si $h$ es
 admisible, A* es óptima. Si $h$ es consistente, también es eficiente: ningún
 nodo se expande más de una vez. Es probablemente el algoritmo de búsqueda más
 influyente de la IA.
+
+<Aside type="note">
+
+Aquí, $g(n)$ es el coste acumulado desde el inicio hasta $n$, $h(n)$ es el
+coste estimado desde $n$ a la meta y $f(n)$ es la evaluación total usada para
+priorizar nodos.
+
+</Aside>
 
 ### IDA* (Iterative Deepening A*)
 
@@ -764,6 +807,14 @@ suficientemente grande.
 Búsqueda local probabilística inspirada en el recocido metalúrgico. Acepta
 movimientos peores con probabilidad $\exp(-\Delta E / T)$ y reduce la
 temperatura $T$ con el tiempo. Permite escapar de óptimos locales.
+
+<Aside type="note">
+
+Aquí, $\exp(\cdot)$ es la función exponencial, $\Delta E$ es el empeoramiento
+de la solución (incremento de coste) y $T$ controla cuánta exploración se
+permite.
+
+</Aside>
 
 ### Búsqueda tabú
 
@@ -838,6 +889,15 @@ U(n) & \text{si}~n~\text{es}~\text{terminal} \\
 \min_s \text{minimax}(s) & \text{si}~\text{turno}~\text{de}~\text{MIN},~s \in \text{suc}(n)
 \end{cases}
 $$
+
+
+<Aside type="note">
+
+En la ecuación de minimax, $n$ es el nodo actual, $U(n)$ su utilidad terminal,
+$\text{suc}(n)$ el conjunto de sucesores y $\max/\min$ eligen la mejor jugada
+para MAX/MIN respectivamente.
+
+</Aside>
 
 ### Poda alfa-beta
 
@@ -929,12 +989,27 @@ Conjunto de proposiciones que deben estar presentes en el estado actual para
 que la acción sea aplicable. Si $\text{Pre}(a) \not\subseteq S$, la acción
 no puede ejecutarse.
 
+<Aside type="note">
+
+Aquí, $\text{Pre}(a)$ es el conjunto de precondiciones de la acción $a$,
+$S$ el estado actual, $\subseteq$ «subconjunto de» y $\not\subseteq$ «no es
+subconjunto de».
+
+</Aside>
+
 ### Efectos
 
 Cambios que la acción produce en el estado. En STRIPS se descomponen en
 **lista de añadir** ($A$) y **lista de eliminar** ($E$). El nuevo estado es:
 
 $$S' \leftarrow (S \setminus E) \cup A$$
+
+<Aside type="note">
+
+Aquí, $S'$ es el nuevo estado, $\setminus$ elimina elementos de un conjunto y
+$\cup$ une conjuntos.
+
+</Aside>
 
 ### Hipótesis del mundo cerrado (CWA)
 
@@ -1366,6 +1441,15 @@ la ecuación de Bellman:
 
 $$V^*(s) = \max_a \left[ R(s, a) + \gamma \sum_t P(t \mid s, a) V^*(t) \right]$$
 
+<Aside type="note">
+
+Aquí, $V^*(s)$ es el valor óptimo del estado $s$; $\max_a$ elige la mejor
+acción; $R(s,a)$ es recompensa inmediata; $\gamma$ descuenta recompensas
+futuras; $P(t \mid s,a)$ es probabilidad de llegar al estado $t$ desde $s$ con
+$a$; y $\sum_t$ agrega el valor esperado sobre todos los estados siguientes.
+
+</Aside>
+
 ### POMDP (Partially Observable MDP)
 
 Generalización de MDP en que el agente no observa el estado directamente,
@@ -1535,6 +1619,12 @@ $p$ si y solo si (1) $S$ cree que $p$, (2) $p$ es verdadero, y (3) $S$
 está justificado en creer $p$. Es la base implícita del modelo BDI:
 los *beliefs* del agente son su intento de reconstruir esta tríada con
 información incompleta.
+
+<Aside type="note">
+
+Aquí, $S$ denota al sujeto cognoscente y $p$ al enunciado/proposición.
+
+</Aside>
 
 #### Problema de Gettier
 
@@ -1847,6 +1937,14 @@ posibles: $A \square\!\!\!\rightarrow B$ es verdadero si en el mundo
 posible más cercano donde $A$, también ocurre $B$. Son la base del
 razonamiento causal contrafáctico (*counterfactual reasoning*) en
 ML moderno y del análisis de explicabilidad.
+
+<Aside type="note">
+
+En esa notación, $\square\!\!\!\rightarrow$ representa la implicación
+contrafáctica («si fuera el caso que..., entonces...»), distinta de la
+implicación material $\rightarrow$ de la lógica clásica.
+
+</Aside>
 
 #### Determinismo
 
