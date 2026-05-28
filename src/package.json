@@ -22,7 +22,7 @@
     "@astrojs/sitemap": "3.7.2",
     "@giscus/react": "^3.1.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@rgglez/astro-tocbutton": "^0.1.1",
+    "@rgglez/astro-tocbutton": "0.1.2",
     "@rgglez/shiki-pddl": "^0.0.3",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
