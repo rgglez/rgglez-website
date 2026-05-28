@@ -85,10 +85,10 @@ html[data-theme="dark"] {
     display: none !important;
   }
 
-  /* White background, black text everywhere */
-  *,
-  *::before,
-  *::after {
+  /* White background, black text — exclude SVG so Mermaid diagrams print correctly */
+  *:not(svg):not(svg *),
+  *:not(svg):not(svg *)::before,
+  *:not(svg):not(svg *)::after {
     background: white !important;
     color: black !important;
     box-shadow: none !important;
