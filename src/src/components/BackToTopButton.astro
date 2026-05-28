@@ -44,25 +44,30 @@ import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
     if (!rootElement || !btnContainer || !backToTopBtn || !progressIndicator)
       return;
 
-    // Attach click event handler for back-to-top button
+    // Guard against duplicate listeners when script re-runs on navigation
+    if (btnContainer.dataset.bttInit) return;
+    btnContainer.dataset.bttInit = "1";
+
     backToTopBtn.addEventListener("click", () => {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+      window.scrollTo({ top: 0, behavior: "instant" });
     });
 
-    // Handle button visibility according to scroll position
+    // Handle button visibility according to scroll position.
+    // Intentionally no RAF ticking: on iOS Safari, RAFs can be suspended during
+    // the rubber-band effect after a programmatic scroll, leaving ticking=true
+    // permanently and silencing all future scroll events.
     let lastVisible = null;
     function handleScroll() {
       const scrollTotal = rootElement.scrollHeight - rootElement.clientHeight;
       const scrollTop = rootElement.scrollTop;
-      const scrollPercent = Math.floor((scrollTop / scrollTotal) * 100);
+      const scrollPercent = scrollTotal > 0 ? Math.floor((scrollTop / scrollTotal) * 100) : 0;
 
       progressIndicator.style.setProperty(
         "background-image",
         `conic-gradient(var(--accent), var(--accent) ${scrollPercent}%, transparent ${scrollPercent}%)`
       );
 
-      const isVisible = scrollTop / scrollTotal > 0.3;
+      const isVisible = scrollTotal > 0 && scrollTop / scrollTotal > 0.3;
 
       if (isVisible !== lastVisible) {
         btnContainer.classList.toggle("opacity-100", isVisible);
@@ -73,16 +78,7 @@ import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
       }
     }
 
-    let ticking = false;
-    document.addEventListener("scroll", () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
+    window.addEventListener("scroll", handleScroll, { passive: true });
   }
   backToTop();
 </script>
