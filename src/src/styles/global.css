@@ -95,18 +95,10 @@ html[data-theme="dark"] {
     text-shadow: none !important;
   }
 
-  /* Mermaid diagrams: fix overflow clipping and SVG sizing in print */
-  [data-mermaid] {
-    overflow: visible !important;
-    display: block !important;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-  [data-mermaid] > svg {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
+  /* Mermaid diagrams: hide in print (SVG rendering unreliable) */
+  [data-mermaid],
+  pre.mermaid {
+    display: none !important;
   }
 
   /* Code blocks: force shiki light theme */
