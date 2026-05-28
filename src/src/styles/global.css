@@ -72,6 +72,17 @@ html[data-theme="dark"] {
   scroll-margin-block: 1rem;
 }
 
+/* KaTeX: dark mode contrast fix */
+[data-theme="dark"] .katex {
+  color: var(--foreground);
+}
+
+/* KaTeX: wide display formulas scroll instead of overflow */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 /* Mermaid: mindmap — secciones no-root usan color de texto del tema */
 svg.mindmapDiagram [class*="section-"]:not(.section-root) span {
   color: var(--foreground) !important;
