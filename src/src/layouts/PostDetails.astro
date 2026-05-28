@@ -9,6 +9,7 @@ import EditPost from "@/components/EditPost.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
+import TocButton from "@/components/TocButton.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { getTranslations, getFileLang } from "@/utils/getTranslations";
@@ -188,6 +189,7 @@ const nextPost =
     </ul>
 
     <BackToTopButton />
+    <TocButton />
 
     <div id="share-links">
       <ShareLinks />
