@@ -3,7 +3,7 @@ title: "Glosario de Razonamiento y Planificación Automática"
 description: >-
   Guía de estudio en formato glosario sobre Razonamiento y Planificación
   Automática. Cubre fundamentos de agentes, tipos de lógica, búsqueda
-  heurística y adversarial, STRIPS/PDDL/GOAP, HTN, planificación multi-agente
+  heurística y adversarial, STRIPS (Stanford Research Institute Problem Solver)/PDDL/GOAP, HTN, planificación multi-agente
   y desarrollos modernos (MCTS, MDP, LLMs como planificadores).
 author: "Rodolfo González González"
 pubDatetime: 2026-05-06T00:00:00Z
@@ -57,15 +57,17 @@ en el índice alfabético final.
   - [Arquitectura reactiva](#arquitectura-reactiva)
   - [Arquitectura híbrida](#arquitectura-hibrida)
   - [Modelo BDI (Belief–Desire–Intention)](#modelo-bdi)
+  - [ACT-R](#act-r)
+  - [SOAR](#soar)
 - [2. Representación del conocimiento](#2-representacion-del-conocimiento)
   - [Representación simbólica](#representacion-simbolica)
   - [Marcos (Frames)](#marcos)
   - [Reglas de producción](#reglas-de-produccion)
-  - [Restricciones (CSP)](#restricciones)
+  - [Constraint Satisfaction Problem (CSP) (problema de satisfacción de restricciones)](#constraint-satisfaction-problem-csp-problema-de-satisfaccion-de-restricciones)
   - [Red bayesiana](#red-bayesiana)
   - [Ontología](#ontologia)
-  - [Grafo de conocimiento (Knowledge Graph)](#grafo-de-conocimiento)
-  - [Conocimiento declarativo vs. procedural](#conocimiento-declarativo-vs-procedural)
+  - [Knowledge Graph (grafo de conocimiento)](#knowledge-graph-grafo-de-conocimiento)
+  - [Declarative vs. procedural knowledge (conocimiento declarativo vs. procedimental)](#declarative-vs-procedural-knowledge-conocimiento-declarativo-vs-procedimental)
 - [3. Tipos de razonamiento](#3-tipos-de-razonamiento)
   - [Razonamiento deductivo](#razonamiento-deductivo)
   - [Razonamiento inductivo](#razonamiento-inductivo)
@@ -79,8 +81,8 @@ en el índice alfabético final.
 - [4. Tipos de lógica](#4-tipos-de-logica)
   - [Lógica proposicional](#logica-proposicional)
   - [Lógica de predicados](#logica-de-predicados)
-  - [Lógica de primer orden (FOL)](#logica-de-primer-orden)
-  - [Lógica de orden superior (HOL)](#logica-de-orden-superior)
+  - [First-Order Logic (FOL) (lógica de primer orden)](#first-order-logic-fol-logica-de-primer-orden)
+  - [Higher-Order Logic (HOL) (lógica de orden superior)](#higher-order-logic-hol-logica-de-orden-superior)
   - [Lógica modal](#logica-modal)
   - [Lógica temporal](#logica-temporal)
   - [Lógica multivaluada](#logica-multivaluada)
@@ -93,10 +95,10 @@ en el índice alfabético final.
   - [Árbol de búsqueda](#arbol-de-busqueda)
   - [Frontera (lista de abiertos)](#frontera)
   - [Factor de ramificación](#factor-de-ramificacion)
-  - [Búsqueda en amplitud (BFS)](#busqueda-en-amplitud)
-  - [Búsqueda en profundidad (DFS)](#busqueda-en-profundidad)
-  - [Búsqueda de coste uniforme (UCS)](#busqueda-de-coste-uniforme)
-  - [Búsqueda en profundidad iterativa (IDS)](#busqueda-en-profundidad-iterativa)
+  - [Breadth-First Search (BFS) (búsqueda en amplitud)](#breadth-first-search-bfs-busqueda-en-amplitud)
+  - [Depth-First Search (DFS) (búsqueda en profundidad)](#depth-first-search-dfs-busqueda-en-profundidad)
+  - [Uniform Cost Search (UCS) (búsqueda de costo uniforme)](#uniform-cost-search-ucs-busqueda-de-costo-uniforme)
+  - [Iterative Deepening Search (IDS) (búsqueda en profundidad iterativa)](#iterative-deepening-search-ids-busqueda-en-profundidad-iterativa)
   - [Búsqueda bidireccional](#busqueda-bidireccional)
   - [Algoritmo de Dijkstra](#algoritmo-de-dijkstra)
   - [Completitud y optimalidad](#completitud-y-optimalidad)
@@ -106,13 +108,13 @@ en el índice alfabético final.
   - [Heurística admisible](#heuristica-admisible)
   - [Heurística consistente (monótona)](#heuristica-consistente)
   - [Heurística dominante](#heuristica-dominante)
-  - [Búsqueda voraz primero el mejor (Greedy Best-First)](#busqueda-voraz-primero-el-mejor)
-  - [Búsqueda A*](#busqueda-a)
-  - [IDA* (Iterative Deepening A*)](#ida)
+  - [Greedy Best-First Search (búsqueda voraz primero el mejor)](#greedy-best-first-search-busqueda-voraz-primero-el-mejor)
+  - [A* Search (búsqueda A*)](#a-search-busqueda-a)
+  - [Iterative Deepening A* (IDA*)](#iterative-deepening-a-ida)
   - [Búsqueda por subobjetivos (subgoaling)](#busqueda-por-subobjetivos)
   - [Búsqueda por ascenso de colinas (Hill Climbing)](#busqueda-por-ascenso-de-colinas)
   - [Búsqueda con horizonte](#busqueda-con-horizonte)
-  - [Recocido simulado (Simulated Annealing)](#recocido-simulado)
+  - [Simulated Annealing (recocido simulado)](#simulated-annealing-recocido-simulado)
   - [Búsqueda tabú](#busqueda-tabu)
   - [Búsqueda local iterada (ILS)](#busqueda-local-iterada)
   - [Búsqueda online](#busqueda-online)
@@ -126,7 +128,7 @@ en el índice alfabético final.
   - [Función de evaluación](#funcion-de-evaluacion)
   - [Búsqueda expectiminimax](#busqueda-expectiminimax)
   - [Equilibrio de Nash](#equilibrio-de-nash)
-  - [Monte Carlo Tree Search (MCTS)](#monte-carlo-tree-search)
+  - [Monte Carlo Tree Search (MCTS) (búsqueda en árbol Monte Carlo)](#monte-carlo-tree-search-mcts-busqueda-en-arbol-monte-carlo)
 - [8. Planificación clásica](#8-planificacion-clasica)
   - [Problema de planificación](#problema-de-planificacion)
   - [Plan](#plan)
@@ -134,32 +136,32 @@ en el índice alfabético final.
   - [Acción / operador](#accion-operador)
   - [Precondiciones](#precondiciones)
   - [Efectos](#efectos)
-  - [Hipótesis del mundo cerrado (CWA)](#hipotesis-del-mundo-cerrado)
+  - [Closed World Assumption (CWA) (hipótesis del mundo cerrado)](#closed-world-assumption-cwa-hipotesis-del-mundo-cerrado)
   - [Mutex (mutual exclusion)](#mutex)
   - [Anomalía de Sussman](#anomalia-de-sussman)
   - [Planificación hacia adelante (forward / progression)](#planificacion-hacia-adelante)
   - [Planificación hacia atrás (backward / regression)](#planificacion-hacia-atras)
   - [Planificación de orden total](#planificacion-de-orden-total)
-  - [Planificación de orden parcial (POP)](#planificacion-de-orden-parcial)
+  - [Partial-Order Planning (POP) (planificación de orden parcial)](#partial-order-planning-pop-planificacion-de-orden-parcial)
   - [Planificación deliberativa vs. reactiva](#planificacion-deliberativa-vs-reactiva)
   - [Planificación con incertidumbre](#planificacion-con-incertidumbre)
   - [Planificación generalizada](#planificacion-generalizada)
 - [9. Lenguajes y planificadores](#9-lenguajes-y-planificadores)
-  - [STRIPS](#strips)
-  - [PDDL (Planning Domain Definition Language)](#pddl)
-  - [ADL (Action Description Language)](#adl)
+  - [STRIPS (Stanford Research Institute Problem Solver)](#strips-stanford-research-institute-problem-solver)
+  - [PDDL (Planning Domain Definition Language) (lenguaje de definición de dominios de planificación)](#planning-domain-definition-language-pddl)
+  - [ADL (Action Description Language) (lenguaje de descripción de acciones)](#action-description-language-adl)
   - [Fluents](#fluents)
-  - [GOAP (Goal-Oriented Action Planning)](#goap)
-  - [FF (Fast-Forward)](#ff)
+  - [GOAP (Goal-Oriented Action Planning) (planificación orientada a objetivos)](#goal-oriented-action-planning-goap)
+  - [FF (Fast-Forward) (planificador heurístico)](#fast-forward-ff)
   - [LAMA](#lama)
   - [Fast Downward](#fast-downward)
   - [Graphplan](#graphplan)
   - [SHOP / SHOP2 / JSHOP](#shop-shop2-jshop)
   - [LPG](#lpg)
   - [VAL](#val)
-  - [IPC (International Planning Competition)](#ipc)
+  - [IPC (International Planning Competition) (competencia internacional de planificación)](#international-planning-competition-ipc)
   - [Prolog](#prolog)
-  - [LLMs como planificadores (NL2PDDL)](#llms-como-planificadores)
+  - [LLMs as planners (NL2PDDL) (LLMs como planificadores)](#llms-as-planners-nl2pddl-llms-como-planificadores)
 - [10. Planificación jerárquica (HTN)](#10-planificacion-jerarquica)
   - [HTN (Hierarchical Task Networks)](#htn)
   - [Tarea primitiva](#tarea-primitiva)
@@ -169,10 +171,10 @@ en el índice alfabético final.
   - [Descomposición jerárquica](#descomposicion-jerarquica)
   - [Conocimiento de dominio en HTN](#conocimiento-de-dominio-en-htn)
 - [11. Planificación multi-agente](#11-planificacion-multi-agente)
-  - [Sistema multi-agente (MAS)](#sistema-multi-agente)
+  - [Multi-Agent System (MAS) (sistema multi-agente)](#multi-agent-system-mas-sistema-multi-agente)
   - [Escenarios cooperativo, parcialmente cooperativo y antagónico](#escenarios-cooperativo-parcialmente-cooperativo-y-antagonico)
-  - [Planificación PARA múltiples agentes (PTMA)](#planificacion-para-multiples-agentes)
-  - [Planificación POR múltiples agentes (PBMA)](#planificacion-por-multiples-agentes)
+  - [Planning for Multiple Agents (PTMA) (planificación PARA múltiples agentes)](#planning-for-multiple-agents-ptma-planificacion-para-multiples-agentes)
+  - [Planning by Multiple Agents (PBMA) (planificación POR múltiples agentes)](#planning-by-multiple-agents-pbma-planificacion-por-multiples-agentes)
   - [Coordinación de planes (plan merging)](#coordinacion-de-planes)
   - [Asignación de tareas (task allocation)](#asignacion-de-tareas)
   - [Partial Global Planning (PGP)](#partial-global-planning)
@@ -180,14 +182,36 @@ en el índice alfabético final.
   - [FMAP (Forward Multi-Agent Planning)](#fmap)
   - [Enlace de orden y enlace causal](#enlace-de-orden-y-enlace-causal)
   - [Protocolos de coordinación](#protocolos-de-coordinacion)
+  - [Distributed planning (planificación distribuida)](#distributed-planning-planificacion-distribuida)
+  - [Centralized plan representation (representación centralizada del plan)](#centralized-plan-representation-representacion-centralizada-del-plan)
+  - [Shared information (información compartida)](#shared-information-informacion-compartida)
+  - [State variables and value domains (variables de estado y dominio de valores)](#state-variables-and-value-domains-variables-de-estado-y-dominio-de-valores)
+  - [Multi-functions (multifunciones)](#multi-functions-multifunciones)
+  - [Public goals vs. private goals (metas públicas vs. metas privadas)](#public-goals-vs-private-goals-metas-publicas-vs-metas-privadas)
+  - [Public actions vs. private actions (acciones públicas vs. acciones privadas)](#public-actions-vs-private-actions-acciones-publicas-vs-acciones-privadas)
+  - [Open World Assumption (OWA) (hipótesis de mundo abierto)](#open-world-assumption-hipotesis-de-mundo-abierto-owa)
+  - [Plan refinement (refinamiento de planes)](#plan-refinement-refinamiento-de-planes)
+  - [Open goal (meta abierta)](#open-goal-meta-abierta)
+  - [Threat in multi-agent POP (amenaza en POP multi-agente)](#threat-in-multi-agent-pop-amenaza-en-pop-multi-agente)
+  - [Concurrent plan (plan concurrente)](#concurrent-plan-plan-concurrente)
+  - [Execution monitoring (monitorización de ejecución)](#execution-monitoring-monitorizacion-de-ejecucion)
+  - [Broadcast help request (solicitud de ayuda por broadcast)](#broadcast-help-request-solicitud-de-ayuda-por-broadcast)
+  - [MARPE](#marpe)
+  - [JADE](#jade)
+  - [Reparación de planes multi-agente](#reparacion-de-planes-multi-agente)
+  - [Desconocimiento global](#desconocimiento-global)
+  - [Decisiones no consensuadas](#decisiones-no-consensuadas)
+  - [Tiempos de respuesta](#tiempos-de-respuesta)
+  - [Repetición de fallos](#repeticion-de-fallos)
+  - [Roles de agentes](#roles-de-agentes)
 - [12. Planificación bajo incertidumbre](#12-planificacion-bajo-incertidumbre)
   - [Entorno parcialmente observable](#entorno-parcialmente-observable)
   - [Entorno no determinista](#entorno-no-determinista)
   - [Entorno dinámico](#entorno-dinamico)
   - [Proceso de decisión de Markov (MDP)](#proceso-de-decision-de-markov)
-  - [POMDP (Partially Observable MDP)](#pomdp)
-  - [Modelo Oculto de Markov (HMM)](#modelo-oculto-de-markov)
-  - [Aprendizaje por refuerzo (RL)](#aprendizaje-por-refuerzo)
+  - [POMDP (Partially Observable Markov Decision Process) (proceso de decisión de Markov parcialmente observable)](#partially-observable-markov-decision-process-pomdp)
+  - [Hidden Markov Model (HMM) (modelo oculto de Markov)](#hidden-markov-model-hmm-modelo-oculto-de-markov)
+  - [Reinforcement Learning (RL) (aprendizaje por refuerzo)](#reinforcement-learning-rl-aprendizaje-por-refuerzo)
   - [Planificación reactiva y replanificación](#planificacion-reactiva-y-replanificacion)
 - [13. Conceptos transversales](#13-conceptos-transversales)
   - [Espacio de búsqueda](#espacio-de-busqueda)
@@ -230,6 +254,8 @@ mindmap
     Arquitectura reactiva
     Arquitectura híbrida
     Modelo BDI (Belief–Desire–Intention)
+    ACT-R
+    SOAR
 ```
 
 
@@ -309,6 +335,20 @@ Arquitectura cognitiva basada en tres actitudes mentales: **creencias**
 alcanzar) e **intenciones** (deseos a los que se ha comprometido a actuar).
 Es el fundamento conceptual de muchos sistemas multi-agente.
 
+### ACT-R
+
+Arquitectura cognitiva (*Adaptive Control of Thought-Rational*) que modela el
+procesamiento humano mediante módulos de memoria declarativa y procedimental.
+En IA se usa para estudiar cómo una arquitectura basada en producción de reglas
+selecciona acciones bajo restricciones cognitivas.
+
+### SOAR
+
+Arquitectura cognitiva unificada orientada a resolución de problemas mediante
+espacios de estados, operadores y aprendizaje por compilación de reglas
+(*chunking*). Su hipótesis central es que gran parte del comportamiento
+deliberado puede representarse como selección iterativa de operadores.
+
 ## 2. Representación del conocimiento
 
 
@@ -350,7 +390,7 @@ La inferencia se ejecuta mediante **encadenamiento hacia adelante**
 (*forward chaining*: desde los hechos a las conclusiones) o **hacia atrás**
 (*backward chaining*: desde las metas a los hechos).
 
-### Restricciones (CSP)
+### Constraint Satisfaction Problem (CSP) (problema de satisfacción de restricciones)
 
 Un *Constraint Satisfaction Problem* representa el conocimiento como
 variables, dominios y restricciones. La inferencia se realiza mediante
@@ -371,14 +411,14 @@ Especificación formal y compartida de los conceptos de un dominio y las
 relaciones entre ellos. En IA moderna, ontologías como OWL (basado en lógicas
 de descripción) permiten el razonamiento automatizado en la Web Semántica.
 
-### Grafo de conocimiento (Knowledge Graph)
+### Knowledge Graph (grafo de conocimiento)
 
 Estructura de datos que integra entidades, propiedades y relaciones a gran
 escala. Wikidata, DBpedia y los grafos de conocimiento empresariales son
 ejemplos. Combinan representación simbólica con técnicas modernas de
 *embeddings* y *graph neural networks* para inferencia híbrida.
 
-### Conocimiento declarativo vs. procedural
+### Declarative vs. procedural knowledge (conocimiento declarativo vs. procedimental)
 
 El **declarativo** describe *qué* es verdad sobre el mundo (hechos, reglas).
 El **procedural** describe *cómo* hacer algo (procedimientos, recetas). Un
@@ -529,7 +569,7 @@ Extiende la proposicional permitiendo expresar propiedades y relaciones entre
 objetos mediante **predicados** y **funciones**. La inferencia sigue usando
 modus ponens y modus tollens.
 
-### Lógica de primer orden (FOL)
+### First-Order Logic (FOL) (lógica de primer orden)
 
 Lógica de predicados enriquecida con **cuantificadores**: $\forall$ (para
 todo) y $\exists$ (existe). Permite expresar enunciados como «toda madre
@@ -537,7 +577,7 @@ quiere a sus hijas». Es el lenguaje formal canónico de las matemáticas y de
 la mayoría de la IA simbólica. Es semidecidible: el conjunto de teoremas es
 recursivamente enumerable, pero su complemento no.
 
-### Lógica de orden superior (HOL)
+### Higher-Order Logic (HOL) (lógica de orden superior)
 
 Permite cuantificar sobre **predicados y funciones**, no solo sobre
 individuos. Es más expresiva pero menos tratable; se usa en demostradores de
@@ -638,14 +678,14 @@ pila (DFS), cola de prioridad (UCS, A*).
 Número promedio de sucesores que genera un estado. Determina el crecimiento
 exponencial del árbol de búsqueda y, por tanto, el coste computacional.
 
-### Búsqueda en amplitud (BFS)
+### Breadth-First Search (BFS) (búsqueda en amplitud)
 
 Expande nodos por niveles: primero todos los de profundidad 0, luego los de
 profundidad 1, etcétera. Es **completa** y **óptima** cuando el coste por
 acción es uniforme. Complejidad temporal y espacial $O(b^d)$, donde $b$ es
 el factor de ramificación y $d$ la profundidad de la solución.
 
-### Búsqueda en profundidad (DFS)
+### Depth-First Search (DFS) (búsqueda en profundidad)
 
 Expande siempre el nodo más profundo de la frontera. Memoria $O(bm)$ donde
 $m$ es la profundidad máxima. **No** es completa en espacios infinitos ni
@@ -658,13 +698,13 @@ explorada.
 
 </Aside>
 
-### Búsqueda de coste uniforme (UCS)
+### Uniform Cost Search (UCS) (búsqueda de costo uniforme)
 
 Generalización de BFS que expande el nodo con menor coste acumulado $g(n)$.
 Es **óptima** cuando los costes son no negativos. Equivale al algoritmo de
 **Dijkstra** sobre el grafo implícito.
 
-### Búsqueda en profundidad iterativa (IDS)
+### Iterative Deepening Search (IDS) (búsqueda en profundidad iterativa)
 
 Combina la baja memoria de DFS con la completitud de BFS aplicando DFS con
 profundidad límite creciente: 1, 2, 3… El coste adicional es modesto porque
@@ -760,12 +800,12 @@ $n$ a $n'$.
 $h_2$ **domina** a $h_1$ si $h_2(n) \geq h_1(n)$ para todo $n$, siendo ambas
 admisibles. La dominante explora menos nodos: «más informada».
 
-### Búsqueda voraz primero el mejor (Greedy Best-First)
+### Greedy Best-First Search (búsqueda voraz primero el mejor)
 
 Expande el nodo con menor $h(n)$. Es rápida pero **no óptima** ni completa
 en general; puede engancharse en mínimos locales o ramas infinitas.
 
-### Búsqueda A*
+### A* Search (búsqueda A*)
 
 Combina coste pasado y futuro estimado: $f(n) = g(n) + h(n)$. Si $h$ es
 admisible, A* es óptima. Si $h$ es consistente, también es eficiente: ningún
@@ -780,7 +820,7 @@ priorizar nodos.
 
 </Aside>
 
-### IDA* (Iterative Deepening A*)
+### Iterative Deepening A* (IDA*)
 
 Variante de A* que limita la búsqueda por un umbral creciente de $f$ en lugar
 de mantener la frontera en memoria. Conserva la optimalidad sacrificando
@@ -804,7 +844,7 @@ Generalización del ascenso de colinas que mira $k$ pasos por delante antes
 de decidir. Si $h$ es exacta, es óptima y completa para horizonte
 suficientemente grande.
 
-### Recocido simulado (Simulated Annealing)
+### Simulated Annealing (recocido simulado)
 
 Búsqueda local probabilística inspirada en el recocido metalúrgico. Acepta
 movimientos peores con probabilidad $\exp(-\Delta E / T)$ y reduce la
@@ -852,12 +892,12 @@ mindmap
     Juego de suma cero
     Información perfecta vs. imperfecta
     Determinista vs. estocástico
-    Algoritmo Minimax
-    Poda alfa-beta
+    Minimax
+    Poda alfa beta
     Función de evaluación
-    Búsqueda expectiminimax
+    Expectiminimax
     Equilibrio de Nash
-    Monte Carlo Tree Search (MCTS)
+    Monte Carlo Tree Search
 ```
 
 
@@ -927,7 +967,7 @@ Configuración de estrategias en la que ningún jugador puede mejorar
 unilateralmente cambiando la suya. Generaliza la teoría del minimax a juegos
 no necesariamente de suma cero.
 
-### Monte Carlo Tree Search (MCTS)
+### Monte Carlo Tree Search (MCTS) (búsqueda en árbol Monte Carlo)
 
 Algoritmo que estima la utilidad mediante simulaciones aleatorias
 (*rollouts*) en lugar de evaluación heurística. Combina cuatro fases —
@@ -1001,7 +1041,7 @@ subconjunto de».
 
 ### Efectos
 
-Cambios que la acción produce en el estado. En STRIPS se descomponen en
+Cambios que la acción produce en el estado. En STRIPS (Stanford Research Institute Problem Solver) se descomponen en
 **lista de añadir** ($A$) y **lista de eliminar** ($E$). El nuevo estado es:
 
 $$S' \leftarrow (S \setminus E) \cup A$$
@@ -1013,10 +1053,10 @@ $\cup$ une conjuntos.
 
 </Aside>
 
-### Hipótesis del mundo cerrado (CWA)
+### Closed World Assumption (CWA) (hipótesis del mundo cerrado)
 
 Asunción de que toda proposición no presente en el estado es **falsa**. Es la
-asunción estándar en STRIPS y PDDL clásico, y simplifica enormemente la
+asunción estándar en STRIPS (Stanford Research Institute Problem Solver) y PDDL clásico, y simplifica enormemente la
 representación a costa de expresividad.
 
 ### Mutex (mutual exclusion)
@@ -1051,7 +1091,7 @@ Produce planes como secuencias linealmente ordenadas de acciones. Sencillo
 pero rígido: cualquier subobjetivo se compromete con un orden específico,
 lo que puede provocar la anomalía de Sussman.
 
-### Planificación de orden parcial (POP)
+### Partial-Order Planning (POP) (planificación de orden parcial)
 
 Construye planes como conjuntos parcialmente ordenados de acciones, añadiendo
 restricciones de orden sólo cuando son necesarias para resolver conflictos.
@@ -1060,7 +1100,7 @@ Sus elementos son:
 - **Acciones**: pasos del plan, incluyendo dos ficticias $\alpha_i$ (inicio)
   y $\alpha_f$ (fin).
 - **Enlaces de orden** $A \prec B$: «A debe ejecutarse antes que B».
-- **Enlaces causales** $A \xrightarrow{P} B$: «A produce el fluent $P$ que
+- **Enlaces causales** $A \xrightarrow{P} B$: «A produce el fluente $P$ que
   $B$ necesita».
 - **Precondiciones abiertas**: precondiciones aún no soportadas.
 
@@ -1109,7 +1149,7 @@ mindmap
 ```
 
 
-### STRIPS
+### STRIPS (Stanford Research Institute Problem Solver)
 
 *Stanford Research Institute Problem Solver*, propuesto por Fikes y Nilsson
 en 1971. Es el lenguaje de planificación seminal: representa los estados
@@ -1117,10 +1157,10 @@ como conjuntos de proposiciones booleanas y los operadores como tripletas
 `<precondiciones, lista_añadir, lista_eliminar>`. Su simplicidad lo hizo
 omnipresente, y su modelo persiste como núcleo de PDDL.
 
-### PDDL (Planning Domain Definition Language)
+### PDDL (Planning Domain Definition Language) (lenguaje de definición de dominios de planificación)
 
 Lenguaje estándar definido por McDermott et al. (1998) para la
-**International Planning Competition (IPC)**. Separa la **definición del
+**IPC (International Planning Competition) (competencia internacional de planificación)**. Separa la **definición del
 dominio** (predicados, acciones) de la **definición del problema** (objetos,
 estado inicial, meta). Existe en versiones 1.0 a 3.1, cada una añadiendo
 expresividad: ADL, fluentes numéricos, costes, restricciones temporales,
@@ -1137,9 +1177,9 @@ preferencias.
                  (clear ?x) (handempty) (on ?x ?y))))
 ```
 
-### ADL (Action Description Language)
+### ADL (Action Description Language) (lenguaje de descripción de acciones)
 
-Extensión de STRIPS propuesta por Pednault que admite **disyunciones**,
+Extensión de STRIPS (Stanford Research Institute Problem Solver) propuesta por Pednault que admite **disyunciones**,
 **cuantificadores**, **efectos condicionales** y predicados con igualdad.
 PDDL incorpora las construcciones de ADL.
 
@@ -1149,11 +1189,11 @@ Predicados (o funciones numéricas en PDDL2.1+) instanciados con objetos
 concretos del mundo, p. ej. `on(B, A)`. Son los átomos que componen los
 estados.
 
-### GOAP (Goal-Oriented Action Planning)
+### GOAP (Goal-Oriented Action Planning) (planificación orientada a objetivos)
 
-Adaptación de STRIPS para entornos dinámicos como videojuegos, ideada por
+Adaptación de STRIPS (Stanford Research Institute Problem Solver) para entornos dinámicos como videojuegos, ideada por
 **Jeff Orkin** (2004) e implementada por primera vez en *F.E.A.R.* (Monolith,
-2005). Sus diferencias clave con STRIPS:
+2005). Sus diferencias clave con STRIPS (Stanford Research Institute Problem Solver):
 
 1. **Costes** asociados a cada acción para priorizar entre alternativas.
 2. **Lista única de modificaciones** en lugar de añadir/eliminar separadas.
@@ -1164,7 +1204,7 @@ Adaptación de STRIPS para entornos dinámicos como videojuegos, ideada por
 GOAP usa típicamente A* sobre el espacio de acciones para encontrar
 secuencias de coste mínimo.
 
-### FF (Fast-Forward)
+### FF (Fast-Forward) (planificador heurístico)
 
 Planificador de **Hoffmann y Nebel** (2001), ganador del IPC 2000. Realiza
 **búsqueda hacia adelante en el espacio de estados** guiada por una
@@ -1210,7 +1250,7 @@ Validador estándar de planes para PDDL: dado un dominio, un problema y un
 plan, verifica si el plan es válido y reporta errores. Esencial para
 benchmarking y pipelines automatizados.
 
-### IPC (International Planning Competition)
+### IPC (International Planning Competition) (competencia internacional de planificación)
 
 Competición bianual celebrada en el marco de **ICAPS** desde 1998.
 Estandariza benchmarks, promueve PDDL y dirige buena parte del progreso
@@ -1223,7 +1263,7 @@ cláusulas de Horn. Su intérprete realiza **resolución SLD** y *backtracking*
 automáticamente. Pionero en aplicaciones de IA simbólica y razonamiento
 automatizado.
 
-### LLMs como planificadores (NL2PDDL)
+### LLMs as planners (NL2PDDL) (LLMs como planificadores)
 
 Línea de investigación reciente (2023-2026) que evalúa la capacidad de los
 **Large Language Models** —Claude, GPT-5, Gemini, DeepSeek-R1— para generar
@@ -1261,7 +1301,7 @@ hecho de que muchos problemas reales tienen estructura jerárquica natural
 
 ### Tarea primitiva
 
-Tarea ejecutable directamente por el agente; equivale a un operador STRIPS.
+Tarea ejecutable directamente por el agente; equivale a un operador STRIPS (Stanford Research Institute Problem Solver).
 Es el caso base de la descomposición.
 
 ### Tarea compuesta (no primitiva)
@@ -1303,21 +1343,43 @@ del dominio reduce la generalidad).
 ```mermaid
 mindmap
   root(("Planificación multi-agente"))
-    Sistema multi-agente (MAS)
+    Sistema multi-agente
     Escenarios cooperativo, parcialmente cooperativo y antagónico
-    Planificación PARA múltiples agentes (PTMA)
-    Planificación POR múltiples agentes (PBMA)
-    Coordinación de planes (plan merging)
-    Asignación de tareas (task allocation)
-    Partial Global Planning (PGP)
+    Planificación para múltiples agentes
+    Planificación por múltiples agentes
+    Coordinación de planes
+    Asignación de tareas
+    Partial Global Planning
     GRATE
-    FMAP (Forward Multi-Agent Planning)
+    FMAP
     Enlace de orden y enlace causal
     Protocolos de coordinación
+    Planificadores distribuidos
+    Representación centralizada del plan
+    Información compartida
+    Variables de estado y dominio de valores
+    Multifunciones
+    Metas públicas vs. metas privadas
+    Acciones públicas vs. acciones privadas
+    Hipótesis de mundo abierto
+    Refinamiento de planes
+    Meta abierta
+    Amenaza en POP multi-agente
+    Plan concurrente
+    Monitorización de ejecución
+    Broadcast para solicitud de ayuda
+    MARPE
+    JADE
+    Reparación de planes multi-agente
+    Desconocimiento global
+    Decisiones no consensuadas
+    Tiempos de respuesta
+    Repetición de fallos
+    Roles de agentes
 ```
 
 
-### Sistema multi-agente (MAS)
+### Multi-Agent System (MAS) (sistema multi-agente)
 
 Conjunto de agentes que interactúan en un entorno compartido, cada uno con
 sus propias percepciones, capacidades y objetivos. Pueden ser cooperativos,
@@ -1331,13 +1393,13 @@ parcialmente cooperativos o competitivos.
 - **Antagónico (competitivo):** las metas son opuestas; lo que gana uno lo
   pierde otro.
 
-### Planificación PARA múltiples agentes (PTMA)
+### Planning for Multiple Agents (PTMA) (planificación PARA múltiples agentes)
 
 Un planificador **centralizado** genera un plan global y asigna acciones a
 cada agente de ejecución (*task allocation*). Garantiza optimalidad y
 ausencia de conflictos, pero exige visión global y comunicación abundante.
 
-### Planificación POR múltiples agentes (PBMA)
+### Planning by Multiple Agents (PBMA) (planificación POR múltiples agentes)
 
 Cada agente planifica de forma **independiente y distribuida**, coordinándose
 mediante protocolos para evitar conflictos. Permite preservar privacidad y
@@ -1383,7 +1445,7 @@ fases son:
 
 - **Enlace de orden** $A \prec B$: la acción $A$ debe ejecutarse antes que
   $B$ en cualquier linealización del plan.
-- **Enlace causal** $A \xrightarrow{P} B$: la acción $A$ produce el fluent
+- **Enlace causal** $A \xrightarrow{P} B$: la acción $A$ produce el fluente
   $P$ que $B$ requiere; ninguna otra acción puede borrarlo entre ambas.
 
 ### Protocolos de coordinación
@@ -1391,6 +1453,143 @@ fases son:
 Reglas que estructuran la comunicación entre agentes durante la
 planificación distribuida: turnos, *contract net*, subastas, votación. Un
 buen protocolo equilibra eficiencia, justicia y robustez ante fallos.
+
+### Distributed planning (planificación distribuida)
+
+Arquitectura de planificación en la que varios agentes planifican de forma
+descentralizada y cooperan mediante intercambio de información y protocolos de
+coordinación, en lugar de depender de un único planificador central.
+
+### Centralized plan representation (representación centralizada del plan)
+
+Esquema donde el artefacto del plan conjunto es compartido por todos los
+agentes (por ejemplo, como una «pizarra común»), aunque el proceso de
+planificación que lo construye siga siendo distribuido.
+
+### Shared information (información compartida)
+
+Subconjunto de variables, predicados o fluentes que los agentes acuerdan
+publicar para coordinarse. Suele declararse explícitamente para equilibrar
+cooperación y privacidad del conocimiento local.
+
+### State variables and value domains (variables de estado y dominio de valores)
+
+Formalización del estado del mundo mediante variables $V$, cada una con un
+dominio finito de valores mutuamente excluyentes $D_v$. Un **fluente** es una
+instanciación $\langle v, d \rangle$ de una variable con uno de sus valores.
+
+### Multi-functions (multifunciones)
+
+Mecanismo de modelado para codificar información del problema de forma compacta
+en dominios multi-agente, facilitando la representación de conocimiento parcial
+y la manipulación de variables instanciadas compartidas.
+
+### Public goals vs. private goals (metas públicas vs. metas privadas)
+
+- **Metas públicas:** objetivos globales que deben ser satisfechos de manera
+  consistente por el plan conjunto.
+- **Metas privadas:** objetivos internos de cada agente, resueltos localmente
+  sin exponer necesariamente toda su información o estrategia.
+
+### Public actions vs. private actions (acciones públicas vs. acciones privadas)
+
+- **Acciones públicas:** operadores conocidos por varios agentes, con
+  precondiciones y efectos compartidos para coordinar dependencias.
+- **Acciones privadas:** operadores locales de un agente, no totalmente
+  observables por otros, que preservan autonomía y privacidad.
+
+### Open World Assumption (OWA) (hipótesis de mundo abierto)
+
+Supuesto en el que la información no especificada explícitamente se considera
+**desconocida** y no falsa por defecto. En multi-agente modela mejor la visión
+parcial y heterogénea del entorno.
+
+### Plan refinement (refinamiento de planes)
+
+Proceso iterativo donde los agentes parten de un plan base (a menudo parcial o
+vacío) y agregan subplanes para resolver metas abiertas, manteniendo
+consistencia causal y de orden.
+
+### Open goal (meta abierta)
+
+Precondición o condición objetivo del plan parcial que todavía no está
+soportada por ninguna acción válida del plan actual, por lo que requiere
+refinamiento adicional.
+
+### Threat in multi-agent POP (amenaza en POP multi-agente)
+
+Situación en la que una acción puede invalidar un enlace causal existente entre
+otras dos acciones del plan parcial. Se resuelve con restricciones de orden,
+cambios de refinamiento o reasignación de acciones.
+
+### Concurrent plan (plan concurrente)
+
+Plan en el que múltiples agentes ejecutan acciones en paralelo cuando son
+mutuamente consistentes y no generan conflictos sobre recursos, precondiciones
+o efectos.
+
+### Execution monitoring (monitorización de ejecución)
+
+Supervisión continua del estado y de la ejecución de acciones para detectar
+desviaciones, fallos o violaciones de precondiciones y activar reparación o
+replanificación.
+
+### Broadcast help request (solicitud de ayuda por broadcast)
+
+Patrón de comunicación donde un agente difunde a varios colaboradores una
+petición de apoyo ante un fallo, para recibir alternativas de reparación y
+seleccionar la más conveniente.
+
+### MARPE
+
+Marco de trabajo de planificación y ejecución reactiva en entornos
+multi-agente, orientado a detectar fallos durante la ejecución y coordinar
+reparación
+distribuida en tiempos cortos.
+
+### JADE
+
+**Java Agent DEvelopment Framework**, plataforma para implementar sistemas
+multi-agente en Java siguiendo estándares FIPA (mensajería ACL, directorio de
+servicios y ciclos de vida de agentes). Se usa para prototipar coordinación,
+negociación y ejecución distribuida.
+
+### Reparación de planes multi-agente
+
+Proceso de ajustar un plan conjunto cuando cambian el entorno, los recursos o
+la disponibilidad de agentes, evitando replanificar todo desde cero. Busca
+recuperar factibilidad con cambios locales y bajo coste de coordinación.
+
+### Desconocimiento global
+
+Situación en la que ningún agente posee una visión completa y actualizada del
+estado global del sistema. Obliga a coordinarse con información parcial,
+incrementando la incertidumbre y el riesgo de conflictos entre planes.
+
+### Decisiones no consensuadas
+
+Decisiones tomadas por uno o varios agentes sin acuerdo explícito del resto
+cuando el protocolo requería consenso o validación compartida. Pueden acelerar
+la reacción local, pero también introducir incoherencias y reprocesos.
+
+### Tiempos de respuesta
+
+Latencia entre la detección de un evento y la emisión/ejecución de una acción
+coordinada por el sistema multi-agente. Depende de cómputo local, comunicación,
+sincronización y complejidad del protocolo de coordinación.
+
+### Repetición de fallos
+
+Recurrencia del mismo patrón de error en ciclos sucesivos de coordinación o
+ejecución (por ejemplo, conflicto de recursos no resuelto). Indica debilidad
+en diagnóstico, aprendizaje o reglas de recuperación del sistema.
+
+### Roles de agentes
+
+Especialización funcional de los agentes dentro del sistema (p. ej.,
+coordinador, planificador, ejecutor, monitor, negociador). Definir roles
+claros reduce ambiguedad, mejora escalabilidad y facilita protocolos de
+interacción robustos.
 
 ## 12. Planificación bajo incertidumbre
 
@@ -1452,7 +1651,7 @@ $a$; y $\sum_t$ agrega el valor esperado sobre todos los estados siguientes.
 
 </Aside>
 
-### POMDP (Partially Observable MDP)
+### POMDP (Partially Observable Markov Decision Process) (proceso de decisión de Markov parcialmente observable)
 
 Generalización de MDP en que el agente no observa el estado directamente,
 sino observaciones $o \in O$ con probabilidad $P(o \mid s, a)$. La política
@@ -1460,7 +1659,7 @@ sino observaciones $o \in O$ con probabilidad $P(o \mid s, a)$. La política
 Su resolución es PSPACE-hard, por lo que en la práctica se usan
 aproximaciones.
 
-### Modelo Oculto de Markov (HMM)
+### Hidden Markov Model (HMM) (modelo oculto de Markov)
 
 Caso particular de POMDP sin acciones, en el que el estado evoluciona
 según una cadena de Markov y solo se observa una variable dependiente del
@@ -1468,7 +1667,7 @@ estado. Usado en reconocimiento de voz, *POS tagging* y bioinformática.
 Algoritmos clave: **forward-backward** (probabilidades), **Viterbi**
 (secuencia más probable), **Baum-Welch** (aprendizaje de parámetros).
 
-### Aprendizaje por refuerzo (RL)
+### Reinforcement Learning (RL) (aprendizaje por refuerzo)
 
 Paradigma en que el agente aprende una política óptima mediante interacción
 con el entorno, sin conocer a priori las funciones de transición o
@@ -1898,7 +2097,7 @@ debate.
 Distinción aristotélica: **propiedades esenciales** son aquellas sin
 las cuales el objeto no sería lo que es; **accidentales** son las
 contingentes. En modelado: las precondiciones rígidas de un operador
-STRIPS capturan condiciones esenciales para la acción.
+STRIPS (Stanford Research Institute Problem Solver) capturan condiciones esenciales para la acción.
 
 #### Compromiso ontológico
 
@@ -2043,38 +2242,43 @@ los frameworks GRATE y BDI distribuido en sistemas multi-agente.
 
 Para consulta rápida, los términos más usados en orden alfabético:
 
-- **A\***: búsqueda informada óptima con $f(n) = g(n) + h(n)$.
-- **ADL**: extensión expresiva de STRIPS.
-- **ALC**: lógica de descripción base.
-- **BDI**: Belief-Desire-Intention.
-- **BFS**: Breadth-First Search.
-- **CSP**: Constraint Satisfaction Problem.
-- **CWA**: Closed World Assumption.
-- **DFS**: Depth-First Search.
-- **FF**: Fast-Forward planner.
-- **FMAP**: Forward Multi-Agent Planning.
-- **FOL**: First-Order Logic.
-- **GOAP**: Goal-Oriented Action Planning.
-- **HMM**: Hidden Markov Model.
-- **HTN**: Hierarchical Task Network.
-- **IDA\***: Iterative Deepening A\*.
-- **IDS**: Iterative Deepening Search.
-- **IPC**: International Planning Competition.
-- **LAMA**: planificador basado en landmarks.
-- **MAS**: Multi-Agent System.
-- **MCP**: Model Context Protocol.
-- **MCTS**: Monte Carlo Tree Search.
-- **MDP**: Markov Decision Process.
-- **PBMA**: Planificación POR Múltiples Agentes.
-- **PDDL**: Planning Domain Definition Language.
-- **PGP**: Partial Global Planning.
-- **POMDP**: Partially Observable MDP.
-- **POP**: Partial-Order Planning.
-- **PTMA**: Planificación PARA Múltiples Agentes.
-- **SHOP**: Simple Hierarchical Ordered Planner.
-- **STRIPS**: Stanford Research Institute Problem Solver.
-- **UCS**: Uniform Cost Search.
-- **VAL**: validador de planes PDDL.
+- **A\***: *A-star* (búsqueda informada óptima con $f(n)=g(n)+h(n)$).
+- **ACT-R**: *Adaptive Control of Thought-Rational* (arquitectura cognitiva modular), por sus siglas en inglés.
+- **ADL**: *Action Description Language* (lenguaje de descripción de acciones), por sus siglas en inglés.
+- **ALC**: *Attributive Language with Complement* (lógica de descripción base), por sus siglas en inglés.
+- **BDI**: *Belief-Desire-Intention* (creencias-deseos-intenciones), por sus siglas en inglés.
+- **BFS**: *Breadth-First Search* (búsqueda en amplitud), por sus siglas en inglés.
+- **CSP**: *Constraint Satisfaction Problem* (problema de satisfacción de restricciones), por sus siglas en inglés.
+- **CWA**: *Closed World Assumption* (hipótesis del mundo cerrado), por sus siglas en inglés.
+- **DFS**: *Depth-First Search* (búsqueda en profundidad), por sus siglas en inglés.
+- **FF**: *Fast-Forward* (planificador heurístico), por sus siglas en inglés.
+- **FMAP**: *Forward Multi-Agent Planning* (planificación multiagente hacia adelante), por sus siglas en inglés.
+- **FOL**: *First-Order Logic* (lógica de primer orden), por sus siglas en inglés.
+- **GOAP**: *Goal-Oriented Action Planning* (planificación orientada a objetivos), por sus siglas en inglés.
+- **HMM**: *Hidden Markov Model* (modelo oculto de Markov), por sus siglas en inglés.
+- **HTN**: *Hierarchical Task Network* (red jerárquica de tareas), por sus siglas en inglés.
+- **IDA\***: *Iterative Deepening A-star* (A* con profundización iterativa), por sus siglas en inglés.
+- **IDS**: *Iterative Deepening Search* (búsqueda con profundización iterativa), por sus siglas en inglés.
+- **IPC**: *International Planning Competition* (competencia internacional de planificación), por sus siglas en inglés.
+- **JADE**: *Java Agent DEvelopment Framework* (marco para sistemas multiagente), por sus siglas en inglés.
+- **LAMA**: *LAMA planner* (planificador basado en hitos y costos de acción; nombre de uso estándar en inglés).
+- **MARPE**: *Multi-Agent Reactive Plan Execution* (ejecución reactiva y reparación de planes), por sus siglas en inglés.
+- **MAS**: *Multi-Agent System* (sistema multiagente), por sus siglas en inglés.
+- **MCP**: *Model Context Protocol* (protocolo de contexto de modelo), por sus siglas en inglés.
+- **MCTS**: *Monte Carlo Tree Search* (búsqueda en árbol Monte Carlo), por sus siglas en inglés.
+- **MDP**: *Markov Decision Process* (proceso de decisión de Markov), por sus siglas en inglés.
+- **OWA**: *Open World Assumption* (hipótesis de mundo abierto), por sus siglas en inglés.
+- **PBMA**: *Planning by Multiple Agents* (planificación por múltiples agentes), por sus siglas en inglés.
+- **PDDL**: *Planning Domain Definition Language* (lenguaje de definición de dominios de planificación), por sus siglas en inglés.
+- **PGP**: *Partial Global Planning* (planificación global parcial), por sus siglas en inglés.
+- **POMDP**: *Partially Observable Markov Decision Process* (proceso de decisión de Markov parcialmente observable), por sus siglas en inglés.
+- **POP**: *Partial-Order Planning* (planificación de orden parcial), por sus siglas en inglés.
+- **PTMA**: *Planning for Multiple Agents* (planificación para múltiples agentes), por sus siglas en inglés.
+- **SHOP**: *Simple Hierarchical Ordered Planner* (planificador jerárquico ordenado simple), por sus siglas en inglés.
+- **SOAR**: *SOAR* (arquitectura cognitiva para resolución de problemas; nombre estándar en inglés).
+- **STRIPS (Stanford Research Institute Problem Solver)**: *Stanford Research Institute Problem Solver* (sistema clásico de planificación), por sus siglas en inglés.
+- **UCS**: *Uniform Cost Search* (búsqueda de costo uniforme), por sus siglas en inglés.
+- **VAL**: *VAL plan validator* (validador de planes PDDL; nombre de uso estándar en inglés).
 
 ## 16. Referencias y lecturas recomendadas
 
@@ -2090,7 +2294,7 @@ Para consulta rápida, los términos más usados en orden alfabético:
 
 **Artículos seminales:**
 
-- Fikes, R. y Nilsson, N. (1971). *STRIPS: A New Approach to the Application
+- Fikes, R. y Nilsson, N. (1971). *STRIPS (Stanford Research Institute Problem Solver): A New Approach to the Application
   of Theorem Proving to Problem Solving*. Artificial Intelligence, 2(3-4).
 - Hoffmann, J. y Nebel, B. (2001). *The FF Planning System*. JAIR.
 - Helmert, M. (2006). *The Fast Downward Planning System*. JAIR.
@@ -2175,7 +2379,7 @@ mindmap
       A estrella e IDA estrella
       Minimax y MCTS
     Planificación
-      STRIPS/PDDL
+      STRIPS y PDDL
       POP y HTN
       PTMA y PBMA
     Incertidumbre
