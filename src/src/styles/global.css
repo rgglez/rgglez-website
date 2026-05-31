@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./typography.css";
 
+@source "../../node_modules/@rgglez/astro-aside/src/**/*.astro";
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root,
