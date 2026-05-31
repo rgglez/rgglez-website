@@ -26,7 +26,7 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
-import Aside from "@/components/Aside.astro";
+import Aside from "@rgglez/astro-aside";
 
 ## Introducción
 
@@ -2280,64 +2280,53 @@ Para consulta rápida, los términos más usados en orden alfabético:
 - **UCS**: *Uniform Cost Search* (búsqueda de costo uniforme), por sus siglas en inglés.
 - **VAL**: *VAL plan validator* (validador de planes PDDL; nombre de uso estándar en inglés).
 
-## 16. Referencias y lecturas recomendadas
+## 16. Bibliografía 
 
-**Textos canónicos:**
+### Fundamentos de IA, búsqueda y planificación
 
-- Russell, S. y Norvig, P. *Artificial Intelligence: A Modern Approach*
-  (4.ª ed., 2020). Capítulos 3-11 (búsqueda y planificación) y 17 (decisión
-  bajo incertidumbre).
-- Ghallab, M., Nau, D. y Traverso, P. *Automated Planning: Theory and
-  Practice* (2004). Texto de referencia específico.
-- Ghallab, M., Nau, D. y Traverso, P. *Automated Planning and Acting*
-  (2016). Continuación que integra ejecución y reactividad.
+- Ghallab, M., Nau, D., & Traverso, P. (2004). *Automated planning: Theory and practice*. Morgan Kaufmann. https://shop.elsevier.com/books/automated-planning/ghallab/978-1-55860-856-6
+- Ghallab, M., Nau, D., & Traverso, P. (2016). *Automated planning and acting*. Cambridge University Press. https://doi.org/10.1017/CBO9781139583923
+- Russell, S. J., & Norvig, P. (2021). *Artificial intelligence: A modern approach* (4th ed.). Pearson. https://aima.cs.berkeley.edu/
 
-**Artículos seminales:**
+### Planificación clásica y lenguajes (STRIPS/PDDL)
 
-- Fikes, R. y Nilsson, N. (1971). *STRIPS (Stanford Research Institute Problem Solver): A New Approach to the Application
-  of Theorem Proving to Problem Solving*. Artificial Intelligence, 2(3-4).
-- Hoffmann, J. y Nebel, B. (2001). *The FF Planning System*. JAIR.
-- Helmert, M. (2006). *The Fast Downward Planning System*. JAIR.
-- Richter, S. y Westphal, M. (2010). *The LAMA Planner*. JAIR.
-- Orkin, J. (2006). *Three States and a Plan: The AI of F.E.A.R.* GDC.
-- Erol, K., Hendler, J. y Nau, D. (1994). *HTN Planning: Complexity and
-  Expressivity*. AAAI.
+- Fikes, R. E., & Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. *Artificial Intelligence, 2*(3-4), 189-208. https://doi.org/10.1016/0004-3702(71)90010-5
+- Fox, M., & Long, D. (2003). PDDL2.1: An extension to PDDL for expressing temporal planning domains. *Journal of Artificial Intelligence Research, 20*, 61-124. https://jair.org/index.php/jair/article/view/10379
+- McDermott, D., Ghallab, M., Howe, A., Knoblock, C., Ram, A., Veloso, M., Weld, D., & Wilkins, D. (1998). PDDL - The planning domain definition language (Tech. Rep. CVC TR-98-003/DCS TR-1165). Yale Center for Computational Vision and Control. https://planning.wiki/_citedpapers/pddl1998.pdf
 
-**Avances recientes (LLMs y planificación, 2023-2026):**
+### Planificadores heurísticos y óptimos
 
-- Valmeekam, K. et al. (2023). *PlanBench: An Extensible Benchmark for
-  Evaluating Large Language Models on Planning and Reasoning about Change*.
-  NeurIPS.
-- Liu, B. et al. (2023). *LLM+P: Empowering Large Language Models with
-  Optimal Planning Proficiency*.
-- Corrêa, A. B., Pereira, A. G. y Seipp, J. (2025). *The 2025 Planning
-  Performance of Frontier Large Language Models*. arXiv:2511.09378.
+- Helmert, M. (2006). The Fast Downward planning system. *Journal of Artificial Intelligence Research, 26*, 191-246. https://jair.org/index.php/jair/article/view/10457
+- Hoffmann, J., & Nebel, B. (2001). The FF planning system: Fast plan generation through heuristic search. *Journal of Artificial Intelligence Research, 14*, 253-302. https://jair.org/index.php/jair/article/view/10390
+- Richter, S., & Westphal, M. (2010). The LAMA planner: Guiding cost-based anytime planning with landmarks. *Journal of Artificial Intelligence Research, 39*, 127-177. https://jair.org/index.php/jair/article/view/10699
 
-**Recursos online:**
+### HTN, GOAP y planificación aplicada
 
-- [planning.wiki](https://planning.wiki/) — Documentación comunitaria.
-- [editor.planning.domains](https://editor.planning.domains/) — Editor PDDL
-  online con planificadores integrados.
-- [ICAPS](https://www.icaps-conference.org/) — Conferencia principal del
-  campo.
-- [Fast Downward](https://www.fast-downward.org/) — Plataforma open-source.
+- Erol, K., Hendler, J., & Nau, D. S. (1994). HTN planning: Complexity and expressivity. *Proceedings of the 12th National Conference on Artificial Intelligence (AAAI)*, 1123-1128. https://cdn.aaai.org/AAAI/1994/AAAI94-173.pdf
+- Nau, D. S., Au, T.-C., Ilghami, O., Kuter, U., Murdock, J. W., Wu, D., & Yaman, F. (2003). SHOP2: An HTN planning system. *Journal of Artificial Intelligence Research, 20*, 379-404. https://jair.org/index.php/jair/article/view/10395
+- Orkin, J. (2006). Three states and a plan: The AI of F.E.A.R. *Proceedings of the Game Developers Conference (GDC)*. https://alumni.media.mit.edu/~jorkin/gdc2006_orkin_jeff_fear.pdf
 
-**Filosofía relevante a la IA:**
+### Planificación multi-agente y bajo incertidumbre
 
-- Turing, A. (1950). *Computing Machinery and Intelligence*. Mind, 59(236).
-- Newell, A. y Simon, H. (1976). *Computer Science as Empirical Inquiry:
-  Symbols and Search*. Communications of the ACM, 19(3).
-- Searle, J. (1980). *Minds, Brains, and Programs*. Behavioral and Brain
-  Sciences, 3(3).
-- Dennett, D. (1987). *The Intentional Stance*. MIT Press.
-- Pearl, J. y Mackenzie, D. (2018). *The Book of Why: The New Science of
-  Cause and Effect*. Basic Books.
-- [Webdianoia](https://www.webdianoia.com/glosario/) — Glosario filosófico
-  general en español, útil como referencia complementaria.
+- Brafman, R. I., & Domshlak, C. (2008). From one to many: Planning for loosely coupled multi-agent systems. *Proceedings of ICAPS 2008*, 28-35. https://ojs.aaai.org/index.php/ICAPS/article/view/13485
+- Puterman, M. L. (1994). *Markov decision processes: Discrete stochastic dynamic programming*. Wiley. https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887
+- Silver, D., & Veness, J. (2010). Monte-Carlo planning in large POMDPs. *Advances in Neural Information Processing Systems, 23*. https://papers.nips.cc/paper/2010/hash/edfbe1afcf9246bb0d40eb4d8027d90f-Abstract.html
+
+### LLMs y planificación (lecturas recientes)
+
+- Liu, B., Jiang, Y., Zhang, X., Liu, Q., Zhang, S., Biswas, J., & Stone, P. (2023). LLM+P: Empowering large language models with optimal planning proficiency. *arXiv*. https://arxiv.org/abs/2304.11477
+- Valmeekam, K., Sreedharan, S., Marquez, M., & Kambhampati, S. (2023). PlanBench: An extensible benchmark for evaluating large language models on planning and reasoning about change. *Advances in Neural Information Processing Systems, 36*. https://arxiv.org/abs/2206.10498
+
+### Recursos abiertos recomendados
+
+- International Conference on Automated Planning and Scheduling. (s. f.). *ICAPS*. https://icaps-conference.org/
+- Planning Wiki. (s. f.). *Planning.wiki*. https://planning.wiki/
+- Planning.Domains. (s. f.). *Editor*. https://editor.planning.domains/
+- Fast Downward. (s. f.). *Fast Downward planning system*. https://www.fast-downward.org/
 
 
 
-## Apéndice: mapas mentales integradores
+## Apéndice
 
 ### Mapa global del glosario
 

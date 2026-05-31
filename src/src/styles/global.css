@@ -150,8 +150,8 @@ html[data-theme="dark"] {
   overflow-y: hidden;
 }
 
-/* Mermaid: mindmap — secciones no-root usan color de texto del tema */
-svg.mindmapDiagram [class*="section-"]:not(.section-root) span {
+/* Mermaid: mindmap — forzar color de texto temático en todas las secciones, incluyendo root */
+svg.mindmapDiagram [class*="section-"] span {
   color: var(--foreground) !important;
 }
 
