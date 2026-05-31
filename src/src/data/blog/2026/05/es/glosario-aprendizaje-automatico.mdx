@@ -806,6 +806,7 @@ Tabla que resume predicciones correctas e incorrectas por clase.
 
 Mide cómo se distribuyen aciertos y errores por clase para entender en qué se equivoca el modelo.
 Ejemplo: en detección de fraude, permite ver si hay demasiados fraudes no detectados ($FN$).
+$TP$ son verdaderos positivos; $TN$ son verdaderos negativos; $FP$ son falsos positivos; $FN$ son falsos negativos.
 
 </Aside>
 
@@ -821,6 +822,7 @@ $$
 
 Mide la fracción total de aciertos del modelo y sirve como referencia global rápida.
 Ejemplo: en clasificación de imágenes balanceadas (gato/perro), se usa como métrica principal inicial.
+$TP$ son verdaderos positivos; $TN$ son verdaderos negativos; $FP$ son falsos positivos; $FN$ son falsos negativos.
 
 </Aside>
 
@@ -836,6 +838,7 @@ $$
 
 Mide qué porcentaje de predicciones positivas realmente eran positivas; prioriza evitar falsos positivos.
 Ejemplo: en un filtro de spam, alta precisión evita mandar correos legítimos a spam.
+$TP$ son verdaderos positivos; $FP$ son falsos positivos.
 
 </Aside>
 
@@ -851,6 +854,7 @@ $$
 
 Mide qué porcentaje de los positivos reales logra capturar el modelo; prioriza evitar falsos negativos.
 Ejemplo: en tamizaje médico, se busca alto recall para no dejar casos enfermos sin detectar.
+$TP$ son verdaderos positivos; $FN$ son falsos negativos.
 
 </Aside>
 
@@ -866,6 +870,7 @@ $$
 
 Mide qué tan bien el modelo identifica negativos reales.
 Ejemplo: en detección de intrusiones, ayuda a estimar cuántas conexiones normales se marcan erróneamente como ataque.
+$TN$ son verdaderos negativos; $FP$ son falsos positivos.
 
 </Aside>
 
@@ -881,6 +886,7 @@ $$
 
 Mide el equilibrio entre precisión y recall en una sola cifra.
 Ejemplo: en moderación de contenido, se usa cuando importa balancear publicaciones peligrosas omitidas y falsos reportes.
+$\operatorname{precision}$ indica cuántos positivos predichos fueron correctos; $\operatorname{recall}$ indica cuántos positivos reales fueron detectados.
 
 </Aside>
 
@@ -903,6 +909,7 @@ Proporción de positivos reales correctamente identificados; equivale a recall o
 
 Mide la capacidad de detectar la clase positiva.
 Ejemplo: en detección de cáncer, un TPR alto indica que se detectan la mayoría de casos reales.
+$TP$ son verdaderos positivos; $FN$ son falsos negativos; $\operatorname{TPR}=\frac{TP}{TP+FN}$.
 
 </Aside>
 
@@ -914,6 +921,7 @@ Proporción de negativos reales que el modelo clasifica incorrectamente como pos
 
 Mide la frecuencia con que se generan falsas alarmas sobre casos negativos.
 Ejemplo: en autenticación biométrica, un FPR alto implica aceptar usuarios no autorizados.
+$FP$ son falsos positivos; $TN$ son verdaderos negativos; $\operatorname{FPR}=\frac{FP}{FP+TN}$.
 
 </Aside>
 
@@ -962,6 +970,7 @@ $$
 
 Mide qué tan bien calibradas y seguras son las probabilidades predichas; penaliza mucho la sobreconfianza incorrecta.
 Ejemplo: en un sistema de aprobación automática, se usa para entrenar modelos probabilísticos confiables.
+$n$ es el número de ejemplos; $y_i$ es la etiqueta real binaria; $\hat{p}_i$ es la probabilidad predicha para la clase positiva; $\log$ es el logaritmo natural.
 
 </Aside>
 
@@ -999,6 +1008,7 @@ $$
 
 Mide la calidad global de clasificación binaria considerando todas las celdas de la matriz de confusión.
 Ejemplo: en problemas médicos desbalanceados, MCC se usa para comparar modelos de forma más estable que accuracy.
+$TP$, $TN$, $FP$ y $FN$ son los conteos de la matriz de confusión. MCC toma valores entre $-1$ y $1$; $1$ indica predicción perfecta, $0$ equivale a azar y $-1$ indica desacuerdo total.
 
 </Aside>
 
@@ -1031,6 +1041,7 @@ $$
 
 Mide el error promedio en magnitud absoluta, fácil de interpretar en las unidades originales.
 Ejemplo: en pronóstico de ventas, MAE indica en promedio cuántas unidades se falla por periodo.
+$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción; $|\cdot|$ indica valor absoluto.
 
 </Aside>
 
@@ -1046,6 +1057,7 @@ $$
 
 Mide el error cuadrático promedio y penaliza con más fuerza errores grandes.
 Ejemplo: en estimación de demanda eléctrica, se usa cuando errores extremos son especialmente costosos.
+$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es el valor predicho.
 
 </Aside>
 
@@ -1061,6 +1073,7 @@ $$
 
 Mide el tamaño típico del error con mayor sensibilidad a errores grandes, pero en la misma unidad del objetivo.
 Ejemplo: en predicción de temperatura, RMSE se reporta en °C para interpretación directa.
+$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción.
 
 </Aside>
 
@@ -1087,6 +1100,7 @@ $$
 
 Mide qué proporción de la variación de la variable objetivo explica el modelo frente a una línea base.
 Ejemplo: en modelos inmobiliarios, permite comunicar cuánto de la variabilidad de precios se captura.
+$y_i$ es el valor real; $\hat{y}_i$ es la predicción; $\bar{y}$ es la media de los valores reales; el numerador mide error residual y el denominador mide variabilidad total.
 
 </Aside>
 
@@ -1102,6 +1116,7 @@ $$
 
 Mide el error promedio en porcentaje, útil para comparar desempeño entre series con distintas escalas.
 Ejemplo: en forecast de inventario multi-producto, facilita comparar error relativo entre categorías.
+$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción. MAPE puede ser problemático cuando $y_i$ es cero o cercano a cero.
 
 </Aside>
 
