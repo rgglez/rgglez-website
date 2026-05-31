@@ -894,6 +894,10 @@ $\operatorname{precision}$ indica cuántos positivos predichos fueron correctos;
 
 Curva que muestra la relación entre tasa de verdaderos positivos y tasa de falsos positivos al variar el umbral de decisión.
 
+$$
+\operatorname{ROC}(t)=\left(\operatorname{FPR}(t),\operatorname{TPR}(t)\right),\quad t\in[0,1]
+$$
+
 <Aside type="note">
 
 Sirve para comparar clasificadores a distintos umbrales de decisión.
@@ -905,11 +909,15 @@ Ejemplo: en scoring crediticio, ayuda a elegir el umbral de aprobación según t
 
 Proporción de positivos reales correctamente identificados; equivale a recall o sensibilidad.
 
+$$
+\operatorname{TPR}=\frac{TP}{TP+FN}
+$$
+
 <Aside type="note">
 
 Mide la capacidad de detectar la clase positiva.
 Ejemplo: en detección de cáncer, un TPR alto indica que se detectan la mayoría de casos reales.
-$TP$ son verdaderos positivos; $FN$ son falsos negativos; $\operatorname{TPR}=\frac{TP}{TP+FN}$.
+$TP$ son verdaderos positivos; $FN$ son falsos negativos.
 
 </Aside>
 
@@ -917,28 +925,40 @@ $TP$ son verdaderos positivos; $FN$ son falsos negativos; $\operatorname{TPR}=\f
 
 Proporción de negativos reales que el modelo clasifica incorrectamente como positivos.
 
+$$
+\operatorname{FPR}=\frac{FP}{FP+TN}
+$$
+
 <Aside type="note">
 
 Mide la frecuencia con que se generan falsas alarmas sobre casos negativos.
 Ejemplo: en autenticación biométrica, un FPR alto implica aceptar usuarios no autorizados.
-$FP$ son falsos positivos; $TN$ son verdaderos negativos; $\operatorname{FPR}=\frac{FP}{FP+TN}$.
-
+$FP$ son falsos positivos; $TN$ son verdaderos negativos.
 </Aside>
 
 ### AUC-ROC
 
 Área bajo la curva ROC. Mide la capacidad del modelo para ordenar positivos por encima de negativos.
 
+$$
+\operatorname{AUC} \approx \sum_{k}(\operatorname{FPR}_{k+1}-\operatorname{FPR}_k)\cdot\frac{\operatorname{TPR}_{k+1}+\operatorname{TPR}_k}{2}
+$$
+
 <Aside type="note">
 
 Resume en un solo valor la calidad de separación entre clases, independiente del umbral específico.
 Ejemplo: en selección de modelos para churn, se elige el de mayor AUC antes de fijar umbral.
+$k$ indexa puntos consecutivos de la curva ROC; la fórmula usa la regla del trapecio para aproximar el área.
 
 </Aside>
 
 ### Precision-Recall curve
 
 Curva que muestra el intercambio entre precisión y recall. Suele ser más informativa que ROC en problemas muy desbalanceados.
+
+$$
+\operatorname{PR}(t)=\left(\operatorname{recall}(t),\operatorname{precision}(t)\right),\quad t\in[0,1]
+$$
 
 <Aside type="note">
 
@@ -951,10 +971,15 @@ Ejemplo: en detección de fraude (clase positiva rara), permite elegir umbrales 
 
 Resumen del área bajo la curva precision-recall.
 
+$$
+\operatorname{AP}=\sum_{n}\left(R_n-R_{n-1}\right)P_n
+$$
+
 <Aside type="note">
 
 Mide el desempeño promedio del modelo en distintos niveles de recall dentro de la curva PR.
 Ejemplo: en búsqueda de documentos relevantes, AP permite comparar ranking models de forma compacta.
+$P_n$ es la precisión en el umbral $n$; $R_n$ es el recall acumulado en ese umbral.
 
 </Aside>
 
@@ -978,10 +1003,15 @@ $n$ es el número de ejemplos; $y_i$ es la etiqueta real binaria; $\hat{p}_i$ es
 
 Promedio del recall por clase. Es útil cuando las clases están desbalanceadas.
 
+$$
+\operatorname{BalancedAccuracy}=\frac{1}{C}\sum_{c=1}^{C}\operatorname{Recall}_c
+$$
+
 <Aside type="note">
 
 Mide el desempeño promedio en cada clase sin dejar que la clase mayoritaria domine el resultado.
 Ejemplo: en detección de fallas raras en manufactura, refleja mejor el rendimiento real que la accuracy.
+$C$ es el número de clases; $\operatorname{Recall}_c$ es el recall de la clase $c$.
 
 </Aside>
 
@@ -989,10 +1019,15 @@ Ejemplo: en detección de fallas raras en manufactura, refleja mejor el rendimie
 
 Métrica de acuerdo entre predicciones y etiquetas que corrige el acuerdo esperado por azar.
 
+$$
+\kappa=\frac{p_o-p_e}{1-p_e}
+$$
+
 <Aside type="note">
 
 Mide cuánto mejor es el acuerdo del modelo frente al acuerdo que ocurriría por azar.
 Ejemplo: en clasificación manual asistida (p. ej., tickets), ayuda a validar consistencia modelo-etiquetador.
+$p_o$ es el acuerdo observado; $p_e$ es el acuerdo esperado por azar.
 
 </Aside>
 
@@ -1081,10 +1116,15 @@ $n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la pr
 
 Root Mean Squared Logarithmic Error. Métrica de regresión que aplica logaritmos antes del error cuadrático para enfatizar diferencias relativas.
 
+$$
+\operatorname{RMSLE}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(\log(1+\hat{y}_i)-\log(1+y_i)\right)^2}
+$$
+
 <Aside type="note">
 
 Mide error relativo y reduce el impacto de escalas grandes, útil cuando importa el porcentaje de error más que el absoluto.
 Ejemplo: en predicción de precios de e-commerce, RMSLE tolera mejor diferencias entre productos baratos y caros.
+$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción; se usa $\log(1+\cdot)$ para evitar problemas con valores cero.
 
 </Aside>
 
@@ -1124,10 +1164,15 @@ $n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la pr
 
 Median Absolute Error. Mediana de los errores absolutos. Es más robusta a outliers que MAE.
 
+$$
+\operatorname{MedAE}=\operatorname{median}\left(|y_i-\hat{y}_i|\right)
+$$
+
 <Aside type="note">
 
 Mide el error absoluto típico del caso central y reduce la influencia de valores atípicos.
 Ejemplo: en predicción de tiempos de entrega con retrasos extremos ocasionales, MedAE refleja mejor el comportamiento habitual.
+$y_i$ es el valor real; $\hat{y}_i$ es la predicción; $\operatorname{median}$ toma el valor central de los errores absolutos.
 
 </Aside>
 
