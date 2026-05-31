@@ -804,7 +804,8 @@ Tabla que resume predicciones correctas e incorrectas por clase.
 
 <Aside type="note">
 
-$TP$ son verdaderos positivos; $TN$ son verdaderos negativos; $FP$ son falsos positivos; $FN$ son falsos negativos.
+Mide cómo se distribuyen aciertos y errores por clase para entender en qué se equivoca el modelo.
+Ejemplo: en detección de fraude, permite ver si hay demasiados fraudes no detectados ($FN$).
 
 </Aside>
 
@@ -818,7 +819,8 @@ $$
 
 <Aside type="note">
 
-$TP$ son verdaderos positivos; $TN$ son verdaderos negativos; $FP$ son falsos positivos; $FN$ son falsos negativos. La exactitud puede ser engañosa en datasets desbalanceados.
+Mide la fracción total de aciertos del modelo y sirve como referencia global rápida.
+Ejemplo: en clasificación de imágenes balanceadas (gato/perro), se usa como métrica principal inicial.
 
 </Aside>
 
@@ -832,7 +834,8 @@ $$
 
 <Aside type="note">
 
-$TP$ son verdaderos positivos; $FP$ son falsos positivos. Alta precisión implica pocos falsos positivos.
+Mide qué porcentaje de predicciones positivas realmente eran positivas; prioriza evitar falsos positivos.
+Ejemplo: en un filtro de spam, alta precisión evita mandar correos legítimos a spam.
 
 </Aside>
 
@@ -846,7 +849,8 @@ $$
 
 <Aside type="note">
 
-$TP$ son verdaderos positivos; $FN$ son falsos negativos. Alto recall implica pocos positivos omitidos.
+Mide qué porcentaje de los positivos reales logra capturar el modelo; prioriza evitar falsos negativos.
+Ejemplo: en tamizaje médico, se busca alto recall para no dejar casos enfermos sin detectar.
 
 </Aside>
 
@@ -860,7 +864,8 @@ $$
 
 <Aside type="note">
 
-$TN$ son verdaderos negativos; $FP$ son falsos positivos.
+Mide qué tan bien el modelo identifica negativos reales.
+Ejemplo: en detección de intrusiones, ayuda a estimar cuántas conexiones normales se marcan erróneamente como ataque.
 
 </Aside>
 
@@ -874,7 +879,8 @@ $$
 
 <Aside type="note">
 
-$F_1$ combina precisión y recall; es útil cuando hay desbalance de clases o cuando se desea equilibrar falsos positivos y falsos negativos.
+Mide el equilibrio entre precisión y recall en una sola cifra.
+Ejemplo: en moderación de contenido, se usa cuando importa balancear publicaciones peligrosas omitidas y falsos reportes.
 
 </Aside>
 
@@ -882,25 +888,67 @@ $F_1$ combina precisión y recall; es útil cuando hay desbalance de clases o cu
 
 Curva que muestra la relación entre tasa de verdaderos positivos y tasa de falsos positivos al variar el umbral de decisión.
 
+<Aside type="note">
+
+Sirve para comparar clasificadores a distintos umbrales de decisión.
+Ejemplo: en scoring crediticio, ayuda a elegir el umbral de aprobación según tolerancia al riesgo.
+
+</Aside>
+
 ### Tasa de verdaderos positivos, TPR
 
 Proporción de positivos reales correctamente identificados; equivale a recall o sensibilidad.
+
+<Aside type="note">
+
+Mide la capacidad de detectar la clase positiva.
+Ejemplo: en detección de cáncer, un TPR alto indica que se detectan la mayoría de casos reales.
+
+</Aside>
 
 ### Tasa de falsos positivos, FPR
 
 Proporción de negativos reales que el modelo clasifica incorrectamente como positivos.
 
+<Aside type="note">
+
+Mide la frecuencia con que se generan falsas alarmas sobre casos negativos.
+Ejemplo: en autenticación biométrica, un FPR alto implica aceptar usuarios no autorizados.
+
+</Aside>
+
 ### AUC-ROC
 
 Área bajo la curva ROC. Mide la capacidad del modelo para ordenar positivos por encima de negativos.
+
+<Aside type="note">
+
+Resume en un solo valor la calidad de separación entre clases, independiente del umbral específico.
+Ejemplo: en selección de modelos para churn, se elige el de mayor AUC antes de fijar umbral.
+
+</Aside>
 
 ### Precision-Recall curve
 
 Curva que muestra el intercambio entre precisión y recall. Suele ser más informativa que ROC en problemas muy desbalanceados.
 
+<Aside type="note">
+
+Sirve para evaluar cómo cambia el balance entre falsos positivos y falsos negativos al mover el umbral.
+Ejemplo: en detección de fraude (clase positiva rara), permite elegir umbrales operables para el equipo de revisión.
+
+</Aside>
+
 ### Average Precision, AP
 
 Resumen del área bajo la curva precision-recall.
+
+<Aside type="note">
+
+Mide el desempeño promedio del modelo en distintos niveles de recall dentro de la curva PR.
+Ejemplo: en búsqueda de documentos relevantes, AP permite comparar ranking models de forma compacta.
+
+</Aside>
 
 ### Log loss
 
@@ -912,7 +960,8 @@ $$
 
 <Aside type="note">
 
-$n$ es el número de ejemplos; $y_i$ es la etiqueta real binaria; $\hat{p}_i$ es la probabilidad predicha para la clase positiva; $\log$ es el logaritmo natural.
+Mide qué tan bien calibradas y seguras son las probabilidades predichas; penaliza mucho la sobreconfianza incorrecta.
+Ejemplo: en un sistema de aprobación automática, se usa para entrenar modelos probabilísticos confiables.
 
 </Aside>
 
@@ -920,9 +969,23 @@ $n$ es el número de ejemplos; $y_i$ es la etiqueta real binaria; $\hat{p}_i$ es
 
 Promedio del recall por clase. Es útil cuando las clases están desbalanceadas.
 
+<Aside type="note">
+
+Mide el desempeño promedio en cada clase sin dejar que la clase mayoritaria domine el resultado.
+Ejemplo: en detección de fallas raras en manufactura, refleja mejor el rendimiento real que la accuracy.
+
+</Aside>
+
 ### Cohen's kappa
 
 Métrica de acuerdo entre predicciones y etiquetas que corrige el acuerdo esperado por azar.
+
+<Aside type="note">
+
+Mide cuánto mejor es el acuerdo del modelo frente al acuerdo que ocurriría por azar.
+Ejemplo: en clasificación manual asistida (p. ej., tickets), ayuda a validar consistencia modelo-etiquetador.
+
+</Aside>
 
 ### Matthews Correlation Coefficient, MCC
 
@@ -934,7 +997,8 @@ $$
 
 <Aside type="note">
 
-$TP$, $TN$, $FP$ y $FN$ son los conteos de la matriz de confusión. MCC toma valores entre $-1$ y $1$; $1$ indica predicción perfecta, $0$ equivale a azar y $-1$ indica desacuerdo total.
+Mide la calidad global de clasificación binaria considerando todas las celdas de la matriz de confusión.
+Ejemplo: en problemas médicos desbalanceados, MCC se usa para comparar modelos de forma más estable que accuracy.
 
 </Aside>
 
@@ -965,7 +1029,8 @@ $$
 
 <Aside type="note">
 
-$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción; $|\cdot|$ indica valor absoluto.
+Mide el error promedio en magnitud absoluta, fácil de interpretar en las unidades originales.
+Ejemplo: en pronóstico de ventas, MAE indica en promedio cuántas unidades se falla por periodo.
 
 </Aside>
 
@@ -979,7 +1044,8 @@ $$
 
 <Aside type="note">
 
-$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es el valor predicho. Al elevar el error al cuadrado se penalizan más los errores grandes.
+Mide el error cuadrático promedio y penaliza con más fuerza errores grandes.
+Ejemplo: en estimación de demanda eléctrica, se usa cuando errores extremos son especialmente costosos.
 
 </Aside>
 
@@ -993,13 +1059,21 @@ $$
 
 <Aside type="note">
 
-$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción. RMSE queda en la misma unidad que la variable objetivo.
+Mide el tamaño típico del error con mayor sensibilidad a errores grandes, pero en la misma unidad del objetivo.
+Ejemplo: en predicción de temperatura, RMSE se reporta en °C para interpretación directa.
 
 </Aside>
 
 ### RMSLE
 
 Root Mean Squared Logarithmic Error. Métrica de regresión que aplica logaritmos antes del error cuadrático para enfatizar diferencias relativas.
+
+<Aside type="note">
+
+Mide error relativo y reduce el impacto de escalas grandes, útil cuando importa el porcentaje de error más que el absoluto.
+Ejemplo: en predicción de precios de e-commerce, RMSLE tolera mejor diferencias entre productos baratos y caros.
+
+</Aside>
 
 ### Coeficiente de determinación, R²
 
@@ -1011,7 +1085,8 @@ $$
 
 <Aside type="note">
 
-$y_i$ es el valor real; $\hat{y}_i$ es la predicción; $\bar{y}$ es la media de los valores reales; el numerador mide error residual y el denominador mide variabilidad total.
+Mide qué proporción de la variación de la variable objetivo explica el modelo frente a una línea base.
+Ejemplo: en modelos inmobiliarios, permite comunicar cuánto de la variabilidad de precios se captura.
 
 </Aside>
 
@@ -1025,13 +1100,21 @@ $$
 
 <Aside type="note">
 
-$n$ es el número de observaciones; $y_i$ es el valor real; $\hat{y}_i$ es la predicción. MAPE puede ser problemático cuando $y_i$ es cero o cercano a cero.
+Mide el error promedio en porcentaje, útil para comparar desempeño entre series con distintas escalas.
+Ejemplo: en forecast de inventario multi-producto, facilita comparar error relativo entre categorías.
 
 </Aside>
 
 ### MedAE
 
 Median Absolute Error. Mediana de los errores absolutos. Es más robusta a outliers que MAE.
+
+<Aside type="note">
+
+Mide el error absoluto típico del caso central y reduce la influencia de valores atípicos.
+Ejemplo: en predicción de tiempos de entrega con retrasos extremos ocasionales, MedAE refleja mejor el comportamiento habitual.
+
+</Aside>
 
 ---
 
