@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build:astro": "astro build",
     "build:pagefind": "pagefind --site dist/client",
-    "build": "astro build && pagefind --site dist/client",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' astro build && pagefind --site dist/client",
     "preview": "astro preview",
     "sync": "astro sync",
     "astro": "astro",

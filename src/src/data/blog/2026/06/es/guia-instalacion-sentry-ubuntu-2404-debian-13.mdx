@@ -823,7 +823,7 @@ sudo nano /etc/caddy/Caddyfile
 
 Usa esta configuración:
 
-```caddyfile
+```nginx
 # Dominio público de Sentry.
 # Caddy pedirá automáticamente un certificado TLS válido para este host.
 sentry.example.com {
@@ -1897,7 +1897,7 @@ Qué significa:
 
 La configuración de Caddy es igual que en Docker, porque el servicio web nativo escucha en `127.0.0.1:9000`.
 
-```caddyfile
+```nginx
 sentry.example.com {
     encode zstd gzip
 
@@ -2438,7 +2438,7 @@ No subas `.env.local` a Git si contiene valores de entornos reales.
 
 En `.gitignore`:
 
-```gitignore
+```txt
 .env.local
 .env.*.local
 ```

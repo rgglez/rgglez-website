@@ -1009,7 +1009,7 @@ systemctl cat fluentd | grep -E '^(User|Group)='
 
 La configuración siguiente recibe eventos por `forward` en el puerto `24224`, exige una clave compartida y envía eventos a OpenObserve usando el endpoint JSON `_json`.
 
-```apacheconf
+```apache
 # system contiene opciones globales del proceso Fluentd.
 <system>
   # log_level info registra mensajes operativos útiles sin activar debug excesivo.
@@ -1692,7 +1692,7 @@ sudo -u nagios /usr/lib/nagios/plugins/check_openobserve_patterns --window 300 -
 
 Crea un archivo de comandos Nagios. Este comando lógico se llamará `check_openobserve_patterns`.
 
-```cfg
+```ini
 # define command crea un comando reutilizable en Nagios.
 define command {
     # command_name es el nombre lógico invocado desde servicios.
@@ -1726,7 +1726,7 @@ EOF_NAGIOS_CMD
 
 Crea el host lógico para OpenObserve y el servicio que consulta patrones críticos.
 
-```cfg
+```ini
 # define host crea un objeto host en Nagios.
 define host {
     # use hereda valores de la plantilla generic-host.
@@ -1868,7 +1868,7 @@ grep -R "contact_name.*nagiosadmin" /etc/nagios4
 
 Ejemplo de contacto comentado:
 
-```cfg
+```ini
 # define contact declara un receptor de notificaciones.
 define contact {
     # contact_name es el identificador interno.
