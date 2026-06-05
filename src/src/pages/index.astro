@@ -1,29 +1,36 @@
 ---
 export const prerender = true;
 import { SITE } from "@/config";
+import Seo from "@rgglez/astro-seo";
+
 const { supportedLangs, defaultLang } = SITE;
 const defaultUrl = new URL(`/${defaultLang}`, SITE.website).href;
 const ogImageUrl = new URL(SITE.ogImage, SITE.website).href;
 const ogTitle = `${SITE.title} — Música, Programación, Electrónica e IA`;
 ---
+
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="canonical" href={defaultUrl} />
     <meta http-equiv="refresh" content={`0;url=${defaultUrl}`} />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content={ogTitle} />
-    <meta property="og:description" content={SITE.desc} />
-    <meta property="og:url" content={SITE.website} />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:type" content="website" />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content={ogTitle} />
-    <meta property="twitter:description" content={SITE.desc} />
-    <meta property="twitter:image" content={ogImageUrl} />
+    <Seo
+      title={ogTitle}
+      description={SITE.desc}
+      canonical={defaultUrl}
+      openGraph={{
+        title: ogTitle,
+        description: SITE.desc,
+        url: SITE.website,
+        type: "website",
+        images: [{ url: ogImageUrl }],
+      }}
+      twitter={{
+        card: "summary_large_image",
+        title: ogTitle,
+        description: SITE.desc,
+        image: ogImageUrl,
+      }}
+    />
   </head>
   <body>
     <script is:inline define:vars={{ supportedLangs, defaultLang }}>

@@ -1,0 +1,2716 @@
+---
+title: "Cómo instalar Sentry self-hosted en Ubuntu 24.04 o Debian 13, y no morir en el intento."
+description: >-
+    Guía paso a paso para instalar Sentry self-hosted en Ubuntu 24.04 y Debian
+    13 por Docker, desde fuentes, con checkinstall y revisión de paquetes .deb;
+    incluye integración con Svelte.
+author: "Rodolfo González González"
+pubDatetime: 2026-06-03T00:00:00Z
+modDatetime: 2026-06-03T00:00:00Z
+slug: instalar-sentry-ubuntu-debian
+lang: es
+ogImage: "../../../../../assets/posts/2026/06/guia-instalacion-sentry-ubuntu-2404-debian-13/header.webp"
+featured: false
+draft: true
+tags:
+  - sentry
+  - observabilidad
+  - docker
+  - ubuntu
+  - debian
+  - svelte
+  - checkinstall
+  - self-hosted
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@rgglez/astro-aside";
+
+## Introducción
+
+Sentry es una plataforma de observabilidad orientada a desarrollo. Sirve para capturar errores de JavaScript, excepciones de backend, trazas de rendimiento, releases, sourcemaps, sesiones afectadas y contexto técnico útil para reproducir fallos.
+
+En una aplicación web con interfaz gráfica, Sentry normalmente se usa para contestar preguntas como estas:
+
+- ¿Qué error vio el usuario?
+- ¿En qué navegador ocurrió?
+- ¿Qué versión de la aplicación estaba publicada?
+- ¿Qué ruta o componente provocó el fallo?
+- ¿Qué usuario, sesión, release o ambiente estuvo involucrado?
+- ¿Qué stack trace real corresponde al código fuente original, no al JavaScript minificado?
+
+Esta guía cubre Ubuntu Server 24.04 LTS y Debian 13. Las diferencias se marcan dentro de cada sección, no como guías separadas.
+
+La guía incluye cuatro rutas:
+
+1. **Instalación recomendada con Docker Compose**, que es la ruta self-hosted mantenida por Sentry.
+2. **Instalación desde fuentes en modo manual**, útil para laboratorio, auditoría, aprendizaje o entornos extremadamente personalizados.
+3. **Instalación desde fuentes usando `checkinstall`**, para generar un paquete `.deb` local con un layout controlado.
+4. **Revisión de paquetes `.deb`**, explicando si existe o no un paquete oficial instalable con `apt`.
+
+<Aside type="note" title="Conclusión técnica adelantada">
+
+Para producción, usa Docker Compose salvo que tengas una razón fuerte para no hacerlo. Sentry moderno no es una sola aplicación Python; es un conjunto de servicios: aplicación web, workers, cron, PostgreSQL, Redis, Kafka, ClickHouse, Snuba, Relay, Symbolicator y otros procesos auxiliares. La ruta nativa existe como ejercicio avanzado, pero no es la ruta recomendada ni la más estable para operar.
+
+Una razón fuerte podría ser utilizar servicios *serverless* (valga la redundancia) o gestionados para PostgreSQL, Redis, Kafka, ClickHouse, etc., y solo instalar los componentes de Sentry que hablan con esos servicios. Sin embargo, esta configuración es más compleja de mantener y no es la ruta oficial de Sentry self-hosted. Solo la recomiendo si eres un equipo de operaciones con experiencia en infraestructura, bases de datos, colas y sistemas distribuidos, y estás dispuesto a resolver problemas de compatibilidad, actualizaciones y mantenimiento manualmente o usas un servicio de *cloud computing* que facilite esta arquitectura personalizada.
+
+</Aside>
+
+---
+
+## Tabla de contenido
+
+---
+
+## 1. Compatibilidad de esta guía
+
+Sistema operativo cubierto:
+
+| Sistema | Versión | Nombre clave | Comentario |
+|---|---:|---|---|
+| Ubuntu Server | 24.04 LTS | `noble` | Adecuado para Docker, Caddy, PostgreSQL y Redis desde repositorios. |
+| Debian | 13 | `trixie` | Adecuado para Docker oficial, Caddy y servicios base. |
+
+Arquitecturas razonables:
+
+| Arquitectura | Recomendación |
+|---|---|
+| `amd64` / `x86_64` | Recomendada. Es la ruta más probada. |
+| `arm64` | Puede funcionar con Docker, pero revisa imágenes y dependencias. |
+| `armhf`, `i386` | No recomendadas para Sentry moderno. |
+
+---
+
+## 2. Requisitos de hardware
+
+Para una instalación self-hosted de bajo tráfico:
+
+| Recurso | Mínimo operativo | Recomendado |
+|---|---:|---:|
+| CPU | 4 vCPU | 8 vCPU o más |
+| RAM | 16 GB RAM + 16 GB swap | 32 GB RAM |
+| Disco | 20 GB libres | 100 GB SSD/NVMe o más |
+| Docker | 19.03.6 o superior | Versión estable actual desde el repositorio oficial de Docker |
+| Docker Compose | 2.32.2 o superior | Plugin oficial `docker-compose-plugin` |
+
+Si se usa un contenedor, Sentry self-hosted concentra bases de datos, colas, almacenamiento analítico e ingestión de eventos en una sola máquina. Por eso el disco importa mucho. Una VPS con disco lento puede sentirse inestable aunque tenga CPU disponible.
+
+Recomendaciones reales para producción pequeña:
+
+- Usa SSD o NVMe.
+- Habilita swap, pero no dependas de swap como sustituto de RAM.
+- Monitorea uso de disco.
+- Ajusta retención de eventos.
+- Haz backups.
+- Evita desplegarlo junto con bases de datos críticas de otros sistemas en la misma máquina.
+
+---
+
+## 3. Variables usadas en la guía
+
+En los ejemplos se usarán estos valores. Cámbialos por valores reales.
+
+| Variable | Ejemplo | Significado |
+|---|---|---|
+| `SENTRY_DOMAIN` | `sentry.example.com` | Hostname público para abrir la interfaz web de Sentry. |
+| `SENTRY_PUBLIC_URL` | `https://sentry.example.com` | URL pública completa usada por Sentry para enlaces, DSNs, cookies y redirecciones. |
+| `SENTRY_INSTALL_DIR` | `/opt/sentry/self-hosted` | Directorio de instalación para la ruta Docker. |
+| `SENTRY_NATIVE_DIR` | `/opt/sentry-native` | Directorio de instalación para la ruta nativa. |
+| `SENTRY_CONF` | `/etc/sentry` | Directorio de configuración usado por Sentry. |
+| `SENTRY_BIND` | `127.0.0.1:9000` | Dirección local donde Sentry escuchará antes del reverse proxy. |
+
+Usaremos `sentry.example.com` como nombre de ejemplo.
+
+---
+
+## 4. Preparar DNS
+
+Crea un registro DNS para el subdominio.
+
+Ejemplo con IPv4:
+
+```text
+Tipo: A
+Nombre: sentry
+Valor: 203.0.113.10
+TTL: 300
+```
+
+Ejemplo con IPv6:
+
+```text
+Tipo: AAAA
+Nombre: sentry
+Valor: 2001:db8::10
+TTL: 300
+```
+
+Verifica la resolución DNS:
+
+```bash
+dig +short sentry.example.com
+```
+
+Qué hace cada parte:
+
+- `dig`: herramienta para consultar DNS.
+- `+short`: muestra solo la respuesta breve.
+- `sentry.example.com`: nombre que quieres resolver.
+
+Salida esperada:
+
+```text
+203.0.113.10
+```
+
+Si no ves la IP pública correcta, espera la propagación DNS antes de configurar TLS.
+
+---
+
+## 5. Preparar el sistema base
+
+Conéctate por SSH:
+
+```bash
+ssh usuario@sentry.example.com
+```
+
+Qué significa cada parte:
+
+- `ssh`: abre una sesión remota segura.
+- `usuario`: usuario Linux con permisos de `sudo`.
+- `@`: separa el usuario del host.
+- `sentry.example.com`: dominio o IP del servidor.
+
+Actualiza índices de paquetes:
+
+```bash
+sudo apt update
+```
+
+Qué hace:
+
+- `sudo`: ejecuta con privilegios administrativos.
+- `apt`: gestor de paquetes de Debian y Ubuntu.
+- `update`: descarga los índices de paquetes desde los repositorios configurados.
+
+Actualiza paquetes instalados:
+
+```bash
+sudo apt full-upgrade -y
+```
+
+Qué hace:
+
+- `full-upgrade`: actualiza paquetes y permite instalar o eliminar dependencias si es necesario.
+- `-y`: responde afirmativamente a las confirmaciones.
+
+Instala herramientas base:
+
+```bash
+sudo apt install -y \
+  ca-certificates \
+  curl \
+  dnsutils \
+  git \
+  gnupg \
+  jq \
+  lsb-release \
+  openssl \
+  ufw
+```
+
+Qué instala cada paquete:
+
+- `ca-certificates`: certificados raíz para conexiones HTTPS confiables.
+- `curl`: descarga contenido desde URLs.
+- `dnsutils`: incluye `dig` para pruebas DNS.
+- `git`: clona repositorios.
+- `gnupg`: maneja claves GPG para repositorios APT.
+- `jq`: procesa JSON desde línea de comandos.
+- `lsb-release`: obtiene nombre clave de la distribución.
+- `openssl`: genera secretos y prueba TLS.
+- `ufw`: firewall simplificado.
+
+---
+
+## 6. Configurar firewall básico
+
+Permite SSH:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+Qué hace:
+
+- `ufw`: administra reglas de firewall.
+- `allow`: permite tráfico.
+- `OpenSSH`: perfil de aplicación que normalmente abre `22/tcp`.
+
+Permite HTTP y HTTPS:
+
+```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+```
+
+Qué significa:
+
+- `80/tcp`: HTTP; Caddy lo usará para validaciones ACME y redirección a HTTPS.
+- `443/tcp`: HTTPS; acceso normal a Sentry.
+
+Activa el firewall:
+
+```bash
+sudo ufw enable
+```
+
+Revisa el estado:
+
+```bash
+sudo ufw status verbose
+```
+
+Qué significa:
+
+- `status`: muestra reglas activas.
+- `verbose`: agrega detalle extra, como política predeterminada.
+
+---
+
+# Parte A: instalación recomendada con Docker Compose
+
+Esta es la ruta mantenida para Sentry self-hosted moderno.
+
+La arquitectura final será:
+
+```text
+Navegador / SDK de Svelte
+        |
+        | HTTPS
+        v
+sentry.example.com
+        |
+        | Caddy: TLS + reverse proxy
+        v
+127.0.0.1:9000
+        |
+        | Docker Compose
+        v
+Sentry self-hosted
+```
+
+La idea:
+
+1. El usuario abre `https://sentry.example.com`.
+2. Caddy recibe tráfico público en `80/tcp` y `443/tcp`.
+3. Caddy obtiene y renueva certificados TLS automáticamente.
+4. Caddy reenvía tráfico a `127.0.0.1:9000`.
+5. Docker Compose mantiene todos los servicios internos de Sentry.
+
+No se recomienda publicar Sentry bajo una subruta como:
+
+```text
+https://example.com/sentry
+```
+
+Usa un subdominio dedicado:
+
+```text
+https://sentry.example.com
+```
+
+Esto evita problemas con cookies, CSRF, DSNs, sourcemaps, callbacks e integraciones.
+
+---
+
+## 7. Instalar Docker Engine en Ubuntu 24.04
+
+<Aside type="warning">
+
+Ejecuta esta sección solo si el servidor es Ubuntu 24.04. Si usas Debian 13, salta a la sección siguiente.
+
+</Aside>
+
+Elimina paquetes conflictivos si existen:
+
+```bash
+sudo apt remove -y \
+  docker.io \
+  docker-compose \
+  docker-doc \
+  podman-docker \
+  containerd \
+  runc || true
+```
+
+Qué hace:
+
+- `apt remove`: elimina paquetes instalados.
+- `docker.io`: paquete de Docker provisto por Ubuntu, no necesariamente el más actual.
+- `docker-compose`: versión antigua standalone de Compose.
+- `docker-doc`: documentación del paquete de la distro.
+- `podman-docker`: wrapper que puede interceptar comandos `docker`.
+- `containerd` y `runc`: runtimes que Docker oficial instala como `containerd.io`.
+- `|| true`: evita que el script falle si alguno de esos paquetes no existe.
+
+Crea el directorio para llaves APT:
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+```
+
+Qué significa:
+
+- `install`: crea directorios o instala archivos con permisos definidos.
+- `-m 0755`: asigna permisos `rwxr-xr-x`.
+- `-d`: crea un directorio.
+- `/etc/apt/keyrings`: ubicación moderna para llaves de repositorios APT.
+
+Descarga la llave GPG de Docker:
+
+```bash
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  -o /etc/apt/keyrings/docker.asc
+```
+
+Qué significa:
+
+- `curl`: descarga la llave.
+- `-f`: falla si el servidor responde con error HTTP.
+- `-s`: modo silencioso.
+- `-S`: muestra error si falla.
+- `-L`: sigue redirecciones.
+- `-o`: escribe la descarga en un archivo.
+
+Permite que APT lea la llave:
+
+```bash
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+Qué significa:
+
+- `chmod`: cambia permisos.
+- `a+r`: permite lectura a todos los usuarios.
+
+Agrega el repositorio oficial de Docker:
+
+```bash
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+Qué significa:
+
+- `echo`: construye la línea del repositorio.
+- `deb`: indica que es un repositorio APT binario.
+- `arch=$(dpkg --print-architecture)`: limita paquetes a la arquitectura real, por ejemplo `amd64`.
+- `signed-by=/etc/apt/keyrings/docker.asc`: indica qué llave valida ese repositorio.
+- `https://download.docker.com/linux/ubuntu`: repositorio oficial de Docker para Ubuntu.
+- `$(. /etc/os-release && echo "$VERSION_CODENAME")`: obtiene el codename, por ejemplo `noble`.
+- `stable`: canal estable.
+- `tee`: escribe el archivo con permisos de `sudo`.
+- `> /dev/null`: evita imprimir la línea duplicada en pantalla.
+
+Actualiza índices:
+
+```bash
+sudo apt update
+```
+
+Instala Docker:
+
+```bash
+sudo apt install -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+```
+
+Qué instala:
+
+- `docker-ce`: Docker Community Edition, el daemon principal.
+- `docker-ce-cli`: cliente `docker`.
+- `containerd.io`: runtime de contenedores usado por Docker.
+- `docker-buildx-plugin`: plugin para builds modernos.
+- `docker-compose-plugin`: comando `docker compose` integrado al CLI.
+
+Activa Docker:
+
+```bash
+sudo systemctl enable --now docker
+```
+
+Qué significa:
+
+- `systemctl`: administra servicios systemd.
+- `enable`: arranca Docker automáticamente al iniciar el sistema.
+- `--now`: inicia el servicio inmediatamente.
+- `docker`: unidad de servicio.
+
+Verifica versiones:
+
+```bash
+docker --version
+docker compose version
+```
+
+---
+
+## 8. Instalar Docker Engine en Debian 13
+
+<Aside type="warning">
+
+Ejecuta esta sección solo si el servidor es Debian 13. Si ya instalaste Docker en Ubuntu, salta a la sección de Caddy.
+
+</Aside>
+
+Elimina paquetes conflictivos:
+
+```bash
+sudo apt remove -y \
+  docker.io \
+  docker-compose \
+  docker-doc \
+  podman-docker \
+  containerd \
+  runc || true
+```
+
+Crea el directorio de llaves:
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+```
+
+Descarga la llave GPG de Docker para Debian:
+
+```bash
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg \
+  -o /etc/apt/keyrings/docker.asc
+```
+
+Permite lectura de la llave:
+
+```bash
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+Agrega el repositorio oficial de Docker para Debian:
+
+```bash
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+En Debian 13, `VERSION_CODENAME` debe resolver a:
+
+```text
+trixie
+```
+
+Actualiza índices:
+
+```bash
+sudo apt update
+```
+
+Instala Docker:
+
+```bash
+sudo apt install -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+```
+
+Activa Docker:
+
+```bash
+sudo systemctl enable --now docker
+```
+
+Verifica:
+
+```bash
+docker --version
+docker compose version
+```
+
+---
+
+## 9. Permitir usar Docker sin `sudo` opcionalmente
+
+Agrega tu usuario al grupo `docker`:
+
+```bash
+sudo usermod -aG docker "$USER"
+```
+
+Qué significa:
+
+- `usermod`: modifica una cuenta de usuario.
+- `-aG`: agrega el usuario a un grupo sin quitarlo de otros grupos.
+- `docker`: grupo que puede hablar con el socket de Docker.
+- `"$USER"`: usuario actual.
+
+Aplica el grupo en la sesión actual:
+
+```bash
+newgrp docker
+```
+
+Verifica:
+
+```bash
+docker run --rm hello-world
+```
+
+Qué significa:
+
+- `docker run`: ejecuta un contenedor.
+- `--rm`: borra el contenedor al terminar.
+- `hello-world`: imagen mínima de prueba.
+
+<Aside type="warning" title="Advertencia de seguridad">
+
+Pertenecer al grupo `docker` equivale prácticamente a tener privilegios de root, porque Docker puede montar archivos del host y ejecutar contenedores privilegiados. En servidores multiusuario, no agregues usuarios no confiables al grupo `docker`.
+
+</Aside>
+
+---
+
+## 10. Instalar Caddy como reverse proxy HTTPS
+
+Caddy simplifica TLS porque obtiene y renueva certificados automáticamente.
+
+Instala dependencias:
+
+```bash
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+```
+
+Qué instala:
+
+- `debian-keyring`: llaves de desarrolladores Debian.
+- `debian-archive-keyring`: llaves del archivo Debian.
+- `apt-transport-https`: compatibilidad HTTPS para APT; en sistemas modernos suele venir integrado, pero no estorba.
+
+Agrega la llave de Caddy:
+
+```bash
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | \
+  sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+```
+
+Qué significa:
+
+- `curl -1sLf`: descarga usando TLS 1.x, en modo silencioso, siguiendo redirecciones y fallando en errores HTTP.
+- `gpg --dearmor`: convierte la llave ASCII a formato binario APT.
+- `-o`: define el archivo de salida.
+
+Agrega el repositorio estable de Caddy:
+
+```bash
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | \
+  sudo tee /etc/apt/sources.list.d/caddy-stable.list
+```
+
+Actualiza índices e instala Caddy:
+
+```bash
+sudo apt update
+sudo apt install -y caddy
+```
+
+Activa Caddy:
+
+```bash
+sudo systemctl enable --now caddy
+```
+
+Verifica:
+
+```bash
+systemctl status caddy --no-pager
+```
+
+Qué significa:
+
+- `status`: muestra estado del servicio.
+- `--no-pager`: no abre `less`, imprime directo en terminal.
+
+---
+
+## 11. Descargar Sentry self-hosted
+
+Crea el directorio base:
+
+```bash
+sudo mkdir -p /opt/sentry
+```
+
+Qué significa:
+
+- `mkdir`: crea directorios.
+- `-p`: crea padres si no existen y no falla si ya existen.
+- `/opt/sentry`: ubicación para software externo al sistema base.
+
+Asigna propiedad al usuario actual:
+
+```bash
+sudo chown -R "$USER":"$USER" /opt/sentry
+```
+
+Qué significa:
+
+- `chown`: cambia propietario y grupo.
+- `-R`: aplica recursivamente.
+- `"$USER":"$USER"`: usuario y grupo actual.
+
+Obtén el tag más reciente de self-hosted:
+
+```bash
+VERSION=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/getsentry/self-hosted/releases/latest)
+VERSION=${VERSION##*/}
+echo "$VERSION"
+```
+
+Qué hace cada línea:
+
+- `curl -Ls`: sigue redirecciones en modo silencioso.
+- `-o /dev/null`: descarta el cuerpo de la respuesta.
+- `-w '%{url_effective}'`: imprime la URL final después de redirecciones.
+- `VERSION=${VERSION##*/}`: conserva solo el último segmento de la URL, que corresponde al tag.
+- `echo "$VERSION"`: muestra el tag detectado.
+
+Clona el repositorio:
+
+```bash
+git clone https://github.com/getsentry/self-hosted.git /opt/sentry/self-hosted
+```
+
+Entra al directorio:
+
+```bash
+cd /opt/sentry/self-hosted
+```
+
+Fija el tag detectado:
+
+```bash
+git checkout "$VERSION"
+```
+
+Qué significa:
+
+- `git checkout`: cambia a una rama, tag o commit.
+- `"$VERSION"`: tag de release detectado.
+
+---
+
+## 12. Ejecutar el instalador de Sentry self-hosted
+
+Desde `/opt/sentry/self-hosted`, ejecuta:
+
+```bash
+./install.sh
+```
+
+Qué hace este script:
+
+- Verifica requisitos mínimos.
+- Descarga imágenes de contenedor.
+- Genera configuración base.
+- Construye imágenes locales si hace falta.
+- Prepara servicios definidos en Compose.
+- Ejecuta migraciones iniciales.
+- Crea o solicita datos del usuario administrador, según la versión.
+
+El script puede tardar bastante. Depende de CPU, disco y velocidad de red.
+
+Cuando termine, levanta Sentry:
+
+```bash
+docker compose up --wait
+```
+
+Qué significa:
+
+- `docker compose`: ejecuta Compose mediante el plugin moderno de Docker.
+- `up`: crea y arranca los servicios definidos.
+- `--wait`: espera a que los servicios con healthcheck queden listos.
+
+Verifica contenedores:
+
+```bash
+docker compose ps
+```
+
+Qué significa:
+
+- `ps`: lista servicios, estado, puertos y nombres de contenedores.
+
+Prueba acceso local:
+
+```bash
+curl -I http://127.0.0.1:9000
+```
+
+Qué significa:
+
+- `curl`: hace una solicitud HTTP.
+- `-I`: pide solo encabezados.
+- `http://127.0.0.1:9000`: Sentry publicado localmente por Compose.
+
+---
+
+## 13. Ajustar URL pública de Sentry
+
+Edita el archivo principal de configuración:
+
+```bash
+nano /opt/sentry/self-hosted/sentry/config.yml
+```
+
+Busca o agrega:
+
+```yaml
+# URL pública completa de Sentry.
+# Debe coincidir con el dominio usado por usuarios y SDKs.
+# Es importante para enlaces en correos, DSNs, cookies y redirecciones.
+system.url-prefix: "https://sentry.example.com"
+```
+
+Guarda el archivo.
+
+Aplica cambios ejecutando de nuevo el instalador:
+
+```bash
+cd /opt/sentry/self-hosted
+./install.sh
+```
+
+Después levanta otra vez:
+
+```bash
+docker compose up -d
+```
+
+Qué significa:
+
+- `-d`: modo detached; deja los contenedores corriendo en segundo plano.
+
+---
+
+## 14. Configurar Caddy para publicar Sentry con HTTPS
+
+Edita el Caddyfile:
+
+```bash
+sudo nano /etc/caddy/Caddyfile
+```
+
+Usa esta configuración:
+
+```caddyfile
+# Dominio público de Sentry.
+# Caddy pedirá automáticamente un certificado TLS válido para este host.
+sentry.example.com {
+    # Comprime respuestas cuando sea conveniente.
+    # zstd es eficiente; gzip mantiene compatibilidad amplia.
+    encode zstd gzip
+
+    # Reenvía todas las solicitudes a Sentry local.
+    # 127.0.0.1 evita exponer directamente el puerto 9000 a Internet.
+    reverse_proxy 127.0.0.1:9000 {
+        # Conserva el hostname original solicitado por el cliente.
+        header_up Host {host}
+
+        # Reenvía la IP real del cliente.
+        header_up X-Real-IP {remote_host}
+
+        # Reenvía la cadena de proxies por la que pasó la solicitud.
+        header_up X-Forwarded-For {remote_host}
+
+        # Indica a Sentry que la conexión pública original usa HTTPS.
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+```
+
+Valida la configuración:
+
+```bash
+sudo caddy validate --config /etc/caddy/Caddyfile
+```
+
+Qué significa:
+
+- `caddy validate`: revisa sintaxis y estructura.
+- `--config`: indica qué archivo validar.
+
+Recarga Caddy:
+
+```bash
+sudo systemctl reload caddy
+```
+
+Qué significa:
+
+- `reload`: recarga configuración sin detener el proceso por completo.
+
+Abre en navegador:
+
+```text
+https://sentry.example.com
+```
+
+---
+
+## 15. Configurar correo SMTP en Sentry
+
+Sentry puede enviar correos para invitaciones, alertas y recuperación de contraseña.
+
+Edita:
+
+```bash
+nano /opt/sentry/self-hosted/sentry/config.yml
+```
+
+Ejemplo con SMTP externo:
+
+```yaml
+# Servidor SMTP usado para enviar correos.
+mail.host: "smtp.example.com"
+
+# Puerto SMTP.
+# 587 suele usarse con STARTTLS.
+mail.port: 587
+
+# Usuario SMTP.
+mail.username: "sentry@example.com"
+
+# Contraseña SMTP.
+# En producción evita dejarla en Git.
+mail.password: "CAMBIA_ESTA_CONTRASEÑA"
+
+# Activa TLS oportunista/STARTTLS.
+mail.use-tls: true
+
+# Dirección From usada por Sentry.
+mail.from: "sentry@example.com"
+```
+
+Aplica cambios:
+
+```bash
+cd /opt/sentry/self-hosted
+./install.sh
+docker compose up -d
+```
+
+Prueba desde la interfaz web creando una invitación o configurando alertas.
+
+---
+
+## 16. Ajustar retención de eventos
+
+Por defecto, Sentry self-hosted conserva eventos durante cierto número de días. Reducir retención ahorra disco.
+
+Edita `.env`:
+
+```bash
+nano /opt/sentry/self-hosted/.env
+```
+
+Agrega o modifica:
+
+```dotenv
+# Número de días que se conservarán eventos.
+# Menos días significa menor uso de disco.
+SENTRY_EVENT_RETENTION_DAYS=30
+```
+
+Aplica:
+
+```bash
+cd /opt/sentry/self-hosted
+./install.sh
+docker compose up -d
+```
+
+---
+
+## 17. Comandos de operación diaria con Docker
+
+Ver servicios:
+
+```bash
+cd /opt/sentry/self-hosted
+docker compose ps
+```
+
+Ver logs generales:
+
+```bash
+docker compose logs --tail=200
+```
+
+Qué significa:
+
+- `logs`: imprime logs.
+- `--tail=200`: muestra las últimas 200 líneas por servicio.
+
+Ver logs de un servicio concreto:
+
+```bash
+docker compose logs --tail=200 web
+```
+
+Seguir logs en tiempo real:
+
+```bash
+docker compose logs -f web worker cron
+```
+
+Qué significa:
+
+- `-f`: sigue la salida como `tail -f`.
+- `web worker cron`: limita la salida a esos servicios.
+
+Reiniciar servicios:
+
+```bash
+docker compose restart
+```
+
+Detener Sentry:
+
+```bash
+docker compose down
+```
+
+Levantar Sentry:
+
+```bash
+docker compose up -d
+```
+
+Ejecutar un comando de Sentry dentro del contenedor web:
+
+```bash
+docker compose run --rm web sentry help
+```
+
+Qué significa:
+
+- `run`: ejecuta un comando nuevo en un servicio.
+- `--rm`: borra el contenedor temporal al terminar.
+- `web`: servicio donde existe el comando `sentry`.
+- `sentry help`: muestra comandos disponibles.
+
+---
+
+## 18. Actualizar Sentry self-hosted con Docker
+
+Entra al directorio:
+
+```bash
+cd /opt/sentry/self-hosted
+```
+
+Guarda el estado actual:
+
+```bash
+git status
+```
+
+Obtén cambios:
+
+```bash
+git fetch --tags
+```
+
+Lista tags recientes:
+
+```bash
+git tag --sort=-creatordate | head
+```
+
+Elige un tag estable y cámbiate a él:
+
+```bash
+git checkout 26.5.2
+```
+
+<Aside type="note">
+
+Cambia `26.5.2` por el tag real que quieras instalar.
+
+</Aside>
+
+Ejecuta instalador:
+
+```bash
+./install.sh
+```
+
+Levanta servicios actualizados:
+
+```bash
+docker compose up -d
+```
+
+Verifica:
+
+```bash
+docker compose ps
+```
+
+---
+
+## 19. Backups mínimos en la ruta Docker
+
+Sentry incluye bases internas y datos en volúmenes Docker. Para una copia básica del directorio y metadatos:
+
+```bash
+sudo tar -czf /root/sentry-self-hosted-config-$(date +%F).tar.gz \
+  /opt/sentry/self-hosted
+```
+
+Qué significa:
+
+- `tar`: empaqueta archivos.
+- `-c`: crea archivo.
+- `-z`: comprime con gzip.
+- `-f`: define nombre de salida.
+- `$(date +%F)`: inserta fecha en formato `YYYY-MM-DD`.
+
+Para volúmenes, lista nombres:
+
+```bash
+docker volume ls | grep sentry
+```
+
+Para producción, usa snapshots del servidor o una estrategia formal de backup/restore. No confíes únicamente en copiar el árbol Git.
+
+---
+
+# Parte B: instalación desde fuentes, modo manual
+
+Esta parte documenta una instalación nativa experimental. No es la ruta recomendada para producción.
+
+El objetivo de esta sección es mostrar cómo se compone una instalación desde fuentes y qué piezas hacen falta. En Sentry moderno, instalar solo el paquete Python `sentry` no equivale a tener Sentry self-hosted completo.
+
+## 20. Por qué la instalación nativa es difícil
+
+Sentry moderno está compuesto por varios servicios:
+
+| Componente | Función |
+|---|---|
+| `sentry web` | Interfaz web y API principal. |
+| `sentry worker` | Procesamiento asíncrono. |
+| `sentry cron` | Tareas periódicas. |
+| PostgreSQL | Base relacional principal. |
+| Redis | Cache, colas ligeras y locks. |
+| Kafka | Bus de eventos. |
+| ClickHouse | Almacenamiento analítico de eventos. |
+| Snuba | Capa de consultas sobre ClickHouse. |
+| Relay | Ingesta de eventos desde SDKs. |
+| Symbolicator | Simbolicación de stack traces nativos. |
+| Vroom / profiling | Soporte de perfiles, según versión. |
+
+En la ruta Docker, `install.sh` y `docker-compose.yml` resuelven esta orquestación. En nativo, tú debes instalar, configurar y mantener cada pieza.
+
+Usa esta ruta cuando:
+
+- Necesitas entender internamente Sentry.
+- Quieres auditar el build.
+- Quieres experimentar en laboratorio.
+- Tienes infraestructura externa para PostgreSQL, Redis, Kafka y ClickHouse.
+- Aceptas resolver cambios entre versiones.
+
+No uses esta ruta cuando:
+
+- Quieres algo estable rápido.
+- No quieres mantener Kafka/ClickHouse/Snuba manualmente.
+- No tienes experiencia con systemd, Python, Node, Rust, colas y bases analíticas.
+
+---
+
+## 21. Crear usuario y directorios para instalación nativa
+
+Crea un usuario de sistema:
+
+```bash
+sudo adduser --system \
+  --group \
+  --home /opt/sentry-native \
+  --shell /usr/sbin/nologin \
+  sentry
+```
+
+Qué significa:
+
+- `adduser`: crea usuarios.
+- `--system`: crea una cuenta de sistema, no una cuenta humana normal.
+- `--group`: crea grupo con el mismo nombre.
+- `--home /opt/sentry-native`: define directorio home.
+- `--shell /usr/sbin/nologin`: impide login interactivo.
+- `sentry`: nombre del usuario.
+
+Crea directorios:
+
+```bash
+sudo mkdir -p \
+  /opt/sentry-native/src \
+  /opt/sentry-native/venv \
+  /opt/sentry-native/data \
+  /opt/sentry-native/log \
+  /etc/sentry
+```
+
+Qué representa cada uno:
+
+- `/opt/sentry-native/src`: código fuente.
+- `/opt/sentry-native/venv`: entorno virtual Python.
+- `/opt/sentry-native/data`: datos locales si algún componente los necesita.
+- `/opt/sentry-native/log`: logs locales.
+- `/etc/sentry`: configuración.
+
+Ajusta permisos:
+
+```bash
+sudo chown -R sentry:sentry /opt/sentry-native /etc/sentry
+```
+
+---
+
+## 22. Instalar dependencias de compilación
+
+Instala herramientas y bibliotecas:
+
+```bash
+sudo apt install -y \
+  build-essential \
+  cargo \
+  curl \
+  git \
+  libffi-dev \
+  libjpeg-dev \
+  libldap2-dev \
+  libpcre2-dev \
+  libpq-dev \
+  libsasl2-dev \
+  libssl-dev \
+  libxml2-dev \
+  libxmlsec1-dev \
+  libxmlsec1-openssl \
+  libxslt1-dev \
+  openjdk-17-jre-headless \
+  pkg-config \
+  python3-dev \
+  rustc \
+  zlib1g-dev
+```
+
+Qué instala:
+
+- `build-essential`: compilador C/C++, `make` y herramientas básicas.
+- `cargo` y `rustc`: toolchain Rust para componentes con extensiones nativas.
+- `libffi-dev`: soporte FFI usado por paquetes Python.
+- `libjpeg-dev`: soporte para imágenes.
+- `libldap2-dev` y `libsasl2-dev`: soporte LDAP/SASL si se compilan dependencias relacionadas.
+- `libpcre2-dev`: expresiones regulares PCRE2; aparece en dependencias de runtime/build.
+- `libpq-dev`: headers de PostgreSQL para `psycopg`/`psycopg2`.
+- `libssl-dev`: headers OpenSSL.
+- `libxml2-dev`, `libxslt1-dev`, `libxmlsec1-dev`, `libxmlsec1-openssl`: XML, XSLT y firmas XML; relevantes para integraciones como SAML.
+- `openjdk-17-jre-headless`: Java 17 para Kafka.
+- `pkg-config`: localiza bibliotecas durante compilación.
+- `python3-dev`: headers Python del sistema.
+- `zlib1g-dev`: compresión zlib.
+
+---
+
+## 23. Instalar PostgreSQL y Redis nativos
+
+Instala PostgreSQL y Redis desde APT:
+
+```bash
+sudo apt install -y postgresql postgresql-contrib redis-server
+```
+
+Qué instala:
+
+- `postgresql`: servidor PostgreSQL predeterminado de la distribución.
+- `postgresql-contrib`: extensiones adicionales como `citext`.
+- `redis-server`: servidor Redis.
+
+Activa servicios:
+
+```bash
+sudo systemctl enable --now postgresql redis-server
+```
+
+Crea usuario y base de datos:
+
+```bash
+sudo -u postgres psql <<'SQL'
+CREATE USER sentry WITH PASSWORD 'CAMBIA_ESTA_CONTRASEÑA_DE_POSTGRES';
+CREATE DATABASE sentry OWNER sentry;
+\c sentry
+CREATE EXTENSION IF NOT EXISTS citext;
+SQL
+```
+
+Qué significa:
+
+- `sudo -u postgres`: ejecuta como el usuario administrativo de PostgreSQL.
+- `psql`: cliente PostgreSQL.
+- `<<'SQL'`: heredoc; envía varias líneas como entrada al comando.
+- `CREATE USER`: crea usuario de base de datos.
+- `CREATE DATABASE`: crea base perteneciente al usuario.
+- `\c sentry`: cambia a la base `sentry`.
+- `CREATE EXTENSION`: activa una extensión si no existe.
+
+Prueba conexión:
+
+```bash
+PGPASSWORD='CAMBIA_ESTA_CONTRASEÑA_DE_POSTGRES' \
+psql -h 127.0.0.1 -U sentry -d sentry -c 'SELECT version();'
+```
+
+Qué significa:
+
+- `PGPASSWORD`: contraseña enviada por variable de entorno para esta prueba.
+- `-h 127.0.0.1`: conecta por TCP local.
+- `-U sentry`: usuario.
+- `-d sentry`: base.
+- `-c`: ejecuta un comando SQL.
+
+---
+
+## 24. Instalar ClickHouse nativo
+
+ClickHouse provee paquetes `.deb` oficiales para Debian/Ubuntu.
+
+Agrega la llave:
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/clickhouse-keyring.gpg
+```
+
+Agrega el repositorio:
+
+```bash
+echo "deb [signed-by=/etc/apt/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" | \
+  sudo tee /etc/apt/sources.list.d/clickhouse.list
+```
+
+Actualiza e instala:
+
+```bash
+sudo apt update
+sudo apt install -y clickhouse-server clickhouse-client
+```
+
+Activa:
+
+```bash
+sudo systemctl enable --now clickhouse-server
+```
+
+Prueba:
+
+```bash
+clickhouse-client --query 'SELECT version()'
+```
+
+Qué significa:
+
+- `clickhouse-client`: cliente CLI.
+- `--query`: ejecuta una consulta SQL.
+
+<Aside type="note">
+
+ClickHouse es usado indirectamente mediante Snuba. Instalar ClickHouse no basta; también necesitas Snuba y sus migraciones/esquemas.
+
+</Aside>
+
+---
+
+## 25. Instalar Kafka nativo en modo KRaft
+
+Kafka requiere Java 17 o superior.
+
+Crea usuario:
+
+```bash
+sudo adduser --system \
+  --group \
+  --home /opt/kafka \
+  --shell /usr/sbin/nologin \
+  kafka
+```
+
+Descarga Kafka:
+
+```bash
+cd /tmp
+curl -LO https://downloads.apache.org/kafka/4.3.0/kafka_2.13-4.3.0.tgz
+```
+
+Qué significa:
+
+- `-L`: sigue redirecciones.
+- `-O`: guarda con el nombre original remoto.
+
+Extrae:
+
+```bash
+sudo tar -xzf kafka_2.13-4.3.0.tgz -C /opt
+sudo ln -sfn /opt/kafka_2.13-4.3.0 /opt/kafka
+sudo chown -R kafka:kafka /opt/kafka_2.13-4.3.0 /opt/kafka
+```
+
+Qué significa:
+
+- `tar -xzf`: extrae un `.tar.gz`.
+- `-C /opt`: extrae dentro de `/opt`.
+- `ln -sfn`: crea o reemplaza un enlace simbólico.
+- `chown -R`: asigna propiedad a `kafka`.
+
+Genera un ID de clúster KRaft:
+
+```bash
+sudo -u kafka /opt/kafka/bin/kafka-storage.sh random-uuid | sudo tee /etc/kafka-cluster-id
+```
+
+Crea directorio de datos:
+
+```bash
+sudo mkdir -p /var/lib/kafka/kraft-combined-logs
+sudo chown -R kafka:kafka /var/lib/kafka
+```
+
+Prepara configuración mínima:
+
+```bash
+sudo mkdir -p /etc/kafka
+sudo cp /opt/kafka/config/kraft/server.properties /etc/kafka/server.properties
+sudo chown -R kafka:kafka /etc/kafka
+```
+
+Ajusta listeners locales:
+
+```bash
+sudo sed -i 's#^log.dirs=.*#log.dirs=/var/lib/kafka/kraft-combined-logs#' /etc/kafka/server.properties
+sudo sed -i 's#^listeners=.*#listeners=PLAINTEXT://127.0.0.1:9092,CONTROLLER://127.0.0.1:9093#' /etc/kafka/server.properties
+sudo sed -i 's#^advertised.listeners=.*#advertised.listeners=PLAINTEXT://127.0.0.1:9092#' /etc/kafka/server.properties
+```
+
+Formatea almacenamiento KRaft:
+
+```bash
+sudo -u kafka /opt/kafka/bin/kafka-storage.sh format \
+  -t "$(cat /etc/kafka-cluster-id)" \
+  -c /etc/kafka/server.properties
+```
+
+Qué significa:
+
+- `kafka-storage.sh format`: inicializa almacenamiento KRaft.
+- `-t`: define ID de clúster.
+- `-c`: indica archivo de configuración.
+
+Crea unidad systemd:
+
+```bash
+sudo tee /etc/systemd/system/kafka.service > /dev/null <<'EOF'
+[Unit]
+Description=Apache Kafka broker in KRaft mode
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kafka
+Group=kafka
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /etc/kafka/server.properties
+ExecStop=/opt/kafka/bin/kafka-server-stop.sh
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=100000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Explicación de la unidad:
+
+- `[Unit]`: metadatos y dependencias del servicio.
+- `After=network-online.target`: espera a que red esté lista.
+- `[Service]`: define cómo arrancar/parar el proceso.
+- `User=kafka`: ejecuta sin root.
+- `ExecStart`: comando de inicio.
+- `ExecStop`: comando de parada.
+- `Restart=on-failure`: reinicia ante fallos.
+- `LimitNOFILE`: aumenta límite de archivos abiertos.
+- `[Install]`: permite habilitarlo al arranque.
+
+Activa Kafka:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now kafka
+```
+
+Prueba listar topics:
+
+```bash
+/opt/kafka/bin/kafka-topics.sh --bootstrap-server 127.0.0.1:9092 --list
+```
+
+---
+
+## 26. Compilar Python 3.13 para Sentry nativo
+
+La imagen oficial de Sentry usa Python 3.13 en versiones modernas. Ubuntu 24.04 no trae Python 3.13 como Python principal. Para evitar mezclar PPAs entre Ubuntu y Debian, esta guía usa una instalación local bajo `/opt/python/3.13.1`.
+
+Instala dependencias de compilación de Python:
+
+```bash
+sudo apt install -y \
+  libbz2-dev \
+  libncursesw5-dev \
+  libreadline-dev \
+  libsqlite3-dev \
+  liblzma-dev \
+  tk-dev \
+  uuid-dev
+```
+
+Descarga Python:
+
+```bash
+cd /usr/local/src
+sudo curl -LO https://www.python.org/ftp/python/3.13.1/Python-3.13.1.tgz
+```
+
+Extrae:
+
+```bash
+sudo tar -xzf Python-3.13.1.tgz
+cd Python-3.13.1
+```
+
+Configura build:
+
+```bash
+sudo ./configure \
+  --prefix=/opt/python/3.13.1 \
+  --enable-optimizations \
+  --with-ensurepip=install
+```
+
+Qué significa:
+
+- `./configure`: prepara Makefiles para compilar.
+- `--prefix=/opt/python/3.13.1`: instala Python en un prefijo aislado.
+- `--enable-optimizations`: activa optimizaciones PGO/LTO; tarda más pero mejora rendimiento.
+- `--with-ensurepip=install`: instala `pip` junto con Python.
+
+Compila:
+
+```bash
+sudo make -j"$(nproc)"
+```
+
+Qué significa:
+
+- `make`: compila.
+- `-j"$(nproc)"`: usa tantos jobs como núcleos detecte `nproc`.
+
+Instala sin reemplazar Python del sistema:
+
+```bash
+sudo make altinstall
+```
+
+Qué significa:
+
+- `altinstall`: instala `python3.13` sin reemplazar `/usr/bin/python3`.
+
+Verifica:
+
+```bash
+/opt/python/3.13.1/bin/python3.13 --version
+```
+
+---
+
+## 27. Clonar y preparar Sentry desde fuentes
+
+Clona el repositorio principal:
+
+```bash
+sudo -u sentry git clone https://github.com/getsentry/sentry.git /opt/sentry-native/src/sentry
+```
+
+Entra al repositorio:
+
+```bash
+cd /opt/sentry-native/src/sentry
+```
+
+Selecciona una versión o commit. En laboratorio puedes usar `master`, pero para reproducibilidad usa un tag:
+
+```bash
+sudo -u sentry git fetch --tags
+sudo -u sentry git tag --sort=-creatordate | head
+```
+
+Ejemplo:
+
+```bash
+sudo -u sentry git checkout 26.5.2
+```
+
+<Aside type="note">
+
+Cambia `26.5.2` por un tag real disponible en el repositorio. Conviene usar un tag que corresponda a la misma familia de release que self-hosted.
+
+</Aside>
+
+Crea entorno virtual:
+
+```bash
+sudo -u sentry /opt/python/3.13.1/bin/python3.13 -m venv /opt/sentry-native/venv
+```
+
+Actualiza herramientas base:
+
+```bash
+sudo -u sentry /opt/sentry-native/venv/bin/python -m pip install --upgrade pip setuptools wheel
+```
+
+Instala `uv` usando el índice usado por el proyecto:
+
+```bash
+sudo -u sentry /opt/sentry-native/venv/bin/python -m pip install \
+  --index-url 'https://pypi.devinfra.sentry.io/simple' \
+  'uv==0.9.28'
+```
+
+Qué significa:
+
+- `--index-url`: indica el índice Python principal.
+- `https://pypi.devinfra.sentry.io/simple`: índice usado por Sentry para wheels/dependencias internas.
+- `'uv==0.9.28'`: fija versión de `uv`.
+
+Instala dependencias Python declaradas por el lockfile:
+
+```bash
+cd /opt/sentry-native/src/sentry
+sudo -u sentry /opt/sentry-native/venv/bin/uv sync \
+  --frozen \
+  --quiet \
+  --no-install-project
+```
+
+Qué significa:
+
+- `uv sync`: sincroniza dependencias del proyecto.
+- `--frozen`: exige respetar el lockfile; no recalcula dependencias.
+- `--quiet`: reduce salida.
+- `--no-install-project`: instala dependencias sin instalar todavía el proyecto como tal.
+
+Instala Sentry en modo editable rápido, siguiendo el patrón de su Dockerfile:
+
+```bash
+cd /opt/sentry-native/src/sentry
+sudo -u sentry /opt/sentry-native/venv/bin/python -m tools.fast_editable --path .
+```
+
+Verifica el comando:
+
+```bash
+sudo -u sentry /opt/sentry-native/venv/bin/sentry help
+```
+
+Si este paso falla, revisa:
+
+- Versión de Python.
+- Dependencias nativas faltantes.
+- Tag elegido.
+- Cambios recientes en el build de Sentry.
+- Acceso al índice `pypi.devinfra.sentry.io`.
+
+---
+
+## 28. Configurar Sentry nativo
+
+Copia archivos de configuración base:
+
+```bash
+sudo cp /opt/sentry-native/src/sentry/self-hosted/config.yml /etc/sentry/config.yml
+sudo cp /opt/sentry-native/src/sentry/self-hosted/sentry.conf.py /etc/sentry/sentry.conf.py
+sudo chown -R sentry:sentry /etc/sentry
+```
+
+Genera secret key:
+
+```bash
+sudo -u sentry SENTRY_CONF=/etc/sentry \
+  /opt/sentry-native/venv/bin/sentry config generate-secret-key
+```
+
+Guarda el valor generado. Luego edita:
+
+```bash
+sudo nano /etc/sentry/config.yml
+```
+
+Ajusta valores base:
+
+```yaml
+# URL pública completa de esta instalación.
+system.url-prefix: "https://sentry.example.com"
+
+# Base de datos PostgreSQL.
+database.engine: "sentry.db.postgres"
+database.name: "sentry"
+database.user: "sentry"
+database.password: "CAMBIA_ESTA_CONTRASEÑA_DE_POSTGRES"
+database.host: "127.0.0.1"
+database.port: "5432"
+
+# Redis local.
+redis.clusters:
+  default:
+    hosts:
+      0:
+        host: 127.0.0.1
+        port: 6379
+```
+
+Edita `sentry.conf.py`:
+
+```bash
+sudo nano /etc/sentry/sentry.conf.py
+```
+
+Asegúrate de tener una clave secreta:
+
+```python
+# Clave secreta de Django/Sentry.
+# Debe ser larga, aleatoria y privada.
+# No la cambies después de tener datos reales salvo que sepas las consecuencias.
+SECRET_KEY = "PEGA_AQUI_LA_SECRET_KEY_GENERADA"
+
+# Cuando se termina TLS en Caddy o un proxy externo, esta opción ayuda
+# a que Sentry reconozca que la URL pública original usa HTTPS.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Cookies solo por HTTPS.
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+```
+
+---
+
+## 29. Migraciones y usuario administrador en modo nativo
+
+Ejecuta migraciones:
+
+```bash
+sudo -u sentry SENTRY_CONF=/etc/sentry \
+  /opt/sentry-native/venv/bin/sentry upgrade
+```
+
+Qué significa:
+
+- `SENTRY_CONF=/etc/sentry`: indica dónde leer configuración.
+- `sentry upgrade`: aplica migraciones y prepara estructura de datos.
+
+Crea superusuario:
+
+```bash
+sudo -u sentry SENTRY_CONF=/etc/sentry \
+  /opt/sentry-native/venv/bin/sentry createuser
+```
+
+El comando pedirá email y contraseña.
+
+<Aside type="warning">
+
+Este paso puede no bastar en versiones modernas si Snuba, Kafka, ClickHouse, Relay o Symbolicator no están configurados. La UI puede arrancar parcialmente, pero ingestión, consulta de eventos y funcionalidades modernas dependerán de servicios auxiliares.
+
+</Aside>
+
+---
+
+## 30. Crear unidades systemd nativas para Sentry
+
+Crea unidad para web:
+
+```bash
+sudo tee /etc/systemd/system/sentry-web.service > /dev/null <<'EOF'
+[Unit]
+Description=Sentry web service native
+After=network-online.target postgresql.service redis-server.service kafka.service clickhouse-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sentry
+Group=sentry
+WorkingDirectory=/opt/sentry-native/src/sentry
+Environment=SENTRY_CONF=/etc/sentry
+Environment=PATH=/opt/sentry-native/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/sentry-native/venv/bin/sentry run web -b 127.0.0.1:9000
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Crea unidad para workers:
+
+```bash
+sudo tee /etc/systemd/system/sentry-worker.service > /dev/null <<'EOF'
+[Unit]
+Description=Sentry worker native
+After=network-online.target postgresql.service redis-server.service kafka.service clickhouse-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sentry
+Group=sentry
+WorkingDirectory=/opt/sentry-native/src/sentry
+Environment=SENTRY_CONF=/etc/sentry
+Environment=PATH=/opt/sentry-native/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/sentry-native/venv/bin/sentry run worker
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Crea unidad para cron:
+
+```bash
+sudo tee /etc/systemd/system/sentry-cron.service > /dev/null <<'EOF'
+[Unit]
+Description=Sentry cron native
+After=network-online.target postgresql.service redis-server.service kafka.service clickhouse-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sentry
+Group=sentry
+WorkingDirectory=/opt/sentry-native/src/sentry
+Environment=SENTRY_CONF=/etc/sentry
+Environment=PATH=/opt/sentry-native/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/sentry-native/venv/bin/sentry run cron
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Explicación de parámetros importantes:
+
+- `After`: ordena arranque después de servicios base.
+- `Wants`: solicita que la red esté disponible.
+- `User` y `Group`: ejecutan Sentry sin root.
+- `WorkingDirectory`: directorio del código fuente.
+- `Environment=SENTRY_CONF=/etc/sentry`: ruta de configuración.
+- `ExecStart`: comando real del servicio.
+- `Restart=on-failure`: reinicia ante errores.
+- `NoNewPrivileges=true`: endurece el servicio.
+- `PrivateTmp=true`: aísla `/tmp`.
+
+Recarga systemd:
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Arranca servicios:
+
+```bash
+sudo systemctl enable --now sentry-web sentry-worker sentry-cron
+```
+
+Revisa estado:
+
+```bash
+systemctl status sentry-web --no-pager
+systemctl status sentry-worker --no-pager
+systemctl status sentry-cron --no-pager
+```
+
+Ver logs:
+
+```bash
+journalctl -u sentry-web -f
+```
+
+Qué significa:
+
+- `journalctl`: lee logs de systemd.
+- `-u sentry-web`: filtra por unidad.
+- `-f`: sigue logs en tiempo real.
+
+---
+
+## 31. Configurar Caddy para la instalación nativa
+
+La configuración de Caddy es igual que en Docker, porque el servicio web nativo escucha en `127.0.0.1:9000`.
+
+```caddyfile
+sentry.example.com {
+    encode zstd gzip
+
+    reverse_proxy 127.0.0.1:9000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+```
+
+Valida y recarga:
+
+```bash
+sudo caddy validate --config /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+```
+
+---
+
+## 32. Limitaciones explícitas de la ruta nativa
+
+La instalación anterior puede arrancar el proceso web y workers, pero una instalación Sentry completa requiere operar también Snuba, Relay, Symbolicator y esquemas en ClickHouse/Kafka.
+
+La forma práctica de descubrir qué servicios requiere una versión concreta es revisar el `docker-compose.yml` de `getsentry/self-hosted` para el tag correspondiente:
+
+```bash
+cd /opt/sentry/self-hosted
+grep -E '^[a-zA-Z0-9_-]+:' docker-compose.yml
+```
+
+Qué hace:
+
+- `grep`: busca líneas por expresión regular.
+- `-E`: activa regex extendida.
+- `^[a-zA-Z0-9_-]+:`: detecta nombres de servicios al inicio de línea.
+
+Si haces instalación nativa total, debes construir o instalar equivalentes nativos de cada servicio. En la práctica, esto convierte Sentry en un despliegue distribuido manual.
+
+---
+
+# Parte C: instalación desde fuentes usando `checkinstall`
+
+`checkinstall` observa una instalación manual, crea un paquete `.deb` local y registra los archivos en la base de datos de paquetes. Es útil cuando quieres desinstalar limpiamente lo que instalaste desde fuentes.
+
+No convierte mágicamente Sentry en un paquete oficial. Tampoco resuelve PostgreSQL, Redis, Kafka, ClickHouse, Snuba, Relay ni Symbolicator.
+
+Usaremos `checkinstall` para empaquetar el árbol nativo bajo `/opt/sentry-native` y los archivos de `/etc/sentry` y systemd.
+
+---
+
+## 33. Instalar `checkinstall`
+
+```bash
+sudo apt install -y checkinstall
+```
+
+Qué hace:
+
+- `checkinstall`: herramienta que ejecuta un comando de instalación, detecta archivos instalados y genera un paquete `.deb`, `.rpm` o `.tgz`.
+
+Verifica:
+
+```bash
+checkinstall --version
+```
+
+---
+
+## 34. Preparar staging para paquete local
+
+Crea un directorio de staging:
+
+```bash
+mkdir -p "$HOME/sentry-native-package/stage"
+```
+
+Qué significa:
+
+- `mkdir -p`: crea toda la ruta si no existe.
+- `stage`: directorio temporal que simulará el contenido final del sistema.
+
+Copia estructura ya preparada:
+
+```bash
+sudo rsync -a /opt/sentry-native/ "$HOME/sentry-native-package/stage/opt/sentry-native/"
+sudo rsync -a /etc/sentry/ "$HOME/sentry-native-package/stage/etc/sentry/"
+```
+
+Qué significa:
+
+- `rsync -a`: copia en modo archivo, preservando permisos, enlaces y tiempos.
+- Primera ruta: copia instalación nativa.
+- Segunda ruta: copia configuración.
+
+Crea directorio systemd en staging:
+
+```bash
+mkdir -p "$HOME/sentry-native-package/stage/etc/systemd/system"
+```
+
+Copia unidades:
+
+```bash
+sudo cp /etc/systemd/system/sentry-web.service \
+        /etc/systemd/system/sentry-worker.service \
+        /etc/systemd/system/sentry-cron.service \
+        "$HOME/sentry-native-package/stage/etc/systemd/system/"
+```
+
+Ajusta propiedad del staging:
+
+```bash
+sudo chown -R root:root "$HOME/sentry-native-package/stage"
+```
+
+---
+
+## 35. Crear script de instalación para `checkinstall`
+
+Crea script:
+
+```bash
+cat > "$HOME/sentry-native-package/install.sh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Copia todos los archivos del staging hacia el sistema raíz.
+# -a preserva permisos y enlaces.
+# ./ al final del origen copia el contenido, no el directorio stage completo.
+cp -a stage/. /
+
+# Crea el usuario si no existe.
+if ! id sentry >/dev/null 2>&1; then
+  adduser --system --group --home /opt/sentry-native --shell /usr/sbin/nologin sentry
+fi
+
+# Reasegura permisos de runtime.
+chown -R sentry:sentry /opt/sentry-native /etc/sentry
+
+# Recarga systemd para que detecte las unidades instaladas.
+systemctl daemon-reload || true
+EOF
+```
+
+Hazlo ejecutable:
+
+```bash
+chmod +x "$HOME/sentry-native-package/install.sh"
+```
+
+---
+
+## 36. Generar paquete `.deb` local con `checkinstall`
+
+Entra al directorio:
+
+```bash
+cd "$HOME/sentry-native-package"
+```
+
+Ejecuta `checkinstall`:
+
+```bash
+sudo checkinstall \
+  --type=debian \
+  --pkgname=sentry-native-local \
+  --pkgversion=26.5.2 \
+  --pkgrelease=1 \
+  --pkglicense="BUSL-1.1" \
+  --maintainer="admin@example.com" \
+  --requires="postgresql,redis-server" \
+  --backup=no \
+  --deldoc=yes \
+  --fstrans=no \
+  --install=yes \
+  --pakdir="$HOME" \
+  --default \
+  ./install.sh
+```
+
+Qué significa cada parámetro:
+
+- `--type=debian`: genera paquete `.deb`.
+- `--pkgname=sentry-native-local`: nombre local del paquete.
+- `--pkgversion=26.5.2`: versión del paquete; cámbiala por la versión real usada.
+- `--pkgrelease=1`: release interno del paquete local.
+- `--pkglicense="BUSL-1.1"`: licencia declarada; revisa la licencia real de la versión usada antes de redistribuir.
+- `--maintainer="admin@example.com"`: responsable local del paquete.
+- `--requires="postgresql,redis-server"`: dependencias básicas registradas. No cubre Kafka/ClickHouse/Snuba/Relay/Symbolicator.
+- `--backup=no`: evita crear backups automáticos de archivos reemplazados.
+- `--deldoc=yes`: elimina documentación temporal generada por checkinstall.
+- `--fstrans=no`: desactiva filesystem translation; más predecible para scripts complejos.
+- `--install=yes`: instala el paquete después de construirlo.
+- `--pakdir="$HOME"`: coloca el `.deb` resultante en tu home.
+- `--default`: responde con valores predeterminados donde aplique.
+- `./install.sh`: comando que checkinstall observará.
+
+Verifica paquete instalado:
+
+```bash
+dpkg -l | grep sentry-native-local
+```
+
+Ver archivos registrados:
+
+```bash
+dpkg -L sentry-native-local | head -100
+```
+
+Desinstalar el paquete local:
+
+```bash
+sudo apt remove sentry-native-local
+```
+
+<Aside type="warning">
+
+`apt remove` quitará archivos registrados por el paquete, pero no necesariamente bases de datos, topics de Kafka, tablas de ClickHouse ni datos externos.
+
+</Aside>
+
+---
+
+# Parte D: ¿existe paquete `.deb` oficial de Sentry?
+
+## 37. Estado de paquetes `.deb`
+
+Para Sentry self-hosted moderno, no hay un paquete `.deb` oficial equivalente a:
+
+```bash
+sudo apt install sentry
+```
+
+La ruta oficial self-hosted usa el repositorio `getsentry/self-hosted` con Docker Compose.
+
+Puedes verificar en tu sistema:
+
+```bash
+apt-cache search '^sentry$'
+```
+
+Qué significa:
+
+- `apt-cache search`: busca paquetes disponibles en repositorios APT configurados.
+- `'^sentry$'`: expresión regular que busca exactamente el nombre `sentry`.
+
+También puedes buscar paquetes relacionados:
+
+```bash
+apt-cache search sentry
+```
+
+Posibles resultados:
+
+- SDKs.
+- Bibliotecas no relacionadas.
+- Paquetes antiguos.
+- Herramientas auxiliares.
+
+No asumas que un paquete llamado `sentry` equivale al servidor self-hosted moderno.
+
+---
+
+## 38. PyPI no equivale a un `.deb`
+
+Existe un paquete `sentry` en PyPI, pero eso no significa que sea la ruta moderna recomendada para self-hosted.
+
+Problemas prácticos:
+
+- No instala por sí solo todos los servicios auxiliares.
+- Puede representar versiones antiguas.
+- No configura Kafka, ClickHouse, Snuba, Relay ni Symbolicator.
+- No genera unidades systemd completas.
+- No reemplaza `getsentry/self-hosted`.
+
+Por tanto, no lo trates como equivalente a:
+
+```bash
+apt install sentry
+```
+
+---
+
+## 39. Snap de Sentry
+
+Existe un snap llamado `sentry` publicado por Snapcrafters. No es un `.deb`, no es la ruta self-hosted oficial actual y puede estar desactualizado.
+
+Para esta guía no se recomienda usarlo en producción.
+
+Razones:
+
+- No sigue la ruta oficial self-hosted moderna.
+- Puede estar sin mantenimiento activo.
+- No ofrece la misma transparencia operativa que `getsentry/self-hosted`.
+- En Debian, además, snapd añade una capa de empaquetado que quizá no quieras en servidores.
+
+---
+
+# Parte E: endurecimiento, monitoreo y mantenimiento
+
+## 40. Recomendaciones de seguridad
+
+Usa HTTPS siempre:
+
+- El DSN puede recibir eventos desde navegadores públicos.
+- La interfaz de Sentry contiene datos sensibles: stack traces, URLs, headers, usuarios, tokens accidentales, etc.
+
+Configura correo:
+
+- Para recuperar cuentas.
+- Para alertas.
+- Para invitaciones.
+
+Restringe acceso administrativo:
+
+- Usa usuarios individuales.
+- Activa MFA.
+- Evita compartir cuentas.
+- Usa contraseñas largas.
+
+Cuida datos sensibles:
+
+- Configura scrubbing de datos.
+- No envíes contraseñas, tokens, cookies completas ni datos personales innecesarios.
+- Revisa breadcrumbs y contextos personalizados.
+
+---
+
+## 41. Variables y archivos que conviene respaldar
+
+Ruta Docker:
+
+```text
+/opt/sentry/self-hosted/
+```
+
+Archivos relevantes:
+
+```text
+/opt/sentry/self-hosted/sentry/config.yml
+/opt/sentry/self-hosted/sentry/sentry.conf.py
+/opt/sentry/self-hosted/.env
+/opt/sentry/self-hosted/.env.custom
+/etc/caddy/Caddyfile
+```
+
+Ruta nativa:
+
+```text
+/opt/sentry-native/
+/etc/sentry/
+/etc/systemd/system/sentry-web.service
+/etc/systemd/system/sentry-worker.service
+/etc/systemd/system/sentry-cron.service
+/etc/caddy/Caddyfile
+```
+
+Datos externos:
+
+- PostgreSQL.
+- Redis si contiene colas no procesadas.
+- Kafka.
+- ClickHouse.
+- Almacenamiento de archivos.
+
+---
+
+## 42. Pruebas de salud
+
+Prueba HTTP local:
+
+```bash
+curl -I http://127.0.0.1:9000
+```
+
+Prueba HTTPS público:
+
+```bash
+curl -I https://sentry.example.com
+```
+
+Prueba certificado:
+
+```bash
+openssl s_client -connect sentry.example.com:443 -servername sentry.example.com </dev/null
+```
+
+Qué significa:
+
+- `openssl s_client`: abre conexión TLS manual.
+- `-connect`: host y puerto.
+- `-servername`: SNI usado para seleccionar certificado correcto.
+- `</dev/null`: evita quedar en modo interactivo.
+
+Verifica puertos escuchando:
+
+```bash
+sudo ss -lntp
+```
+
+Qué significa:
+
+- `ss`: muestra sockets.
+- `-l`: sockets en escucha.
+- `-n`: no resuelve nombres.
+- `-t`: TCP.
+- `-p`: muestra proceso propietario.
+
+---
+
+# Apéndice A: integración de Sentry en Svelte + Vite
+
+Este ejemplo muestra una integración mínima en una app Svelte con Vite. No es una aplicación completa; solo los archivos importantes.
+
+## A.1. Crear proyecto en Sentry
+
+En la interfaz web de Sentry:
+
+1. Crea una organización si aún no existe.
+2. Crea un proyecto tipo JavaScript/Svelte.
+3. Copia el DSN del proyecto.
+
+El DSN se parece a:
+
+```text
+https://PUBLIC_KEY@sentry.example.com/PROJECT_ID
+```
+
+No es una contraseña, pero conviene tratarlo con cuidado porque identifica el endpoint de ingestión.
+
+---
+
+## A.2. Instalar SDK de Sentry para Svelte
+
+En tu proyecto Svelte:
+
+```bash
+npm install @sentry/svelte
+```
+
+Qué significa:
+
+- `npm install`: instala una dependencia.
+- `@sentry/svelte`: SDK de Sentry para Svelte.
+
+Si usas pnpm:
+
+```bash
+pnpm add @sentry/svelte
+```
+
+Si usas yarn:
+
+```bash
+yarn add @sentry/svelte
+```
+
+---
+
+## A.3. Crear archivo de configuración de Sentry
+
+Crea `src/sentry.ts`:
+
+```ts
+// Importa el SDK de Sentry para Svelte.
+import * as Sentry from "@sentry/svelte";
+
+// Inicializa Sentry lo antes posible en el ciclo de vida de la app.
+Sentry.init({
+  // DSN del proyecto. Se lee desde variable de entorno de Vite.
+  // En Vite, solo las variables que empiezan con VITE_ llegan al navegador.
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+
+  // Ambiente actual: development, production, staging, etc.
+  environment: import.meta.env.MODE,
+
+  // Porcentaje de transacciones de rendimiento a capturar.
+  // 0.1 significa 10%. En producción evita 1.0 salvo que tengas poco tráfico.
+  tracesSampleRate: 0.1,
+
+  // Porcentaje de sesiones normales con replay.
+  // 0.01 significa 1%.
+  replaysSessionSampleRate: 0.01,
+
+  // Porcentaje de sesiones con replay cuando ocurre un error.
+  // 1.0 significa 100% de sesiones con error.
+  replaysOnErrorSampleRate: 1.0,
+
+  // Integraciones del navegador.
+  integrations: [
+    // Captura navegación y trazas de rendimiento en el navegador.
+    Sentry.browserTracingIntegration(),
+
+    // Habilita Session Replay.
+    Sentry.replayIntegration(),
+  ],
+});
+```
+
+---
+
+## A.4. Importar Sentry al arrancar la app
+
+Edita `src/main.ts`:
+
+```ts
+// Importa Sentry antes de montar la aplicación.
+// Esto permite capturar errores lo más temprano posible.
+import "./sentry";
+
+// Importa el componente raíz de Svelte.
+import App from "./App.svelte";
+
+// Monta la aplicación en el elemento #app del HTML.
+const app = new App({
+  target: document.getElementById("app")!,
+});
+
+// Exporta app por compatibilidad con el template de Vite/Svelte.
+export default app;
+```
+
+---
+
+## A.5. Configurar variable de entorno
+
+Crea `.env.local`:
+
+```dotenv
+# DSN del proyecto Sentry.
+# Cambia el valor por el DSN real mostrado por tu instalación.
+VITE_SENTRY_DSN=https://PUBLIC_KEY@sentry.example.com/PROJECT_ID
+```
+
+No subas `.env.local` a Git si contiene valores de entornos reales.
+
+En `.gitignore`:
+
+```gitignore
+.env.local
+.env.*.local
+```
+
+---
+
+## A.6. Página/componente de prueba
+
+Crea `src/SentryDemo.svelte`:
+
+```svelte
+<script lang="ts">
+  // Importa el SDK para capturar excepciones manualmente.
+  import * as Sentry from "@sentry/svelte";
+
+  // Estado local para mostrar mensajes simples en la página.
+  let lastAction = "Aún no se ha enviado ningún evento.";
+
+  // Envía un evento controlado a Sentry sin romper la app.
+  function sendHandledError() {
+    try {
+      // Simula un error manejado.
+      throw new Error("Error controlado desde SvelteDemo.svelte");
+    } catch (error) {
+      // captureException envía el error a Sentry.
+      Sentry.captureException(error, {
+        // tags permite filtrar eventos en la interfaz de Sentry.
+        tags: {
+          component: "SentryDemo",
+          kind: "handled-error",
+        },
+
+        // extra agrega contexto adicional no indexado como tag.
+        extra: {
+          clickedAt: new Date().toISOString(),
+          explanation: "Este error fue capturado manualmente para probar Sentry.",
+        },
+      });
+
+      lastAction = "Se envió un error controlado a Sentry.";
+    }
+  }
+
+  // Lanza un error no controlado.
+  // Sentry debería capturarlo automáticamente si la integración está activa.
+  function throwUnhandledError() {
+    throw new Error("Error no controlado desde SvelteDemo.svelte");
+  }
+</script>
+
+<svelte:head>
+  <title>Prueba de Sentry</title>
+</svelte:head>
+
+<main class="sentry-demo">
+  <h1>Prueba de Sentry en Svelte</h1>
+
+  <p>
+    Esta página permite enviar errores de prueba a Sentry para verificar que el SDK,
+    el DSN y la instalación self-hosted funcionan correctamente.
+  </p>
+
+  <p><strong>Última acción:</strong> {lastAction}</p>
+
+  <button type="button" on:click={sendHandledError}>
+    Enviar error controlado
+  </button>
+
+  <button type="button" on:click={throwUnhandledError}>
+    Lanzar error no controlado
+  </button>
+</main>
+
+<style>
+  .sentry-demo {
+    max-width: 720px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    font-family: system-ui, sans-serif;
+  }
+
+  button {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+  }
+</style>
+```
+
+Para probarlo desde `App.svelte`:
+
+```svelte
+<script lang="ts">
+  import SentryDemo from "./SentryDemo.svelte";
+</script>
+
+<SentryDemo />
+```
+
+---
+
+## A.7. Subida de sourcemaps con Vite
+
+Sin sourcemaps, Sentry puede mostrar stack traces minificados difíciles de leer. Para subir sourcemaps durante build, instala el plugin:
+
+```bash
+npm install --save-dev @sentry/vite-plugin
+```
+
+Crea un token de autenticación en Sentry con permisos para leer proyecto y administrar releases. Luego define una variable de entorno en CI:
+
+```dotenv
+SENTRY_AUTH_TOKEN=TOKEN_PRIVADO_DE_BUILD
+```
+
+No expongas `SENTRY_AUTH_TOKEN` al navegador. No debe empezar con `VITE_`.
+
+Edita `vite.config.ts`:
+
+```ts
+import { defineConfig } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+
+export default defineConfig({
+  build: {
+    // hidden genera sourcemaps para Sentry sin referenciarlos públicamente
+    // desde los archivos JavaScript finales.
+    sourcemap: "hidden",
+  },
+
+  plugins: [
+    // Plugin normal de Svelte.
+    svelte(),
+
+    // El plugin de Sentry debe ir después de otros plugins.
+    sentryVitePlugin({
+      // Slug de la organización en Sentry.
+      org: "mi-organizacion",
+
+      // Slug del proyecto en Sentry.
+      project: "mi-proyecto-svelte",
+
+      // URL de tu Sentry self-hosted.
+      url: "https://sentry.example.com",
+
+      // Token privado de build leído desde entorno.
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+
+      sourcemaps: {
+        // Borra sourcemaps después de subirlos para evitar publicarlos.
+        filesToDeleteAfterUpload: ["./dist/**/*.map"],
+      },
+    }),
+  ],
+});
+```
+
+Compila:
+
+```bash
+npm run build
+```
+
+El plugin subirá sourcemaps durante el build de producción. No esperes que suba sourcemaps durante `npm run dev`.
+
+---
+
+# Apéndice B: nota para SvelteKit
+
+Si tu app es SvelteKit en vez de Svelte puro con Vite, usa el SDK específico:
+
+```bash
+npm install @sentry/sveltekit
+```
+
+SvelteKit requiere integración con hooks e instrumentación de servidor/cliente. La configuración exacta depende de la versión de SvelteKit, el adapter usado y si corres en Node, Bun, Cloudflare Workers o Pages.
+
+Para una prueba mínima de evento manual en una página SvelteKit, el componente sería muy parecido:
+
+```svelte
+<script lang="ts">
+  import * as Sentry from "@sentry/sveltekit";
+
+  function testSentry() {
+    Sentry.captureException(new Error("Prueba manual desde una página SvelteKit"), {
+      tags: {
+        route: "sentry-demo",
+      },
+    });
+  }
+</script>
+
+<h1>Prueba de Sentry en SvelteKit</h1>
+
+<button type="button" on:click={testSentry}>
+  Enviar error de prueba
+</button>
+```
+
+En SvelteKit, coloca esto por ejemplo en:
+
+```text
+src/routes/sentry-demo/+page.svelte
+```
+
+---
+
+# Apéndice C: comandos rápidos de diagnóstico
+
+Ver uso de disco:
+
+```bash
+df -h
+```
+
+Ver memoria:
+
+```bash
+free -h
+```
+
+Ver procesos pesados:
+
+```bash
+top
+```
+
+Ver I/O si tienes `sysstat`:
+
+```bash
+sudo apt install -y sysstat
+iostat -xz 1
+```
+
+Ver logs de Caddy:
+
+```bash
+journalctl -u caddy -f
+```
+
+Ver logs de Sentry Docker:
+
+```bash
+cd /opt/sentry/self-hosted
+docker compose logs -f web worker cron relay snuba-api
+```
+
+Ver logs de Sentry nativo:
+
+```bash
+journalctl -u sentry-web -u sentry-worker -u sentry-cron -f
+```
+
+---
+
+# Referencias consultadas
+
+- Sentry Developer Documentation: Self-Hosted Sentry. <a href="https://develop.sentry.dev/self-hosted/" target="_blank" rel="noopener noreferrer">https://develop.sentry.dev/self-hosted/</a>
+- Sentry Developer Documentation: Self-Hosted Configuration. <a href="https://develop.sentry.dev/self-hosted/configuration/" target="_blank" rel="noopener noreferrer">https://develop.sentry.dev/self-hosted/configuration/</a>
+- Sentry Developer Documentation: Reverse Proxy. <a href="https://develop.sentry.dev/self-hosted/production-enhancements/reverse-proxy/" target="_blank" rel="noopener noreferrer">https://develop.sentry.dev/self-hosted/production-enhancements/reverse-proxy/</a>
+- Docker Docs: Install Docker Engine on Ubuntu. <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank" rel="noopener noreferrer">https://docs.docker.com/engine/install/ubuntu/</a>
+- Docker Docs: Install Docker Engine on Debian. <a href="https://docs.docker.com/engine/install/debian/" target="_blank" rel="noopener noreferrer">https://docs.docker.com/engine/install/debian/</a>
+- Caddy Documentation: Install. <a href="https://caddyserver.com/docs/install" target="_blank" rel="noopener noreferrer">https://caddyserver.com/docs/install</a>
+- Debian Wiki: CheckInstall. <a href="https://wiki.debian.org/CheckInstall" target="_blank" rel="noopener noreferrer">https://wiki.debian.org/CheckInstall</a>
+- Ubuntu Community Help Wiki: CheckInstall. <a href="https://help.ubuntu.com/community/CheckInstall" target="_blank" rel="noopener noreferrer">https://help.ubuntu.com/community/CheckInstall</a>
+- ClickHouse Docs: Install on Debian/Ubuntu. <a href="https://clickhouse.com/docs/install/debian_ubuntu" target="_blank" rel="noopener noreferrer">https://clickhouse.com/docs/install/debian_ubuntu</a>
+- Apache Kafka Quickstart. <a href="https://kafka.apache.org/quickstart/" target="_blank" rel="noopener noreferrer">https://kafka.apache.org/quickstart/</a>
+- Sentry for Svelte. <a href="https://docs.sentry.io/platforms/javascript/guides/svelte/" target="_blank" rel="noopener noreferrer">https://docs.sentry.io/platforms/javascript/guides/svelte/</a>
+- Sentry for SvelteKit. <a href="https://docs.sentry.io/platforms/javascript/guides/sveltekit/" target="_blank" rel="noopener noreferrer">https://docs.sentry.io/platforms/javascript/guides/sveltekit/</a>
+- Sentry Vite sourcemaps. <a href="https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/vite/" target="_blank" rel="noopener noreferrer">https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/vite/</a>
+- PyPI project: `sentry`. <a href="https://pypi.org/project/sentry/" target="_blank" rel="noopener noreferrer">https://pypi.org/project/sentry/</a>
+- Snapcraft package page: `sentry`. <a href="https://snapcraft.io/install/sentry/debian" target="_blank" rel="noopener noreferrer">https://snapcraft.io/install/sentry/debian</a>

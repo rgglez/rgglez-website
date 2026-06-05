@@ -19,6 +19,7 @@ import IconScale from "@/assets/icons/IconScale.svg";
 import IconAuthor from "@/assets/icons/IconAuthor.svg";
 import { getImage } from "astro:assets";
 import { SITE } from "@/config";
+import type { JsonLd } from "@rgglez/astro-seo/types";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
 
@@ -70,6 +71,18 @@ const ogImage = ogImageUrl
   ? new URL(ogImageUrl, Astro.url.origin).href
   : undefined;
 
+// Load JSON-LD companion file if one exists for this post (e.g., glosario articles)
+const jsonldModules = import.meta.glob<{ default: (baseUrl: string) => JsonLd }>(
+  "../data/jsonld/**/*.ts",
+  { eager: true }
+);
+const blogRelPath = post.filePath?.match(/data\/blog\/(.+)\.mdx?$/)?.[1] ?? "";
+const jsonLdFn = blogRelPath
+  ? jsonldModules[`../data/jsonld/${blogRelPath}.ts`]?.default
+  : undefined;
+const canonicalHref = canonicalURL ?? new URL(getPath(post.id, post.filePath), SITE.website).href;
+const jsonLd = jsonLdFn ? jsonLdFn(canonicalHref.toString()) : undefined;
+
 const layoutProps = {
   title: `${title.replace(/\.$/, '')} | ${SITE.title}`,
   author,
@@ -79,6 +92,7 @@ const layoutProps = {
   canonicalURL,
   ogImage,
   scrollSmooth: true,
+  jsonLd,
 };
 
 /* ========== Language Translations ========== */
