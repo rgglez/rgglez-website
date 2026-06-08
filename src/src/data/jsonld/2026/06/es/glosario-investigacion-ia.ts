@@ -38,7 +38,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-fundamentos-epistemologicos-y-metodo-cientifico`,
-      name: "Fundamentos epistemológicos y método científico",
+      name: "1. Fundamentos epistemológicos y método científico",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -215,7 +215,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-metodologias-y-diseno-de-investigacion`,
-      name: "Metodologías y diseño de investigación",
+      name: "2. Metodologías y diseño de investigación",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -548,7 +548,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-busqueda-bibliografica-fuentes-y-comunicacion-cientifica`,
-      name: "Búsqueda bibliográfica, fuentes y comunicación científica",
+      name: "3. Búsqueda bibliográfica, fuentes y comunicación científica",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -816,7 +816,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-gestion-de-proyectos-de-investigacion-en-ia`,
-      name: "Gestión de proyectos de investigación en IA",
+      name: "4. Gestión de proyectos de investigación en IA",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -1016,7 +1016,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-fundamentos-de-inteligencia-artificial`,
-      name: "Fundamentos de inteligencia artificial",
+      name: "5. Fundamentos de inteligencia artificial",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -1245,7 +1245,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-aprendizaje-automatico-y-evaluacion-experimental`,
-      name: "Aprendizaje automático y evaluación experimental",
+      name: "6. Aprendizaje automático y evaluación experimental",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -1613,7 +1613,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-deep-learning-pln-sistemas-cognitivos-y-modelos-fundacionales`,
-      name: "Deep learning, PLN, sistemas cognitivos y modelos fundacionales",
+      name: "7. Deep learning, PLN, sistemas cognitivos y modelos fundacionales",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -1906,7 +1906,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-computacion-bioinspirada-robotica-y-sistemas-emergentes`,
-      name: "Computación bioinspirada, robótica y sistemas emergentes",
+      name: "8. Computación bioinspirada, robótica y sistemas emergentes",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -2119,7 +2119,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-ingenieria-datos-y-despliegue-en-investigacion-de-ia`,
-      name: "Ingeniería, datos y despliegue en investigación de IA",
+      name: "9. Ingeniería, datos y despliegue en investigación de IA",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
@@ -2335,7 +2335,7 @@ export default function getJsonLd(base: string): Record<string, unknown>[] {
     {
       "@type": "DefinedTermSet",
       "@id": `${base}#section-etica-legalidad-seguridad-y-explicabilidad`,
-      name: "Ética, legalidad, seguridad y explicabilidad",
+      name: "10. Ética, legalidad, seguridad y explicabilidad",
       isPartOf: { "@id": `${base}#termset` },
       hasDefinedTerm: [
         {
