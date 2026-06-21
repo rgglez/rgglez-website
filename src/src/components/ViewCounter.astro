@@ -1,0 +1,31 @@
+---
+import IconEye from "@/assets/icons/IconEye.svg";
+
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<span
+  class="inline-flex items-center gap-1 text-sm text-foreground/70"
+  aria-live="polite"
+>
+  <IconEye class="inline-block size-6 min-w-5.5 flex-none" />
+  <span id="view-count" data-slug={slug}>…</span>
+</span>
+
+<script>
+  const el = document.getElementById("view-count");
+  if (el) {
+    const slug = el.dataset.slug;
+    fetch(`/api/views/${slug}`, { method: "POST" })
+      .then((r) => r.json() as Promise<{ count: number }>)
+      .then((d) => {
+        el.textContent = new Intl.NumberFormat().format(d.count);
+      })
+      .catch(() => {
+        el.textContent = "—";
+      });
+  }
+</script>

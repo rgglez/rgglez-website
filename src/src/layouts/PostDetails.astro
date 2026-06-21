@@ -22,6 +22,7 @@ import { SITE } from "@/config";
 import type { JsonLd } from "@rgglez/astro-seo/types";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
+import ViewCounter from "@/components/ViewCounter.astro";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -44,9 +45,13 @@ const {
   hideEditPost,
   license,
   licenseUrl,
+
 } = post.data;
 
 const { Content } = await render(post);
+
+// Clave estable del contador de visitas (misma base que getPath usa para la URL).
+const slug = post.id;
 
 const postLang = getFileLang(post.filePath) || SITE.lang;
 
@@ -85,6 +90,7 @@ const jsonLd = jsonLdFn ? jsonLdFn(canonicalHref.toString()) : undefined;
 
 const layoutProps = {
   title: `${title.replace(/\.$/, '')} | ${SITE.title}`,
+
   author,
   description,
   pubDatetime,
@@ -131,6 +137,8 @@ const nextPost =
     </h1>
     <div class="my-2 flex flex-wrap items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" lang={postLang} />
+      <span aria-hidden="true" class="text-foreground/40">|</span>
+      <ViewCounter slug={slug} />
       <span
         aria-hidden="true"
         class:list={[
@@ -418,9 +426,8 @@ const nextPost =
         wrapper.dataset.mermaid = source;
         wrapper.innerHTML = svg;
         pre.replaceWith(wrapper);
-      } catch (err) {
-        console.error("[mermaid]", err);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err) {}
     }));
   }
 
