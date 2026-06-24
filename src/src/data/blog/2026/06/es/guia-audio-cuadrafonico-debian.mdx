@@ -2,8 +2,8 @@
 title: "Cómo configurar un sistema de audio 4.1 en Linux usando PipeWire, JamesDSP y systemd"
 description: >-
     Guía completa para configurar un sistema de altavoces cuadrafónicos 4.1 en Linux, utilizando PipeWire, JamesDSP y systemd. Incluye análisis técnico del hardware, funcionamiento de los altavoces Cambridge Soundworks FPS2000 y pasos detallados de implementación.
-pubDatetime: 2026-06-24T20:00:00-06:00
-modDatetime: 2026-06-24T20:00:00-06:00
+pubDatetime: 2026-06-24T00:00:00-06:00
+modDatetime: 2026-06-24T00:00:00-06:00
 slug: "guia-audio-cuadrafonico-debian"
 lang: es
 ogImage: "../../../../../assets/posts/2026/06/guia-audio-cuadrafonico-debian/header.webp"
@@ -31,7 +31,7 @@ import strix from '@/assets/posts/2026/06/guia-audio-cuadrafonico-debian/strix.w
 
 # Introducción
 
-A inicios de los 2000 adquirí un sistema de altavoces cuadrafónicos 4.1 <a href="https://en.wikipedia.org/wiki/Cambridge_SoundWorks" target="_blank">Cambridge Soundworks FPS2000</a> <Image src={fps2000} alt="Cambridge Soundworks FPS2000" class="float-left mr-6 mb-4 w-2/5 max-w-40 h-auto" /> que, conectado a una <a href="https://en.wikipedia.org/wiki/Sound_Blaster_AWE64" target="_blank">Sound Blaster AWE64 Mark II</a>, permitía escuchar música y videojuegos con un efecto cuadrafónico envolvente muy convincente. Al cambiar de componentes, pasé a usar una <a href="https://en.wikipedia.org/wiki/Asus_Xonar" target="_blank">ASUS Xonar D2X</a>, la cual, a pesar de ser una tarjeta de sonido dedicada y moderna, no disponía del conector digital de la Sound Blaster. Además, ante la falta de drivers oficiales para versiones modernas de Windows, tuve que recurrir a drivers comunitarios. Al pasar a Debian Linux, la tarjeta ASUS Xonar D2X dejó de funcionar correctamente, lo que provocó que los altavoces traseros no recibieran señal alguna. <Image src={awe64} alt="Sound Blaster AWE64" class="float-right ml-6 mb-4 w-2/5 max-w-40 h-auto" /> Tras varios intentos fallidos de configuración, decidí regresar a la tarjeta integrada de la placa base <a href="https://rog.asus.com/mx/motherboards/rog-strix/rog-strix-b550-f-gaming-model/" target="_blank">ASUS ROG STRIX B550-F Gaming</a>, la cual, aunque no es dedicada, es plenamente compatible con PipeWire y permite una configuración cuadrafónica estable.
+A inicios de los 2000 adquirí un sistema de altavoces cuadrafónicos 4.1 <a href="https://en.wikipedia.org/wiki/Cambridge_SoundWorks" target="_blank">Cambridge Soundworks FPS2000</a> <Image src={fps2000} alt="Cambridge Soundworks FPS2000" class="float-left mr-6 mb-4 w-2/5 max-w-50 h-auto" /> que, conectado a una <a href="https://en.wikipedia.org/wiki/Sound_Blaster_AWE64" target="_blank">Sound Blaster AWE64 Mark II</a>, permitía escuchar música y videojuegos con un efecto cuadrafónico envolvente muy convincente. Al cambiar de componentes, pasé a usar una <a href="https://en.wikipedia.org/wiki/Asus_Xonar" target="_blank">ASUS Xonar D2X</a>, la cual, a pesar de ser una tarjeta de sonido dedicada y moderna, no disponía del conector digital de la Sound Blaster. Además, ante la falta de drivers oficiales para versiones modernas de Windows, tuve que recurrir a drivers comunitarios. Al pasar a Debian Linux, la tarjeta ASUS Xonar D2X dejó de funcionar correctamente, lo que provocó que los altavoces traseros no recibieran señal alguna. <Image src={awe64} alt="Sound Blaster AWE64" class="float-right ml-6 mb-4 w-2/5 max-w-50 h-auto" /> Tras varios intentos fallidos de configuración, decidí regresar a la tarjeta integrada de la placa base <a href="https://rog.asus.com/mx/motherboards/rog-strix/rog-strix-b550-f-gaming-model/" target="_blank">ASUS ROG STRIX B550-F Gaming</a>, la cual, aunque no es dedicada, es plenamente compatible con PipeWire y permite una configuración cuadrafónica estable.
 
 En esta guía se detalla la solución definitiva para configurar un sistema de altavoces cuadrafónico 4.1 Cambridge Soundworks FPS2000 en una placa base moderna con la distribución Debian Forky/Sid, utilizando el servidor de sonido PipeWire, el plugin JamesDSP y la automatización mediante un servicio de usuario en systemd.
 
@@ -43,7 +43,7 @@ En esta guía se detalla la solución definitiva para configurar un sistema de a
 
 ## 1. Análisis técnico del hardware y justificación del cambio
 ### Por qué la tarjeta ASUS Xonar D2X no funcionó
-<Image src={xonar} alt="ASUS Xonar D2X" class="float-right mr-6 mb-4 w-2/5 max-w-40 h-auto" /> La tarjeta dedicada ASUS Xonar D2X (chipset AV200 / C-Media CMI8788) presenta
+<Image src={xonar} alt="ASUS Xonar D2X" class="float-right mr-6 mb-4 w-2/5 max-w-50 h-auto" /> La tarjeta dedicada ASUS Xonar D2X (chipset AV200 / C-Media CMI8788) presenta
 incompatibilidades insalvables en plataformas modernas como AMD B550
 (arquitectura AM4):
 1. **Driver heredado sin soporte (snd_virtuoso):** El módulo del kernel para
@@ -60,7 +60,7 @@ relés analógicos mecánicos secundarios. En consecuencia, aunque el sistema
 operativo reporta que los puertos traseros están activos, los jacks físicos
 (negro/naranja) permanecen completamente apagados a nivel eléctrico.
 ### Selección de la tarjeta integrada (Realtek SupremeFX S1220A)
-<Image src={strix} alt="ASUS ROG STRIX B550-F Gaming" class="float-right ml-6 mb-4 w-2/5 max-w-40 h-auto" /> Se decidió regresar a la tarjeta integrada de la placa base ASUS ROG STRIX
+<Image src={strix} alt="ASUS ROG STRIX B550-F Gaming" class="float-right ml-6 mb-4 w-2/5 max-w-50 h-auto" /> Se decidió regresar a la tarjeta integrada de la placa base ASUS ROG STRIX
 B550-F Gaming. Esta tarjeta utiliza el driver estándar y moderno `snd-hda-intel`,
 plenamente mantenido en el kernel de Linux, lo que garantiza estabilidad,
 compatibilidad con PipeWire y una respuesta analógica inmediata.

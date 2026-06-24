@@ -1,0 +1,241 @@
+---
+title: "So konfigurierst du ein 4.1-Audiosystem unter Linux mit PipeWire, JamesDSP und systemd"
+description: >-
+  Vollständige Anleitung zur Konfiguration eines quadrophonischen
+  4.1-Lautsprechersystems unter Linux mit PipeWire, JamesDSP und systemd.
+  Enthält eine technische Hardwareanalyse, die Funktionsweise der Cambridge
+  Soundworks FPS2000 und detaillierte Implementierungsschritte.
+pubDatetime: 2026-06-24T00:00:00-06:00
+modDatetime: 2026-06-24T00:00:00-06:00
+slug: "anleitung-quadrophonisches-audio-debian"
+lang: de
+ogImage: "../../../../../assets/posts/2026/06/guia-audio-cuadrafonico-debian/header.webp"
+featured: false
+draft: false
+tags:
+  - "Linux"
+  - "PipeWire"
+  - "JamesDSP"
+  - "systemd"
+  - "4.1 Audio"
+  - "Retro-Audio"
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.de"
+---
+
+import { Image } from "astro:assets";
+import Aside from "@rgglez/astro-aside";
+
+import awe64 from "@/assets/posts/2026/06/guia-audio-cuadrafonico-debian/awe64.webp";
+import fps2000 from "@/assets/posts/2026/06/guia-audio-cuadrafonico-debian/fps2000.webp";
+import xonar from "@/assets/posts/2026/06/guia-audio-cuadrafonico-debian/xonar.webp";
+import strix from "@/assets/posts/2026/06/guia-audio-cuadrafonico-debian/strix.webp";
+
+# Einführung
+
+Anfang der 2000er kaufte ich ein quadrophonisches 4.1-Lautsprechersystem, das <a href="https://en.wikipedia.org/wiki/Cambridge_SoundWorks" target="_blank">Cambridge Soundworks FPS2000</a> <Image src={fps2000} alt="Cambridge Soundworks FPS2000" class="float-left mr-6 mb-4 w-2/5 max-w-50 h-auto" />, das in Verbindung mit einer <a href="https://en.wikipedia.org/wiki/Sound_Blaster_AWE64" target="_blank">Sound Blaster AWE64 Mark II</a> Musik und Videospiele mit einem sehr überzeugenden, immersiven Quadrophonie-Effekt ermöglichte. Als ich später Komponenten austauschte, wechselte ich zu einer <a href="https://en.wikipedia.org/wiki/Asus_Xonar" target="_blank">ASUS Xonar D2X</a>, die zwar eine moderne dedizierte Soundkarte war, aber nicht über den digitalen Anschluss der Sound Blaster verfügte. Außerdem musste ich mangels offizieller Treiber für moderne Windows-Versionen auf Community-Treiber zurückgreifen. Nach dem Umstieg auf Debian Linux funktionierte die ASUS Xonar D2X nicht mehr korrekt, wodurch die hinteren Lautsprecher überhaupt kein Signal mehr bekamen. <Image src={awe64} alt="Sound Blaster AWE64" class="float-right ml-6 mb-4 w-2/5 max-w-50 h-auto" /> Nach mehreren fehlgeschlagenen Konfigurationsversuchen entschied ich mich, wieder auf den integrierten Audiochip des Mainboards <a href="https://rog.asus.com/mx/motherboards/rog-strix/rog-strix-b550-f-gaming-model/" target="_blank">ASUS ROG STRIX B550-F Gaming</a> zurückzugehen. Obwohl er nicht dediziert ist, ist er vollständig mit PipeWire kompatibel und erlaubt eine stabile quadrophonische Konfiguration.
+
+Diese Anleitung beschreibt die endgültige Lösung zur Konfiguration eines Cambridge Soundworks FPS2000 quadrophonischen 4.1-Lautsprechersystems auf einem modernen Mainboard mit der Distribution Debian Forky/Sid unter Verwendung des PipeWire-Soundservers, des JamesDSP-Plugins und der Automatisierung über einen systemd-Benutzerdienst.
+
+---
+
+## Inhaltsverzeichnis
+
+---
+
+## 1. Technische Hardwareanalyse und Begründung für den Wechsel
+
+### Warum die ASUS Xonar D2X nicht funktionierte
+
+<Image
+  src={xonar}
+  alt="ASUS Xonar D2X"
+  class="float-right mr-6 mb-4 h-auto w-2/5 max-w-50"
+/>
+Die dedizierte ASUS Xonar D2X (AV200 / C-Media CMI8788-Chipsatz) weist auf
+modernen Plattformen wie AMD B550 (AM4-Architektur) unüberwindbare
+Inkompatibilitäten auf:
+
+1. **Veralteter Treiber ohne Support (`snd_virtuoso`):** Das Kernelmodul für
+   diese Karte wurde ursprünglich zwischen 2007 und 2009 entwickelt. In
+   modernen Linux-Kernel-Versionen und unter dynamischen Audioarchitekturen wie
+   PipeWire schlägt das Mapping der sekundären Kanäle fehl, was zu erzwungenem
+   Downmixing nach vorne oder zu vollständigem Signalverlust führt.
+2. **Elektrischer Fehler der PCIe-Brücke (PLX PEX8112):** Die Xonar D2X ist
+   eine native PCI-Karte, die einen physischen Bridge-Chip nutzt, um sich an
+   den PCI-Express-Bus anzupassen. Moderne Chipsätze verwalten die
+   Energiezustände dieser alten Komponente über diesen veralteten Treiber nicht
+   korrekt. Dadurch kann die Karte den Spannungsimpuls nicht senden, der nötig
+   ist, um ihre sekundären mechanischen Analogrelais zu aktivieren. In der
+   Folge meldet das Betriebssystem zwar die hinteren Ports als aktiv, die
+   physischen Buchsen (schwarz/orange) bleiben elektrisch jedoch vollständig
+   inaktiv.
+
+### Auswahl der integrierten Karte (Realtek SupremeFX S1220A)
+
+<Image
+  src={strix}
+  alt="ASUS ROG STRIX B550-F Gaming"
+  class="float-right mb-4 ml-6 h-auto w-2/5 max-w-50"
+/>
+Deshalb fiel die Entscheidung, zum integrierten Audiochip des ASUS ROG STRIX
+B550-F Gaming Mainboards zurückzukehren. Dieser verwendet den modernen
+Standardtreiber `snd-hda-intel`, der im Linux-Kernel vollständig gepflegt wird
+und dadurch Stabilität, PipeWire-Kompatibilität und unmittelbare analoge
+Reaktion garantiert.
+
+## 2. Funktionsweise der Cambridge Soundworks FPS2000
+
+Die Cambridge Soundworks FPS2000 arbeiten hinsichtlich der Verarbeitung von
+Audiosignalen auf eine besondere Weise:
+
+- **Trennung der Satelliten (4.0):** Sie erhalten zwei unabhängige
+  Stereosignale über analoge 3,5-mm-Verbindungen: das grüne Kabel
+  (Front Left/Right) und das schwarze Kabel (Rear Left/Right). Der
+  Systemverstärker verarbeitet diese Signale diskret und leitet sie an die
+  vier unabhängigen Satelliten weiter.
+- **Hardware-Crossover des Subwoofers (das ".1"):** Das System erfordert
+  nicht, dass der Computer einen separaten Low Frequency Effects (LFE)-Kanal
+  sendet. Die im Subwoofer integrierte Verstärkerschaltung greift die tiefen
+  Frequenzen aus den vorderen und hinteren Eingängen ab, vereinigt sie analog
+  und gibt sie über den Anschluss des Tieftonlautsprechers wieder.
+- **Physische Fader-Steuerung:** Die kabelgebundene Lautstärkeregelung besitzt
+  ein Balance-Potentiometer (Fader). Es ist zwingend erforderlich, dass sich
+  dieser Regler exakt in seiner Mittelstellung (physische Rastung) befindet,
+  damit das elektrische Signal gleichmäßig auf die hinteren und vorderen
+  Verstärkerstufen verteilt wird.
+
+## 3. Implementierung und Konfiguration des Systems
+
+### Schritt 1: Physischer Kabelanschluss
+
+1. Schließe das **grüne** Kabel (Frontlautsprecher) an die grüne Buchse
+   (Line Out / L-OUT) auf der Rückseite des ROG-STRIX-Boards an.
+2. Schließe das **schwarze** Kabel (Hinterlautsprecher) an die schwarze Buchse
+   (REAR) auf der Rückseite des ROG-STRIX-Boards an.
+3. Lasse die übrigen analogen Ports frei.
+
+### Schritt 2: Konfiguration des Audioprofils
+
+Öffne im Lautstärkemixer deiner Desktop-Umgebung (KDE Plasma) die
+Konfiguration des integrierten Audiogeräts ("Internes Audio") und wähle das
+Profil **Analoger Surround 4.1** aus (oder 5.1, falls Ersteres nicht
+verfügbar ist, da das Script den Center-Kanal ignorieren wird). Dadurch werden
+die benötigten Hardware-Nodes in PipeWire bereitgestellt.
+
+### Schritt 3: Script zum Klonen der Kanäle
+
+Wir erstellen das Script, das den von JamesDSP verarbeiteten Stereostream auf
+die hinteren Ausgänge und den virtuellen LFE-Kanal dupliziert:
+
+Bevor du das Script erstellst, musst du den internen Namen des integrierten
+Audioausgangs in PipeWire ermitteln. Aktiviere dazu zuerst das Profil
+**Analoger Surround 4.1** und führe dann aus:
+
+```bash
+pactl list short sinks
+```
+
+In meinem Fall erscheint der integrierte Ausgang mit einem Namen ähnlich
+diesem:
+
+```text
+alsa_output.pci-0000_0f_00.4.analog-surround-41
+```
+
+Der Teil, der die Hardware stabil identifiziert, ist
+`alsa_output.pci-0000_0f_00.4`; das Suffix `.analog-surround-41` entspricht dem
+gewählten Ausgabeprofil. Du kannst den exakten Namen der von PipeWire
+bereitgestellten Ports auch mit folgendem Befehl prüfen:
+
+```bash
+pw-link -o | grep analog-surround
+```
+
+Der ermittelte Wert muss in der Variable `INTEGRADA` des Scripts verwendet
+werden. Wenn Mainboard oder PCI-Bus unterschiedlich sind, ändert sich dieser
+Bezeichner.
+
+```bash
+# ~/.local/bin/fix-audio-routing.sh
+
+#!/bin/bash
+# Unveränderliche Hardwareadresse der integrierten Soundkarte
+INTEGRADA="alsa_output.pci-0000_0f_00.4"
+# Absoluter Pfad zum PipeWire-Programm zur Link-Steuerung
+PW_BIN="/usr/bin/pw-link"
+# Dupliziere den vorderen linken Kanal (FL) auf den hinteren linken Kanal (RL)
+# Leitet Fehler nach /dev/null um, falls der Link bereits besteht
+
+$PW_BIN jdsp_@PwJamesDspPlugin_JamesDsp:output_FL ${INTEGRADA}.analog-surround-41:playback_RL 2>/dev/null
+
+# Dupliziere den vorderen rechten Kanal (FR) auf den hinteren rechten Kanal (RR)
+
+$PW_BIN jdsp_@PwJamesDspPlugin_JamesDsp:output_FR ${INTEGRADA}.analog-surround-41:playback_RR 2>/dev/null
+
+# Erzwinge die Einspeisung des linken Signals in den virtuellen Subwoofer-Kanal (LFE)
+# Das stellt Konsistenz in der von der Matrix verwalteten Tiefbasszuordnung sicher
+$PW_BIN jdsp_@PwJamesDspPlugin_JamesDsp:output_FL ${INTEGRADA}.analog-surround-41:playback_LFE 2>/dev/null
+# Mit erfolgreichem Status beenden, um Warnungen in systemd zu vermeiden
+exit 0
+```
+
+Vergib Ausführungsrechte an das Script:
+
+```bash
+chmod +x ~/.local/bin/fix-audio-routing.sh
+```
+
+### Schritt 4: Automatisierung mit systemd auf Benutzerebene
+
+Damit die Konfiguration beim Anmelden automatisch ausgeführt wird, erstellen
+wir eine Benutzerdienst-Unit.
+
+Erstelle die Konfigurationsdatei:
+
+```ini
+# ~/.config/systemd/user/dsp-routing.service
+
+[Unit]
+Description=4.1-Kanalduplizierung für Cambridge FPS2000
+# Stellt sicher, dass das Script ausgeführt wird, nachdem Soundserver und grafische Sitzung bereit sind
+After=pipewire.service wireplumber.service graphical-session.target
+[Service]
+# Setzt den Typ auf oneshot, da das Script schnell ausgeführt wird und sofort endet
+Type=oneshot
+# Ausführungsbefehl mit der Makrovariable %h, die das Home des Benutzers dynamisch auflöst
+ExecStart=%h/.local/bin/fix-audio-routing.sh
+# Fügt eine Verzögerung von 3 Sekunden hinzu, damit JamesDSP vollständig geladen ist
+ExecStartPre=/bin/sleep 3
+RemainAfterExit=yes
+[Install]
+# Verknüpft den Dienst mit dem Standardziel der Benutzeranmeldung
+WantedBy=default.target
+```
+
+Führe die folgenden Befehle aus, um den Dienst zu registrieren, zu aktivieren
+und sofort zu starten:
+
+```bash
+# Systemd-Daemon neu laden, damit die neue Benutzer-Unit erkannt wird
+systemctl --user daemon-reload
+# Dienst aktivieren, damit er bei jeder Anmeldung automatisch ausgeführt wird
+systemctl --user enable dsp-routing.service
+# Dienst sofort manuell starten, um die Umgebung zu aktivieren
+systemctl --user start dsp-routing.service
+```
+
+Um zu prüfen, ob die Initialisierung korrekt erfolgt ist, kontrolliere den
+Status mit:
+
+```bash
+systemctl --user status dsp-routing.service
+```
+
+Es sollte der Status `Active: active (exited)` in grüner Farbe angezeigt
+werden.
+
+Wenn du den Regler des Balance-Potentiometers (Fader) nach links oder rechts
+drehst, kannst du überprüfen, dass die hinteren Lautsprecher korrekt Signal
+erhalten und der Subwoofer die tiefen Frequenzen gleichmäßig wiedergibt.
