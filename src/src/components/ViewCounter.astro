@@ -16,8 +16,9 @@ const { slug } = Astro.props;
 </span>
 
 <script>
-  const el = document.getElementById("view-count");
-  if (el) {
+  function loadViewCount() {
+    const el = document.getElementById("view-count");
+    if (!el) return;
     const slug = el.dataset.slug;
     fetch(`/api/views/${slug}`, { method: "POST" })
       .then((r) => r.json() as Promise<{ count: number }>)
@@ -28,4 +29,6 @@ const { slug } = Astro.props;
         el.textContent = "—";
       });
   }
+  // astro:page-load corre en la carga inicial y tras cada navegación con ClientRouter.
+  document.addEventListener("astro:page-load", loadViewCount);
 </script>

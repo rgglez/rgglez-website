@@ -314,8 +314,9 @@ const { slug } = Astro.props;
 </span>
 
 <script>
-  const el = document.getElementById("view-count");
-  if (el) {
+  function loadViewCount() {
+    const el = document.getElementById("view-count");
+    if (!el) return;
     const slug = el.dataset.slug;
     fetch(`/api/views/${slug}`, { method: "POST" })
       .then((r) => r.json() as Promise<{ count: number }>)
@@ -326,8 +327,16 @@ const { slug } = Astro.props;
         el.textContent = "—";
       });
   }
+  // astro:page-load corre en la carga inicial y tras cada navegación con ClientRouter.
+  document.addEventListener("astro:page-load", loadViewCount);
 </script>
 ```
+
+<Aside type="caution" title="Si usas View Transitions (ClientRouter), escucha astro:page-load">
+
+Los `<script>` de módulo de Astro corren **una sola vez** en la carga completa de la página. Si tu sitio usa el <a href="https://docs.astro.build/en/guides/view-transitions/" target="_blank">`ClientRouter`</a> (View Transitions), al navegar entre artículos el DOM se reemplaza sin recargar y el script **no vuelve a ejecutarse**: el contador se queda en `…` hasta que recargas a mano (F5). La solución es envolver la lógica en una función y dispararla con el evento `astro:page-load`, que se emite tanto en la carga inicial como tras cada navegación. Vuelve a buscar el elemento dentro de la función, porque el nodo anterior ya no existe tras el _swap_. Si tu sitio **no** usa View Transitions, basta con llamar a `loadViewCount()` directamente.
+
+</Aside>
 
 Úsalo en el layout del artículo (en AstroPaper, típicamente `src/layouts/PostDetails.astro` o equivalente), pasándole el slug del post:
 
