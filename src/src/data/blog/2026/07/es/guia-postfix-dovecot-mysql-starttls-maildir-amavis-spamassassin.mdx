@@ -342,7 +342,8 @@ CREATE TABLE virtual_aliases (
   active TINYINT(1) NOT NULL DEFAULT 1,
   FOREIGN KEY (domain_id) REFERENCES virtual_domains(id)
     ON DELETE CASCADE,
-  INDEX(source)
+  -- source es la dirección completa (incluye dominio); no debe repetirse.
+  UNIQUE KEY uniq_alias_source (domain_id, source)
 );
 
 -- Tabla para registrar envíos SMTP autenticados.
@@ -357,13 +358,19 @@ CREATE TABLE smtp_send_log (
   INDEX idx_client_time (client_address, created_at)
 );
 
--- Tabla de países permitidos o bloqueados.
+-- Tabla de países permitidos o bloqueados, por dominio.
+-- domain_id NULL = regla global (aplica a cualquier dominio sin regla propia).
+-- domain_id con valor = regla específica de ese dominio (tenant).
 CREATE TABLE geoip_policy (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  country_iso CHAR(2) NOT NULL UNIQUE,
+  domain_id INT NULL,
+  country_iso CHAR(2) NOT NULL,
   action ENUM('permit', 'reject') NOT NULL DEFAULT 'reject',
   description VARCHAR(255) NULL,
-  active TINYINT(1) NOT NULL DEFAULT 1
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  UNIQUE KEY uniq_domain_country (domain_id, country_iso),
+  FOREIGN KEY (domain_id) REFERENCES virtual_domains(id)
+    ON DELETE CASCADE
 );
 
 -- Inserta un dominio de ejemplo.
@@ -403,17 +410,41 @@ VALUES (
   1
 );
 
+-- Reglas GLOBALES (domain_id NULL): aplican a cualquier dominio sin regla propia.
 -- Ejemplo: permitir México y Estados Unidos.
-INSERT INTO geoip_policy (country_iso, action, description, active)
+INSERT INTO geoip_policy (domain_id, country_iso, action, description, active)
 VALUES
-  ('MX', 'permit', 'México permitido para SMTP autenticado', 1),
-  ('US', 'permit', 'Estados Unidos permitido para SMTP autenticado', 1);
+  (NULL, 'MX', 'permit', 'México permitido (global)', 1),
+  (NULL, 'US', 'permit', 'Estados Unidos permitido (global)', 1);
+
+-- Regla ESPECÍFICA de un dominio: sólo example.com (domain_id = 1) permite además Canadá.
+-- Las reglas de dominio se combinan con las globales; para un país concreto,
+-- la regla del dominio tiene prioridad sobre la global.
+INSERT INTO geoip_policy (domain_id, country_iso, action, description, active)
+VALUES
+  (1, 'CA', 'permit', 'Canadá permitido sólo para example.com', 1);
 ```
 
 Sal de MySQL:
 
 ```sql
 EXIT;
+```
+
+Si ya tenías una instalación previa con `geoip_policy` global y `virtual_aliases` con `source` no único, migra los esquemas así (depura duplicados de `source` antes de crear el índice único):
+
+```sql
+-- GeoIP por dominio: agrega domain_id y cambia la unicidad a (domain_id, country_iso).
+ALTER TABLE geoip_policy
+  ADD COLUMN domain_id INT NULL AFTER id,
+  DROP INDEX country_iso,
+  ADD UNIQUE KEY uniq_domain_country (domain_id, country_iso),
+  ADD FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE;
+
+-- Alias: source único por dominio (elimina primero filas duplicadas de source).
+ALTER TABLE virtual_aliases
+  DROP INDEX source,
+  ADD UNIQUE KEY uniq_alias_source (domain_id, source);
 ```
 
 ---
@@ -667,7 +698,7 @@ sudo nano /etc/dovecot/dovecot.conf
 
 Contenido recomendado:
 
-```conf
+```ini
 # Protocolos habilitados por Dovecot.
 # imap: permite acceso IMAP a los buzones.
 # pop3: permite acceso POP3 a los buzones.
@@ -689,7 +720,7 @@ sudo nano /etc/dovecot/conf.d/10-mail.conf
 
 Busca y ajusta:
 
-```conf
+```ini
 # mail_location define dónde y cómo se almacenan los buzones.
 # maildir indica formato Maildir.
 # /var/vmail/%d/%n/Maildir coloca cada buzón como:
@@ -723,7 +754,7 @@ sudo nano /etc/dovecot/conf.d/10-auth.conf
 
 Contenido relevante:
 
-```conf
+```ini
 # disable_plaintext_auth=yes impide autenticación en texto claro
 # salvo cuando la conexión está protegida por TLS.
 disable_plaintext_auth = yes
@@ -748,7 +779,7 @@ sudo nano /etc/dovecot/conf.d/auth-sql.conf.ext
 
 Contenido:
 
-```conf
+```ini
 # passdb define dónde se validan las contraseñas.
 passdb {
   # driver=sql indica que se consultará una base de datos SQL.
@@ -779,7 +810,7 @@ sudo nano /etc/dovecot/dovecot-sql.conf.ext
 
 Contenido:
 
-```conf
+```ini
 # driver define el motor SQL.
 driver = mysql
 
@@ -836,7 +867,7 @@ sudo nano /etc/dovecot/conf.d/10-ssl.conf
 
 Contenido:
 
-```conf
+```ini
 # ssl=yes habilita TLS y STARTTLS.
 # En IMAP y POP3 esto permite STARTTLS en 143 y 110.
 ssl = yes
@@ -865,7 +896,7 @@ sudo nano /etc/dovecot/conf.d/10-master.conf
 
 Ajusta las secciones relevantes:
 
-```conf
+```ini
 service imap-login {
   # inet_listener imap define el listener IMAP en el puerto 143.
   inet_listener imap {
@@ -1001,7 +1032,7 @@ sudo nano /etc/postfix/main.cf
 
 Contenido recomendado:
 
-```conf
+```ini
 # Nombre completo del servidor de correo.
 myhostname = mail.example.com
 
@@ -1179,7 +1210,7 @@ sudo nano /etc/postfix/master.cf
 
 Agrega o ajusta las siguientes secciones:
 
-```conf
+```ini
 # Servicio SMTP público en puerto 25.
 smtp      inet  n       -       y       -       -       smtpd
 
@@ -1319,6 +1350,7 @@ $mydomain = 'example.com';
 # Hostname del servidor.
 $myhostname = 'mail.example.com';
 
+# Niveles POR DEFECTO (fallback global si un dominio no tiene override).
 # Nivel a partir del cual se etiqueta como spam.
 $sa_tag_level_deflt = 2.0;
 
@@ -1327,6 +1359,23 @@ $sa_tag2_level_deflt = 6.31;
 
 # Nivel a partir del cual el mensaje se considera spam claro.
 $sa_kill_level_deflt = 10.0;
+
+# Umbrales de spam POR DOMINIO destinatario (multitenant).
+# Amavis busca el dominio del destinatario en el hash; si no está,
+# usa el escalar $sa_*_deflt de arriba como valor por defecto.
+# Ajusta o agrega dominios según la sensibilidad que quiera cada tenant.
+@spam_tag_level_maps = (
+  { 'example.com' => 2.0, 'otro-tenant.com' => 4.0 },
+  \$sa_tag_level_deflt,
+);
+@spam_tag2_level_maps = (
+  { 'example.com' => 6.31, 'otro-tenant.com' => 7.5 },
+  \$sa_tag2_level_deflt,
+);
+@spam_kill_level_maps = (
+  { 'example.com' => 10.0, 'otro-tenant.com' => 8.0 },
+  \$sa_kill_level_deflt,
+);
 
 # Asunto agregado a mensajes marcados como spam.
 $sa_spam_subject_tag = '[SPAM] ';
@@ -1359,8 +1408,32 @@ $notify_method = 'smtp:[127.0.0.1]:10025';
 # Redes permitidas para conectarse a Amavis.
 @inet_acl = qw(127.0.0.1 [::1]);
 
+# --- Firma y verificación DKIM (multitenant, una clave por dominio) ---
+# Verifica DKIM del correo entrante.
+$enable_dkim_verification = 1;
+
+# Firma DKIM del correo saliente autenticado.
+$enable_dkim_signing = 1;
+
+# Una clave por dominio. El selector ('mail') y el archivo de clave
+# se definen en la sección 17. Repite dkim_key por cada dominio del tenant.
+dkim_key('example.com',      'mail', '/var/lib/dkim/example.com.mail.key.pem');
+dkim_key('otro-tenant.com',  'mail', '/var/lib/dkim/otro-tenant.com.mail.key.pem');
+
+# Selecciona qué clave usar según el dominio del remitente.
+# La primera regla que casa gana; el patrón final '.' es el fallback.
+@dkim_signature_options_bysender_maps = ({
+  'example.com'      => { d => 'example.com',     a => 'rsa-sha256', c => 'relaxed/simple' },
+  'otro-tenant.com'  => { d => 'otro-tenant.com', a => 'rsa-sha256', c => 'relaxed/simple' },
+});
+
 1;
 ```
+
+Sobre la configuración por dominio de este archivo:
+
+- Los `@spam_*_level_maps` fijan umbrales de spam por dominio destinatario; los escalares `$sa_*_deflt` quedan como fallback global. Para políticas más ricas (por buzón, listas blancas por tenant) Amavis soporta *policy banks* y lookup SQL, fuera del alcance de esta guía.
+- Los `dkim_key` y `@dkim_signature_options_bysender_maps` firman el correo saliente con la clave del dominio del remitente. La generación de claves y los registros DNS se cubren en la sección 17.
 
 ## 8.3. Configurar SpamAssassin
 
@@ -1372,7 +1445,7 @@ sudo nano /etc/spamassassin/local.cf
 
 Contenido:
 
-```conf
+```ini
 # required_score define la puntuación necesaria para marcar spam.
 required_score 5.0
 
@@ -1459,7 +1532,7 @@ sudo nano /etc/clamav/clamd.conf
 
 Asegúrate de tener estas directivas, sólo en la interfaz local:
 
-```conf
+```ini
 # Mantiene también el socket Unix local que usan otras herramientas.
 LocalSocket /var/run/clamav/clamd.ctl
 
@@ -1536,7 +1609,7 @@ curl -s https://secure.eicar.org/eicar.com.txt | clamdscan -
 
 Ya agregamos esto en `smtpd_recipient_restrictions`:
 
-```conf
+```ini
 reject_rbl_client zen.spamhaus.org,
 reject_rbl_client bl.spamcop.net,
 ```
@@ -1549,7 +1622,7 @@ Donde:
 
 Una configuración más conservadora puede poner DNSBL antes del policy daemon pero después de `permit_sasl_authenticated`, como hicimos:
 
-```conf
+```ini
 smtpd_recipient_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -1683,6 +1756,13 @@ MYSQL_CONFIG = {
 
 GEOIP_DB = "/var/lib/GeoIP/GeoLite2-Country.mmdb"
 
+# Abrimos el lector GeoIP UNA sola vez al arrancar y lo reutilizamos en cada
+# request. Abrir la base en cada conexión (un Reader por petición) es caro.
+try:
+    GEOIP_READER = geoip2.database.Reader(GEOIP_DB)
+except FileNotFoundError:
+    GEOIP_READER = None
+
 HOST = "127.0.0.1"
 PORT = 10040
 
@@ -1731,38 +1811,58 @@ def country_for_ip(ip_address):
 
     Si la IP no existe en la base o es privada, devuelve None.
     """
+    if GEOIP_READER is None:
+        return None
+
     try:
-        with geoip2.database.Reader(GEOIP_DB) as reader:
-            response = reader.country(ip_address)
-            return response.country.iso_code
-    except (geoip2.errors.AddressNotFoundError, ValueError, FileNotFoundError):
+        response = GEOIP_READER.country(ip_address)
+        return response.country.iso_code
+    except (geoip2.errors.AddressNotFoundError, ValueError):
         return None
 
 
-def geoip_allowed(conn, ip_address):
+def domain_of(address):
     """
-    Verifica si la IP pertenece a un país permitido.
+    Devuelve la parte de dominio de una dirección (en minúsculas), o None.
+    """
+    if "@" in address:
+        return address.rsplit("@", 1)[1].lower()
+    return None
 
-    Política elegida:
+
+def geoip_allowed(conn, ip_address, sasl_username):
+    """
+    Verifica si la IP pertenece a un país permitido para el dominio del usuario.
+
+    Política elegida (multitenant):
     - Si no se detecta país, se permite.
-    - Si hay reglas activas en geoip_policy, sólo se permiten países con action='permit'.
-    - Países con action='reject' se rechazan.
+    - Se consultan las reglas del dominio del usuario y las globales (domain_id NULL).
+    - Para un país dado, la regla del dominio tiene prioridad sobre la global.
+    - Si hay una regla que casa, sólo se permite si action='permit'.
+    - Si ningún país casa, se rechaza (lista blanca implícita).
     """
     country = country_for_ip(ip_address)
 
     if country is None:
         return True, "No GeoIP country detected"
 
+    domain = domain_of(sasl_username)
+
     with conn.cursor() as cur:
+        # domain_id IS NULL da 1 (global) y 0 (regla de dominio);
+        # ORDER BY lo ordena ascendente, así la regla del dominio gana.
         cur.execute(
             """
             SELECT action
             FROM geoip_policy
             WHERE country_iso = %s
               AND active = 1
+              AND (domain_id = (SELECT id FROM virtual_domains WHERE name = %s)
+                   OR domain_id IS NULL)
+            ORDER BY domain_id IS NULL
             LIMIT 1
             """,
-            (country,),
+            (country, domain),
         )
         row = cur.fetchone()
 
@@ -1861,7 +1961,7 @@ class PolicyHandler(socketserver.StreamRequestHandler):
         try:
             conn = mysql_connection()
 
-            allowed, reason = geoip_allowed(conn, client_address)
+            allowed, reason = geoip_allowed(conn, client_address, sasl_username)
             if not allowed:
                 self.respond(f"reject {reason}")
                 return
@@ -2268,7 +2368,51 @@ Donde:
 - `mx`: los servidores MX del dominio pueden enviar correo.
 - `-all`: todo lo demás falla.
 
-Para DKIM se recomienda usar OpenDKIM o Rspamd. Para DMARC:
+## 17.1. DKIM por dominio con Amavis
+
+Como Amavis ya está en la ruta del correo, lo usamos también para firmar DKIM, con **una clave por dominio**. No hace falta OpenDKIM ni otro daemon. En la sección 8.2 ya activamos `$enable_dkim_signing` y declaramos los `dkim_key(...)`; aquí generamos las claves y publicamos los TXT.
+
+Crea el directorio de claves y genera una clave RSA de 2048 bits por dominio.
+
+```bash
+sudo mkdir -p /var/lib/dkim
+
+# Repite por cada dominio del tenant, cambiando el nombre del archivo.
+sudo amavisd-new genrsa /var/lib/dkim/example.com.mail.key.pem 2048
+sudo amavisd-new genrsa /var/lib/dkim/otro-tenant.com.mail.key.pem 2048
+
+# Amavis debe poder leer las claves.
+sudo chown -R amavis:amavis /var/lib/dkim
+sudo chmod 640 /var/lib/dkim/*.key.pem
+```
+
+Reinicia Amavis y obtén el valor público que debes publicar en DNS.
+
+```bash
+sudo systemctl restart amavis
+
+# Muestra el registro TXT de cada dominio configurado con dkim_key.
+sudo amavisd-new showkeys
+```
+
+`showkeys` imprime, por dominio, un registro listo para publicar, por ejemplo:
+
+```dns
+mail._domainkey.example.com. IN TXT (
+  "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFA...IDAQAB" )
+```
+
+Publica el TXT `mail._domainkey.<dominio>` de cada tenant. El selector `mail` debe coincidir con el usado en `dkim_key(...)`. Verifica la firma con:
+
+```bash
+# Debe reportar "domainkeys: no signature" -> pasa a valid tras firmar,
+# o usa un validador externo enviando a check-auth@verifier.port25.com.
+sudo amavisd-new testkeys
+```
+
+**Multitenant:** por cada dominio nuevo repite: `dkim_key(...)` en `50-user`, `genrsa`, y el TXT `mail._domainkey.<dominio>`.
+
+## 17.2. DMARC
 
 ```dns
 _dmarc.example.com. IN TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
@@ -2280,6 +2424,8 @@ Donde:
 - `p=quarantine`: política de cuarentena si SPF/DKIM fallan.
 - `rua=mailto:dmarc@example.com`: dirección para reportes agregados.
 
+Publica un `_dmarc.<dominio>` por cada tenant.
+
 ---
 
 # 18. Endurecimiento recomendado
@@ -2288,7 +2434,7 @@ Donde:
 
 Comprueba que tienes:
 
-```conf
+```ini
 smtpd_recipient_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -2302,7 +2448,7 @@ smtpd_recipient_restrictions =
 
 En `master.cf`, puerto 587:
 
-```conf
+```ini
 -o smtpd_tls_security_level=encrypt
 ```
 
@@ -2312,13 +2458,13 @@ Esto obliga STARTTLS antes de autenticación.
 
 En `main.cf`:
 
-```conf
+```ini
 smtpd_sender_login_maps = mysql:/etc/postfix/mysql/sender_login_maps.cf
 ```
 
 Y en restricciones:
 
-```conf
+```ini
 reject_sender_login_mismatch
 ```
 
@@ -2345,6 +2491,48 @@ Donde:
 - `143/tcp`: IMAP.
 - `110/tcp`: POP3.
 - `enable`: activa firewall.
+
+## 18.5. Certificado por dominio con SNI (opcional, multitenant)
+
+Por defecto todos los tenants conectan al host compartido `mail.example.com` con un único certificado. Esto funciona: el hostname del servidor es independiente del dominio de correo. Sólo necesitas SNI si quieres que cada tenant use su **propio** hostname (`mail.sudominio.com`) con su propio certificado.
+
+Sigue siendo **una sola instancia** de Postfix/Dovecot; SNI únicamente selecciona el certificado según el nombre que pide el cliente. Requiere un certificado por hostname (por ejemplo, uno de Let's Encrypt por dominio).
+
+**Postfix** (≥ 3.4), en `main.cf`:
+
+```ini
+# Mapa de certificados por nombre de servidor solicitado vía SNI.
+tls_server_sni_maps = hash:/etc/postfix/vmail_sni
+```
+
+Crea `/etc/postfix/vmail_sni` con una línea por hostname; cada línea apunta a la clave y al certificado (en ese orden), separados por espacio:
+
+```text
+mail.example.com      /etc/letsencrypt/live/mail.example.com/privkey.pem /etc/letsencrypt/live/mail.example.com/fullchain.pem
+mail.otro-tenant.com  /etc/letsencrypt/live/mail.otro-tenant.com/privkey.pem /etc/letsencrypt/live/mail.otro-tenant.com/fullchain.pem
+```
+
+Genera el mapa indexado y recarga. La opción `-F` indica que los valores son rutas de archivo:
+
+```bash
+sudo postmap -F hash:/etc/postfix/vmail_sni
+sudo systemctl reload postfix
+```
+
+**Dovecot**, en `/etc/dovecot/conf.d/10-ssl.conf`, un bloque por hostname adicional. El certificado por defecto se mantiene; `local_name` sólo se aplica cuando el cliente pide ese nombre por SNI:
+
+```ini
+local_name mail.otro-tenant.com {
+  ssl_cert = </etc/letsencrypt/live/mail.otro-tenant.com/fullchain.pem
+  ssl_key  = </etc/letsencrypt/live/mail.otro-tenant.com/privkey.pem
+}
+```
+
+```bash
+sudo systemctl reload dovecot
+```
+
+Nota: los clientes de cada tenant deben configurar su servidor entrante/saliente como `mail.sudominio.com`, y ese hostname debe resolver a la IP del servidor.
 
 ---
 
@@ -2449,7 +2637,7 @@ sudo journalctl -u dovecot -f
 
 Verifica en `master.cf` que el servicio `127.0.0.1:10025` tenga:
 
-```conf
+```ini
 -o content_filter=
 ```
 
@@ -2461,7 +2649,7 @@ Asegúrate de que `permit_sasl_authenticated` esté antes de `reject_rbl_client`
 
 Configuración correcta:
 
-```conf
+```ini
 smtpd_recipient_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
@@ -2471,7 +2659,7 @@ smtpd_recipient_restrictions =
 
 Configuración problemática:
 
-```conf
+```ini
 smtpd_recipient_restrictions =
     reject_rbl_client zen.spamhaus.org,
     permit_sasl_authenticated,
@@ -2500,12 +2688,14 @@ En la segunda, usuarios autenticados desde IPs residenciales listadas pueden ser
 | `/etc/dovecot/conf.d/10-ssl.conf` | TLS/STARTTLS |
 | `/etc/dovecot/conf.d/10-master.conf` | Sockets LMTP y SASL |
 | `/etc/amavis/conf.d/15-content_filter_mode` | Activa filtro spam y antivirus |
-| `/etc/amavis/conf.d/50-user` | Configuración local Amavis |
+| `/etc/amavis/conf.d/50-user` | Amavis: umbrales spam por dominio y firma DKIM |
 | `/etc/amavis/conf.d/15-av_scanners` | Conecta Amavis con ClamAV (TCP 3310) |
 | `/etc/clamav/clamd.conf` | `clamd` escuchando en `127.0.0.1:3310` |
+| `/var/lib/dkim/*.key.pem` | Claves privadas DKIM, una por dominio |
 | `/etc/spamassassin/local.cf` | Reglas locales SpamAssassin |
-| `/opt/postfix-policy/policy.py` | Rate limit y GeoIP |
+| `/opt/postfix-policy/policy.py` | Rate limit y GeoIP por dominio |
 | `/etc/systemd/system/postfix-policy.service` | Servicio systemd del policy daemon |
+| `/etc/postfix/vmail_sni` | Certificados por dominio vía SNI (opcional) |
 
 ---
 
@@ -2529,8 +2719,10 @@ Antes de considerar listo el servidor:
 - [ ] Las DNSBL no bloquean usuarios autenticados legítimos.
 - [ ] El policy daemon responde en `127.0.0.1:10040`.
 - [ ] El rate limit se registra en `smtp_send_log`.
-- [ ] GeoIP permite y bloquea según `geoip_policy`.
-- [ ] SPF, DKIM y DMARC están configurados.
+- [ ] GeoIP permite y bloquea según `geoip_policy` (reglas por dominio y globales).
+- [ ] SPF está publicado por cada dominio.
+- [ ] Amavis firma DKIM y `amavisd-new testkeys` valida cada clave.
+- [ ] Cada dominio publica su TXT `mail._domainkey.<dominio>` y su `_dmarc.<dominio>`.
 - [ ] El firewall sólo expone los puertos necesarios.
 
 ---
