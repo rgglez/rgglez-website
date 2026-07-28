@@ -4,3 +4,6 @@ src/.wrangler/
 .venv/
 .agents
 .vscode/
+.astro/
+node_modules/
+
