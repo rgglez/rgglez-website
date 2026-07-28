@@ -3,4 +3,5 @@ export const LANG_NAMES: Record<string, string> = {
   en: "English",
   fr: "Français",
   de: "Deutsch",
+  zh: "中文",
 };
