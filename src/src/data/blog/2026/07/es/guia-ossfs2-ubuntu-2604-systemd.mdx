@@ -537,6 +537,10 @@ required_variables=(
 # Directorio local de montaje.
   OSSFS_LOG_DIR
 # Directorio exclusivo de logs.
+  OSSFS_FILE_MODE
+# Permisos octales para los archivos del bucket.
+  OSSFS_DIR_MODE
+# Permisos octales para los directorios del bucket.
 )
 # Finaliza la lista.
 
@@ -552,6 +556,20 @@ for variable in "${required_variables[@]}"; do
 # Finaliza la comprobación.
 done
 # Finaliza el recorrido.
+
+for variable in OSSFS_FILE_MODE OSSFS_DIR_MODE; do
+# Recorre las variables que contienen permisos.
+  if [[ ! "${!variable}" =~ ^0[0-7]{3}$ ]]; then
+# Exige cuatro dígitos octales, por ejemplo 0644 o 0750.
+    printf '%s debe ser un modo octal de cuatro dígitos (por ejemplo, 0644): %s\n' \
+      "$variable" "${!variable}" >&2
+# Explica el formato esperado y muestra el valor no válido.
+    exit 1
+# Impide montar con permisos ambiguos o incorrectos.
+  fi
+# Finaliza la validación.
+done
+# Finaliza el recorrido de los modos.
 
 if [[ ! -x "$OSSFS_BINARY" ]]; then
 # Comprueba que el ejecutable exista.
@@ -589,6 +607,10 @@ args=(
 # Indica el bucket.
   "--log_dir=$OSSFS_LOG_DIR"
 # Separa los logs por instancia.
+  "--file_mode=$OSSFS_FILE_MODE"
+# Fija los permisos que OSSFS2 muestra para todos los archivos.
+  "--dir_mode=$OSSFS_DIR_MODE"
+# Fija los permisos que OSSFS2 muestra para todos los directorios.
 )
 # Finaliza el arreglo.
 
@@ -608,6 +630,7 @@ exec "$OSSFS_BINARY" "${args[@]}"
 - `>&2` redirige a stderr.
 - `mountpoint -q` comprueba sin imprimir.
 - Los arreglos preservan los límites de los argumentos.
+- `file_mode` y `dir_mode` están disponibles en OSSFS2 2.0.1 o posterior y fijan los permisos globales que presenta el montaje; no son una `umask`.
 - `exec` reemplaza el shell por OSSFS2.
 
 Valida:
@@ -769,11 +792,17 @@ OSSFS_MOUNTPOINT=/mnt/oss/documentos
 # Directorio exclusivo de logs.
 OSSFS_LOG_DIR=/var/log/ossfs2/documentos
 
+# Permisos para todos los archivos visibles en el montaje.
+OSSFS_FILE_MODE=0640
+
+# Permisos para todos los directorios visibles en el montaje.
+OSSFS_DIR_MODE=0750
+
 # Descomenta para usar RAM Role en lugar de AccessKeys.
 # OSSFS_RAM_ROLE=rol-oss-ejemplo
 ```
 
-Repite el patrón con `/etc/ossfs2/multimedia.env`, `/etc/ossfs2/respaldos.env` u otros nombres. Cada instancia debe tener punto de montaje y directorio de logs propios.
+Repite el patrón con `/etc/ossfs2/multimedia.env`, `/etc/ossfs2/respaldos.env` u otros nombres. Cada instancia debe tener punto de montaje y directorio de logs propios. Ajusta `OSSFS_FILE_MODE` y `OSSFS_DIR_MODE` según el acceso que necesite cada bucket; los valores se aplican globalmente a los archivos y directorios que OSSFS2 presenta, incluidos los recién creados.
 
 ## 17. Probar y habilitar montajes
 

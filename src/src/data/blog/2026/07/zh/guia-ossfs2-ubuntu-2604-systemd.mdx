@@ -537,6 +537,10 @@ required_variables=(
 # 本地挂载目录。
   OSSFS_LOG_DIR
 # 专用日志目录。
+  OSSFS_FILE_MODE
+# 存储桶中文件的八进制权限。
+  OSSFS_DIR_MODE
+# 存储桶中目录的八进制权限。
 )
 # 结束列表。
 
@@ -552,6 +556,20 @@ for variable in "${required_variables[@]}"; do
 # 结束检查。
 done
 # 结束循环。
+
+for variable in OSSFS_FILE_MODE OSSFS_DIR_MODE; do
+# 遍历包含权限的变量。
+  if [[ ! "${!variable}" =~ ^0[0-7]{3}$ ]]; then
+# 要求使用四位八进制数，例如 0644 或 0750。
+    printf '%s 必须是四位八进制权限（例如 0644）：%s\n' \
+      "$variable" "${!variable}" >&2
+# 说明预期格式并显示无效值。
+    exit 1
+# 防止使用含糊或无效的权限挂载。
+  fi
+# 结束验证。
+done
+# 结束权限循环。
 
 if [[ ! -x "$OSSFS_BINARY" ]]; then
 # 检查可执行文件是否存在。
@@ -589,6 +607,10 @@ args=(
 # 指定存储空间。
   "--log_dir=$OSSFS_LOG_DIR"
 # 按实例分离日志。
+  "--file_mode=$OSSFS_FILE_MODE"
+# 设置 OSSFS2 为所有文件显示的权限。
+  "--dir_mode=$OSSFS_DIR_MODE"
+# 设置 OSSFS2 为所有目录显示的权限。
 )
 # 结束数组。
 
@@ -608,6 +630,7 @@ exec "$OSSFS_BINARY" "${args[@]}"
 - `>&2` 重定向到 stderr。
 - `mountpoint -q` 只检查而不输出。
 - 数组能保留各个参数的边界。
+- `file_mode` 和 `dir_mode` 自 OSSFS2 2.0.1 起可用，用于设置挂载所呈现的全局权限；它们不是 `umask`。
 - `exec` 用 OSSFS2 替换当前 shell。
 
 验证：
@@ -769,11 +792,17 @@ OSSFS_MOUNTPOINT=/mnt/oss/documents
 # 专用日志目录。
 OSSFS_LOG_DIR=/var/log/ossfs2/documents
 
+# 挂载中所有文件的权限。
+OSSFS_FILE_MODE=0640
+
+# 挂载中所有目录的权限。
+OSSFS_DIR_MODE=0750
+
 # 取消注释即可用 RAM 角色代替 AccessKey。
 # OSSFS_RAM_ROLE=example-oss-role
 ```
 
-按同样的方式创建 `/etc/ossfs2/multimedia.env`、`/etc/ossfs2/backups.env` 或其他名称的文件。每个实例都必须拥有各自独立的挂载点和日志目录。
+按同样的方式创建 `/etc/ossfs2/multimedia.env`、`/etc/ossfs2/backups.env` 或其他名称的文件。每个实例都必须拥有各自独立的挂载点和日志目录。请根据每个存储桶所需的访问权限设置 `OSSFS_FILE_MODE` 和 `OSSFS_DIR_MODE`；这些值会全局应用于 OSSFS2 所呈现的文件和目录，包括新创建的项目。
 
 ## 17. 测试并启用挂载
 

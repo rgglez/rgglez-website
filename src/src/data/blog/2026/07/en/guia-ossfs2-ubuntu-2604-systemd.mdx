@@ -537,6 +537,10 @@ required_variables=(
 # Local mount directory.
   OSSFS_LOG_DIR
 # Dedicated log directory.
+  OSSFS_FILE_MODE
+# Octal permissions for files in the bucket.
+  OSSFS_DIR_MODE
+# Octal permissions for directories in the bucket.
 )
 # Ends the list.
 
@@ -552,6 +556,20 @@ for variable in "${required_variables[@]}"; do
 # Ends the check.
 done
 # Ends the loop.
+
+for variable in OSSFS_FILE_MODE OSSFS_DIR_MODE; do
+# Iterates over the variables that contain permissions.
+  if [[ ! "${!variable}" =~ ^0[0-7]{3}$ ]]; then
+# Requires four octal digits, for example 0644 or 0750.
+    printf '%s must be a four-digit octal mode (for example, 0644): %s\n' \
+      "$variable" "${!variable}" >&2
+# Explains the expected format and shows the invalid value.
+    exit 1
+# Prevents mounting with ambiguous or invalid permissions.
+  fi
+# Ends validation.
+done
+# Ends the mode loop.
 
 if [[ ! -x "$OSSFS_BINARY" ]]; then
 # Checks that the executable exists.
@@ -589,6 +607,10 @@ args=(
 # Indicates the bucket.
   "--log_dir=$OSSFS_LOG_DIR"
 # Keeps logs separated per instance.
+  "--file_mode=$OSSFS_FILE_MODE"
+# Sets the permissions OSSFS2 reports for all files.
+  "--dir_mode=$OSSFS_DIR_MODE"
+# Sets the permissions OSSFS2 reports for all directories.
 )
 # Ends the array.
 
@@ -608,6 +630,7 @@ exec "$OSSFS_BINARY" "${args[@]}"
 - `>&2` redirects to stderr.
 - `mountpoint -q` checks without printing.
 - Arrays preserve argument boundaries.
+- `file_mode` and `dir_mode` are available in OSSFS2 2.0.1 or later and set the global permissions presented by the mount; they are not a `umask`.
 - `exec` replaces the shell with OSSFS2.
 
 Validate it:
@@ -769,11 +792,17 @@ OSSFS_MOUNTPOINT=/mnt/oss/documents
 # Dedicated log directory.
 OSSFS_LOG_DIR=/var/log/ossfs2/documents
 
+# Permissions for all files visible in the mount.
+OSSFS_FILE_MODE=0640
+
+# Permissions for all directories visible in the mount.
+OSSFS_DIR_MODE=0750
+
 # Uncomment to use a RAM Role instead of AccessKeys.
 # OSSFS_RAM_ROLE=example-oss-role
 ```
 
-Repeat the pattern with `/etc/ossfs2/multimedia.env`, `/etc/ossfs2/backups.env` or other names. Each instance must have its own mount point and log directory.
+Repeat the pattern with `/etc/ossfs2/multimedia.env`, `/etc/ossfs2/backups.env` or other names. Each instance must have its own mount point and log directory. Set `OSSFS_FILE_MODE` and `OSSFS_DIR_MODE` for the access required by each bucket; the values apply globally to the files and directories presented by OSSFS2, including newly created ones.
 
 ## 17. Test and enable mounts
 
