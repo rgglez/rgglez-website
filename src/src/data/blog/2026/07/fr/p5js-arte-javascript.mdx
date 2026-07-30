@@ -1,0 +1,312 @@
+---
+title: "p5.js : l’art avec JavaScript"
+description: >-
+  p5.js est une bibliothèque JavaScript qui permet de créer de l’art et des
+  visualisations interactives sur le Web. Cet article en présente les bases.
+pubDatetime: 2026-07-30T00:00:00-06:00
+modDatetime: 2026-07-30T00:00:00-06:00
+featured: true
+draft: false
+lang: fr
+slug: p5js-programmation-creative
+ogImage: "../../../../../assets/posts/2026/07/p5js-arte-javascript/header.webp"
+tags:
+  - p5js
+  - art
+  - javascript
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import P5Sketch from "@/components/P5Sketch.astro";
+import {
+  demoAve,
+  demoCirculos,
+  demoGolf,
+} from "@/data/blog/2026/07/p5js-demos";
+
+## Introduction
+
+J’ai découvert récemment la bibliothèque JavaScript p5.js grâce à une publication de Max de Mendizábal sur Facebook (oui, je sais, un peu tard). Elle permet de créer simplement des œuvres et des visualisations interactives sur le Web. Dans cet article, nous verrons comment l’utiliser pour réaliser des œuvres numériques et en quoi elle peut être utile aux artistes et aux designers.
+
+## Histoire
+
+En 2001, Ben Fry et Casey Reas, membres de l’Aesthetics and Computation Group du MIT Media Lab dirigé par John Maeda, ont créé Processing. Il s’agit d’un langage de programmation et d’un environnement de développement intégré libres, fondés sur une syntaxe Java simplifiée et un modèle de programmation graphique destiné aux artistes visuels et aux designers. Conçu à l’origine pour leur enseigner la programmation, Processing est rapidement devenu une plateforme populaire pour l’art numérique et les visualisations interactives.
+
+Processing a donné naissance à plusieurs projets apparentés ou inspirés de lui, dont p5.js. Lauren McCarthy a créé cette bibliothèque en 2014 selon la même philosophie que Processing, mais adaptée à JavaScript et au Web. p5.js fournit des fonctions accessibles pour créer des graphiques, des animations et des visualisations interactives.
+
+La page Wikipédia consacrée à <a href="https://fr.wikipedia.org/wiki/Processing" target="_blank" rel="noopener noreferrer">Processing</a> présente d’autres projets apparentés, tels que Processing.py et Processing for Android.
+
+## Installation et configuration
+
+Pour utiliser p5.js, nous devons d’abord ajouter la bibliothèque au projet. Nous pouvons la charger depuis un CDN ou l’installer comme dépendance npm.
+
+### Depuis un CDN
+
+La solution la plus simple consiste à charger la bibliothèque depuis un réseau de diffusion de contenu (CDN) dans le document HTML :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon premier sketch p5.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/2.3.1/p5.min.js"></script>
+  </head>
+  <body>
+    <script src="sketch.js"></script>
+  </body>
+</html>
+```
+
+Le fichier `sketch.js` contiendra notre code p5.js. Nous pouvons aussi télécharger la bibliothèque depuis son site officiel et l’héberger dans le projet.
+
+### Comme dépendance npm
+
+Si le projet utilise déjà un outil de regroupement tel que Vite, Astro ou webpack, mieux vaut installer p5 comme dépendance. Sa version sera fixée dans `package.json`, le site ne dépendra pas d’un tiers à l’exécution et pourra fonctionner hors ligne :
+
+```bash
+npm install p5
+# ou
+bun add p5
+pnpm add p5
+yarn add p5
+```
+
+Le paquet fournit ses propres définitions TypeScript (`p5/types/p5.d.ts`) : il n’est donc pas nécessaire d’installer `@types/p5`.
+
+p5 s’importe ensuite comme tout autre module. Attention : la bibliothèque accède à `window` lors de son chargement ; elle ne doit donc être importée que par du code exécuté dans le navigateur. Avec Astro ou Next.js, utilisez un script côté client ou un `import()` dynamique, jamais le rendu côté serveur :
+
+```js
+import p5 from "p5";
+
+new p5(p => {
+  p.setup = () => {
+    p.createCanvas(400, 400);
+  };
+  p.draw = () => {
+    p.background(20);
+    p.circle(p.mouseX, p.mouseY, 40);
+  };
+}, document.getElementById("conteneur"));
+```
+
+Le second argument de `new p5()` est l’élément du DOM qui recevra le canevas. S’il est omis, p5 ajoute celui-ci à la fin de `<body>`. Cet article emploie le mode instance pour intégrer les sketchs ci-dessous.
+
+La bibliothèque complète pèse environ un mégaoctet. Un `import()` dynamique permet donc de ne la télécharger que sur les pages qui contiennent un sketch.
+
+## Introduction à la programmation créative
+
+En programmation créative, le code ne se contente pas de résoudre une tâche : il définit aussi une image, un mouvement ou une expérience. Au lieu de partir d’une œuvre achevée, nous établissons des règles et observons ce qu’elles produisent. p5.js facilite ce processus grâce à un canevas, une boucle d’animation et des fonctions simples de dessin et d’interaction.
+
+### Structure d’un sketch
+
+Un sketch élémentaire comprend généralement deux fonctions :
+
+```js
+function setup() {
+  createCanvas(600, 400);
+}
+
+function draw() {
+  background(245);
+  circle(300, 200, 80);
+}
+```
+
+`setup()` s’exécute une seule fois au démarrage ; elle sert à créer le canevas et à définir la configuration initiale. `draw()` s’exécute automatiquement — en général environ 60 fois par seconde — et redessine la scène. `background()` efface l’image précédente ; sans elle, les formes laissent des traces qui peuvent devenir un procédé visuel.
+
+### Coordonnées et formes
+
+L’origine `(0, 0)` se trouve dans le coin supérieur gauche. L’axe `x` croît vers la droite et l’axe `y` vers le bas. `width` et `height` contiennent les dimensions actuelles du canevas :
+
+```js
+line(0, 0, width, height);
+circle(width / 2, height / 2, 100);
+rect(40, 60, 120, 80);
+triangle(300, 40, 240, 160, 360, 160);
+```
+
+Chaque fonction reçoit des coordonnées et des dimensions. Ainsi, `circle(x, y, diamètre)` trace un cercle centré en `(x, y)`, tandis que `(x, y)` désigne par défaut le coin supérieur gauche de `rect(x, y, largeur, hauteur)`.
+
+### Couleur et style
+
+`fill()` contrôle le remplissage et `stroke()`, le contour. `noFill()` et `noStroke()` les désactivent ; `strokeWeight()` modifie l’épaisseur du trait :
+
+```js
+background(250);
+fill(57, 255, 20, 140);
+stroke(20);
+strokeWeight(3);
+circle(200, 200, 150);
+```
+
+Les trois premières valeurs représentent le rouge, le vert et le bleu ; la quatrième règle la transparence. Par défaut, elles vont toutes de `0` à `255`. Les couleurs CSS sont également acceptées, par exemple `fill("#39ff14")`.
+
+### Mouvement et temps
+
+Une animation apparaît lorsqu’une valeur change d’une image à l’autre. `frameCount` compte les exécutions de `draw()`, tandis que des fonctions comme `sin()` permettent de créer un mouvement périodique :
+
+```js
+function draw() {
+  background(245);
+  const x = width / 2 + sin(frameCount * 0.03) * 160;
+  circle(x, height / 2, 50);
+}
+```
+
+Pour mieux contrôler l’animation, conservons son état dans des variables déclarées hors de `draw()` et actualisons-les progressivement :
+
+```js
+let x = 0;
+
+function draw() {
+  background(245);
+  x = (x + 2) % width;
+  circle(x, height / 2, 40);
+}
+```
+
+### Interaction
+
+p5.js maintient des variables décrivant l’état de la souris et du clavier. `mouseX` et `mouseY` indiquent la position du pointeur ; `mouseIsPressed` et `keyIsPressed` permettent d’interroger leur état en continu :
+
+```js
+let diametre = 50;
+
+function draw() {
+  background(245);
+  fill(mouseIsPressed ? "#39ff14" : "#222");
+  circle(mouseX, mouseY, diametre);
+}
+
+function keyPressed() {
+  if (key === " ") {
+    diametre = random(20, 100);
+  }
+}
+```
+
+p5.js appelle aussi des fonctions événementielles comme `mousePressed()`, `mouseDragged()`, `keyPressed()` et `touchStarted()` lorsque l’action correspondante se produit.
+
+### Hasard, répétition et transformation
+
+La combinaison de boucles et de `random()` produit des variations :
+
+```js
+function mousePressed() {
+  background(245);
+
+  for (let i = 0; i < 100; i++) {
+    const d = random(5, 40);
+    circle(random(width), random(height), d);
+  }
+}
+```
+
+`translate()`, `rotate()` et `scale()` transforment le système de coordonnées. Il est conseillé d’encadrer chaque transformation par `push()` et `pop()` afin qu’elle n’affecte pas le reste du dessin :
+
+```js
+push();
+translate(width / 2, height / 2);
+rotate(frameCount * 0.01);
+rectMode(CENTER);
+rect(0, 0, 140, 40);
+pop();
+```
+
+Voici les éléments essentiels : état, répétition, variation, temps et interaction. Leur combinaison permet de réaliser aussi bien des motifs géométriques que des simulations et des œuvres génératives. Les exemples précédents utilisent le mode global ; en mode instance, il suffit de préfixer les fonctions et variables de p5.js par `p.`, comme dans `p.circle()` ou `p.mouseX`.
+
+## Un sketch en direct
+
+L’exemple du CDN utilise le _mode global_, dans lequel `setup()` et `draw()` sont des fonctions globales. Cette approche ne permet qu’un sketch par page. Pour en intégrer plusieurs, cet article emploie donc le _mode instance_ : le code reçoit un objet `p` et appelle toutes les fonctions p5 avec le préfixe `p.` :
+
+```js
+p.setup = () => {
+  p.createCanvas(400, 400);
+  p.noFill();
+};
+p.draw = () => {
+  p.background(20);
+  for (let i = 0; i < 24; i++) {
+    p.stroke(150 + i * 4, 100, 255 - i * 8);
+    const r = 20 + i * 14 + p.sin(p.frameCount * 0.02 + i) * 10;
+    p.ellipse(p.width / 2, p.height / 2, r, r);
+  }
+};
+```
+
+Voici le résultat, exécuté directement sur cette page :
+
+<P5Sketch code={demoCirculos} />
+
+## De l’art en deux lignes
+
+Toute une sous-culture du _code golf_ s’est développée autour de p5.js : des sketchs conçus pour tenir dans un tweet, où chaque caractère compte. Cet exemple dessine en deux lignes une surface ondulante à l’apparence tridimensionnelle :
+
+```js
+a = (
+  y,
+  d = mag((k = (4 + cos(i / 9 - t * 2)) * cos(i / 35)), (e = y / 7 - 13)) +
+    sin(e / 9 + t / 2) -
+    4
+) =>
+  point(
+    (q =
+      2 * sin(k * 3) - (y / 35) * k * (9 + k * sin(cos(e) * 9 - d * 2 + t))) +
+      40 * cos((c = d - t)) +
+      200,
+    q * sin(c) + d * 35
+  );
+((t = 0),
+  (draw = $ => {
+    t || createCanvas((w = 400), w);
+    background(9).stroke(w, 96);
+    for (t += PI / 80, i = 1e4; i--; ) a(i / 235);
+  }));
+```
+
+<P5Sketch code={demoGolf} global />
+
+Presque toutes les astuces économisent des caractères plutôt qu’elles ne modifient le dessin : les paramètres par défaut de `a` servent de variables temporaires (`d`, `k` et `e`), des affectations sont intégrées aux appels (`createCanvas(w=400,w)` et `cos(c=d-t)`), la boucle `for` compte à rebours parce que `i--` est plus court qu’une comparaison, et `t||createCanvas(...)` remplace `setup()`. Sous ces artifices se trouvent simplement dix mille points par image, placés à l’aide de sinus et de cosinus, ainsi qu’une rotation de `PI/80` radians à chaque appel de `draw()`.
+
+## Possibilités
+
+p5.js permet de dessiner des formes élémentaires — lignes, cercles, rectangles et polygones —, ainsi que des images et du texte. La bibliothèque propose également des outils pour la couleur, la transparence et les effets visuels. Sa boucle `draw()` facilite l’animation, tandis que ses événements répondent à la souris, au clavier et aux écrans tactiles. Elle peut lire et manipuler directement de la vidéo ; le son est pris en charge par la bibliothèque complémentaire `p5.sound`. Son mode WebGL gère en outre les graphismes tridimensionnels, l’éclairage, les caméras et les shaders.
+
+## Éditeur en ligne
+
+Sur <a href="https://editor.p5js.org/" target="_blank" rel="noopener noreferrer">editor.p5js.org</a>, il est possible d’écrire et d’exécuter du code p5.js directement dans le navigateur, sans rien installer. L’éditeur permet d’enregistrer et de partager des sketchs ; c’est un excellent espace pour expérimenter et apprendre.
+
+## Conclusion
+
+Ce dernier sketch combine des primitives tridimensionnelles, de l’éclairage et des transformations hiérarchiques pour construire un oiseau stylisé. Ses ailes s’articulent à partir du corps et leur angle change à chaque image afin de simuler le vol. Déplacez le pointeur sur la scène pour l’observer sous différents angles :
+
+<P5Sketch code={demoAve} />
+
+Comme nous l’avons vu, p5.js est un outil puissant pour intégrer de nombreux types de graphismes et d’animations directement au Web. Il possède également une grande valeur pédagogique, dans la lignée de langages éducatifs tels que Logo.
+
+## Références
+
+- <a href="https://p5js.org/" target="_blank" rel="noopener noreferrer">
+    Site officiel de p5.js
+  </a>
+- <a href="https://processing.org/" target="_blank" rel="noopener noreferrer">
+    Site officiel de Processing
+  </a>
+- <a
+    href="https://p5js.org/tutorials/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Tutoriels et guides d’apprentissage de p5.js
+  </a>
+- <a
+    href="https://p5js.org/examples/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Galerie officielle d’exemples p5.js
+  </a>

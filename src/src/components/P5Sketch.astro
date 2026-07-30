@@ -1,0 +1,78 @@
+---
+interface Props {
+  /** Código del sketch en modo instancia: recibe `p` y asigna p.setup, p.draw, etc. */
+  code: string;
+  /** Ejecuta el código tal cual en modo global (setup/draw sueltos, sin prefijo `p.`). */
+  global?: boolean;
+  class?: string;
+}
+const { code, global = false, class: className = "" } = Astro.props;
+---
+
+<div
+  class={`my-6 flex justify-center ${className}`}
+  data-p5={code}
+  data-p5-global={global ? "" : undefined}
+></div>
+
+<script>
+  import type p5Type from "p5";
+
+  const instances: p5Type[] = [];
+
+  // Funciones que p5 busca en la instancia; hay que crearlas (aunque sea como
+  // undefined) para que `with (p)` capture las asignaciones del modo global.
+  const HOOKS = [
+    "setup",
+    "draw",
+    "preload",
+    "windowResized",
+    "mousePressed",
+    "mouseReleased",
+    "mouseMoved",
+    "mouseDragged",
+    "mouseClicked",
+    "mouseWheel",
+    "doubleClicked",
+    "keyPressed",
+    "keyReleased",
+    "keyTyped",
+    "touchStarted",
+    "touchMoved",
+    "touchEnded",
+  ];
+
+  function makeSketch(code: string, isGlobal: boolean) {
+    if (!isGlobal) return new Function("p", code) as (p: p5Type) => void;
+    // ponytail: `with` deja las variables sin declarar del sketch en window;
+    // dos sketches globales en la misma página pueden pisarse entre sí.
+    const run = new Function("p", `with (p) {\n${code}\n}`);
+    return (p: p5Type) => {
+      const target = p as unknown as Record<string, unknown>;
+      for (const hook of HOOKS) target[hook] = undefined;
+      run(p);
+    };
+  }
+
+  async function runSketches() {
+    const nodes = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-p5]:not([data-p5-ready])")
+    );
+    if (!nodes.length) return;
+    // Dinámico: p5 toca `window` al cargarse, así que sólo se importa en el navegador.
+    const p5 = (await import("p5")).default;
+    for (const el of nodes) {
+      el.dataset.p5Ready = "";
+      const sketch = makeSketch(el.dataset.p5!, el.dataset.p5Global !== undefined);
+      instances.push(new p5(sketch, el));
+    }
+  }
+
+  // Sin esto los sketches siguen corriendo tras navegar con ClientRouter.
+  function removeSketches() {
+    while (instances.length) instances.pop()!.remove();
+  }
+
+  document.addEventListener("astro:page-load", runSketches);
+  document.addEventListener("astro:before-swap", removeSketches);
+</script>
