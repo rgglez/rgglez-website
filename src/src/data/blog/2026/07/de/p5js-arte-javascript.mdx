@@ -228,22 +228,7 @@ Dies sind die Grundbausteine: Zustand, Wiederholung, Variation, Zeit und Interak
 
 ## Ein Sketch in Aktion
 
-Das CDN-Beispiel verwendet den _globalen Modus_, in dem `setup()` und `draw()` globale Funktionen sind. Damit ist nur ein Sketch pro Seite möglich. Für mehrere eingebettete Sketches nutzt dieser Artikel daher den _Instanzmodus_: Der Code erhält ein Objekt `p`, und alle p5-Funktionen werden mit dem Präfix `p.` aufgerufen:
-
-```js
-p.setup = () => {
-  p.createCanvas(400, 400);
-  p.noFill();
-};
-p.draw = () => {
-  p.background(20);
-  for (let i = 0; i < 24; i++) {
-    p.stroke(150 + i * 4, 100, 255 - i * 8);
-    const r = 20 + i * 14 + p.sin(p.frameCount * 0.02 + i) * 10;
-    p.ellipse(p.width / 2, p.height / 2, r, r);
-  }
-};
-```
+Das CDN-Beispiel verwendet den _globalen Modus_, in dem `setup()` und `draw()` globale Funktionen sind. Damit ist nur ein Sketch pro Seite möglich. Für mehrere eingebettete Sketches nutzt dieser Artikel daher den _Instanzmodus_: Der Code erhält ein Objekt `p`, und alle p5-Funktionen werden mit dem Präfix `p.` aufgerufen.
 
 Das Ergebnis läuft direkt auf dieser Seite:
 
@@ -255,28 +240,6 @@ Das Ergebnis läuft direkt auf dieser Seite:
 ## Kunst in zwei Zeilen
 
 Rund um p5.js hat sich eine ganze _Code-Golf_-Subkultur entwickelt: Sketches sollen in einen Tweet passen, sodass jedes Zeichen zählt. Dieses Beispiel zeichnet in nur zwei Zeilen eine scheinbar dreidimensionale, wellenförmige Fläche:
-
-```js
-a = (
-  y,
-  d = mag((k = (4 + cos(i / 9 - t * 2)) * cos(i / 35)), (e = y / 7 - 13)) +
-    sin(e / 9 + t / 2) -
-    4
-) =>
-  point(
-    (q =
-      2 * sin(k * 3) - (y / 35) * k * (9 + k * sin(cos(e) * 9 - d * 2 + t))) +
-      40 * cos((c = d - t)) +
-      200,
-    q * sin(c) + d * 35
-  );
-((t = 0),
-  (draw = $ => {
-    t || createCanvas((w = 400), w);
-    background(9).stroke(w, 96);
-    for (t += PI / 80, i = 1e4; i--; ) a(i / 235);
-  }));
-```
 
 <P5Sketch code={demoGolf} global />
 <CollapsibleCode code={demoGolf}>

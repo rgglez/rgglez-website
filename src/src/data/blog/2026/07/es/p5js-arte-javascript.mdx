@@ -229,22 +229,7 @@ Estas son las piezas fundamentales: estado, repetición, variación, tiempo e in
 
 ## Un sketch en vivo
 
-El ejemplo del CDN usa el _modo global_, en el que `setup()` y `draw()` son funciones globales. Esto sólo permite un sketch por página; por ello, para incrustar varios sketches en este artículo se utiliza el _modo instancia_: el código recibe un objeto `p` y todas las funciones de p5 se llaman con `p.`:
-
-```js
-p.setup = () => {
-  p.createCanvas(400, 400);
-  p.noFill();
-};
-p.draw = () => {
-  p.background(20);
-  for (let i = 0; i < 24; i++) {
-    p.stroke(150 + i * 4, 100, 255 - i * 8);
-    const r = 20 + i * 14 + p.sin(p.frameCount * 0.02 + i) * 10;
-    p.ellipse(p.width / 2, p.height / 2, r, r);
-  }
-};
-```
+El ejemplo del CDN usa el _modo global_, en el que `setup()` y `draw()` son funciones globales. Esto sólo permite un sketch por página; por ello, para incrustar varios sketches en este artículo se utiliza el _modo instancia_: el código recibe un objeto `p` y todas las funciones de p5 se llaman con `p.`.
 
 Este es el resultado, ejecutándose aquí mismo:
 
@@ -256,28 +241,6 @@ Este es el resultado, ejecutándose aquí mismo:
 ## Arte en dos líneas
 
 Existe toda una subcultura de _code golf_ alrededor de p5.js: sketches escritos para caber en un tuit, donde cada carácter cuenta. Este, por ejemplo, dibuja una superficie ondulante en tres dimensiones aparentes con dos líneas de código:
-
-```js
-a = (
-  y,
-  d = mag((k = (4 + cos(i / 9 - t * 2)) * cos(i / 35)), (e = y / 7 - 13)) +
-    sin(e / 9 + t / 2) -
-    4
-) =>
-  point(
-    (q =
-      2 * sin(k * 3) - (y / 35) * k * (9 + k * sin(cos(e) * 9 - d * 2 + t))) +
-      40 * cos((c = d - t)) +
-      200,
-    q * sin(c) + d * 35
-  );
-((t = 0),
-  (draw = $ => {
-    t || createCanvas((w = 400), w);
-    background(9).stroke(w, 96);
-    for (t += PI / 80, i = 1e4; i--; ) a(i / 235);
-  }));
-```
 
 <P5Sketch code={demoGolf} global />
 <CollapsibleCode code={demoGolf}>
