@@ -194,6 +194,9 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
+      // p5 se importa dinámicamente dentro de un <script> de componente, así que
+      // el escaneo de Vite no lo ve y su dep CJS (libtess) se servía sin default.
+      include: ["p5"],
     },
     ssr: {
       external: ["@resvg/resvg-js"],
