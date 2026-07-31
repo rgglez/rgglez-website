@@ -201,3 +201,12 @@ svg.mindmapDiagram [class*="section-"] span {
 [id^="mermaid-"] .actor-line {
   stroke: var(--border) !important;
 }
+
+/* CollapsibleCode: gira el caret del disparador cuando el panel está abierto */
+[data-code-icon] {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+[aria-expanded="true"] [data-code-icon] {
+  transform: rotate(90deg);
+}

@@ -19,7 +19,8 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
 ---
 
-import P5Sketch from "@/components/P5Sketch.astro";
+import P5Sketch from "@rgglez/astro-p5js-sketch";
+import CollapsibleCode from "@rgglez/astro-collapsiblecode";
 import {
   demoAve,
   demoCirculos,
@@ -241,6 +242,9 @@ p.draw = () => {
 Voici le résultat, exécuté directement sur cette page :
 
 <P5Sketch code={demoCirculos} />
+<CollapsibleCode code={demoCirculos}>
+  <button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border bg-muted px-4 py-2 font-medium text-foreground transition-colors hover:bg-accent hover:text-background"><span aria-hidden="true" data-code-icon>▶</span> Voir le code</button>
+</CollapsibleCode>
 
 ## De l’art en deux lignes
 
@@ -269,6 +273,9 @@ a = (
 ```
 
 <P5Sketch code={demoGolf} global />
+<CollapsibleCode code={demoGolf}>
+  <button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border bg-muted px-4 py-2 font-medium text-foreground transition-colors hover:bg-accent hover:text-background"><span aria-hidden="true" data-code-icon>▶</span> Voir le code</button>
+</CollapsibleCode>
 
 Presque toutes les astuces économisent des caractères plutôt qu’elles ne modifient le dessin : les paramètres par défaut de `a` servent de variables temporaires (`d`, `k` et `e`), des affectations sont intégrées aux appels (`createCanvas(w=400,w)` et `cos(c=d-t)`), la boucle `for` compte à rebours parce que `i--` est plus court qu’une comparaison, et `t||createCanvas(...)` remplace `setup()`. Sous ces artifices se trouvent simplement dix mille points par image, placés à l’aide de sinus et de cosinus, ainsi qu’une rotation de `PI/80` radians à chaque appel de `draw()`.
 
@@ -280,11 +287,16 @@ p5.js permet de dessiner des formes élémentaires — lignes, cercles, rectangl
 
 Sur <a href="https://editor.p5js.org/" target="_blank" rel="noopener noreferrer">editor.p5js.org</a>, il est possible d’écrire et d’exécuter du code p5.js directement dans le navigateur, sans rien installer. L’éditeur permet d’enregistrer et de partager des sketchs ; c’est un excellent espace pour expérimenter et apprendre.
 
-## Conclusion
+## Pour aller plus loin
 
 Ce dernier sketch combine des primitives tridimensionnelles, de l’éclairage et des transformations hiérarchiques pour construire un oiseau stylisé. Ses ailes s’articulent à partir du corps et leur angle change à chaque image afin de simuler le vol. Déplacez le pointeur sur la scène pour l’observer sous différents angles :
 
 <P5Sketch code={demoAve} />
+<CollapsibleCode code={demoAve}>
+  <button type="button" class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border bg-muted px-4 py-2 font-medium text-foreground transition-colors hover:bg-accent hover:text-background"><span aria-hidden="true" data-code-icon>▶</span> Voir le code</button>
+</CollapsibleCode>
+
+## Conclusions
 
 Comme nous l’avons vu, p5.js est un outil puissant pour intégrer de nombreux types de graphismes et d’animations directement au Web. Il possède également une grande valeur pédagogique, dans la lignée de langages éducatifs tels que Logo.
 

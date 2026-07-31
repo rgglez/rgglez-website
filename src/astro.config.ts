@@ -5,10 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import { visit } from 'unist-util-visit';
-import expressiveCode from 'astro-expressive-code';
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { visit } from "unist-util-visit";
+import expressiveCode from "astro-expressive-code";
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -26,10 +26,10 @@ import pddlGrammar from "@rgglez/shiki-pddl";
 
 function fontPreloadIntegration(): AstroIntegration {
   return {
-    name: 'font-preload',
+    name: "font-preload",
     hooks: {
-      'astro:build:done': async ({ dir, logger }) => {
-        const clientDir = resolve(dir.pathname, '..', 'client');
+      "astro:build:done": async ({ dir, logger }) => {
+        const clientDir = resolve(dir.pathname, "..", "client");
 
         async function findHtmlFiles(dirPath: string): Promise<string[]> {
           const entries = await readdir(dirPath, { withFileTypes: true });
@@ -37,32 +37,42 @@ function fontPreloadIntegration(): AstroIntegration {
           for (const entry of entries) {
             const full = join(dirPath, entry.name);
             if (entry.isDirectory()) {
-              files.push(...await findHtmlFiles(full));
-            } else if (entry.name.endsWith('.html')) {
+              files.push(...(await findHtmlFiles(full)));
+            } else if (entry.name.endsWith(".html")) {
               files.push(full);
             }
           }
           return files;
         }
 
-        const htmlFiles = await findHtmlFiles(clientDir).catch(() => [] as string[]);
+        const htmlFiles = await findHtmlFiles(clientDir).catch(
+          () => [] as string[]
+        );
         if (!htmlFiles.length) return;
 
-        const html = await readFile(htmlFiles[0], 'utf-8');
+        const html = await readFile(htmlFiles[0], "utf-8");
         const fontFaceRegex = /@font-face\{[^}]+\}/g;
         const srcRegex = /src:url\("([^"]+)"\)/;
         let fontUrl: string | null = null;
 
         for (const match of html.matchAll(fontFaceRegex)) {
           const block = match[0];
-          if (/font-weight:400/.test(block) && /font-style:normal/.test(block)) {
+          if (
+            /font-weight:400/.test(block) &&
+            /font-style:normal/.test(block)
+          ) {
             const src = block.match(srcRegex);
-            if (src) { fontUrl = src[1]; break; }
+            if (src) {
+              fontUrl = src[1];
+              break;
+            }
           }
         }
 
         if (!fontUrl) {
-          logger.warn('font-preload: Could not extract font URL from built HTML');
+          logger.warn(
+            "font-preload: Could not extract font URL from built HTML"
+          );
           return;
         }
 
@@ -72,9 +82,12 @@ function fontPreloadIntegration(): AstroIntegration {
         // Inject preload into all prerendered HTML files
         let injected = 0;
         for (const file of htmlFiles) {
-          const content = await readFile(file, 'utf-8');
+          const content = await readFile(file, "utf-8");
           if (content.includes(preloadTag)) continue;
-          const updated = content.replace('<meta charset="UTF-8">', `<meta charset="UTF-8">${preloadTag}`);
+          const updated = content.replace(
+            '<meta charset="UTF-8">',
+            `<meta charset="UTF-8">${preloadTag}`
+          );
           if (updated !== content) {
             await writeFile(file, updated);
             injected++;
@@ -82,21 +95,23 @@ function fontPreloadIntegration(): AstroIntegration {
         }
 
         // Write _headers for Cloudflare Pages (covers SSR pages too)
-        const headersPath = join(clientDir, '_headers');
+        const headersPath = join(clientDir, "_headers");
         await writeFile(headersPath, `/*\n  Link: ${linkHeader}\n`);
 
-        logger.info(`font-preload: preload injected into ${injected} HTML files, _headers written (${fontUrl})`);
-      }
-    }
+        logger.info(
+          `font-preload: preload injected into ${injected} HTML files, _headers written (${fontUrl})`
+        );
+      },
+    },
   };
 }
 
 function remarkMermaidBypass() {
   return (tree: any) => {
-    visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
-      if (node.lang === 'mermaid' && parent && typeof index === 'number') {
+    visit(tree, "code", (node: any, index: number | undefined, parent: any) => {
+      if (node.lang === "mermaid" && parent && typeof index === "number") {
         parent.children[index] = {
-          type: 'html',
+          type: "html",
           value: `<pre class="mermaid">\n${node.value}\n</pre>`,
         };
       }
@@ -106,26 +121,26 @@ function remarkMermaidBypass() {
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
+  output: "server",
 
   site: SITE.website,
-  trailingSlash: 'never',
+  trailingSlash: "never",
 
   integrations: [
     fontPreloadIntegration(),
     sitemap({
-        filter: page => SITE.showArchives || !page.endsWith("/archives"),
+      filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
     expressiveCode({
-        themes: ['dracula', 'github-light'],
-        themeCssSelector: (theme) =>
-          `[data-theme="${theme.type === 'dark' ? 'dark' : 'light'}"]`,
-        useDarkModeMediaQuery: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        shiki: { langs: [pddlGrammar as any] },
+      themes: ["dracula", "github-light"],
+      themeCssSelector: theme =>
+        `[data-theme="${theme.type === "dark" ? "dark" : "light"}"]`,
+      useDarkModeMediaQuery: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      shiki: { langs: [pddlGrammar as any] },
     }),
     mdx({
-        extendMarkdownConfig: true,
+      extendMarkdownConfig: true,
     }),
     react(),
   ],
@@ -134,9 +149,21 @@ export default defineConfig({
     rehypePlugins: [rehypeKatex],
     remarkPlugins: [
       remarkMermaidBypass,
-      [remarkToc, { heading: "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis" }],
+      [
+        remarkToc,
+        {
+          heading:
+            "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis",
+        },
+      ],
       remarkMath,
-      [remarkCollapse, { test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis)$/i, summary: (str: string) => str }],
+      [
+        remarkCollapse,
+        {
+          test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis)$/i,
+          summary: (str: string) => str,
+        },
+      ],
     ],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
@@ -153,7 +180,7 @@ export default defineConfig({
   },
 
   build: {
-    inlineStylesheets: 'always',
+    inlineStylesheets: "always",
   },
 
   vite: {
@@ -183,7 +210,7 @@ export default defineConfig({
     responsiveStyles: true,
     layout: "constrained",
     service: {
-      entrypoint: 'astro/assets/services/sharp',
+      entrypoint: "astro/assets/services/sharp",
     },
   },
 

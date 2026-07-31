@@ -2358,7 +2358,7 @@ Aunque esta guía se centra en Postfix, Dovecot, Amavis y SpamAssassin, un servi
 
 Ejemplo de SPF básico para `example.com`:
 
-```dns
+```ini
 example.com. IN TXT "v=spf1 mx -all"
 ```
 
@@ -2397,7 +2397,7 @@ sudo amavisd-new showkeys
 
 `showkeys` imprime, por dominio, un registro listo para publicar, por ejemplo:
 
-```dns
+```ini
 mail._domainkey.example.com. IN TXT (
   "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFA...IDAQAB" )
 ```
@@ -2414,7 +2414,7 @@ sudo amavisd-new testkeys
 
 ## 17.2. DMARC
 
-```dns
+```ini
 _dmarc.example.com. IN TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
 ```
 

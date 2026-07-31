@@ -13,8 +13,10 @@
         "@giscus/react": "^3.1.0",
         "@resvg/resvg-js": "^2.6.2",
         "@rgglez/astro-aside": "^0.1.3",
+        "@rgglez/astro-collapsiblecode": "^0.1.1",
         "@rgglez/astro-downloadchecklist": "^0.1.4",
         "@rgglez/astro-downloadtable": "^0.1.5",
+        "@rgglez/astro-p5js-sketch": "^0.1.1",
         "@rgglez/astro-seo": "^0.1.2",
         "@rgglez/astro-tocbutton": "0.1.5",
         "@rgglez/astro-ytembed": "0.1.4",
@@ -406,9 +408,13 @@
 
     "@rgglez/astro-aside": ["@rgglez/astro-aside@0.1.3", "", { "peerDependencies": { "astro": ">=4.0.0", "tailwindcss": ">=3.0.0" }, "optionalPeers": ["tailwindcss"] }, "sha512-1b5GfYrUgd1h8koKgwGSfTD5npwY4WDlaLya5K4JQFFKrhvYw/+0IJlKT9jo3Xw1Zk8z3PcCfQOBLVpUtYK9UA=="],
 
+    "@rgglez/astro-collapsiblecode": ["@rgglez/astro-collapsiblecode@0.1.1", "", { "peerDependencies": { "astro": ">=4.0.0", "shiki": ">=3.0.0" } }, "sha512-KL15XK9/2Fe4x9pBYf3wzkMlG0Kmli3jaweeYJs3DYDDTvDBWfr32VPf/oR22+NIRK5cuaLSRhwtI9UedPsmiA=="],
+
     "@rgglez/astro-downloadchecklist": ["@rgglez/astro-downloadchecklist@0.1.4", "", { "peerDependencies": { "astro": ">=4.0.0" } }, "sha512-tHrpMCWviaCcLAcyWZNn7TDU7LilpvyetvZOqd9ECXeO8Nxzp+1VMuMURFmYINwCPT5N9KPqfNSM5/KnTbW4xQ=="],
 
     "@rgglez/astro-downloadtable": ["@rgglez/astro-downloadtable@0.1.5", "", { "peerDependencies": { "astro": ">=4.0.0" } }, "sha512-ZsW/559xk1TQgMDQ9Q/YxUFTKm4xYlWhAZbu/nTiLSdB3F46rf1xRE4cCfj8W64qwe6zdn+dn2HrxsOC6+dmdA=="],
+
+    "@rgglez/astro-p5js-sketch": ["@rgglez/astro-p5js-sketch@0.1.1", "", { "peerDependencies": { "astro": ">=4.0.0", "p5": ">=1.0.0" } }, "sha512-4w7vWtLkAM5u8UMS6+/sHRoB2UcYdGEfrZFUY+Tg1mwF9UIYNFZ1zS+uZyVvoFT1QMUmg8GF6cHrZ5294Qziow=="],
 
     "@rgglez/astro-seo": ["@rgglez/astro-seo@0.1.2", "", { "peerDependencies": { "astro": ">=4.0.0" } }, "sha512-8tPE4XxmQ9go1eqk3g7N5JsYQHQsM2xOnJKmbPMZ0M+hIOvm3qAyird5A3oBAcw1lUnVqNEHM98u5grpCwg9ig=="],
 
