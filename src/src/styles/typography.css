@@ -45,6 +45,12 @@
       @apply marker:text-[#74869b] dark:marker:text-[#7d90a7];
     }
 
+    /* MDX envuelve en <p> el texto de un <a> JSX partido en varias líneas
+       (prettier lo hace con URLs largas). Anula el margen del párrafo. */
+    a > p:only-child {
+      @apply my-0 inline;
+    }
+
     hr {
       @apply border-border;
     }
