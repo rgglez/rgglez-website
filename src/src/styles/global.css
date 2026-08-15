@@ -7,7 +7,7 @@
 
 :root,
 html[data-theme="light"] {
-  --background: #f8fafc;
+  --background: #f4f1ea;
   --foreground: #334155;
   --accent: #2563eb;
   --muted: #f1f5f9;
@@ -15,11 +15,11 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
-  --background: #101922;
-  --foreground: #cbd5e1;
-  --accent: #137fec;
-  --muted: #172331;
-  --border: #243440;
+  --background: #14191e;
+  --foreground: #d6dce2;
+  --accent: #58a6ff;
+  --muted: #1c232a;
+  --border: #303a43;
 }
 
 @theme inline {
