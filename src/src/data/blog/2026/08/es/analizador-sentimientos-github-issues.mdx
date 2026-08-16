@@ -122,11 +122,23 @@ de texto. Natural depende de APIs de Node, así que la reservé para el entrenad
 que se ejecuta fuera de línea; el Worker no la carga, sino que consume el modelo
 ya serializado en JSON y realiza la inferencia con TypeScript puro.
 
+Las principales alternativas que evalué se pueden resumir así. Ninguna resuelve
+por sí sola el análisis de sentimientos: todas necesitan texto etiquetado y una
+fase previa de tokenización y extracción de características.
+
+| Biblioteca                                                    | Modelos supervisados                                                            | Preparación del texto                                     | Ventajas                                                                          | Limitaciones para este proyecto                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [Natural](https://naturalnode.github.io/natural/)             | Naive Bayes y regresión logística                                               | Incluye tokenización, stemming y TF-IDF                   | API orientada a NLP, entrenamiento sencillo y modelos serializables en JSON       | Depende de APIs de Node; conviene usarla en el entrenador y reproducir la inferencia en TypeScript puro           |
+| [ML.js](https://github.com/mljs) (`ml-naivebayes` y `ml-svm`) | Naive Bayes gaussiano o multinomial y SVM                                       | Requiere convertir el texto en vectores numéricos         | Paquetes pequeños, independientes y con modelos exportables                       | `ml-svm` es una implementación educativa y binaria; la clasificación multiclase requiere una estrategia adicional |
+| [libsvm-js](https://github.com/mljs/libsvm)                   | SVM de clasificación y regresión con kernels lineal, polinomial, RBF y sigmoide | Requiere vectores como TF-IDF                             | Implementación completa de LIBSVM, multiclase, validación cruzada y serialización | Usa WebAssembly y es más pesada que una inferencia lineal escrita específicamente para el Worker                  |
+| [TensorFlow.js](https://www.tensorflow.org/js)                | Redes densas, convolucionales y recurrentes, entre otras                        | Requiere diseñar la codificación o tokenización del texto | Máxima flexibilidad y entrenamiento tanto en navegador como en Node.js            | Mayor complejidad, tamaño y costo de ejecución para un clasificador clásico pequeño                               |
+
 Y finalmente quedaba la cuestión del dataset de entrenamiento. Descartados los
 servicios de inferencia hospedada de pago, como los de OpenAI, y los modelos
 preentrenados del Hub de Hugging Face, demasiado pesados para un Worker, tuve que
 buscar un dataset libre y gratuito que contuviera ejemplos de comentarios y
 descripciones de issues. Afortunadamente, existe un dataset llamado
+
 <a href="https://figshare.com/articles/dataset/A_gold_standard_for_polarity_of_emotions_of_software_developers_in_GitHub/11604597?file=21001260">GitHub Gold Standard</a>,
 que contiene más de 7,000 comentarios y descripciones de issues de GitHub,
 etiquetados con su polaridad (positivo, negativo o neutral). Este dataset es

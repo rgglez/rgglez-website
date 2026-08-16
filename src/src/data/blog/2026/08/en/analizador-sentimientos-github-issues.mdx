@@ -111,6 +111,17 @@ techniques. Natural depends on Node APIs, so I reserved it for the offline
 trainer. The Worker does not load the library; it consumes the model already
 serialized as JSON and performs inference in pure TypeScript.
 
+The main alternatives I evaluated can be summarized as follows. None of them
+provides sentiment analysis by itself: they all require labeled text and a
+preliminary tokenization and feature-extraction stage.
+
+| Library                                                         | Supervised models                                                                    | Text preparation                                     | Advantages                                                                              | Limitations for this project                                                                                 |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [Natural](https://naturalnode.github.io/natural/)               | Naive Bayes and logistic regression                                                  | Includes tokenization, stemming, and TF-IDF          | NLP-oriented API, straightforward training, and JSON-serializable models                | Depends on Node APIs; best used in the trainer, with inference reproduced in pure TypeScript                 |
+| [ML.js](https://github.com/mljs) (`ml-naivebayes` and `ml-svm`) | Gaussian or multinomial Naive Bayes and SVM                                          | Requires converting text into numeric vectors        | Small, independent packages with exportable models                                      | `ml-svm` is an educational, binary implementation; multiclass classification requires an additional strategy |
+| [libsvm-js](https://github.com/mljs/libsvm)                     | Classification and regression SVMs with linear, polynomial, RBF, and sigmoid kernels | Requires vectors such as TF-IDF                      | Full LIBSVM implementation with multiclass support, cross-validation, and serialization | Uses WebAssembly and is heavier than linear inference written specifically for the Worker                    |
+| [TensorFlow.js](https://www.tensorflow.org/js)                  | Dense, convolutional, and recurrent neural networks, among others                    | Requires designing the text encoding or tokenization | Maximum flexibility, with training in either the browser or Node.js                     | Greater complexity, bundle size, and execution cost for a small classical classifier                         |
+
 The final question was the training dataset. Having ruled out paid hosted
 inference services, such as OpenAI, and pretrained Hugging Face Hub models that
 were too heavy for a Worker, I needed a free dataset containing examples of
