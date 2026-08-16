@@ -1,0 +1,1007 @@
+{
+  "generatedAt": "2026-08-16T02:01:31.634Z",
+  "source": "github:rgglez",
+  "languages": [
+    "Go",
+    "Python",
+    "TypeScript",
+    "Rust",
+    "Assembly",
+    "Astro",
+    "C",
+    "C++",
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "MDX",
+    "Makefile",
+    "PHP",
+    "Pascal",
+    "Perl",
+    "Prolog",
+    "Shell",
+    "Svelte",
+    "TeX",
+    "Other"
+  ],
+  "topics": [
+    "astro",
+    "pddl",
+    "golang",
+    "ai"
+  ],
+  "repos": [
+    {
+      "name": "rgglez",
+      "description": "Global readme",
+      "url": "https://github.com/rgglez/rgglez",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-16T01:39:31Z"
+    },
+    {
+      "name": "rgglez-website",
+      "description": "Personal website",
+      "url": "https://github.com/rgglez/rgglez-website",
+      "homepage": null,
+      "language": "MDX",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-16T01:12:01Z"
+    },
+    {
+      "name": "github-issues-sentiment-analyzer",
+      "description": "Github issues sentiment analyzer.",
+      "url": "https://github.com/rgglez/github-issues-sentiment-analyzer",
+      "homepage": "https://rodolfo.gg/en/posts/2026/08/github-issues-sentiment-analyzer/",
+      "language": "TypeScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-08T07:30:28Z"
+    },
+    {
+      "name": "ansible-scripts",
+      "description": "Misc. scripts for Ansible",
+      "url": "https://github.com/rgglez/ansible-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-07T01:42:09Z"
+    },
+    {
+      "name": "astro-collapsiblecode",
+      "description": "An Astro component for displaying highlighted code with Shiki inside a collapsible block on an Astro/MD/MDX page.",
+      "url": "https://github.com/rgglez/astro-collapsiblecode",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-31T05:50:33Z"
+    },
+    {
+      "name": "astro-p5js-sketch",
+      "description": "An Astro component for embedding p5.js to run scripts on an Astro/MD/MDX page.",
+      "url": "https://github.com/rgglez/astro-p5js-sketch",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-31T02:28:10Z"
+    },
+    {
+      "name": "ossfs2-ubuntu2604",
+      "description": "OSSFS2 compatibility patch for Ubuntu 26.04",
+      "url": "https://github.com/rgglez/ossfs2-ubuntu2604",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-28T18:31:11Z"
+    },
+    {
+      "name": "go-playground-recaptcha3-validator",
+      "description": "Custom validator for playground doing reCAPTCHA v3 validation.",
+      "url": "https://github.com/rgglez/go-playground-recaptcha3-validator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-25T08:38:24Z"
+    },
+    {
+      "name": "gofiber-recaptcha3-middleware",
+      "description": "Middleware for gofiber implementing Google reCAPTCHA v3 validation",
+      "url": "https://github.com/rgglez/gofiber-recaptcha3-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-25T08:00:57Z"
+    },
+    {
+      "name": "svelte-quill",
+      "description": "Configurable Svelte 5 wrapper for the Quill 2 rich-text editor.",
+      "url": "https://github.com/rgglez/svelte-quill",
+      "homepage": null,
+      "language": "Svelte",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-21T17:40:19Z"
+    },
+    {
+      "name": "svelte-i18n-gettext",
+      "description": "i18n (translation) for Svelte using gettext.",
+      "url": "https://github.com/rgglez/svelte-i18n-gettext",
+      "homepage": null,
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 1,
+      "forks": 1,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:21:24Z"
+    },
+    {
+      "name": "svelte-notoriuosbutton",
+      "description": "A Svelte (3/4, 5) component to create a button with animated effects, to make it \"notorious\".",
+      "url": "https://github.com/rgglez/svelte-notoriuosbutton",
+      "homepage": null,
+      "language": "CSS",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:20:23Z"
+    },
+    {
+      "name": "astro-ytembed",
+      "description": "Embed YouTube videos in your Astro pages (astro/MDX)",
+      "url": "https://github.com/rgglez/astro-ytembed",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:20:10Z"
+    },
+    {
+      "name": "astro-downloadtable",
+      "description": "Download a table directly from markdown/mdx in an Astro-rendered web page.",
+      "url": "https://github.com/rgglez/astro-downloadtable",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:19:59Z"
+    },
+    {
+      "name": "astro-downloadchecklist",
+      "description": "Download a checklist directly from markdown/mdx in an Astro-rendered web page.",
+      "url": "https://github.com/rgglez/astro-downloadchecklist",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:19:46Z"
+    },
+    {
+      "name": "astro-aside",
+      "description": "Aside for Astro using Tailwind.",
+      "url": "https://github.com/rgglez/astro-aside",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:17:41Z"
+    },
+    {
+      "name": "svelte-alerts",
+      "description": "Svelte component for managing and displaying alerts.",
+      "url": "https://github.com/rgglez/svelte-alerts",
+      "homepage": null,
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T23:15:31Z"
+    },
+    {
+      "name": "go-config",
+      "description": "Loads a YAML configuration.",
+      "url": "https://github.com/rgglez/go-config",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-20T22:50:00Z"
+    },
+    {
+      "name": "rust-checkpassword",
+      "description": "checkpassword ported to rust.",
+      "url": "https://github.com/rgglez/rust-checkpassword",
+      "homepage": null,
+      "language": "Rust",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-13T01:19:23Z"
+    },
+    {
+      "name": "classic-checkpassword",
+      "description": "Classic DJB checkpassword with modifications to run in modern systems.",
+      "url": "https://github.com/rgglez/classic-checkpassword",
+      "homepage": null,
+      "language": "C",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-07-07T06:00:37Z"
+    },
+    {
+      "name": "gettext-translator",
+      "description": "Translates Gettext .po files using a variety of supported AI backends",
+      "url": "https://github.com/rgglez/gettext-translator",
+      "homepage": null,
+      "language": "Python",
+      "topics": [
+        "ai"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-06-23T21:12:11Z"
+    },
+    {
+      "name": "go-bash-env-redact",
+      "description": "Redact sensitive values in files containing environment variables.",
+      "url": "https://github.com/rgglez/go-bash-env-redact",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-06-12T16:50:47Z"
+    },
+    {
+      "name": "cloudflare-scripts",
+      "description": "Misc. scripts for CloudFlare administration",
+      "url": "https://github.com/rgglez/cloudflare-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-06-12T08:03:28Z"
+    },
+    {
+      "name": "astro-seo",
+      "description": "Optimize your website for search engines and social media with meta tags, Open Graph, and JSON-LD.",
+      "url": "https://github.com/rgglez/astro-seo",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 1,
+      "archived": false,
+      "pushedAt": "2026-06-05T17:31:12Z"
+    },
+    {
+      "name": "rgglez-website-giscus",
+      "description": "Giscus comments @ rgglez-website",
+      "url": "https://github.com/rgglez/rgglez-website-giscus",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-05-29T17:24:50Z"
+    },
+    {
+      "name": "astro-tocbutton",
+      "description": "A floating button which shows a TOC for blog posts in an Astro-based blog.",
+      "url": "https://github.com/rgglez/astro-tocbutton",
+      "homepage": null,
+      "language": "Astro",
+      "topics": [
+        "astro"
+      ],
+      "stars": 2,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-05-29T00:09:35Z"
+    },
+    {
+      "name": "fastfetch-themes",
+      "description": "fastfetch themes.",
+      "url": "https://github.com/rgglez/fastfetch-themes",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-05-26T07:33:46Z"
+    },
+    {
+      "name": "music-drums",
+      "description": "Drum kit",
+      "url": "https://github.com/rgglez/music-drums",
+      "homepage": null,
+      "language": "C++",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-05-20T16:45:13Z"
+    },
+    {
+      "name": "shiki-pddl",
+      "description": "PDDL TextMate grammar for Shiki, Expressive Code and any Markdown/MDX pipeline that accepts a LanguageRegistration-shaped grammar object.",
+      "url": "https://github.com/rgglez/shiki-pddl",
+      "homepage": null,
+      "language": "Makefile",
+      "topics": [
+        "pddl"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-05-20T08:15:32Z"
+    },
+    {
+      "name": "go-slugify",
+      "description": "Port of sindresorhus/slugify to Go.",
+      "url": "https://github.com/rgglez/go-slugify",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-04-29T19:27:20Z"
+    },
+    {
+      "name": "geonames-loader",
+      "description": "Python scripts to download the GeoNames data files and upload the data into relational databases.",
+      "url": "https://github.com/rgglez/geonames-loader",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-03-23T20:20:06Z"
+    },
+    {
+      "name": "unir-nlp-actividad1-corpus-ampliado",
+      "description": "Corpus ampliado utilizado en la actividad 1 de NLP",
+      "url": "https://github.com/rgglez/unir-nlp-actividad1-corpus-ampliado",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-03-21T03:19:40Z"
+    },
+    {
+      "name": "gofiber-validator-middleware",
+      "description": "Middleware to generate a go-playground/validator singleton for use in validating DTOs in handlers.",
+      "url": "https://github.com/rgglez/gofiber-validator-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-03-11T07:19:40Z"
+    },
+    {
+      "name": "go-playground-uts-validator",
+      "description": "Custom validator for playground which validates UNIX timestamps",
+      "url": "https://github.com/rgglez/go-playground-uts-validator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-03-11T06:56:03Z"
+    },
+    {
+      "name": "gofiber-zitadel-middleware",
+      "description": "Middleware to use along with the Zitadel IDP",
+      "url": "https://github.com/rgglez/gofiber-zitadel-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-27T05:22:49Z"
+    },
+    {
+      "name": "gorm-model-generator",
+      "description": "Generates models for GORM",
+      "url": "https://github.com/rgglez/gorm-model-generator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-13T21:30:20Z"
+    },
+    {
+      "name": "asm-8085",
+      "description": "Assembler for the Intel 8085.",
+      "url": "https://github.com/rgglez/asm-8085",
+      "homepage": null,
+      "language": "C",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-10T04:24:41Z"
+    },
+    {
+      "name": "aliyun-scripts",
+      "description": "Misc tools for \"devops\" in Aliyun (Alibaba Cloud)",
+      "url": "https://github.com/rgglez/aliyun-scripts",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:10Z"
+    },
+    {
+      "name": "nagios-check-domain",
+      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output.",
+      "url": "https://github.com/rgglez/nagios-check-domain",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:09Z"
+    },
+    {
+      "name": "gofiber-ip-middleware",
+      "description": "Middleware for IP filtering for gofiber",
+      "url": "https://github.com/rgglez/gofiber-ip-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:06Z"
+    },
+    {
+      "name": "go-database",
+      "description": "Database factory",
+      "url": "https://github.com/rgglez/go-database",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:05Z"
+    },
+    {
+      "name": "gofiber-recovery-middleware",
+      "description": "Middleware to recover a panic in a gofiber application, and log information about it.",
+      "url": "https://github.com/rgglez/gofiber-recovery-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:03Z"
+    },
+    {
+      "name": "svelte-mediaquery",
+      "description": "Conditionally rendering code fragments based on screen resolution.",
+      "url": "https://github.com/rgglez/svelte-mediaquery",
+      "homepage": null,
+      "language": "Svelte",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T05:21:02Z"
+    },
+    {
+      "name": "whois-parser-ai",
+      "description": "Go module for parsing WHOIS output and extracting useful information using AI.",
+      "url": "https://github.com/rgglez/whois-parser-ai",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "ai"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:32Z"
+    },
+    {
+      "name": "gettext-po2json",
+      "description": "Converts a PO file into a gettext-parser JSON format",
+      "url": "https://github.com/rgglez/gettext-po2json",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:31Z"
+    },
+    {
+      "name": "yii-webfeed",
+      "description": "WebFeed (ATOM & RSS) generators for Yii 1.1",
+      "url": "https://github.com/rgglez/yii-webfeed",
+      "homepage": "https://www.yiiframework.com/extension/webfeed",
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 1,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:28Z"
+    },
+    {
+      "name": "gofiber-roles-middleware",
+      "description": "Middleware to validate if the user has certain roles in the claims",
+      "url": "https://github.com/rgglez/gofiber-roles-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:26Z"
+    },
+    {
+      "name": "nagios-check-ping-go",
+      "description": "Nagios plugin to ping a host",
+      "url": "https://github.com/rgglez/nagios-check-ping-go",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:25Z"
+    },
+    {
+      "name": "nagios-check-domain-ai",
+      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output, parsed using an OpenAI model through Azure AI.",
+      "url": "https://github.com/rgglez/nagios-check-domain-ai",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:24Z"
+    },
+    {
+      "name": "yii-jui",
+      "description": "GUI components based on jQueryUI, extension for Yii 1.1",
+      "url": "https://github.com/rgglez/yii-jui",
+      "homepage": "https://www.yiiframework.com/extension/jui",
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:22Z"
+    },
+    {
+      "name": "webkit2png-daemon",
+      "description": "Server written in Perl which uses webkit2png to take screenshots of webpages.",
+      "url": "https://github.com/rgglez/webkit2png-daemon",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:21Z"
+    },
+    {
+      "name": "storage",
+      "description": "go-storage wrapper",
+      "url": "https://github.com/rgglez/storage",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "golang"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:20Z"
+    },
+    {
+      "name": "fc-exchange-rate-update",
+      "description": "Event handler function for Aliyun FC. Fetches data from the Exchange Rate API and uploads it to an Aliyun OSS bucket.",
+      "url": "https://github.com/rgglez/fc-exchange-rate-update",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:17Z"
+    },
+    {
+      "name": "fc-webpage-screenshot",
+      "description": "Aliyun FC function that takes a screenshot of a webpage, using puppeteer.",
+      "url": "https://github.com/rgglez/fc-webpage-screenshot",
+      "homepage": null,
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:15Z"
+    },
+    {
+      "name": "yii-htmlpurifier",
+      "description": "Yii 1.1 extension for HTML Purifier (extends CHtmlPurifier).",
+      "url": "https://github.com/rgglez/yii-htmlpurifier",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:14Z"
+    },
+    {
+      "name": "nagios-check-ssl-expiration",
+      "description": "Nagios plugin which checks if a SSL certificate is about to expire",
+      "url": "https://github.com/rgglez/nagios-check-ssl-expiration",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:13Z"
+    },
+    {
+      "name": "gettext-spellchecker",
+      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
+      "url": "https://github.com/rgglez/gettext-spellchecker",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:09Z"
+    },
+    {
+      "name": "yii-svelte-simpleautocomplete",
+      "description": "Extension for Yii 1.1 integrating the SimpleAutocomplete Svelte component",
+      "url": "https://github.com/rgglez/yii-svelte-simpleautocomplete",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:06Z"
+    },
+    {
+      "name": "fc-gomail",
+      "description": "Event handler for Aliyun Function Compute. It sends email using the gomail module. Intended to be triggered by Aliyun MNS.",
+      "url": "https://github.com/rgglez/fc-gomail",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-02-03T04:53:05Z"
+    },
+    {
+      "name": "rgglez-cs-thesis-scip",
+      "description": "My Computer Science Bachelor's Degree Thesis.",
+      "url": "https://github.com/rgglez/rgglez-cs-thesis-scip",
+      "homepage": null,
+      "language": "TeX",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-22T23:07:16Z"
+    },
+    {
+      "name": "fc-certbot",
+      "description": "Updates SSL certificates from Let's Encrypt. Aliyun FaaS.",
+      "url": "https://github.com/rgglez/fc-certbot",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-09T02:22:10Z"
+    },
+    {
+      "name": "git-scripts",
+      "description": "Misc utils for GIT",
+      "url": "https://github.com/rgglez/git-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-09T01:29:46Z"
+    },
+    {
+      "name": "asm-editor",
+      "description": "Full screen text editor programmed in 8088 assembly.",
+      "url": "https://github.com/rgglez/asm-editor",
+      "homepage": null,
+      "language": "Assembly",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-09T01:28:23Z"
+    },
+    {
+      "name": "music-keyboard",
+      "description": "Plays tunes on a PC internal speaker.",
+      "url": "https://github.com/rgglez/music-keyboard",
+      "homepage": null,
+      "language": "Pascal",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T22:58:34Z"
+    },
+    {
+      "name": "cs-automata-theory",
+      "description": "Some Prolog code on automata theory.",
+      "url": "https://github.com/rgglez/cs-automata-theory",
+      "homepage": null,
+      "language": "Prolog",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T22:46:30Z"
+    },
+    {
+      "name": "cs-prenex",
+      "description": "Converts a Well Formed Formula into Prenex normal form.",
+      "url": "https://github.com/rgglez/cs-prenex",
+      "homepage": null,
+      "language": "C++",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T20:53:11Z"
+    },
+    {
+      "name": "3ds-varitech",
+      "description": "3D Studio animation of a Varitech-like robot",
+      "url": "https://github.com/rgglez/3ds-varitech",
+      "homepage": null,
+      "language": "HTML",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T20:51:18Z"
+    },
+    {
+      "name": "mysql-encrypted-backup",
+      "description": "Integrated management of encrypted mydumper backups.",
+      "url": "https://github.com/rgglez/mysql-encrypted-backup",
+      "homepage": null,
+      "language": "Shell",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T20:30:35Z"
+    },
+    {
+      "name": "letsencrypt-scripts",
+      "description": "Some helper scripts for Let's Encrypt administration.",
+      "url": "https://github.com/rgglez/letsencrypt-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T20:29:39Z"
+    },
+    {
+      "name": "ndjbdns-scripts",
+      "description": "Scripts for performing administrative tasks for ndjbdns.",
+      "url": "https://github.com/rgglez/ndjbdns-scripts",
+      "homepage": null,
+      "language": "Makefile",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2025-09-08T20:11:45Z"
+    },
+    {
+      "name": "php5-ext-crack2",
+      "description": "libcrack extension for PHP 5.x",
+      "url": "https://github.com/rgglez/php5-ext-crack2",
+      "homepage": null,
+      "language": "C",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-17T18:58:30Z"
+    },
+    {
+      "name": "yii-ftpassetmanager",
+      "description": "Assets manager for Yii 1.1. Uploads assets to a FTP server. It locks paths so no duplicated uploads are executed.",
+      "url": "https://github.com/rgglez/yii-ftpassetmanager",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-05T01:11:49Z"
+    },
+    {
+      "name": "yii-emailvalidator",
+      "description": "Extension for Yii 1.1 that validates an email address using SMTP and regex.",
+      "url": "https://github.com/rgglez/yii-emailvalidator",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-05T00:17:33Z"
+    },
+    {
+      "name": "yii-emailsmtpvalidator",
+      "description": "Validator for Yii 1.1 that checks if an e-mail address is valid, using SMTP.",
+      "url": "https://github.com/rgglez/yii-emailsmtpvalidator",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-05T00:16:39Z"
+    },
+    {
+      "name": "yii-emailsintaxvalidator",
+      "description": "Extension to validate the sintax of an e-mail address, for Yii 1.1.",
+      "url": "https://github.com/rgglez/yii-emailsintaxvalidator",
+      "homepage": null,
+      "language": "PHP",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-05T00:16:01Z"
+    },
+    {
+      "name": "jabberd2-auth-linux.patch",
+      "description": "Support for glibc2 crypt() algorithms for jabberd2 2.3.6",
+      "url": "https://github.com/rgglez/jabberd2-auth-linux.patch",
+      "homepage": null,
+      "language": "C",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-04-04T23:39:27Z"
+    },
+    {
+      "name": "lambda-html-tidy",
+      "description": "AWS Lambda to clean garbage code from a HTML input.",
+      "url": "https://github.com/rgglez/lambda-html-tidy",
+      "homepage": null,
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2023-03-22T18:33:59Z"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+---
+import type { PortfolioData, PortfolioRepo } from "@/data/portfolio/types";
+import { PORTFOLIO } from "@/data/portfolio/config";
+
+type Props = { data: PortfolioData };
+const { data } = Astro.props;
+
+// TODO: gettext
+const labels = {
+  languages: "Languages",
+  topics: "Topics",
+  empty: "No repositories in this category.",
+  stars: "stars",
+  homepage: "site",
+};
+
+const langTabs = data.languages.filter(lang =>
+  data.repos.some(r => (r.language ?? "Other") === lang)
+);
+const topicTabs = PORTFOLIO.topicAllowlist.filter(t => data.topics.includes(t));
+
+type Tab = { id: string; label: string; kind: "lang" | "topic" };
+const tabs: Tab[] = [
+  ...langTabs.map(l => ({ id: `lang:${l}`, label: l, kind: "lang" as const })),
+  ...topicTabs.map(t => ({
+    id: `topic:${t}`,
+    label: t,
+    kind: "topic" as const,
+  })),
+];
+
+function reposFor(tab: Tab): PortfolioRepo[] {
+  if (tab.kind === "lang") {
+    const lang = tab.id.slice(5);
+    return data.repos.filter(r => (r.language ?? "Other") === lang);
+  }
+  const topic = tab.id.slice(6);
+  return data.repos.filter(r => r.topics.includes(topic));
+}
+---
+
+{
+  tabs.length === 0 ? (
+    <p class="text-foreground/70">{labels.empty}</p>
+  ) : (
+    <div class="portfolio-tabs" data-portfolio-tabs>
+      <div
+        role="tablist"
+        class="mb-6 flex flex-wrap items-center gap-2"
+        aria-label="Portfolio"
+      >
+        {langTabs.length > 0 && (
+          <span class="me-1 text-sm text-foreground/60">{labels.languages}</span>
+        )}
+        {langTabs.map((l, i) => {
+          const id = `lang:${l}`;
+          const first = i === 0;
+          return (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${id}`}
+              data-tab={id}
+              aria-selected={first ? "true" : "false"}
+              aria-controls={`panel-${id}`}
+              class:list={[
+                "rounded border px-3 py-1 text-sm font-medium transition-colors",
+                first
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border text-foreground/80 hover:border-accent hover:text-accent",
+              ]}
+            >
+              {l}
+            </button>
+          );
+        })}
+        {topicTabs.length > 0 && (
+          <>
+            <span
+              class:list={[
+                "text-sm text-foreground/60",
+                langTabs.length > 0 ? "ms-3 me-1" : "me-1",
+              ]}
+            >
+              {labels.topics}
+            </span>
+            {topicTabs.map((t, i) => {
+              const id = `topic:${t}`;
+              const first = langTabs.length === 0 && i === 0;
+              return (
+                <button
+                  type="button"
+                  role="tab"
+                  id={`tab-${id}`}
+                  data-tab={id}
+                  aria-selected={first ? "true" : "false"}
+                  aria-controls={`panel-${id}`}
+                  class:list={[
+                    "rounded border px-3 py-1 text-sm font-medium transition-colors",
+                    first
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-border text-foreground/80 hover:border-accent hover:text-accent",
+                  ]}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </>
+        )}
+      </div>
+
+      {tabs.map((tab, i) => {
+        const list = reposFor(tab);
+        return (
+          <div
+            role="tabpanel"
+            id={`panel-${tab.id}`}
+            data-panel={tab.id}
+            aria-labelledby={`tab-${tab.id}`}
+            hidden={i !== 0}
+            class="portfolio-panel"
+          >
+            {list.length === 0 ? (
+              <p class="text-foreground/70">{labels.empty}</p>
+            ) : (
+              <ul class="divide-y divide-border">
+                {list.map(repo => (
+                  <li class="py-5">
+                    <a
+                      href={repo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-block text-lg font-medium text-[#161d2e] underline decoration-[#a1bfef] decoration-dashed underline-offset-4 hover:decoration-accent dark:text-white dark:decoration-[#234c77]"
+                    >
+                      {repo.name}
+                    </a>
+                    {repo.description && (
+                      <p class="mt-1 text-foreground/85">{repo.description}</p>
+                    )}
+                    <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-foreground/65">
+                      {repo.language && (
+                        <span class="rounded border border-border px-1.5 py-0.5">
+                          {repo.language}
+                        </span>
+                      )}
+                      {repo.topics.map(t => (
+                        <span class="rounded border border-border px-1.5 py-0.5">
+                          {t}
+                        </span>
+                      ))}
+                      {repo.stars > 0 && (
+                        <span>
+                          ★ {repo.stars} {labels.stars}
+                        </span>
+                      )}
+                      {repo.homepage && (
+                        <a
+                          href={repo.homepage}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link-exempt text-accent hover:underline"
+                        >
+                          {labels.homepage}
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )
+}
+
+<script>
+  function bindPortfolioTabs() {
+    document.querySelectorAll<HTMLElement>("[data-portfolio-tabs]").forEach(root => {
+      const buttons = Array.from(
+        root.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+      );
+      const panels = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-panel]")
+      );
+      if (!buttons.length) return;
+
+      const activate = (id: string) => {
+        buttons.forEach(btn => {
+          const on = btn.dataset.tab === id;
+          btn.setAttribute("aria-selected", on ? "true" : "false");
+          btn.classList.toggle("border-accent", on);
+          btn.classList.toggle("bg-accent/10", on);
+          btn.classList.toggle("text-accent", on);
+          btn.classList.toggle("border-border", !on);
+          btn.classList.toggle("text-foreground/80", !on);
+        });
+        panels.forEach(p => {
+          p.hidden = p.dataset.panel !== id;
+        });
+      };
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.tab) activate(btn.dataset.tab);
+        });
+      });
+    });
+  }
+
+  bindPortfolioTabs();
+  document.addEventListener("astro:after-swap", bindPortfolioTabs);
+</script>

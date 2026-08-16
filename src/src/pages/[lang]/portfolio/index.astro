@@ -1,0 +1,35 @@
+---
+export const prerender = true;
+import type { GetStaticPaths } from "astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import PortfolioTabs from "@/components/PortfolioTabs.astro";
+import { SITE } from "@/config";
+import type { PortfolioData } from "@/data/portfolio/types";
+import reposJson from "@/data/portfolio/repos.json";
+
+export const getStaticPaths = (() => {
+  return SITE.supportedLangs.map(lang => ({ params: { lang } }));
+}) satisfies GetStaticPaths;
+
+const data = reposJson as PortfolioData;
+
+// TODO: gettext for UI strings
+const layoutProps = {
+  title: `Portfolio | ${SITE.title}`,
+  description: "Public GitHub projects by language and topics.",
+};
+---
+
+<Layout {...layoutProps}>
+  <Header />
+  <main id="main-content" class="app-layout py-8">
+    <h1 class="mb-2 text-2xl font-semibold">Portfolio</h1>
+    <p class="mb-8 text-foreground/75">
+      Public GitHub projects by language and topics.
+    </p>
+    <PortfolioTabs data={data} />
+  </main>
+  <Footer />
+</Layout>

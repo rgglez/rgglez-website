@@ -13,7 +13,8 @@
     "astro": "astro",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "sync:portfolio": "node scripts/sync-portfolio.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "13.5.2",
