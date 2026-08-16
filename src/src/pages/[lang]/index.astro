@@ -97,17 +97,20 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 <script is:inline define:vars={{ supportedLangs, defaultLang, lang }}>
   document.addEventListener("astro:page-load", () => {
     const indexLayout = document.querySelector("#main-content")?.dataset?.layout;
-    if (indexLayout) {
-      sessionStorage.setItem("backUrl", "/");
-    }
+    if (!indexLayout) return;
+
+    sessionStorage.setItem("backUrl", "/");
 
     const routeLang = supportedLangs.includes(lang) ? lang : defaultLang;
 
     document.documentElement.lang = routeLang;
 
-    // Group cards by article key, then pick the best version per article:
-    // priority: browser language > "en" > first available
-    const cards = Array.from(document.querySelectorAll("li[data-lang][data-article-key]"));
+    // Only filter cards inside index sections (never sidebar / other pages).
+    const cards = Array.from(
+      document.querySelectorAll(
+        "#recent-posts li[data-lang][data-article-key], #featured li[data-lang][data-article-key]"
+      )
+    );
     const groups = {};
     cards.forEach(card => {
       const key = card.dataset.articleKey;
@@ -127,7 +130,6 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
       });
     });
 
-    // Hide sections with no visible cards
     ["#featured", "#recent-posts"].forEach(selector => {
       const section = document.querySelector(selector);
       if (!section) return;

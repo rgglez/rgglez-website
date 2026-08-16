@@ -4,32 +4,66 @@ import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import PostsListLayout from "@/layouts/PostsListLayout.astro";
 import Card from "@/components/Card.astro";
-import Pagination from "@/components/Pagination.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
+import getPostsByGroupCondition from "@/utils/getPostsByGroupCondition";
 import getTagsWithCount from "@/utils/getTagsWithCount";
 import { getFileLang } from "@/utils/getTranslations";
+import { getMonthName } from "@/utils/formatDate";
 import { SITE } from "@/config";
 
-export const getStaticPaths = (async ({ paginate }) => {
-  const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-  return SITE.supportedLangs.flatMap(lang => {
-    const langPosts = getSortedPosts(allPosts).filter(
-      post => getFileLang(post.filePath) === lang
-    );
-    return paginate(langPosts, { params: { lang }, pageSize: SITE.postPerPage });
-  });
+export const getStaticPaths = (() => {
+  return SITE.supportedLangs.map(lang => ({
+    params: { lang, page: undefined },
+  }));
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
 const { lang } = Astro.params;
 const allPosts = await getCollection("blog");
 
-const langPosts = allPosts.filter(post => getFileLang(post.filePath) === lang);
+const langPosts = getSortedPosts(allPosts)
+  .filter(post => getFileLang(post.filePath) === lang)
+  .sort(
+    (a, b) =>
+      new Date(b.data.pubDatetime).getTime() -
+      new Date(a.data.pubDatetime).getTime()
+  );
+
 const tagCloudTags = getTagsWithCount(langPosts).map(({ tag, tagName, count }) => ({
   label: tagName,
   href: `/${lang}/tags/${tag}/`,
   count,
 }));
+
+const pageSize = SITE.postPerPage;
+
+const yearGroups = Object.entries(
+  getPostsByGroupCondition(langPosts, post => post.data.pubDatetime.getFullYear())
+).sort(([yearA], [yearB]) => Number(yearB) - Number(yearA));
+
+type MonthBlock = {
+  year: number;
+  month: number;
+  posts: typeof langPosts;
+};
+
+const monthBlocks: MonthBlock[] = [];
+for (const [year, yearGroup] of yearGroups) {
+  const months = Object.entries(
+    getPostsByGroupCondition(yearGroup, post => post.data.pubDatetime.getMonth())
+  ).sort(([monthA], [monthB]) => Number(monthB) - Number(monthA));
+
+  for (const [month, monthGroup] of months) {
+    monthBlocks.push({
+      year: Number(year),
+      month: Number(month),
+      posts: monthGroup.sort(
+        (a, b) =>
+          new Date(b.data.pubDatetime).getTime() -
+          new Date(a.data.pubDatetime).getTime()
+      ),
+    });
+  }
+}
 ---
 
 <PostsListLayout
@@ -38,13 +72,157 @@ const tagCloudTags = getTagsWithCount(langPosts).map(({ tag, tagName, count }) =
   pageDesc="All the articles I've posted."
   {tagCloudTags}
   showTagCloud={true}
-  posts={allPosts}
+  posts={langPosts}
   {lang}
-  noMarginTop={page.lastPage > 1}
 >
-  <ul>
-    {page.data.map(data => <Card {...data} allPosts={allPosts} />)}
-  </ul>
-
-  <Pagination {page} slot="pagination" />
+  <div id="posts-feed" data-page-size={pageSize}>
+    {
+      monthBlocks.map((block, blockIndex) => {
+        const showYear =
+          blockIndex === 0 || monthBlocks[blockIndex - 1].year !== block.year;
+        return (
+          <section
+            class="posts-month-block"
+            data-year={block.year}
+            data-month={block.month}
+          >
+            {blockIndex > 0 && (
+              <div class="posts-separator" aria-hidden="true">
+                ---
+              </div>
+            )}
+            <header class="posts-section-header">
+              {showYear && <h2 class="posts-year">{block.year}</h2>}
+              <h3 class="posts-month">{getMonthName(block.month, lang)}</h3>
+              <sup class="posts-count">{block.posts.length}</sup>
+            </header>
+            <ul class="posts-month-list">
+              {block.posts.map(data => (
+                <Card {...data} allPosts={allPosts} />
+              ))}
+            </ul>
+          </section>
+        );
+      })
+    }
+  </div>
+  <div id="posts-sentinel" class="h-8" aria-hidden="true"></div>
 </PostsListLayout>
+
+<style>
+  .posts-separator {
+    margin: 1.75rem 0 1.25rem;
+    text-align: center;
+    letter-spacing: 0.35em;
+    color: var(--muted-foreground, color-mix(in srgb, var(--foreground) 45%, transparent));
+    user-select: none;
+  }
+
+  .posts-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .posts-year {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    width: 100%;
+  }
+
+  .posts-month {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--muted-foreground, color-mix(in srgb, var(--foreground) 70%, transparent));
+  }
+
+  .posts-count {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .posts-month-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #posts-feed :global(li[data-post-hidden="true"]) {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const feed = document.querySelector("#posts-feed");
+    const sentinel = document.querySelector("#posts-sentinel");
+    if (!(feed instanceof HTMLElement) || !(sentinel instanceof HTMLElement)) return;
+
+    const pageSize = Number(feed.dataset.pageSize || 10);
+    const items = Array.from(
+      feed.querySelectorAll("ul.posts-month-list > li")
+    ).filter((el): el is HTMLElement => el instanceof HTMLElement);
+
+    if (items.length <= pageSize) {
+      sentinel.remove();
+      return;
+    }
+
+    let visible = 0;
+
+    const syncSections = () => {
+      const blocks = Array.from(feed.querySelectorAll(".posts-month-block")).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement
+      );
+
+      let previousVisible: HTMLElement | null = null;
+      for (const block of blocks) {
+        const listItems = Array.from(
+          block.querySelectorAll("ul.posts-month-list > li")
+        ).filter((el): el is HTMLElement => el instanceof HTMLElement);
+        const hasVisible = listItems.some(li => li.dataset.postHidden !== "true");
+        block.hidden = !hasVisible;
+
+        const separator = block.querySelector(".posts-separator");
+        if (separator instanceof HTMLElement) {
+          separator.hidden = !previousVisible || !hasVisible;
+        }
+
+        if (hasVisible) previousVisible = block;
+      }
+    };
+
+    const showNext = () => {
+      const next = Math.min(visible + pageSize, items.length);
+      for (let i = visible; i < next; i++) {
+        delete items[i].dataset.postHidden;
+      }
+      visible = next;
+      syncSections();
+      if (visible >= items.length) {
+        observer.disconnect();
+        sentinel.remove();
+      }
+    };
+
+    items.forEach((li, index) => {
+      if (index >= pageSize) li.dataset.postHidden = "true";
+    });
+    visible = Math.min(pageSize, items.length);
+    syncSections();
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) showNext();
+      },
+      { rootMargin: "200px 0px" }
+    );
+
+    observer.observe(sentinel);
+  });
+</script>
