@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-08-16T02:01:31.634Z",
+  "generatedAt": "2026-08-16T02:36:56.576Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
     "Python",
     "TypeScript",
-    "Rust",
+    "PHP",
+    "JavaScript",
+    "Perl",
     "Assembly",
     "Astro",
     "C",
     "C++",
     "CSS",
     "HTML",
-    "JavaScript",
     "MDX",
     "Makefile",
-    "PHP",
     "Pascal",
-    "Perl",
     "Prolog",
+    "Rust",
     "Shell",
     "Svelte",
     "TeX",
@@ -27,22 +27,22 @@
   "topics": [
     "astro",
     "pddl",
-    "golang",
-    "ai"
+    "ai",
+    "ansible",
+    "nagios",
+    "svelte",
+    "yii",
+    "zitadel",
+    "jabber",
+    "aliyun",
+    "cloudflare",
+    "letsencrypt",
+    "i18n",
+    "music",
+    "sysadmin",
+    "graphics"
   ],
   "repos": [
-    {
-      "name": "rgglez",
-      "description": "Global readme",
-      "url": "https://github.com/rgglez/rgglez",
-      "homepage": null,
-      "language": null,
-      "topics": [],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-08-16T01:39:31Z"
-    },
     {
       "name": "rgglez-website",
       "description": "Personal website",
@@ -55,7 +55,19 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-16T01:12:01Z"
+      "pushedAt": "2026-08-16T02:31:11Z"
+    },
+    {
+      "name": "rgglez",
+      "description": "Global readme",
+      "url": "https://github.com/rgglez/rgglez",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-16T01:39:31Z"
     },
     {
       "name": "github-issues-sentiment-analyzer",
@@ -75,7 +87,10 @@
       "url": "https://github.com/rgglez/ansible-scripts",
       "homepage": null,
       "language": "Perl",
-      "topics": [],
+      "topics": [
+        "ansible",
+        "sysadmin"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -100,7 +115,8 @@
       "homepage": null,
       "language": "Astro",
       "topics": [
-        "astro"
+        "astro",
+        "graphics"
       ],
       "stars": 0,
       "forks": 0,
@@ -113,7 +129,9 @@
       "url": "https://github.com/rgglez/ossfs2-ubuntu2604",
       "homepage": null,
       "language": null,
-      "topics": [],
+      "topics": [
+        "aliyun"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -125,9 +143,7 @@
       "url": "https://github.com/rgglez/go-playground-recaptcha3-validator",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -139,9 +155,7 @@
       "url": "https://github.com/rgglez/gofiber-recaptcha3-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -153,7 +167,9 @@
       "url": "https://github.com/rgglez/svelte-quill",
       "homepage": null,
       "language": "Svelte",
-      "topics": [],
+      "topics": [
+        "svelte"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -165,7 +181,10 @@
       "url": "https://github.com/rgglez/svelte-i18n-gettext",
       "homepage": null,
       "language": "JavaScript",
-      "topics": [],
+      "topics": [
+        "i18n",
+        "svelte"
+      ],
       "stars": 1,
       "forks": 1,
       "archived": false,
@@ -177,7 +196,9 @@
       "url": "https://github.com/rgglez/svelte-notoriuosbutton",
       "homepage": null,
       "language": "CSS",
-      "topics": [],
+      "topics": [
+        "svelte"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -245,7 +266,9 @@
       "url": "https://github.com/rgglez/svelte-alerts",
       "homepage": null,
       "language": "JavaScript",
-      "topics": [],
+      "topics": [
+        "svelte"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -257,9 +280,7 @@
       "url": "https://github.com/rgglez/go-config",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -309,9 +330,7 @@
       "url": "https://github.com/rgglez/go-bash-env-redact",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -323,7 +342,9 @@
       "url": "https://github.com/rgglez/cloudflare-scripts",
       "homepage": null,
       "language": "Perl",
-      "topics": [],
+      "topics": [
+        "cloudflare"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -387,7 +408,9 @@
       "url": "https://github.com/rgglez/music-drums",
       "homepage": null,
       "language": "C++",
-      "topics": [],
+      "topics": [
+        "music"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -413,9 +436,7 @@
       "url": "https://github.com/rgglez/go-slugify",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -451,9 +472,7 @@
       "url": "https://github.com/rgglez/gofiber-validator-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -465,9 +484,7 @@
       "url": "https://github.com/rgglez/go-playground-uts-validator",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -479,7 +496,9 @@
       "url": "https://github.com/rgglez/gofiber-zitadel-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [],
+      "topics": [
+        "zitadel"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -515,7 +534,9 @@
       "url": "https://github.com/rgglez/aliyun-scripts",
       "homepage": null,
       "language": "Python",
-      "topics": [],
+      "topics": [
+        "aliyun"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -528,7 +549,7 @@
       "homepage": null,
       "language": "Go",
       "topics": [
-        "golang"
+        "nagios"
       ],
       "stars": 0,
       "forks": 0,
@@ -541,9 +562,7 @@
       "url": "https://github.com/rgglez/gofiber-ip-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -555,9 +574,7 @@
       "url": "https://github.com/rgglez/go-database",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -569,9 +586,7 @@
       "url": "https://github.com/rgglez/gofiber-recovery-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -583,7 +598,9 @@
       "url": "https://github.com/rgglez/svelte-mediaquery",
       "homepage": null,
       "language": "Svelte",
-      "topics": [],
+      "topics": [
+        "svelte"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -621,7 +638,9 @@
       "url": "https://github.com/rgglez/yii-webfeed",
       "homepage": "https://www.yiiframework.com/extension/webfeed",
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 1,
       "archived": false,
@@ -633,7 +652,9 @@
       "url": "https://github.com/rgglez/gofiber-roles-middleware",
       "homepage": null,
       "language": "Go",
-      "topics": [],
+      "topics": [
+        "zitadel"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -645,7 +666,9 @@
       "url": "https://github.com/rgglez/nagios-check-ping-go",
       "homepage": null,
       "language": "Go",
-      "topics": [],
+      "topics": [
+        "nagios"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -658,7 +681,7 @@
       "homepage": null,
       "language": "Go",
       "topics": [
-        "golang"
+        "nagios"
       ],
       "stars": 0,
       "forks": 0,
@@ -671,7 +694,9 @@
       "url": "https://github.com/rgglez/yii-jui",
       "homepage": "https://www.yiiframework.com/extension/jui",
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -695,9 +720,7 @@
       "url": "https://github.com/rgglez/storage",
       "homepage": null,
       "language": "Go",
-      "topics": [
-        "golang"
-      ],
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -709,7 +732,9 @@
       "url": "https://github.com/rgglez/fc-exchange-rate-update",
       "homepage": null,
       "language": "Python",
-      "topics": [],
+      "topics": [
+        "aliyun"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -721,7 +746,9 @@
       "url": "https://github.com/rgglez/fc-webpage-screenshot",
       "homepage": null,
       "language": "JavaScript",
-      "topics": [],
+      "topics": [
+        "aliyun"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -733,7 +760,9 @@
       "url": "https://github.com/rgglez/yii-htmlpurifier",
       "homepage": null,
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -745,7 +774,9 @@
       "url": "https://github.com/rgglez/nagios-check-ssl-expiration",
       "homepage": null,
       "language": "Go",
-      "topics": [],
+      "topics": [
+        "nagios"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -769,7 +800,10 @@
       "url": "https://github.com/rgglez/yii-svelte-simpleautocomplete",
       "homepage": null,
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "svelte",
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -781,7 +815,9 @@
       "url": "https://github.com/rgglez/fc-gomail",
       "homepage": null,
       "language": "Go",
-      "topics": [],
+      "topics": [
+        "aliyun"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -805,7 +841,10 @@
       "url": "https://github.com/rgglez/fc-certbot",
       "homepage": null,
       "language": "Python",
-      "topics": [],
+      "topics": [
+        "aliyun",
+        "letsencrypt"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -841,7 +880,9 @@
       "url": "https://github.com/rgglez/music-keyboard",
       "homepage": null,
       "language": "Pascal",
-      "topics": [],
+      "topics": [
+        "music"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -901,7 +942,9 @@
       "url": "https://github.com/rgglez/letsencrypt-scripts",
       "homepage": null,
       "language": "Perl",
-      "topics": [],
+      "topics": [
+        "letsencrypt"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -913,7 +956,9 @@
       "url": "https://github.com/rgglez/ndjbdns-scripts",
       "homepage": null,
       "language": "Makefile",
-      "topics": [],
+      "topics": [
+        "sysadmin"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -949,7 +994,9 @@
       "url": "https://github.com/rgglez/yii-emailvalidator",
       "homepage": null,
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -961,7 +1008,9 @@
       "url": "https://github.com/rgglez/yii-emailsmtpvalidator",
       "homepage": null,
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -973,7 +1022,9 @@
       "url": "https://github.com/rgglez/yii-emailsintaxvalidator",
       "homepage": null,
       "language": "PHP",
-      "topics": [],
+      "topics": [
+        "yii"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -985,7 +1036,9 @@
       "url": "https://github.com/rgglez/jabberd2-auth-linux.patch",
       "homepage": null,
       "language": "C",
-      "topics": [],
+      "topics": [
+        "jabber"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
