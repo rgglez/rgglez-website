@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T02:36:56.576Z",
+  "generatedAt": "2026-08-17T06:53:11.877Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -44,6 +44,18 @@
   ],
   "repos": [
     {
+      "name": "rgglez",
+      "description": "Global readme",
+      "url": "https://github.com/rgglez/rgglez",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-17T01:37:33Z"
+    },
+    {
       "name": "rgglez-website",
       "description": "Personal website",
       "url": "https://github.com/rgglez/rgglez-website",
@@ -55,19 +67,7 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-16T02:31:11Z"
-    },
-    {
-      "name": "rgglez",
-      "description": "Global readme",
-      "url": "https://github.com/rgglez/rgglez",
-      "homepage": null,
-      "language": null,
-      "topics": [],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-08-16T01:39:31Z"
+      "pushedAt": "2026-08-16T02:36:57Z"
     },
     {
       "name": "github-issues-sentiment-analyzer",
@@ -75,7 +75,9 @@
       "url": "https://github.com/rgglez/github-issues-sentiment-analyzer",
       "homepage": "https://rodolfo.gg/en/posts/2026/08/github-issues-sentiment-analyzer/",
       "language": "TypeScript",
-      "topics": [],
+      "topics": [
+        "ai"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
