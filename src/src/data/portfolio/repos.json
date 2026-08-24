@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T06:53:11.877Z",
+  "generatedAt": "2026-08-24T06:56:18.385Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -53,21 +53,19 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-17T01:37:33Z"
+      "pushedAt": "2026-08-24T01:39:29Z"
     },
     {
-      "name": "rgglez-website",
-      "description": "Personal website",
-      "url": "https://github.com/rgglez/rgglez-website",
+      "name": "rgglez-dev-skills",
+      "description": "My skills marketplace",
+      "url": "https://github.com/rgglez/rgglez-dev-skills",
       "homepage": null,
-      "language": "MDX",
-      "topics": [
-        "astro"
-      ],
-      "stars": 1,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-16T02:36:57Z"
+      "pushedAt": "2026-08-23T06:56:13Z"
     },
     {
       "name": "github-issues-sentiment-analyzer",
@@ -81,7 +79,21 @@
       "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-08T07:30:28Z"
+      "pushedAt": "2026-08-18T06:55:43Z"
+    },
+    {
+      "name": "rgglez-website",
+      "description": "Personal website",
+      "url": "https://github.com/rgglez/rgglez-website",
+      "homepage": null,
+      "language": "MDX",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-17T06:53:13Z"
     },
     {
       "name": "ansible-scripts",
