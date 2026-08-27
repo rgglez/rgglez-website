@@ -1,0 +1,309 @@
+---
+title: "Instalación de DeepSeek Harness e integración con VS Code"
+description: >-
+  Guía vigente para instalar DeepSeek Harness, configurar DeepSeek API o suscripciones e integrarlo con Visual Studio Code.
+pubDatetime: 2026-08-24T00:00:00-06:00
+modDatetime: 2026-08-27T00:00:00-06:00
+featured: false
+draft: false
+lang: es
+slug: instalacion-deepseek-harness-vscode
+ogImage: "../../../../../assets/posts/2026/08/instalacion-deepseek-harness-vscode/header.webp"
+tags:
+  - deepseek
+  - harness
+  - vscode
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import { Image } from "astro:assets";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+import Aside from "@rgglez/astro-aside";
+
+import image1 from "@/assets/posts/2026/08/instalacion-deepseek-harness-vscode/screen1.png";
+import image2 from "@/assets/posts/2026/08/instalacion-deepseek-harness-vscode/screen2.png";
+import image3 from "@/assets/posts/2026/08/instalacion-deepseek-harness-vscode/screen3.png";
+import image4 from "@/assets/posts/2026/08/instalacion-deepseek-harness-vscode/screen4.png";
+import image5 from "@/assets/posts/2026/08/instalacion-deepseek-harness-vscode/screen5.png";
+
+## Introducción
+
+Un _harness_ es la infraestructura que rodea a un modelo y coordina elementos
+como las instrucciones, el historial de conversación, las herramientas, los
+permisos, el entorno de ejecución y la persistencia de las sesiones. DeepSeek
+Harness (`dsh`) es un _harness_ de agentes de código abierto desarrollado por
+DeepSeek AI, con una arquitectura en la que cada capacidad se integra como un
+plugin.
+
+Los siguientes videos ofrecen contexto general sobre el concepto y el proyecto:
+
+<YouTubeEmbed
+  id="q9Vaoz0hd0U"
+  title="Crestomatía: ¿Qué es un harness y qué es harness engineering?"
+/>
+
+<YouTubeEmbed
+  id="jtyV7O4Pt0s"
+  title="Crestomatía: Why DeepSeek Harness Is The End Of Coding Agents as We Know Them"
+/>
+
+<YouTubeEmbed
+  id="Hpw4fAHlHDw"
+  title="Crestomatía: NEW Deepseek Agent Harness EXPLAINED (deep dive)"
+/>
+
+DeepSeek Harness incluye una interfaz web local. También puede mostrarse dentro
+de VS Code mediante una extensión comunitaria, de modo que las conversaciones y
+las herramientas queden junto al proyecto abierto en el editor.
+
+<Image src={image1} alt="Interfaz web de DeepSeek Harness en el perfil web" />
+
+<Aside type="warning" title="Proyecto en desarrollo activo">
+
+Esta guía fue verificada el **27 de agosto de 2026** con DeepSeek Harness
+`0.1.1-rc.2`, `dsh-plugin-subscriptions` `0.5.2` y la extensión de VS Code
+`0.8.33`. DeepSeek Harness continúa en _developer preview_ y sus responsables
+advierten que habrá cambios incompatibles. Consulta las fuentes enlazadas al
+final antes de usar la guía con versiones posteriores.
+
+</Aside>
+
+---
+
+## Tabla de contenido
+
+---
+
+## Requisitos previos
+
+- **Node.js `^22.19.0` o `>=24.0.0`**. Comprueba la versión con
+  `node --version`.
+- **npm/npx**, incluidos normalmente con Node.js.
+- **pnpm en `PATH`** si vas a instalar el plugin de suscripciones. Compruébalo
+  con `pnpm --version`.
+- **Visual Studio Code `1.75.0` o posterior** para la extensión descrita aquí.
+- Una de estas formas de acceso a modelos:
+  - una clave de la API de DeepSeek con saldo disponible, o
+  - una suscripción compatible con el plugin comunitario.
+
+`pnpm` no es intercambiable por npm, Bun o Yarn en los comandos de plugins: la
+CLI de DSH reenvía esos comandos directamente a `pnpm`.
+
+## Paso 1: ejecutar DeepSeek Harness
+
+La ruta oficial y más sencilla no requiere una instalación global:
+
+```bash
+npx @deepseek-ai/dsh web
+```
+
+El comando inicializa el perfil web, inicia el servidor en
+`http://127.0.0.1:3080` y abre la interfaz en el navegador. El proceso permanece
+en primer plano; detenlo con `Ctrl+C`.
+
+<Aside type="note" title="Evita modificar directorios del sistema">
+
+Si una instalación global produce `EACCES`, no cambies el propietario de
+`/usr/local`. npm recomienda utilizar un gestor de versiones de Node.js o
+configurar un prefijo global dentro de tu directorio de usuario. Para esta guía,
+`npx` evita la instalación global.
+
+</Aside>
+
+## Paso 2: elegir cómo acceder a los modelos
+
+DSH puede utilizar la API oficial de DeepSeek o proveedores añadidos por
+plugins. Son mecanismos independientes: tener créditos de API no configura una
+suscripción, y tener una suscripción no crea una clave de API.
+
+### Opción A: API oficial de DeepSeek
+
+1. Crea una clave en la plataforma de DeepSeek y confirma que la cuenta tenga
+   saldo.
+2. En **Settings**, abre la configuración de modelos y selecciona el proveedor
+   `deepseek-official` para guardar la credencial.
+3. También puedes proporcionar la clave mediante la variable de entorno que
+   utiliza el adaptador oficial y ejecutar DSH desde esa misma terminal:
+
+   En Bash, puedes leerla sin mostrarla ni escribirla en el historial:
+
+   ```bash
+   read -rsp 'DeepSeek API key: ' DEEPSEEK_API_KEY
+   export DEEPSEEK_API_KEY
+   printf '\n'
+   npx @deepseek-ai/dsh web
+   ```
+
+4. Selecciona uno de los modelos de DeepSeek disponibles al crear la
+   conversación.
+
+<Aside type="warning" title="Protege la clave">
+
+No guardes la clave en el repositorio, capturas de pantalla ni archivos que se
+sincronicen. El saldo por sí solo no basta: DSH necesita la clave mediante su
+configuración de credenciales o `DEEPSEEK_API_KEY`.
+
+</Aside>
+
+### Opción B: suscripciones mediante un plugin comunitario
+
+[`dsh-plugin-subscriptions`](https://github.com/V1ki/dsh-plugin-subscriptions)
+es un plugin de terceros. Su documentación declara compatibilidad con estos
+planes:
+
+| Proveedor       | Suscripción documentada |
+| :-------------- | :---------------------- |
+| ChatGPT (Codex) | ChatGPT Plus o Pro      |
+| Claude          | Claude Pro o Max        |
+| Grok            | X Premium               |
+| GitHub Copilot  | GitHub Copilot          |
+
+Con DSH detenido, instala el paquete precompilado publicado en npm:
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add -w dsh-plugin-subscriptions
+```
+
+La opción `-w` (`--workspace-root`) confirma que el paquete debe añadirse a la
+raíz del _workspace_ del perfil `web`. Al instalar el paquete precompilado no es
+necesario editar `allowBuilds` ni reemplazar `pnpm-workspace.yaml`.
+
+Después de instalarlo, vuelve a iniciar DSH:
+
+```bash
+npx @deepseek-ai/dsh web
+```
+
+En la interfaz web:
+
+1. Abre **Settings → Subscriptions**.
+2. Pulsa **Connect** en el proveedor deseado.
+3. Completa el flujo de autorización en el navegador.
+4. Abre el selector de modelos de una conversación y elige uno de los modelos
+   proporcionados por la suscripción.
+
+<Image
+  src={image2}
+  alt="Proveedores en Settings → Subscriptions de DeepSeek Harness"
+/>
+
+<Aside type="danger" title="Credenciales administradas por un tercero">
+
+Este plugin no es un componente oficial de DeepSeek, OpenAI, Anthropic, xAI ni
+GitHub. Guarda los tokens en `~/.dsh/plugins/subscriptions/auth.json` con modo
+`0600` y los actualiza automáticamente. Evalúa el código y sus condiciones de
+uso antes de autorizar una cuenta. 
+
+</Aside>
+
+## Paso 3: instalar la extensión de VS Code
+
+La extensión utilizada en esta guía también es comunitaria:
+
+- Nombre: **DeepSeek Harness for VSCode**
+- Identificador: **`vithrive.deepseek-harness-vscode`**
+- Repositorio: [Vithrive/Deepseek-Harness-for-VS-Code](https://github.com/Vithrive/Deepseek-Harness-for-VS-Code)
+- Marketplace: [DeepSeek Harness for VSCode](https://marketplace.visualstudio.com/items?itemName=vithrive.deepseek-harness-vscode)
+
+1. Abre **Extensiones** en VS Code (`Ctrl+Shift+X`).
+2. Busca el identificador `vithrive.deepseek-harness-vscode`.
+3. Comprueba que el publicador sea **Vithrive** e instala la extensión.
+
+<Image
+  src={image3}
+  alt="Resultado de DeepSeek Harness for VSCode en el buscador de extensiones"
+/>
+
+<Image src={image4} alt="Ficha de DeepSeek Harness for VSCode en Marketplace" />
+
+<Aside type="warning" title="Extensión de terceros">
+
+La extensión no pertenece al proyecto oficial de DeepSeek Harness. Revisa su
+repositorio, permisos y actualizaciones antes de utilizarla con código o
+credenciales sensibles.
+
+</Aside>
+
+## Paso 4: configurar la extensión
+
+Abre **Settings** en VS Code y busca `DeepSeek Harness Panel`. Los nombres
+visibles pueden estar traducidos, por lo que conviene identificar cada opción
+por su clave:
+
+| Clave                     | Valor predeterminado    | Función                                                                |
+| :------------------------ | :---------------------- | :--------------------------------------------------------------------- |
+| `dshPanel.url`            | `http://127.0.0.1:3080` | Dirección de la interfaz web que mostrará el panel.                    |
+| `dshPanel.host`           | `127.0.0.1`             | Dirección usada al iniciar DSH automáticamente.                        |
+| `dshPanel.port`           | `3080`                  | Puerto usado al iniciar DSH automáticamente.                           |
+| `dshPanel.autoStart`      | `true`                  | Ejecuta `dsh web` si el servidor no está activo.                       |
+| `dshPanel.autoInstallDsh` | `true`                  | Ofrece instalar globalmente `@deepseek-ai/dsh` si no encuentra `dsh`.  |
+| `dshPanel.dshCommand`     | `dsh`                   | Ejecutable que la extensión busca en `PATH`; admite una ruta absoluta. |
+| `dshPanel.enableDshModel` | `true`                  | Registra DSH como proveedor en el selector de modelos de VS Code.      |
+| `dshPanel.chatProvider`   | vacío                   | Vacío utiliza el proveedor predeterminado configurado en DSH.          |
+| `dshPanel.chatModel`      | vacío                   | Vacío utiliza el modelo predeterminado configurado en DSH.             |
+| `dshPanel.killOnDispose`  | `true`                  | Detiene únicamente el proceso iniciado por la extensión al cerrarla.   |
+
+<Aside type="note" title="npx y el inicio automático">
+
+Ejecutar DSH con `npx` no deja un comando `dsh` permanente en `PATH`. Si
+`dshPanel.autoStart` está activo, la extensión puede pedir permiso para ejecutar
+`npm install -g @deepseek-ai/dsh`. Puedes aceptar esa instalación o rechazarla,
+desactivar `dshPanel.autoStart` e iniciar el servidor manualmente con el comando
+`npx` del paso 1.
+
+</Aside>
+
+La autenticación se realiza en DSH. `dshPanel.chatProvider` y
+`dshPanel.chatModel` solo controlan qué proveedor y modelo ya configurados debe
+usar el puente de VS Code. Déjalos vacíos para seguir los valores predeterminados
+de DSH.
+
+## Paso 5: usar DeepSeek Harness en VS Code
+
+### Panel lateral
+
+1. Haz clic en el icono de **DeepSeek Harness** de la barra de actividad.
+2. La extensión mostrará la interfaz web servida por DSH.
+3. Si el panel no carga, inicia DSH manualmente y comprueba
+   `http://127.0.0.1:3080` en el navegador.
+
+### Selector de modelos de VS Code
+
+Con `dshPanel.enableDshModel` activo, la extensión registra DeepSeek Harness como
+proveedor de modelos para el chat de VS Code. Abre el selector y elige la entrada
+de **DeepSeek Harness**; su texto exacto puede variar entre versiones.
+
+<Image
+  src={image5}
+  alt="DeepSeek Harness en el selector de modelos de VS Code"
+/>
+
+## Resolución de problemas
+
+| Problema                                                              | Comprobación y solución                                                                                                                                |
+| :-------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DSH rechaza la versión de Node.js**                                 | Ejecuta `node --version` y utiliza `^22.19.0` o `>=24.0.0`. Un gestor de versiones de Node evita instalaciones globales con permisos del sistema.      |
+| **`pnpm` no se encuentra al instalar un plugin**                      | Instala pnpm y confirma que `pnpm --version` funciona desde la misma terminal. La CLI de DSH necesita encontrarlo en `PATH`.                           |
+| **`ERR_PNPM_ADDING_TO_ROOT`**                                         | Añade `-w` o `--workspace-root` al comando de instalación. El nombre correcto del error contiene `PNPM`, no `PNMP`.                                    |
+| **Aparece un error relacionado con `allowBuilds`**                    | Usa el paquete precompilado `dsh-plugin-subscriptions`, no la fuente de GitHub. No reemplaces el archivo completo `pnpm-workspace.yaml`.               |
+| **La API de DeepSeek responde con un error de autenticación o cuota** | Confirma que `deepseek-official` tenga una clave válida y que la cuenta disponga de saldo. Tener saldo sin configurar la clave no autentica DSH.       |
+| **No aparece una suscripción en el selector**                         | Abre **Settings → Subscriptions**, conecta de nuevo la cuenta y reinicia `dsh web` después de instalar o actualizar el plugin.                         |
+| **La extensión no encuentra `dsh`**                                   | Acepta su instalación global, configura `dshPanel.dshCommand` con la ruta del ejecutable o desactiva el autoarranque y usa `npx @deepseek-ai/dsh web`. |
+| **El panel muestra un error o no carga**                              | Comprueba que `http://127.0.0.1:3080` responda y que `dshPanel.url`, `dshPanel.host` y `dshPanel.port` coincidan.                                      |
+| **El puente usa otro modelo**                                         | Revisa el modelo predeterminado en DSH o configura conjuntamente `dshPanel.chatProvider` y `dshPanel.chatModel` con identificadores válidos.           |
+
+## Fuentes verificadas
+
+- [DeepSeek Harness: repositorio y guía de ejecución](https://github.com/deepseek-ai/deepseek-harness)
+- [DeepSeek Harness: referencia de la CLI](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/cli/reference/README.md)
+- [DeepSeek Harness: versión y requisitos de Node.js](https://github.com/deepseek-ai/deepseek-harness/blob/master/package.json)
+- [Adaptador oficial de DeepSeek para DSH](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/llm/llm-deepseek)
+- [Documentación oficial de DeepSeek API](https://api-docs.deepseek.com/)
+- [`dsh-plugin-subscriptions`: instalación, proveedores y almacenamiento de tokens](https://github.com/V1ki/dsh-plugin-subscriptions)
+- [Repositorio de DeepSeek Harness for VSCode](https://github.com/Vithrive/Deepseek-Harness-for-VS-Code)
+- [Ficha de la extensión en Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=vithrive.deepseek-harness-vscode)
+- [pnpm: instalación en la raíz de un workspace](https://pnpm.io/cli/add#--ignore-workspace-root-check)
+- [npm: resolución segura de errores `EACCES`](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally/)
+- [OpenAI: métodos oficiales de autenticación de Codex](https://learn.chatgpt.com/docs/auth)

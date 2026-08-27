@@ -34,6 +34,8 @@ const blog = defineCollection({
       timezone: z.string().optional(),
       license: z.string().optional(),
       licenseUrl: z.string().optional(),
+      lang: z.string().optional(),
+      slug: z.string().optional(),
     }),
 });
 
