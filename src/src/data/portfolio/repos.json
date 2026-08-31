@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T06:56:18.385Z",
+  "generatedAt": "2026-08-31T12:48:30.544Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -53,7 +53,327 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-08-24T01:39:29Z"
+      "pushedAt": "2026-08-31T04:46:48Z"
+    },
+    {
+      "name": "rgglez-website",
+      "description": "Personal website",
+      "url": "https://github.com/rgglez/rgglez-website",
+      "homepage": null,
+      "language": "MDX",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-31T02:08:33Z"
+    },
+    {
+      "name": "go-config-struct-generator",
+      "description": "Generates a Go package with structs representing the input YAML file. Useful for marshaling configuration files.",
+      "url": "https://github.com/rgglez/go-config-struct-generator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-29T05:15:48Z"
+    },
+    {
+      "name": "go-config",
+      "description": "Loads a YAML configuration.",
+      "url": "https://github.com/rgglez/go-config",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:30Z"
+    },
+    {
+      "name": "gorm-model-generator",
+      "description": "Generates models for GORM",
+      "url": "https://github.com/rgglez/gorm-model-generator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:29Z"
+    },
+    {
+      "name": "nagios-check-domain",
+      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output.",
+      "url": "https://github.com/rgglez/nagios-check-domain",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "nagios"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:27Z"
+    },
+    {
+      "name": "gofiber-recovery-middleware",
+      "description": "Middleware to recover a panic in a gofiber application, and log information about it.",
+      "url": "https://github.com/rgglez/gofiber-recovery-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:26Z"
+    },
+    {
+      "name": "go-playground-recaptcha3-validator",
+      "description": "Custom validator for playground doing reCAPTCHA v3 validation.",
+      "url": "https://github.com/rgglez/go-playground-recaptcha3-validator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:24Z"
+    },
+    {
+      "name": "gofiber-validator-middleware",
+      "description": "Middleware to generate a go-playground/validator singleton for use in validating DTOs in handlers.",
+      "url": "https://github.com/rgglez/gofiber-validator-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:22Z"
+    },
+    {
+      "name": "nagios-check-domain-ai",
+      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output, parsed using an OpenAI model through Azure AI.",
+      "url": "https://github.com/rgglez/nagios-check-domain-ai",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "nagios"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:21Z"
+    },
+    {
+      "name": "go-playground-uts-validator",
+      "description": "Custom validator for playground which validates UNIX timestamps",
+      "url": "https://github.com/rgglez/go-playground-uts-validator",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:19Z"
+    },
+    {
+      "name": "gofiber-ip-middleware",
+      "description": "Middleware for IP filtering for gofiber",
+      "url": "https://github.com/rgglez/gofiber-ip-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:18Z"
+    },
+    {
+      "name": "whois-parser-ai",
+      "description": "Go module for parsing WHOIS output and extracting useful information using AI.",
+      "url": "https://github.com/rgglez/whois-parser-ai",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "ai"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:16Z"
+    },
+    {
+      "name": "gofiber-roles-middleware",
+      "description": "Middleware to validate if the user has certain roles in the claims",
+      "url": "https://github.com/rgglez/gofiber-roles-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "zitadel"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:15Z"
+    },
+    {
+      "name": "nagios-check-ssl-expiration",
+      "description": "Nagios plugin which checks if a SSL certificate is about to expire",
+      "url": "https://github.com/rgglez/nagios-check-ssl-expiration",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "nagios"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:13Z"
+    },
+    {
+      "name": "go-bash-env-redact",
+      "description": "Redact sensitive values in files containing environment variables.",
+      "url": "https://github.com/rgglez/go-bash-env-redact",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:12Z"
+    },
+    {
+      "name": "storage",
+      "description": "go-storage wrapper",
+      "url": "https://github.com/rgglez/storage",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:10Z"
+    },
+    {
+      "name": "go-slugify",
+      "description": "Port of sindresorhus/slugify to Go.",
+      "url": "https://github.com/rgglez/go-slugify",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:09Z"
+    },
+    {
+      "name": "nagios-check-ping-go",
+      "description": "Nagios plugin to ping a host",
+      "url": "https://github.com/rgglez/nagios-check-ping-go",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "nagios"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:07Z"
+    },
+    {
+      "name": "gofiber-recaptcha3-middleware",
+      "description": "Middleware for gofiber implementing Google reCAPTCHA v3 validation",
+      "url": "https://github.com/rgglez/gofiber-recaptcha3-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:06Z"
+    },
+    {
+      "name": "go-database",
+      "description": "Database factory",
+      "url": "https://github.com/rgglez/go-database",
+      "homepage": null,
+      "language": "Go",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:04Z"
+    },
+    {
+      "name": "gofiber-zitadel-middleware",
+      "description": "Middleware to use along with the Zitadel IDP",
+      "url": "https://github.com/rgglez/gofiber-zitadel-middleware",
+      "homepage": null,
+      "language": "Go",
+      "topics": [
+        "zitadel"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T22:13:02Z"
+    },
+    {
+      "name": "rust-yaml-redact",
+      "description": "Redacts YAML files to ensure privacy and prevent leaks.",
+      "url": "https://github.com/rgglez/rust-yaml-redact",
+      "homepage": null,
+      "language": "Rust",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T21:53:34Z"
+    },
+    {
+      "name": "rust-yamlinc",
+      "description": "YAML preprocessor that allows the inclusion of partial files.",
+      "url": "https://github.com/rgglez/rust-yamlinc",
+      "homepage": null,
+      "language": "Rust",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-28T20:53:33Z"
+    },
+    {
+      "name": "ndjbdns-scripts",
+      "description": "Scripts for performing administrative tasks for ndjbdns.",
+      "url": "https://github.com/rgglez/ndjbdns-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [
+        "sysadmin"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-26T07:59:47Z"
+    },
+    {
+      "name": "cloudflare-scripts",
+      "description": "Misc. scripts for CloudFlare administration",
+      "url": "https://github.com/rgglez/cloudflare-scripts",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [
+        "cloudflare"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-08-26T07:59:02Z"
     },
     {
       "name": "rgglez-dev-skills",
@@ -80,20 +400,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-08-18T06:55:43Z"
-    },
-    {
-      "name": "rgglez-website",
-      "description": "Personal website",
-      "url": "https://github.com/rgglez/rgglez-website",
-      "homepage": null,
-      "language": "MDX",
-      "topics": [
-        "astro"
-      ],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-08-17T06:53:13Z"
     },
     {
       "name": "ansible-scripts",
@@ -150,30 +456,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-07-28T18:31:11Z"
-    },
-    {
-      "name": "go-playground-recaptcha3-validator",
-      "description": "Custom validator for playground doing reCAPTCHA v3 validation.",
-      "url": "https://github.com/rgglez/go-playground-recaptcha3-validator",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-07-25T08:38:24Z"
-    },
-    {
-      "name": "gofiber-recaptcha3-middleware",
-      "description": "Middleware for gofiber implementing Google reCAPTCHA v3 validation",
-      "url": "https://github.com/rgglez/gofiber-recaptcha3-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-07-25T08:00:57Z"
     },
     {
       "name": "svelte-quill",
@@ -289,18 +571,6 @@
       "pushedAt": "2026-07-20T23:15:31Z"
     },
     {
-      "name": "go-config",
-      "description": "Loads a YAML configuration.",
-      "url": "https://github.com/rgglez/go-config",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-07-20T22:50:00Z"
-    },
-    {
       "name": "rust-checkpassword",
       "description": "checkpassword ported to rust.",
       "url": "https://github.com/rgglez/rust-checkpassword",
@@ -337,32 +607,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-06-23T21:12:11Z"
-    },
-    {
-      "name": "go-bash-env-redact",
-      "description": "Redact sensitive values in files containing environment variables.",
-      "url": "https://github.com/rgglez/go-bash-env-redact",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-06-12T16:50:47Z"
-    },
-    {
-      "name": "cloudflare-scripts",
-      "description": "Misc. scripts for CloudFlare administration",
-      "url": "https://github.com/rgglez/cloudflare-scripts",
-      "homepage": null,
-      "language": "Perl",
-      "topics": [
-        "cloudflare"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-06-12T08:03:28Z"
     },
     {
       "name": "astro-seo",
@@ -445,18 +689,6 @@
       "pushedAt": "2026-05-20T08:15:32Z"
     },
     {
-      "name": "go-slugify",
-      "description": "Port of sindresorhus/slugify to Go.",
-      "url": "https://github.com/rgglez/go-slugify",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-04-29T19:27:20Z"
-    },
-    {
       "name": "geonames-loader",
       "description": "Python scripts to download the GeoNames data files and upload the data into relational databases.",
       "url": "https://github.com/rgglez/geonames-loader",
@@ -479,56 +711,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-03-21T03:19:40Z"
-    },
-    {
-      "name": "gofiber-validator-middleware",
-      "description": "Middleware to generate a go-playground/validator singleton for use in validating DTOs in handlers.",
-      "url": "https://github.com/rgglez/gofiber-validator-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-03-11T07:19:40Z"
-    },
-    {
-      "name": "go-playground-uts-validator",
-      "description": "Custom validator for playground which validates UNIX timestamps",
-      "url": "https://github.com/rgglez/go-playground-uts-validator",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-03-11T06:56:03Z"
-    },
-    {
-      "name": "gofiber-zitadel-middleware",
-      "description": "Middleware to use along with the Zitadel IDP",
-      "url": "https://github.com/rgglez/gofiber-zitadel-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "zitadel"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-27T05:22:49Z"
-    },
-    {
-      "name": "gorm-model-generator",
-      "description": "Generates models for GORM",
-      "url": "https://github.com/rgglez/gorm-model-generator",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-13T21:30:20Z"
     },
     {
       "name": "asm-8085",
@@ -557,56 +739,6 @@
       "pushedAt": "2026-02-03T05:21:10Z"
     },
     {
-      "name": "nagios-check-domain",
-      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output.",
-      "url": "https://github.com/rgglez/nagios-check-domain",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "nagios"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T05:21:09Z"
-    },
-    {
-      "name": "gofiber-ip-middleware",
-      "description": "Middleware for IP filtering for gofiber",
-      "url": "https://github.com/rgglez/gofiber-ip-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T05:21:06Z"
-    },
-    {
-      "name": "go-database",
-      "description": "Database factory",
-      "url": "https://github.com/rgglez/go-database",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T05:21:05Z"
-    },
-    {
-      "name": "gofiber-recovery-middleware",
-      "description": "Middleware to recover a panic in a gofiber application, and log information about it.",
-      "url": "https://github.com/rgglez/gofiber-recovery-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T05:21:03Z"
-    },
-    {
       "name": "svelte-mediaquery",
       "description": "Conditionally rendering code fragments based on screen resolution.",
       "url": "https://github.com/rgglez/svelte-mediaquery",
@@ -619,20 +751,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-02-03T05:21:02Z"
-    },
-    {
-      "name": "whois-parser-ai",
-      "description": "Go module for parsing WHOIS output and extracting useful information using AI.",
-      "url": "https://github.com/rgglez/whois-parser-ai",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "ai"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:32Z"
     },
     {
       "name": "gettext-po2json",
@@ -661,48 +779,6 @@
       "pushedAt": "2026-02-03T04:53:28Z"
     },
     {
-      "name": "gofiber-roles-middleware",
-      "description": "Middleware to validate if the user has certain roles in the claims",
-      "url": "https://github.com/rgglez/gofiber-roles-middleware",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "zitadel"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:26Z"
-    },
-    {
-      "name": "nagios-check-ping-go",
-      "description": "Nagios plugin to ping a host",
-      "url": "https://github.com/rgglez/nagios-check-ping-go",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "nagios"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:25Z"
-    },
-    {
-      "name": "nagios-check-domain-ai",
-      "description": "Nagios plugin to check if a domain is about to expire, based on its WHOIS output, parsed using an OpenAI model through Azure AI.",
-      "url": "https://github.com/rgglez/nagios-check-domain-ai",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "nagios"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:24Z"
-    },
-    {
       "name": "yii-jui",
       "description": "GUI components based on jQueryUI, extension for Yii 1.1",
       "url": "https://github.com/rgglez/yii-jui",
@@ -727,18 +803,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-02-03T04:53:21Z"
-    },
-    {
-      "name": "storage",
-      "description": "go-storage wrapper",
-      "url": "https://github.com/rgglez/storage",
-      "homepage": null,
-      "language": "Go",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:20Z"
     },
     {
       "name": "fc-exchange-rate-update",
@@ -781,20 +845,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-02-03T04:53:14Z"
-    },
-    {
-      "name": "nagios-check-ssl-expiration",
-      "description": "Nagios plugin which checks if a SSL certificate is about to expire",
-      "url": "https://github.com/rgglez/nagios-check-ssl-expiration",
-      "homepage": null,
-      "language": "Go",
-      "topics": [
-        "nagios"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:13Z"
     },
     {
       "name": "gettext-spellchecker",
@@ -963,20 +1013,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2025-09-08T20:29:39Z"
-    },
-    {
-      "name": "ndjbdns-scripts",
-      "description": "Scripts for performing administrative tasks for ndjbdns.",
-      "url": "https://github.com/rgglez/ndjbdns-scripts",
-      "homepage": null,
-      "language": "Makefile",
-      "topics": [
-        "sysadmin"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2025-09-08T20:11:45Z"
     },
     {
       "name": "php5-ext-crack2",
