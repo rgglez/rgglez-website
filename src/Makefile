@@ -4,6 +4,7 @@ MSG ?= Update pagefind index
 
 all: build
 	git add public/pagefind
+	git add .
 	git diff --cached --quiet || git commit -m "$(MSG)"
 	git push
 
@@ -12,7 +13,7 @@ dev:
 
 build:
 	bun run build
-	bun run scripts/generate-og.ts
+	bun run build:og
 	cp -r dist/client/pagefind public/
 
 preview:
