@@ -193,13 +193,9 @@ export default defineConfig({
       dedupe: ["react", "react-dom"],
     },
     optimizeDeps: {
-      exclude: ["@resvg/resvg-js"],
       // p5 se importa dinámicamente dentro de un <script> de componente, así que
       // el escaneo de Vite no lo ve y su dep CJS (libtess) se servía sin default.
       include: ["p5"],
-    },
-    ssr: {
-      external: ["@resvg/resvg-js"],
     },
     build: {
       chunkSizeWarningLimit: 700,
@@ -238,5 +234,9 @@ export default defineConfig({
     },
   ],
 
-  adapter: cloudflare(),
+  // ponytail: prerender en Node, no en workerd. El prerenderer workerd levanta un
+  // servidor vite+workerd en localhost y hace fetch a cada ruta; en el contenedor de
+  // build de Cloudflare esa conexión falla ("fetch failed" / internalConnectMultiple).
+  // Quitar si las páginas prerenderizadas llegan a necesitar bindings en build time.
+  adapter: cloudflare({ prerenderEnvironment: "node" }),
 });
