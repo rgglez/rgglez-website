@@ -86,9 +86,13 @@ const structuredData = jsonLd ?? articleStructuredData;
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Load Font -->
+    <!-- Load Fonts -->
     <Font
       cssVariable="--font-funnel-sans"
+      preload={[{ subset: "latin", weight: 400, style: "normal" }]}
+    />
+    <Font
+      cssVariable="--font-literata"
       preload={[{ subset: "latin", weight: 400, style: "normal" }]}
     />
 

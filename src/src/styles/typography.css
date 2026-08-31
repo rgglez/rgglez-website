@@ -3,7 +3,8 @@
 @layer base {
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
-    @apply prose;
+    /* Serif para el cuerpo (lectura larga), sans para títulos y chrome. */
+    @apply prose font-prose text-[1.0625rem] leading-[1.7];
 
     h1,
     h2,
@@ -12,7 +13,7 @@
     h5,
     h6,
     th {
-      @apply mb-3 text-[#161d2e] dark:text-foreground;
+      @apply mb-3 font-app text-[#161d2e] dark:text-foreground;
     }
 
     h1 {

@@ -53,31 +53,47 @@ function fontPreloadIntegration(): AstroIntegration {
         const html = await readFile(htmlFiles[0], "utf-8");
         const fontFaceRegex = /@font-face\{[^}]+\}/g;
         const srcRegex = /src:url\("([^"]+)"\)/;
-        let fontUrl: string | null = null;
+        const familyRegex = /font-family:\s*(?:"([^"]+)"|([^;}]+))/;
+
+        // Una URL por familia (la primera 400/normal). Sin esto se precargaría
+        // solo la primera cara del build y la otra llegaría tarde.
+        const urlsByFamily = new Map<string, string>();
 
         for (const match of html.matchAll(fontFaceRegex)) {
           const block = match[0];
           if (
-            /font-weight:400/.test(block) &&
-            /font-style:normal/.test(block)
+            !/font-weight:400/.test(block) ||
+            !/font-style:normal/.test(block)
           ) {
-            const src = block.match(srcRegex);
-            if (src) {
-              fontUrl = src[1];
-              break;
-            }
+            continue;
           }
+          const family = block.match(familyRegex);
+          const src = block.match(srcRegex);
+          if (!family || !src) continue;
+          const name = (family[1] ?? family[2]).trim();
+          if (!urlsByFamily.has(name)) urlsByFamily.set(name, src[1]);
         }
 
-        if (!fontUrl) {
+        const fontUrls = [...urlsByFamily.values()];
+        if (!fontUrls.length) {
           logger.warn(
             "font-preload: Could not extract font URL from built HTML"
           );
           return;
         }
 
-        const preloadTag = `<link rel="preload" as="font" type="font/woff2" href="${fontUrl}" crossorigin>`;
-        const linkHeader = `<${fontUrl}>; rel=preload; as=font; type=font/woff2; crossorigin`;
+        const preloadTag = fontUrls
+          .map(
+            url =>
+              `<link rel="preload" as="font" type="font/woff2" href="${url}" crossorigin>`
+          )
+          .join("");
+        const linkHeader = fontUrls
+          .map(
+            url =>
+              `<${url}>; rel=preload; as=font; type=font/woff2; crossorigin`
+          )
+          .join(", ");
 
         // Inject preload into all prerendered HTML files
         let injected = 0;
@@ -99,7 +115,7 @@ function fontPreloadIntegration(): AstroIntegration {
         await writeFile(headersPath, `/*\n  Link: ${linkHeader}\n`);
 
         logger.info(
-          `font-preload: preload injected into ${injected} HTML files, _headers written (${fontUrl})`
+          `font-preload: preload injected into ${injected} HTML files, _headers written (${[...urlsByFamily.keys()].join(", ")})`
         );
       },
     },
@@ -228,8 +244,16 @@ export default defineConfig({
       name: "Funnel Sans",
       cssVariable: "--font-funnel-sans",
       provider: fontProviders.google(),
-      fallbacks: ["monospace"],
+      fallbacks: ["sans-serif"],
       weights: [300, 400, 500, 600, 700],
+      styles: ["normal", "italic"],
+    },
+    {
+      name: "Literata",
+      cssVariable: "--font-literata",
+      provider: fontProviders.google(),
+      fallbacks: ["Georgia", "serif"],
+      weights: [400, 600, 700],
       styles: ["normal", "italic"],
     },
   ],
@@ -238,5 +262,12 @@ export default defineConfig({
   // servidor vite+workerd en localhost y hace fetch a cada ruta; en el contenedor de
   // build de Cloudflare esa conexión falla ("fetch failed" / internalConnectMultiple).
   // Quitar si las páginas prerenderizadas llegan a necesitar bindings en build time.
-  adapter: cloudflare({ prerenderEnvironment: "node" }),
+  //
+  // Sólo en build: en dev la opción también saca el entorno de workerd, y el endpoint
+  // de imágenes del adapter (importa `cloudflare:workers`) revienta con 500 en /_image.
+  // ponytail: detección por argv; si algún día hace falta más precisión, una env var
+  // explícita en los scripts de package.json.
+  adapter: cloudflare(
+    process.argv.includes("dev") ? {} : { prerenderEnvironment: "node" }
+  ),
 });
