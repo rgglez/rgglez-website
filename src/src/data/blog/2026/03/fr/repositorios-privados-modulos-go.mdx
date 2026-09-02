@@ -7,6 +7,7 @@ slug: "utiliser-modules-go-depuis-depots-github-prives"
 ogImage: "../../../../../assets/posts/2026/03/repositorios-privados-modulos-go/header.webp"
 featured: true
 draft: false
+lang: fr
 tags:
   - linux
   - git
@@ -22,76 +23,11 @@ import Aside from "@rgglez/astro-aside";
 Le tutoriel suivant explique comment utiliser des modules Go situés dans des dépôts
 privés (p. ex. GitHub).
 
+---
+
 ## Table des matières
 
-- [Introduction](#introduction)
-- [Contexte](#contexte)
-- [Quel flux me convient ?](#quel-flux-me-convient)
-- [Flux A — HTTPS avec Personal Access Token](#flux-a--https-avec-personal-access-token)
-- [A1. Paquets](#a1-paquets)
-- [A2. Personal Access Token (PAT)](#a2-personal-access-token-pat)
-- [A3. Credential Helper](#a3-credential-helper)
-- [A4. Forcer HTTPS pour Go](#a4-forcer-https-pour-go)
-- [A5. Variables Go pour les modules privés](#a5-variables-go-pour-les-modules-privés)
-- [A6. Vérifier](#a6-vérifier)
-- [A7. Flux de travail quotidien](#a7-flux-de-travail-quotidien)
-- [A8. Publier une nouvelle version](#a8-publier-une-nouvelle-version)
-- [A9. Résumé rapide (tout en un bloc)](#a9-résumé-rapide-tout-en-un-bloc)
-- [A10. Résolution de problèmes](#a10-résolution-de-problèmes)
-- [Flux B — SSH avec clé personnelle](#flux-b--ssh-avec-clé-personnelle)
-- [B1. Paquets](#b1-paquets)
-- [B2. Générer la clé SSH](#b2-générer-la-clé-ssh)
-- [B3. Ajouter la clé publique à GitHub](#b3-ajouter-la-clé-publique-à-github)
-- [B4. Configurer `ssh-agent`](#b4-configurer-ssh-agent)
-- [B5. Forcer SSH pour Go](#b5-forcer-ssh-pour-go)
-- [B6. Variables Go pour les modules privés](#b6-variables-go-pour-les-modules-privés)
-- [B7. Vérifier](#b7-vérifier)
-- [B8. Flux de travail quotidien](#b8-flux-de-travail-quotidien)
-- [B9. Publier une nouvelle version](#b9-publier-une-nouvelle-version)
-- [B10. Résumé rapide (tout en un bloc)](#b10-résumé-rapide-tout-en-un-bloc)
-- [B11. Résolution de problèmes](#b11-résolution-de-problèmes)
-- [Flux C — SSH avec deploy key](#flux-c--ssh-avec-deploy-key)
-- [C1. Paquets](#c1-paquets)
-- [C2. Générer une paire de clés dédiée](#c2-générer-une-paire-de-clés-dédiée)
-- [C3. Enregistrer la clé publique dans le dépôt](#c3-enregistrer-la-clé-publique-dans-le-dépôt)
-- [C4. Alias dans `~/.ssh/config`](#c4-alias-dans-sshconfig)
-- [C5. Configurer `ssh-agent`](#c5-configurer-ssh-agent)
-- [C6. Rediriger Go vers l'alias SSH](#c6-rediriger-go-vers-lalias-ssh)
-- [C7. Variables Go pour les modules privés](#c7-variables-go-pour-les-modules-privés)
-- [C8. Vérifier](#c8-vérifier)
-- [C9. Flux de travail quotidien](#c9-flux-de-travail-quotidien)
-- [C10. Publier une nouvelle version](#c10-publier-une-nouvelle-version)
-- [C11. Résumé rapide (tout en un bloc)](#c11-résumé-rapide-tout-en-un-bloc)
-- [C12. Résolution de problèmes](#c12-résolution-de-problèmes)
-- [Flux D — Hybride : deploy key (lecture) + HTTPS (écriture)](#flux-d--hybride-deploy-key-lecture--https-écriture)
-- [D1. Paquets](#d1-paquets)
-- [D2. Générer la deploy key](#d2-générer-la-deploy-key)
-- [D3. Enregistrer la deploy key en lecture seule](#d3-enregistrer-la-deploy-key-en-lecture-seule)
-- [D4. Alias dans `~/.ssh/config`](#d4-alias-dans-sshconfig)
-- [D5. Configurer `ssh-agent`](#d5-configurer-ssh-agent)
-- [D6. Personal Access Token pour l'écriture](#d6-personal-access-token-pour-lécriture)
-- [D7. Règles `insteadOf` + `pushInsteadOf`](#d7-règles-insteadof--pushinsteadof)
-- [D8. Variables Go pour les modules privés](#d8-variables-go-pour-les-modules-privés)
-- [D9. Vérifier](#d9-vérifier)
-- [D10. Flux de travail quotidien](#d10-flux-de-travail-quotidien)
-- [D11. Publier une nouvelle version](#d11-publier-une-nouvelle-version)
-- [D12. Résumé rapide (tout en un bloc)](#d12-résumé-rapide-tout-en-un-bloc)
-- [D13. Résolution de problèmes](#d13-résolution-de-problèmes)
-- [Flux E — Deploy key uniquement pour Go + HTTPS pour le développement](#flux-e--deploy-key-uniquement-pour-go--https-pour-le-développement)
-- [E1. Paquets](#e1-paquets)
-- [E2. Générer la deploy key](#e2-générer-la-deploy-key)
-- [E3. Enregistrer la deploy key en lecture seule](#e3-enregistrer-la-deploy-key-en-lecture-seule)
-- [E4. Alias dans `~/.ssh/config`](#e4-alias-dans-sshconfig)
-- [E5. Configurer `ssh-agent`](#e5-configurer-ssh-agent)
-- [E6. Personal Access Token + Credential Helper pour HTTPS](#e6-personal-access-token--credential-helper-pour-https)
-- [E7. Wrapper Go avec `GIT_CONFIG_*`](#e7-wrapper-go-avec-git_config_)
-- [E8. Variables Go pour les modules privés](#e8-variables-go-pour-les-modules-privés)
-- [E9. Vérifier](#e9-vérifier)
-- [E10. Flux de travail quotidien](#e10-flux-de-travail-quotidien)
-- [E11. Publier une nouvelle version](#e11-publier-une-nouvelle-version)
-- [E12. Résumé rapide (tout en un bloc)](#e12-résumé-rapide-tout-en-un-bloc)
-- [E13. Résolution de problèmes](#e13-résolution-de-problèmes)
-
+---
 
 ## Introduction
 
@@ -129,41 +65,13 @@ go get github.com/gofiber/fiber/v3
 
 Flux normal de `go get` (module public sur GitHub) :
 
-```text
-┌──────────────┐
-│ Développeur  │
-│  go get ...  │
-└──────┬───────┘
-       │
-       v
-┌──────────────┐
-│ Commande Go  │
-│ (résoudre mod│
-│ et version)  │
-└──────┬───────┘
-       │ requête
-       v
-┌─────────────────────────┐
-│ proxy.golang.org        │
-│ (zip/mod/info en cache) │
-└──────┬──────────────────┘
-       │ vérifie les checksums
-       v
-┌──────────────────────────┐
-│ sum.golang.org           │
-│ (transparence & intégr.) │
-└──────┬───────────────────┘
-       │ télécharge le module
-       v
-┌─────────────────────────┐
-│ Cache local des modules │
-│ $GOMODCACHE             │
-└──────┬──────────────────┘
-       │ met à jour
-       v
-┌─────────────────────────┐
-│ go.mod / go.sum         │
-└─────────────────────────┘
+```mermaid
+flowchart TD
+    DEV["Développeur<br/>go get ..."] --> GO["Commande Go<br/>(résoudre le module et la version)"]
+    GO -->|"requête"| PROXY["proxy.golang.org<br/>(zip/mod/info en cache)"]
+    PROXY -->|"vérifie les checksums"| SUM["sum.golang.org<br/>(transparence et intégrité)"]
+    SUM -->|"télécharge le module"| CACHE[("Cache local des modules<br/>$GOMODCACHE")]
+    CACHE -->|"met à jour"| FILES[("go.mod / go.sum")]
 ```
 
 Mais un module situé dans un dépôt privé (p. ex. sur GitHub) échoue souvent

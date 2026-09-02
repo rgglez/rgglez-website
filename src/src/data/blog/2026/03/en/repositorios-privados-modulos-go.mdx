@@ -7,6 +7,7 @@ slug: "using-go-modules-from-private-github-repositories"
 ogImage: "../../../../../assets/posts/2026/03/repositorios-privados-modulos-go/header.webp"
 featured: true
 draft: false
+lang: en
 tags:
   - linux
   - git
@@ -22,76 +23,11 @@ import Aside from "@rgglez/astro-aside";
 The following tutorial explains how to use Go modules located in private
 repositories (e.g. GitHub).
 
+---
+
 ## Table of contents
 
-- [Introduction](#introduction)
-- [Context](#context)
-- [Which flow is right for me?](#which-flow-is-right-for-me)
-- [Flow A — HTTPS with Personal Access Token](#flow-a--https-with-personal-access-token)
-- [A1. Packages](#a1-packages)
-- [A2. Personal Access Token (PAT)](#a2-personal-access-token-pat)
-- [A3. Credential Helper](#a3-credential-helper)
-- [A4. Force HTTPS for Go](#a4-force-https-for-go)
-- [A5. Go variables for private modules](#a5-go-variables-for-private-modules)
-- [A6. Verify](#a6-verify)
-- [A7. Daily workflow](#a7-daily-workflow)
-- [A8. Publish a new version](#a8-publish-a-new-version)
-- [A9. Quick summary (all in one block)](#a9-quick-summary-all-in-one-block)
-- [A10. Troubleshooting](#a10-troubleshooting)
-- [Flow B — SSH with personal key](#flow-b--ssh-with-personal-key)
-- [B1. Packages](#b1-packages)
-- [B2. Generate the SSH key](#b2-generate-the-ssh-key)
-- [B3. Add the public key to GitHub](#b3-add-the-public-key-to-github)
-- [B4. Configure `ssh-agent`](#b4-configure-ssh-agent)
-- [B5. Force SSH for Go](#b5-force-ssh-for-go)
-- [B6. Go variables for private modules](#b6-go-variables-for-private-modules)
-- [B7. Verify](#b7-verify)
-- [B8. Daily workflow](#b8-daily-workflow)
-- [B9. Publish a new version](#b9-publish-a-new-version)
-- [B10. Quick summary (all in one block)](#b10-quick-summary-all-in-one-block)
-- [B11. Troubleshooting](#b11-troubleshooting)
-- [Flow C — SSH with deploy key](#flow-c--ssh-with-deploy-key)
-- [C1. Packages](#c1-packages)
-- [C2. Generate a dedicated key pair](#c2-generate-a-dedicated-key-pair)
-- [C3. Register the public key in the repository](#c3-register-the-public-key-in-the-repository)
-- [C4. Alias in `~/.ssh/config`](#c4-alias-in-sshconfig)
-- [C5. Configure `ssh-agent`](#c5-configure-ssh-agent)
-- [C6. Redirect Go to the SSH alias](#c6-redirect-go-to-the-ssh-alias)
-- [C7. Go variables for private modules](#c7-go-variables-for-private-modules)
-- [C8. Verify](#c8-verify)
-- [C9. Daily workflow](#c9-daily-workflow)
-- [C10. Publish a new version](#c10-publish-a-new-version)
-- [C11. Quick summary (all in one block)](#c11-quick-summary-all-in-one-block)
-- [C12. Troubleshooting](#c12-troubleshooting)
-- [Flow D — Hybrid: deploy key (read) + HTTPS (write)](#flow-d--hybrid-deploy-key-read--https-write)
-- [D1. Packages](#d1-packages)
-- [D2. Generate the deploy key](#d2-generate-the-deploy-key)
-- [D3. Register the deploy key as read-only](#d3-register-the-deploy-key-as-read-only)
-- [D4. Alias in `~/.ssh/config`](#d4-alias-in-sshconfig)
-- [D5. Configure `ssh-agent`](#d5-configure-ssh-agent)
-- [D6. Personal Access Token for writing](#d6-personal-access-token-for-writing)
-- [D7. `insteadOf` + `pushInsteadOf` rules](#d7-insteadof--pushinsteadof-rules)
-- [D8. Go variables for private modules](#d8-go-variables-for-private-modules)
-- [D9. Verify](#d9-verify)
-- [D10. Daily workflow](#d10-daily-workflow)
-- [D11. Publish a new version](#d11-publish-a-new-version)
-- [D12. Quick summary (all in one block)](#d12-quick-summary-all-in-one-block)
-- [D13. Troubleshooting](#d13-troubleshooting)
-- [Flow E — Deploy key for Go only + HTTPS for development](#flow-e--deploy-key-for-go-only--https-for-development)
-- [E1. Packages](#e1-packages)
-- [E2. Generate the deploy key](#e2-generate-the-deploy-key)
-- [E3. Register the deploy key as read-only](#e3-register-the-deploy-key-as-read-only)
-- [E4. Alias in `~/.ssh/config`](#e4-alias-in-sshconfig)
-- [E5. Configure `ssh-agent`](#e5-configure-ssh-agent)
-- [E6. Personal Access Token + Credential Helper for HTTPS](#e6-personal-access-token--credential-helper-for-https)
-- [E7. Go wrapper with `GIT_CONFIG_*`](#e7-go-wrapper-with-git_config_)
-- [E8. Go variables for private modules](#e8-go-variables-for-private-modules)
-- [E9. Verify](#e9-verify)
-- [E10. Daily workflow](#e10-daily-workflow)
-- [E11. Publish a new version](#e11-publish-a-new-version)
-- [E12. Quick summary (all in one block)](#e12-quick-summary-all-in-one-block)
-- [E13. Troubleshooting](#e13-troubleshooting)
-
+---
 
 ## Introduction
 
@@ -129,41 +65,13 @@ go get github.com/gofiber/fiber/v3
 
 Normal `go get` flow (public module on GitHub):
 
-```text
-┌──────────────┐
-│  Developer   │
-│  go get ...  │
-└──────┬───────┘
-       │
-       v
-┌──────────────┐
-│  Go command  │
-│ (resolve mod │
-│ and version) │
-└──────┬───────┘
-       │ queries
-       v
-┌─────────────────────────┐
-│ proxy.golang.org        │
-│ (cached zip/mod/info)   │
-└──────┬──────────────────┘
-       │ verifies checksums
-       v
-┌──────────────────────────┐
-│ sum.golang.org           │
-│ (transparency & integr.) │
-└──────┬───────────────────┘
-       │ downloads module
-       v
-┌─────────────────────────┐
-│ Local module cache      │
-│ $GOMODCACHE             │
-└──────┬──────────────────┘
-       │ updates
-       v
-┌─────────────────────────┐
-│ go.mod / go.sum         │
-└─────────────────────────┘
+```mermaid
+flowchart TD
+    DEV["Developer<br/>go get ..."] --> GO["Go command<br/>(resolve module and version)"]
+    GO -->|"queries"| PROXY["proxy.golang.org<br/>(cached zip/mod/info)"]
+    PROXY -->|"verifies checksums"| SUM["sum.golang.org<br/>(transparency and integrity)"]
+    SUM -->|"downloads module"| CACHE[("Local module cache<br/>$GOMODCACHE")]
+    CACHE -->|"updates"| FILES[("go.mod / go.sum")]
 ```
 
 But a module located in a private repository (e.g. on GitHub) often fails
