@@ -46,199 +46,9 @@ en el índice alfabético final.
 
 ## Tabla de contenido
 
-- [1. Fundamentos: toma de decisiones y agentes inteligentes](#1-fundamentos-toma-de-decisiones-y-agentes-inteligentes)
-  - [Toma de decisiones](#toma-de-decisiones)
-  - [Decisión de alto nivel vs. decisión de bajo nivel](#decision-de-alto-nivel-vs-decision-de-bajo-nivel)
-  - [Decisiones programadas vs. no programadas](#decisiones-programadas-vs-no-programadas)
-  - [Problema estructurado vs. no estructurado](#problema-estructurado-vs-no-estructurado)
-  - [Agente inteligente](#agente-inteligente)
-  - [Racionalidad](#racionalidad)
-  - [Arquitectura deliberativa](#arquitectura-deliberativa)
-  - [Arquitectura reactiva](#arquitectura-reactiva)
-  - [Arquitectura híbrida](#arquitectura-hibrida)
-  - [Modelo BDI (Belief–Desire–Intention)](#modelo-bdi)
-  - [ACT-R](#act-r)
-  - [SOAR](#soar)
-- [2. Representación del conocimiento](#2-representacion-del-conocimiento)
-  - [Representación simbólica](#representacion-simbolica)
-  - [Marcos (Frames)](#marcos)
-  - [Reglas de producción](#reglas-de-produccion)
-  - [Constraint Satisfaction Problem (CSP) (problema de satisfacción de restricciones)](#constraint-satisfaction-problem-csp-problema-de-satisfaccion-de-restricciones)
-  - [Red bayesiana](#red-bayesiana)
-  - [Ontología](#ontologia)
-  - [Knowledge Graph (grafo de conocimiento)](#knowledge-graph-grafo-de-conocimiento)
-  - [Declarative vs. procedural knowledge (conocimiento declarativo vs. procedimental)](#declarative-vs-procedural-knowledge-conocimiento-declarativo-vs-procedimental)
-- [3. Tipos de razonamiento](#3-tipos-de-razonamiento)
-  - [Razonamiento deductivo](#razonamiento-deductivo)
-  - [Razonamiento inductivo](#razonamiento-inductivo)
-  - [Razonamiento abductivo](#razonamiento-abductivo)
-  - [Silogismo](#silogismo)
-  - [Modus ponens](#modus-ponens)
-  - [Modus tollens](#modus-tollens)
-  - [Razonamiento por analogía](#razonamiento-por-analogia)
-  - [Razonamiento monótono vs. no monótono](#razonamiento-monotono-vs-no-monotono)
-  - [Razonamiento por defecto](#razonamiento-por-defecto)
-- [4. Tipos de lógica](#4-tipos-de-logica)
-  - [Lógica proposicional](#logica-proposicional)
-  - [Lógica de predicados](#logica-de-predicados)
-  - [First-Order Logic (FOL) (lógica de primer orden)](#first-order-logic-fol-logica-de-primer-orden)
-  - [Higher-Order Logic (HOL) (lógica de orden superior)](#higher-order-logic-hol-logica-de-orden-superior)
-  - [Lógica modal](#logica-modal)
-  - [Lógica temporal](#logica-temporal)
-  - [Lógica multivaluada](#logica-multivaluada)
-  - [Lógica difusa (Fuzzy Logic)](#logica-difusa)
-  - [Lógica de descripción ALC](#logica-de-descripcion-alc)
-  - [Lógica computacional](#logica-computacional)
-  - [Sintaxis vs. semántica](#sintaxis-vs-semantica)
-- [5. Búsqueda no informada](#5-busqueda-no-informada)
-  - [Espacio de estados](#espacio-de-estados)
-  - [Árbol de búsqueda](#arbol-de-busqueda)
-  - [Frontera (lista de abiertos)](#frontera)
-  - [Factor de ramificación](#factor-de-ramificacion)
-  - [Breadth-First Search (BFS) (búsqueda en amplitud)](#breadth-first-search-bfs-busqueda-en-amplitud)
-  - [Depth-First Search (DFS) (búsqueda en profundidad)](#depth-first-search-dfs-busqueda-en-profundidad)
-  - [Uniform Cost Search (UCS) (búsqueda de costo uniforme)](#uniform-cost-search-ucs-busqueda-de-costo-uniforme)
-  - [Iterative Deepening Search (IDS) (búsqueda en profundidad iterativa)](#iterative-deepening-search-ids-busqueda-en-profundidad-iterativa)
-  - [Búsqueda bidireccional](#busqueda-bidireccional)
-  - [Algoritmo de Dijkstra](#algoritmo-de-dijkstra)
-  - [Completitud y optimalidad](#completitud-y-optimalidad)
-  - [Estados repetidos](#estados-repetidos)
-- [6. Heurística y búsqueda informada](#6-heuristica-y-busqueda-informada)
-  - [Función heurística](#funcion-heuristica)
-  - [Heurística admisible](#heuristica-admisible)
-  - [Heurística consistente (monótona)](#heuristica-consistente)
-  - [Heurística dominante](#heuristica-dominante)
-  - [Greedy Best-First Search (búsqueda voraz primero el mejor)](#greedy-best-first-search-busqueda-voraz-primero-el-mejor)
-  - [A* Search (búsqueda A*)](#a-search-busqueda-a)
-  - [Iterative Deepening A* (IDA*)](#iterative-deepening-a-ida)
-  - [Búsqueda por subobjetivos (subgoaling)](#busqueda-por-subobjetivos)
-  - [Búsqueda por ascenso de colinas (Hill Climbing)](#busqueda-por-ascenso-de-colinas)
-  - [Búsqueda con horizonte](#busqueda-con-horizonte)
-  - [Simulated Annealing (recocido simulado)](#simulated-annealing-recocido-simulado)
-  - [Búsqueda tabú](#busqueda-tabu)
-  - [Búsqueda local iterada (ILS)](#busqueda-local-iterada)
-  - [Búsqueda online](#busqueda-online)
-  - [Algoritmos genéticos](#algoritmos-geneticos)
-- [7. Búsqueda adversarial (teoría de juegos)](#7-busqueda-adversarial)
-  - [Juego de suma cero](#juego-de-suma-cero)
-  - [Información perfecta vs. imperfecta](#informacion-perfecta-vs-imperfecta)
-  - [Determinista vs. estocástico](#determinista-vs-estocastico)
-  - [Algoritmo Minimax](#algoritmo-minimax)
-  - [Poda alfa-beta](#poda-alfa-beta)
-  - [Función de evaluación](#funcion-de-evaluacion)
-  - [Búsqueda expectiminimax](#busqueda-expectiminimax)
-  - [Equilibrio de Nash](#equilibrio-de-nash)
-  - [Monte Carlo Tree Search (MCTS) (búsqueda en árbol Monte Carlo)](#monte-carlo-tree-search-mcts-busqueda-en-arbol-monte-carlo)
-- [8. Planificación clásica](#8-planificacion-clasica)
-  - [Problema de planificación](#problema-de-planificacion)
-  - [Plan](#plan)
-  - [Estado](#estado)
-  - [Acción / operador](#accion-operador)
-  - [Precondiciones](#precondiciones)
-  - [Efectos](#efectos)
-  - [Closed World Assumption (CWA) (hipótesis del mundo cerrado)](#closed-world-assumption-cwa-hipotesis-del-mundo-cerrado)
-  - [Mutex (mutual exclusion)](#mutex)
-  - [Anomalía de Sussman](#anomalia-de-sussman)
-  - [Planificación hacia adelante (forward / progression)](#planificacion-hacia-adelante)
-  - [Planificación hacia atrás (backward / regression)](#planificacion-hacia-atras)
-  - [Planificación de orden total](#planificacion-de-orden-total)
-  - [Partial-Order Planning (POP) (planificación de orden parcial)](#partial-order-planning-pop-planificacion-de-orden-parcial)
-  - [Planificación deliberativa vs. reactiva](#planificacion-deliberativa-vs-reactiva)
-  - [Planificación con incertidumbre](#planificacion-con-incertidumbre)
-  - [Planificación generalizada](#planificacion-generalizada)
-- [9. Lenguajes y planificadores](#9-lenguajes-y-planificadores)
-  - [STRIPS (Stanford Research Institute Problem Solver)](#strips-stanford-research-institute-problem-solver)
-  - [PDDL (Planning Domain Definition Language) (lenguaje de definición de dominios de planificación)](#planning-domain-definition-language-pddl)
-  - [ADL (Action Description Language) (lenguaje de descripción de acciones)](#action-description-language-adl)
-  - [Fluents](#fluents)
-  - [GOAP (Goal-Oriented Action Planning) (planificación orientada a objetivos)](#goal-oriented-action-planning-goap)
-  - [FF (Fast-Forward) (planificador heurístico)](#fast-forward-ff)
-  - [LAMA](#lama)
-  - [Fast Downward](#fast-downward)
-  - [Graphplan](#graphplan)
-  - [SHOP / SHOP2 / JSHOP](#shop-shop2-jshop)
-  - [LPG](#lpg)
-  - [VAL](#val)
-  - [IPC (International Planning Competition) (competencia internacional de planificación)](#international-planning-competition-ipc)
-  - [Prolog](#prolog)
-  - [LLMs as planners (NL2PDDL) (LLMs como planificadores)](#llms-as-planners-nl2pddl-llms-como-planificadores)
-- [10. Planificación jerárquica (HTN)](#10-planificacion-jerarquica)
-  - [HTN (Hierarchical Task Networks)](#htn)
-  - [Tarea primitiva](#tarea-primitiva)
-  - [Tarea compuesta (no primitiva)](#tarea-compuesta)
-  - [Método](#metodo)
-  - [Red de tareas](#red-de-tareas)
-  - [Descomposición jerárquica](#descomposicion-jerarquica)
-  - [Conocimiento de dominio en HTN](#conocimiento-de-dominio-en-htn)
-- [11. Planificación multi-agente](#11-planificacion-multi-agente)
-  - [Multi-Agent System (MAS) (sistema multi-agente)](#multi-agent-system-mas-sistema-multi-agente)
-  - [Escenarios cooperativo, parcialmente cooperativo y antagónico](#escenarios-cooperativo-parcialmente-cooperativo-y-antagonico)
-  - [Planning for Multiple Agents (PTMA) (planificación PARA múltiples agentes)](#planning-for-multiple-agents-ptma-planificacion-para-multiples-agentes)
-  - [Planning by Multiple Agents (PBMA) (planificación POR múltiples agentes)](#planning-by-multiple-agents-pbma-planificacion-por-multiples-agentes)
-  - [Coordinación de planes (plan merging)](#coordinacion-de-planes)
-  - [Asignación de tareas (task allocation)](#asignacion-de-tareas)
-  - [Partial Global Planning (PGP)](#partial-global-planning)
-  - [GRATE](#grate)
-  - [FMAP (Forward Multi-Agent Planning)](#fmap)
-  - [Enlace de orden y enlace causal](#enlace-de-orden-y-enlace-causal)
-  - [Protocolos de coordinación](#protocolos-de-coordinacion)
-  - [Distributed planning (planificación distribuida)](#distributed-planning-planificacion-distribuida)
-  - [Centralized plan representation (representación centralizada del plan)](#centralized-plan-representation-representacion-centralizada-del-plan)
-  - [Shared information (información compartida)](#shared-information-informacion-compartida)
-  - [State variables and value domains (variables de estado y dominio de valores)](#state-variables-and-value-domains-variables-de-estado-y-dominio-de-valores)
-  - [Multi-functions (multifunciones)](#multi-functions-multifunciones)
-  - [Public goals vs. private goals (metas públicas vs. metas privadas)](#public-goals-vs-private-goals-metas-publicas-vs-metas-privadas)
-  - [Public actions vs. private actions (acciones públicas vs. acciones privadas)](#public-actions-vs-private-actions-acciones-publicas-vs-acciones-privadas)
-  - [Open World Assumption (OWA) (hipótesis de mundo abierto)](#open-world-assumption-hipotesis-de-mundo-abierto-owa)
-  - [Plan refinement (refinamiento de planes)](#plan-refinement-refinamiento-de-planes)
-  - [Open goal (meta abierta)](#open-goal-meta-abierta)
-  - [Threat in multi-agent POP (amenaza en POP multi-agente)](#threat-in-multi-agent-pop-amenaza-en-pop-multi-agente)
-  - [Concurrent plan (plan concurrente)](#concurrent-plan-plan-concurrente)
-  - [Execution monitoring (monitorización de ejecución)](#execution-monitoring-monitorizacion-de-ejecucion)
-  - [Broadcast help request (solicitud de ayuda por broadcast)](#broadcast-help-request-solicitud-de-ayuda-por-broadcast)
-  - [MARPE](#marpe)
-  - [JADE](#jade)
-  - [Reparación de planes multi-agente](#reparacion-de-planes-multi-agente)
-  - [Desconocimiento global](#desconocimiento-global)
-  - [Decisiones no consensuadas](#decisiones-no-consensuadas)
-  - [Tiempos de respuesta](#tiempos-de-respuesta)
-  - [Repetición de fallos](#repeticion-de-fallos)
-  - [Roles de agentes](#roles-de-agentes)
-- [12. Planificación bajo incertidumbre](#12-planificacion-bajo-incertidumbre)
-  - [Entorno parcialmente observable](#entorno-parcialmente-observable)
-  - [Entorno no determinista](#entorno-no-determinista)
-  - [Entorno dinámico](#entorno-dinamico)
-  - [Proceso de decisión de Markov (MDP)](#proceso-de-decision-de-markov)
-  - [POMDP (Partially Observable Markov Decision Process) (proceso de decisión de Markov parcialmente observable)](#partially-observable-markov-decision-process-pomdp)
-  - [Hidden Markov Model (HMM) (modelo oculto de Markov)](#hidden-markov-model-hmm-modelo-oculto-de-markov)
-  - [Reinforcement Learning (RL) (aprendizaje por refuerzo)](#reinforcement-learning-rl-aprendizaje-por-refuerzo)
-  - [Planificación reactiva y replanificación](#planificacion-reactiva-y-replanificacion)
-- [13. Conceptos transversales](#13-conceptos-transversales)
-  - [Espacio de búsqueda](#espacio-de-busqueda)
-  - [Backtracking](#backtracking)
-  - [PSPACE-completitud](#pspace-completitud)
-  - [Benchmark](#benchmark)
-  - [Soundness y completeness](#soundness-y-completeness)
-  - [Decidibilidad y semidecidibilidad](#decidibilidad-y-semidecidibilidad)
-  - [Hipótesis del nombre único (UNA)](#hipotesis-del-nombre-unico)
-  - [Heurística vs. metaheurística](#heuristica-vs-metaheuristica)
-  - [Trade-off exploración/explotación](#trade-off-exploracionexplotacion)
-  - [Agéntica moderna](#agentica-moderna)
-  - [MCP (Model Context Protocol)](#mcp-model-context-protocol)
-- [14. Fundamentos filosóficos del razonamiento y la planificación](#14-fundamentos-filosoficos-del-razonamiento-y-la-planificacion)
-  - [14.1 Epistemología (teoría del conocimiento)](#141-epistemologia)
-  - [14.2 Filosofía de la lógica](#142-filosofia-de-la-logica)
-  - [14.3 Filosofía de la mente y de la inteligencia artificial](#143-filosofia-de-la-mente-y-de-la-inteligencia-artificial)
-  - [14.4 Ontología y metafísica](#144-ontologia-y-metafisica)
-  - [14.5 Causalidad, modalidad y mundos posibles](#145-causalidad-modalidad-y-mundos-posibles)
-  - [14.6 Filosofía de la acción](#146-filosofia-de-la-accion)
-- [15. Glosario rápido alfabético](#15-glosario-rapido-alfabetico)
-- [16. Referencias y lecturas recomendadas](#16-referencias-y-lecturas-recomendadas)
-
 ---
 
 ## 1. Fundamentos: toma de decisiones y agentes inteligentes
-
 
 
 ```mermaid
@@ -352,7 +162,6 @@ deliberado puede representarse como selección iterativa de operadores.
 ## 2. Representación del conocimiento
 
 
-
 ```mermaid
 mindmap
   root(("Representación del conocimiento"))
@@ -426,7 +235,6 @@ buen sistema inteligente combina ambos: declara los hechos y procedimentaliza
 las inferencias.
 
 ## 3. Tipos de razonamiento
-
 
 
 ```mermaid
@@ -537,7 +345,6 @@ conclusiones plausibles *en ausencia de evidencia en contra*. Por ejemplo:
 ## 4. Tipos de lógica
 
 
-
 ```mermaid
 mindmap
   root(("Tipos de lógica"))
@@ -632,7 +439,6 @@ La **sintaxis** define qué cadenas son fórmulas bien formadas; la
 todo modelo, **satisfacible** si lo es en al menos uno.
 
 ## 5. Búsqueda no informada
-
 
 
 ```mermaid
@@ -737,7 +543,6 @@ evitar ciclos generales (no añadir antecesores) o evitar todos los repetidos
 mediante una tabla *closed*.
 
 ## 6. Heurística y búsqueda informada
-
 
 
 ```mermaid
@@ -885,7 +690,6 @@ estructurados.
 ## 7. Búsqueda adversarial (teoría de juegos)
 
 
-
 ```mermaid
 mindmap
   root(("Búsqueda adversarial - teoría de juegos"))
@@ -976,7 +780,6 @@ selección, expansión, simulación y *backpropagation* — y usa políticas com
 de **AlphaGo** y **AlphaZero**.
 
 ## 8. Planificación clásica
-
 
 
 ```mermaid
@@ -1125,7 +928,6 @@ estructura común, en lugar de un problema individual. Suele expresarse como
 política o programa con bucles y condicionales.
 
 ## 9. Lenguajes y planificadores
-
 
 
 ```mermaid
@@ -1278,7 +1080,6 @@ natural a PDDL) y delegan la búsqueda a planificadores clásicos.
 ## 10. Planificación jerárquica (HTN)
 
 
-
 ```mermaid
 mindmap
   root(("Planificación jerárquica - HTN"))
@@ -1337,7 +1138,6 @@ ventaja (escalabilidad y eficiencia) y crítica (codificar la solución dentro
 del dominio reduce la generalidad).
 
 ## 11. Planificación multi-agente
-
 
 
 ```mermaid
@@ -1594,7 +1394,6 @@ interacción robustos.
 ## 12. Planificación bajo incertidumbre
 
 
-
 ```mermaid
 mindmap
   root(("Planificación bajo incertidumbre"))
@@ -1682,7 +1481,6 @@ localmente** el plan existente (rápido pero subóptimo). Sistemas como FF-Repla
 y reparación reactiva multi-agente exploran este equilibrio.
 
 ## 13. Conceptos transversales
-
 
 
 ```mermaid
@@ -1792,7 +1590,6 @@ del agente y facilita arquitecturas modulares multi-herramienta, mejorando
 trazabilidad, gobernanza y reproducibilidad de ejecuciones agénticas.
 
 ## 14. Fundamentos filosóficos del razonamiento y la planificación
-
 
 
 ```mermaid
@@ -2323,7 +2120,6 @@ Para consulta rápida, los términos más usados en orden alfabético:
 - Planning Wiki. (s. f.). *Planning.wiki*. https://planning.wiki/
 - Planning.Domains. (s. f.). *Editor*. https://editor.planning.domains/
 - Fast Downward. (s. f.). *Fast Downward planning system*. https://www.fast-downward.org/
-
 
 
 ## Apéndice

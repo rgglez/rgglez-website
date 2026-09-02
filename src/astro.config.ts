@@ -169,14 +169,14 @@ export default defineConfig({
         remarkToc,
         {
           heading:
-            "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis",
+            "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis|目录",
         },
       ],
       remarkMath,
       [
         remarkCollapse,
         {
-          test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis)$/i,
+          test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis|目录)$/i,
           summary: (str: string) => str,
         },
       ],

@@ -116,7 +116,7 @@ pueden ejecutar directamente en un Worker de Cloudflare. Por lo tanto, tuve que
 buscar una biblioteca de análisis de sentimientos que estuviera escrita en
 JavaScript o TypeScript, y que fuera de código abierto y gratuita, y sobre todo,
 compatible con Cloudflare Workers. Afortunadamente, existen algunas opciones
-disponibles, como la biblioteca <a href="https://naturalnode.github.io/natural/">
+disponibles, como la biblioteca <a href="https://naturalnode.github.io/natural/" target="_blank">
 Natural</a>, que ofrece un clasificador Naive Bayes y otras técnicas de análisis
 de texto. Natural depende de APIs de Node, así que la reservé para el entrenador
 que se ejecuta fuera de línea; el Worker no la carga, sino que consume el modelo
@@ -128,10 +128,10 @@ fase previa de tokenización y extracción de características.
 
 | Biblioteca                                                    | Modelos supervisados                                                            | Preparación del texto                                     | Ventajas                                                                          | Limitaciones para este proyecto                                                                                   |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| [Natural](https://naturalnode.github.io/natural/)             | Naive Bayes y regresión logística                                               | Incluye tokenización, stemming y TF-IDF                   | API orientada a NLP, entrenamiento sencillo y modelos serializables en JSON       | Depende de APIs de Node; conviene usarla en el entrenador y reproducir la inferencia en TypeScript puro           |
-| [ML.js](https://github.com/mljs) (`ml-naivebayes` y `ml-svm`) | Naive Bayes gaussiano o multinomial y SVM                                       | Requiere convertir el texto en vectores numéricos         | Paquetes pequeños, independientes y con modelos exportables                       | `ml-svm` es una implementación educativa y binaria; la clasificación multiclase requiere una estrategia adicional |
-| [libsvm-js](https://github.com/mljs/libsvm)                   | SVM de clasificación y regresión con kernels lineal, polinomial, RBF y sigmoide | Requiere vectores como TF-IDF                             | Implementación completa de LIBSVM, multiclase, validación cruzada y serialización | Usa WebAssembly y es más pesada que una inferencia lineal escrita específicamente para el Worker                  |
-| [TensorFlow.js](https://www.tensorflow.org/js)                | Redes densas, convolucionales y recurrentes, entre otras                        | Requiere diseñar la codificación o tokenización del texto | Máxima flexibilidad y entrenamiento tanto en navegador como en Node.js            | Mayor complejidad, tamaño y costo de ejecución para un clasificador clásico pequeño                               |
+| <a href="https://naturalnode.github.io/natural/" target="_blank">Natural</a>             | Naive Bayes y regresión logística                                               | Incluye tokenización, stemming y TF-IDF                   | API orientada a NLP, entrenamiento sencillo y modelos serializables en JSON       | Depende de APIs de Node; conviene usarla en el entrenador y reproducir la inferencia en TypeScript puro           |
+| <a href="https://github.com/mljs" target="_blank">ML.js</a> (`ml-naivebayes` y `ml-svm`) | Naive Bayes gaussiano o multinomial y SVM                                       | Requiere convertir el texto en vectores numéricos         | Paquetes pequeños, independientes y con modelos exportables                       | `ml-svm` es una implementación educativa y binaria; la clasificación multiclase requiere una estrategia adicional |
+| <a href="https://github.com/mljs/libsvm" target="_blank">libsvm-js</a>                   | SVM de clasificación y regresión con kernels lineal, polinomial, RBF y sigmoide | Requiere vectores como TF-IDF                             | Implementación completa de LIBSVM, multiclase, validación cruzada y serialización | Usa WebAssembly y es más pesada que una inferencia lineal escrita específicamente para el Worker                  |
+| <a href="https://www.tensorflow.org/js" target="_blank">TensorFlow.js</a>                | Redes densas, convolucionales y recurrentes, entre otras                        | Requiere diseñar la codificación o tokenización del texto | Máxima flexibilidad y entrenamiento tanto en navegador como en Node.js            | Mayor complejidad, tamaño y costo de ejecución para un clasificador clásico pequeño                               |
 
 Y finalmente quedaba la cuestión del dataset de entrenamiento. Descartados los
 servicios de inferencia hospedada de pago, como los de OpenAI, y los modelos
@@ -139,7 +139,7 @@ preentrenados del Hub de Hugging Face, demasiado pesados para un Worker, tuve qu
 buscar un dataset libre y gratuito que contuviera ejemplos de comentarios y
 descripciones de issues. Afortunadamente, existe un dataset llamado
 
-<a href="https://figshare.com/articles/dataset/A_gold_standard_for_polarity_of_emotions_of_software_developers_in_GitHub/11604597?file=21001260">GitHub Gold Standard</a>,
+<a href="https://figshare.com/articles/dataset/A_gold_standard_for_polarity_of_emotions_of_software_developers_in_GitHub/11604597?file=21001260" target="_blank">GitHub Gold Standard</a>,
 que contiene más de 7,000 comentarios y descripciones de issues de GitHub,
 etiquetados con su polaridad (positivo, negativo o neutral). Este dataset es
 ideal, aun con sus limitaciones, para entrenar un modelo de análisis de
@@ -156,7 +156,7 @@ caso de uso.
 </Aside>
 
 Antes de elegirlo, comparé el Gold Standard con
-[`rsl-ai/github-issues`](https://huggingface.co/datasets/rsl-ai/github-issues),
+<a href="https://huggingface.co/datasets/rsl-ai/github-issues" target="_blank"><code>rsl-ai/github-issues</code></a>,
 otro corpus disponible en Hugging Face:
 
 | Característica | GitHub Gold Standard | `rsl-ai/github-issues` |
@@ -447,36 +447,36 @@ sentimientos.
 ## Referencias
 
 Cortes, C., & Vapnik, V. (1995). Support-vector networks. _Machine Learning,
-20_, 273–297. [https://doi.org/10.1007/BF00994018](https://doi.org/10.1007/BF00994018)
+20_, 273–297. <a href="https://doi.org/10.1007/BF00994018" target="_blank">https://doi.org/10.1007/BF00994018</a>
 
 Coutinho, D., Braga, B., Canuto, T., Pereira, J. A., Assunção, W. K. G.,
 Steinmacher, I., Gerosa, M., & Garcia, A. (2026). Leveraging large language
 models for sentiment analysis in GitHub pull request discussions. _Empirical
 Software Engineering, 31_, Article 140.
-[https://doi.org/10.1007/s10664-026-10868-6](https://doi.org/10.1007/s10664-026-10868-6)
+<a href="https://doi.org/10.1007/s10664-026-10868-6" target="_blank">https://doi.org/10.1007/s10664-026-10868-6</a>
 
 Cox, D. R. (1958). The regression analysis of binary sequences. _Journal of the
 Royal Statistical Society: Series B (Methodological), 20_(2), 215–242.
-[https://doi.org/10.1111/j.2517-6161.1958.tb00292.x](https://doi.org/10.1111/j.2517-6161.1958.tb00292.x)
+<a href="https://doi.org/10.1111/j.2517-6161.1958.tb00292.x" target="_blank">https://doi.org/10.1111/j.2517-6161.1958.tb00292.x</a>
 
 Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). BERT: Pre-training
 of deep bidirectional transformers for language understanding. In _Proceedings
 of the 2019 Conference of the North American Chapter of the Association for
 Computational Linguistics: Human Language Technologies, Volume 1 (Long and
 Short Papers)_ (pp. 4171–4186). Association for Computational Linguistics.
-[https://doi.org/10.18653/v1/N19-1423](https://doi.org/10.18653/v1/N19-1423)
+<a href="https://doi.org/10.18653/v1/N19-1423" target="_blank">https://doi.org/10.18653/v1/N19-1423</a>
 
 Novielli, N., Calefato, F., Dongiovanni, D., Girardi, D., & Lanubile, F.
 (2020a). _A gold standard for polarity of emotions of software developers in
 GitHub_ [Data set]. figshare.
-[https://doi.org/10.6084/m9.figshare.11604597](https://doi.org/10.6084/m9.figshare.11604597)
+<a href="https://doi.org/10.6084/m9.figshare.11604597" target="_blank">https://doi.org/10.6084/m9.figshare.11604597</a>
 
 Novielli, N., Calefato, F., Dongiovanni, D., Girardi, D., & Lanubile, F.
 (2020b). Can we use SE-specific sentiment analysis tools in a cross-platform
 setting? In _Proceedings of the 17th International Conference on Mining
 Software Repositories_ (pp. 158–168). Association for Computing Machinery.
-[https://doi.org/10.1145/3379597.3387446](https://doi.org/10.1145/3379597.3387446)
+<a href="https://doi.org/10.1145/3379597.3387446" target="_blank">https://doi.org/10.1145/3379597.3387446</a>
 
 Webb, G. I., Boughton, J. R., & Wang, Z. (2005). Not so naive Bayes: Aggregating
 one-dependence estimators. _Machine Learning, 58_(1), 5–24.
-[https://doi.org/10.1007/s10994-005-4258-6](https://doi.org/10.1007/s10994-005-4258-6)
+<a href="https://doi.org/10.1007/s10994-005-4258-6" target="_blank">https://doi.org/10.1007/s10994-005-4258-6</a>

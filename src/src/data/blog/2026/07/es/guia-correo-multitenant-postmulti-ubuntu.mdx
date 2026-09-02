@@ -45,7 +45,7 @@ Esta guía describe cómo montar un servidor de correo **multitenant con aislami
 
 ---
 
-# 1. Arquitectura general
+## 1. Arquitectura general
 
 ```mermaid
 flowchart TD
@@ -79,9 +79,9 @@ Dovecot es **compartido**, pero usa archivos de autenticación separados por dom
 
 ---
 
-# 2. Prerequisitos y convenciones
+## 2. Prerequisitos y convenciones
 
-### Variables de ejemplo usadas en esta guía
+#### Variables de ejemplo usadas en esta guía
 
 | Variable            | Valor de ejemplo              |
 |---------------------|-------------------------------|
@@ -110,7 +110,7 @@ Dovecot es **compartido**, pero usa archivos de autenticación separados por dom
 
 > El SMTP público de cada tenant es el **puerto 25 sobre su IP** (`IP_PUB_A`, `IP_PUB_B`). Los puertos `1002x`–`1005x` son **internos** (loopback): reinyección de Amavis y policy daemons.
 
-### Requisitos previos
+#### Requisitos previos
 
 - Ubuntu 24.04 LTS instalado y actualizado.
 - Acceso root o sudo.
@@ -123,7 +123,7 @@ Dovecot es **compartido**, pero usa archivos de autenticación separados por dom
 
 ---
 
-# 3. Instalación de paquetes base
+## 3. Instalación de paquetes base
 
 ```bash
 apt update && apt upgrade -y
@@ -160,9 +160,9 @@ systemctl disable postfix
 
 ---
 
-# 4. Estructura de directorios y montaje NFS
+## 4. Estructura de directorios y montaje NFS
 
-## 4.1. Directorios del servidor de correo
+### 4.1. Directorios del servidor de correo
 
 ```bash
 # Configuración por instancia Postfix
@@ -184,7 +184,7 @@ getent passwd vmail || useradd -r -u 5000 -g mail -d /var/mail -s /usr/sbin/nolo
 
 > Los directorios de cola (`/var/spool/postfix-empresaN`) los crea automáticamente `postmulti` en la sección 5.
 
-## 4.2. Montaje NFS de los Maildirs
+### 4.2. Montaje NFS de los Maildirs
 
 Los buzones viven en el NAS y se montan en `/var/mail/<dominio>`. Los directorios en el NAS **ya existen**; sólo hay que montarlos.
 
@@ -231,7 +231,7 @@ mount | grep /var/mail
 df -h /var/mail/empresa1.com /var/mail/empresa2.net
 ```
 
-## 4.3. UID/GID consistente entre servidor y NAS
+### 4.3. UID/GID consistente entre servidor y NAS
 
 Es el punto más crítico en NFS. Si el UID de `vmail` en el servidor no coincide con el propietario de los archivos en el NAS, los permisos fallarán.
 
@@ -255,7 +255,7 @@ usermod -u <UID_DEL_NAS> vmail
 
 - **Opción B** — Usar `idmapd` (NFSv4) para mapear por nombre en vez de por UID, asegurando que el usuario `vmail` exista con el mismo nombre en el NAS.
 
-## 4.4. Opciones de Dovecot específicas para NFS
+### 4.4. Opciones de Dovecot específicas para NFS
 
 Estas opciones se aplican en `10-mail.conf` (sección 8.2); se listan aquí por referencia:
 
@@ -270,9 +270,9 @@ mail_fsync       = always
 
 ---
 
-# 5. Configuración de Postfix con postmulti
+## 5. Configuración de Postfix con postmulti
 
-## 5.1. Inicializar postmulti
+### 5.1. Inicializar postmulti
 
 `postmulti` permite ejecutar varias instancias de Postfix en el mismo servidor, cada una con su directorio de configuración, cola y puertos propios.
 
@@ -290,7 +290,7 @@ postmulti -l
 
 Esto crea `/etc/postfix-empresa1/`, `/var/spool/postfix-empresa1/` (y sus equivalentes para empresa2).
 
-## 5.2. `main.cf` para empresa1
+### 5.2. `main.cf` para empresa1
 
 Cada instancia enlaza **su propia IP pública** (`inet_interfaces`), no `all`.
 
@@ -380,7 +380,7 @@ compatibility_level = 3.6
 
 > Crea el directorio de caché TLS: `mkdir -p /var/lib/postfix-empresa1 && chown postfix: /var/lib/postfix-empresa1`.
 
-## 5.3. `master.cf` para empresa1
+### 5.3. `master.cf` para empresa1
 
 ```text
 # SMTP público (25) en la IP de la instancia
@@ -451,7 +451,7 @@ anvil     unix  -       -       y       -       1       anvil
 scache    unix  -       -       y       -       1       scache
 ```
 
-## 5.4. Repetir para empresa2
+### 5.4. Repetir para empresa2
 
 Copia y ajusta cambiando dominio, IP, puertos y certificados:
 
@@ -468,7 +468,7 @@ sed -i 's/empresa1/empresa2/g;s/10025/10026/g' /etc/postfix-empresa2/master.cf
 
 Luego revisa manualmente `myhostname`, `mydomain`, `.net` vs `.com`, rutas de certificados y `queue_directory` en `/etc/postfix-empresa2/main.cf`.
 
-## 5.5. Habilitar instancias
+### 5.5. Habilitar instancias
 
 ```bash
 postmulti -i postfix-empresa1 -e enable
@@ -477,7 +477,7 @@ postmulti -i postfix-empresa2 -e enable
 
 ---
 
-# 6. Esquema MySQL por dominio
+## 6. Esquema MySQL por dominio
 
 Este esquema se crea **en la base de datos de cada tenant** (en su servidor MySQL remoto). Como esa base puede usarse también para otras cosas del tenant, otorgamos permisos **sólo** sobre las tablas de correo.
 
@@ -541,9 +541,9 @@ FLUSH PRIVILEGES;
 
 ---
 
-# 7. Mapas MySQL de Postfix por instancia
+## 7. Mapas MySQL de Postfix por instancia
 
-## 7.1. Dominios virtuales
+### 7.1. Dominios virtuales
 
 ```ini
 # /etc/postfix-empresa1/mysql/virtual_domains.cf
@@ -554,7 +554,7 @@ dbname   = maildb_empresa1
 query    = SELECT name FROM virtual_domains WHERE name='%s' AND active=1
 ```
 
-## 7.2. Buzones virtuales
+### 7.2. Buzones virtuales
 
 ```ini
 # /etc/postfix-empresa1/mysql/virtual_mailbox.cf
@@ -565,7 +565,7 @@ dbname   = maildb_empresa1
 query    = SELECT maildir FROM virtual_users WHERE email='%s' AND active=1
 ```
 
-## 7.3. Aliases virtuales
+### 7.3. Aliases virtuales
 
 ```ini
 # /etc/postfix-empresa1/mysql/virtual_aliases.cf
@@ -576,14 +576,14 @@ dbname   = maildb_empresa1
 query    = SELECT destination FROM virtual_aliases WHERE source='%s' AND active=1
 ```
 
-## 7.4. Permisos de los archivos de mapas
+### 7.4. Permisos de los archivos de mapas
 
 ```bash
 chmod 640 /etc/postfix-empresa1/mysql/*.cf /etc/postfix-empresa2/mysql/*.cf
 chown root:postfix /etc/postfix-empresa1/mysql/*.cf /etc/postfix-empresa2/mysql/*.cf
 ```
 
-## 7.5. Probar consultas MySQL
+### 7.5. Probar consultas MySQL
 
 ```bash
 postmap -q "empresa1.com" mysql:/etc/postfix-empresa1/mysql/virtual_domains.cf
@@ -592,11 +592,11 @@ postmap -q "usuario@empresa1.com" mysql:/etc/postfix-empresa1/mysql/virtual_mail
 
 ---
 
-# 8. Configuración de Dovecot multitenant
+## 8. Configuración de Dovecot multitenant
 
 Dovecot es un único proceso compartido. La autenticación y los datos de buzón se resuelven con archivos SQL **separados por dominio**, cada uno conectado a la base del tenant y filtrando por su dominio.
 
-## 8.1. Configuración principal `/etc/dovecot/dovecot.conf`
+### 8.1. Configuración principal `/etc/dovecot/dovecot.conf`
 
 ```ini
 protocols = imap pop3 lmtp sieve
@@ -606,7 +606,7 @@ listen = *, ::
 !include_try local.conf
 ```
 
-## 8.2. `/etc/dovecot/conf.d/10-mail.conf`
+### 8.2. `/etc/dovecot/conf.d/10-mail.conf`
 
 Una **única** definición de ubicación de buzón (`%d` = dominio, `%n` = parte local), evitando definiciones en conflicto.
 
@@ -639,7 +639,7 @@ first_valid_uid = 5000
 last_valid_uid  = 5000
 ```
 
-## 8.3. `/etc/dovecot/conf.d/10-auth.conf`
+### 8.3. `/etc/dovecot/conf.d/10-auth.conf`
 
 ```ini
 auth_mechanisms = plain login
@@ -649,7 +649,7 @@ disable_plaintext_auth = yes
 !include auth-sql-empresa2.conf.ext
 ```
 
-## 8.4. Auth SQL empresa1: `/etc/dovecot/auth-sql-empresa1.conf.ext`
+### 8.4. Auth SQL empresa1: `/etc/dovecot/auth-sql-empresa1.conf.ext`
 
 ```ini
 passdb {
@@ -663,7 +663,7 @@ userdb {
 }
 ```
 
-## 8.5. SQL empresa1: `/etc/dovecot/dovecot-sql-empresa1.conf.ext`
+### 8.5. SQL empresa1: `/etc/dovecot/dovecot-sql-empresa1.conf.ext`
 
 Las consultas usan el esquema `virtual_users` de la sección 6. El filtro `LIKE '%%@empresa1.com'` (el `%%` es un `%` literal en Dovecot) asegura que este backend sólo resuelva usuarios de empresa1.
 
@@ -698,7 +698,7 @@ Repite para empresa2 en `dovecot-sql-empresa2.conf.ext` con sus credenciales MyS
 
 > **Control por servicio (IMAP/POP3/SMTP):** si necesitas habilitar/deshabilitar un usuario por protocolo (por ejemplo, permitir SMTP pero no IMAP), añade columnas booleanas a `virtual_users` y filtra con ellas en las consultas correspondientes (no en `password_query`, que aplica a **todos** los servicios, incluido SASL).
 
-## 8.6. `/etc/dovecot/conf.d/10-ssl.conf`
+### 8.6. `/etc/dovecot/conf.d/10-ssl.conf`
 
 Certificado por dominio vía SNI. El cliente de cada tenant se conecta a `mail.<su-dominio>`.
 
@@ -724,7 +724,7 @@ ssl_cipher_list = ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:HIGH
 ssl_prefer_server_ciphers = yes
 ```
 
-## 8.7. `/etc/dovecot/conf.d/10-master.conf`
+### 8.7. `/etc/dovecot/conf.d/10-master.conf`
 
 Los sockets LMTP y de autenticación se crean **dentro de la cola de cada instancia Postfix**, para que cada Postfix hable con Dovecot por su propio socket.
 
@@ -777,7 +777,7 @@ service managesieve-login {
 
 ---
 
-# 9. SASL: integración Postfix → Dovecot
+## 9. SASL: integración Postfix → Dovecot
 
 La autenticación SASL se delega a Dovecot por socket Unix. En el `main.cf` de cada instancia ya está:
 
@@ -802,9 +802,9 @@ openssl s_client -starttls smtp -connect mail.empresa1.com:587 -quiet
 
 ---
 
-# 10. TLS/STARTTLS con certificados por dominio
+## 10. TLS/STARTTLS con certificados por dominio
 
-## 10.1. Obtener certificados con Let's Encrypt
+### 10.1. Obtener certificados con Let's Encrypt
 
 ```bash
 apt install -y certbot
@@ -816,7 +816,7 @@ certbot certonly --standalone -d mail.empresa2.net \
   --email admin@empresa2.net --agree-tos --non-interactive
 ```
 
-## 10.2. Organizar certificados
+### 10.2. Organizar certificados
 
 ```bash
 mkdir -p /etc/ssl/empresa1 /etc/ssl/empresa2
@@ -827,7 +827,7 @@ ln -sf /etc/letsencrypt/live/mail.empresa2.net/fullchain.pem /etc/ssl/empresa2/f
 ln -sf /etc/letsencrypt/live/mail.empresa2.net/privkey.pem   /etc/ssl/empresa2/privkey.pem
 ```
 
-## 10.3. Renovación automática
+### 10.3. Renovación automática
 
 ```bash
 # /etc/cron.d/certbot-renew
@@ -839,11 +839,11 @@ ln -sf /etc/letsencrypt/live/mail.empresa2.net/privkey.pem   /etc/ssl/empresa2/p
 
 ---
 
-# 11. send_rate_policyd.pl por dominio
+## 11. send_rate_policyd.pl por dominio
 
 Daemon de policy de Postfix que limita la tasa de envío por remitente consultando la tabla `send_rate` en la base del tenant.
 
-## 11.1. El script
+### 11.1. El script
 
 ```perl
 #!/usr/bin/perl
@@ -928,7 +928,7 @@ while (<STDIN>) {
 chmod +x /usr/local/lib/send_rate_policyd.pl
 ```
 
-## 11.2. Tabla de contadores
+### 11.2. Tabla de contadores
 
 ```sql
 -- En la base de cada tenant.
@@ -948,7 +948,7 @@ ON SCHEDULE EVERY 1 DAY
 DO DELETE FROM send_rate_log WHERE sent_at < DATE_SUB(NOW(), INTERVAL 7 DAY);
 ```
 
-## 11.3. Configuración por dominio
+### 11.3. Configuración por dominio
 
 ```ini
 # /etc/mail-policy/empresa1/send_rate.env
@@ -968,13 +968,13 @@ chmod 600 /etc/mail-policy/empresa1/send_rate.env
 
 ---
 
-# 12. yaa.pl por dominio
+## 12. yaa.pl por dominio
 
 **yaa.pl** (Yet Another Autoresponder) gestiona respuestas automáticas (fuera de oficina) consultando la base del tenant.
 
 > **Nota de diseño:** yaa.pl actúa como policy daemon y **envía correo** durante la fase de recepción. Un policy service debe ser rápido; enviar mensajes de forma síncrona puede ralentizar la recepción y, mal configurado, provocar bucles. Se incluye porque forma parte de este stack, con guardas anti-bucle (no responder a `mailer-daemon`/`postmaster`/`no-reply`, y una vez por par emisor→destinatario por día). Como alternativa estándar existe **Sieve `vacation`** (ya instalamos `dovecot-sieve`), que evita estos riesgos.
 
-## 12.1. El script
+### 12.1. El script
 
 ```perl
 #!/usr/bin/perl
@@ -1061,7 +1061,7 @@ while (<STDIN>) {
 chmod +x /usr/local/lib/yaa.pl
 ```
 
-## 12.2. Tablas para yaa.pl
+### 12.2. Tablas para yaa.pl
 
 ```sql
 -- En la base de cada tenant.
@@ -1091,18 +1091,18 @@ CREATE TABLE IF NOT EXISTS `autoresponder_log` (
 
 ---
 
-# 13. Amavis-new por dominio
+## 13. Amavis-new por dominio
 
 Cada dominio tiene su propia instancia de `amavisd-new` en un puerto distinto, con políticas y cuarentena independientes, y firma DKIM propia.
 
-## 13.1. Antivirus y antispam base
+### 13.1. Antivirus y antispam base
 
 ```bash
 systemctl enable --now clamav-freshclam
 sa-update
 ```
 
-## 13.2. Directorios por instancia
+### 13.2. Directorios por instancia
 
 ```bash
 for d in empresa1 empresa2; do
@@ -1112,7 +1112,7 @@ done
 mkdir -p /run/amavis && chown amavis:amavis /run/amavis
 ```
 
-## 13.3. Configuración de amavis para empresa1
+### 13.3. Configuración de amavis para empresa1
 
 Cada instancia necesita sus **propios** `$MYHOME`, `$pid_file`, `$lock_file`, `$db_home` y `$TEMPBASE`; de lo contrario dos `amavisd` colisionan en las rutas por defecto.
 
@@ -1161,7 +1161,7 @@ $sa_dsn_cutoff_level = 10;
 
 Repite en `/etc/amavis/conf.d/50-empresa2` cambiando dominio, `$MYHOME`, pid/lock (`empresa2`), `$inet_socket_port = 10034`, y `$forward_method` a `:10026`.
 
-## 13.4. Firma DKIM por dominio
+### 13.4. Firma DKIM por dominio
 
 DKIM se firma dentro de cada instancia de Amavis. Genera una clave por dominio y publícala en DNS.
 
@@ -1193,16 +1193,16 @@ amavisd-new -c /etc/amavis/conf.d/50-empresa1 showkeys
 
 ---
 
-# 14. Systemd: units para cada componente
+## 14. Systemd: units para cada componente
 
-## 14.1. Postfix (postmulti genera las units)
+### 14.1. Postfix (postmulti genera las units)
 
 ```bash
 postmulti -i postfix-empresa1 -p start
 postmulti -i postfix-empresa2 -p start
 ```
 
-## 14.2. Amavis por instancia
+### 14.2. Amavis por instancia
 
 ```ini
 # /etc/systemd/system/amavis-empresa1.service
@@ -1227,11 +1227,11 @@ WantedBy=multi-user.target
 
 Crea `amavis-empresa2.service` análogo (config `50-empresa2`, pid `empresa2.pid`).
 
-## 14.3. Nota sobre policy daemons con socket systemd
+### 14.3. Nota sobre policy daemons con socket systemd
 
 `send_rate_policyd.pl` y `yaa.pl` leen la petición por **STDIN** y responden por STDOUT. Con activación por socket y `Accept=yes`, systemd crea **una instancia de servicio por conexión** y conecta el socket a STDIN/STDOUT. Esto exige una **unit plantilla** (`nombre@.service`); la `.socket` la referencia automáticamente.
 
-## 14.4. send_rate_policyd (socket + plantilla) empresa1
+### 14.4. send_rate_policyd (socket + plantilla) empresa1
 
 ```ini
 # /etc/systemd/system/send-rate-empresa1.socket
@@ -1261,7 +1261,7 @@ User=nobody
 Group=nogroup
 ```
 
-## 14.5. yaa.pl (socket + plantilla) empresa1
+### 14.5. yaa.pl (socket + plantilla) empresa1
 
 ```ini
 # /etc/systemd/system/yaa-empresa1.socket
@@ -1298,7 +1298,7 @@ Group=nogroup
 
 Crea los units análogos para empresa2 (puertos 10041/10051, base `maildb_empresa2`, `YAA_RELAY_PORT=10026`).
 
-## 14.6. Habilitar y arrancar todo
+### 14.6. Habilitar y arrancar todo
 
 ```bash
 systemctl daemon-reload
@@ -1316,7 +1316,7 @@ postmulti -p start
 
 ---
 
-# 15. Firewall y puertos
+## 15. Firewall y puertos
 
 ```bash
 ufw allow 25/tcp    comment 'SMTP'
@@ -1333,7 +1333,7 @@ ufw status verbose
 
 Los puertos internos (`1002x`–`1005x`) son sólo loopback; **no** se abren en el firewall externo.
 
-### Puertos internos por dominio
+#### Puertos internos por dominio
 
 | Puerto  | Servicio                          | Dominio   |
 |---------|-----------------------------------|-----------|
@@ -1348,9 +1348,9 @@ Los puertos internos (`1002x`–`1005x`) son sólo loopback; **no** se abren en 
 
 ---
 
-# 16. Flujo de correo de extremo a extremo
+## 16. Flujo de correo de extremo a extremo
 
-### Entrante (empresa1.com)
+#### Entrante (empresa1.com)
 
 ```text
 1. Cliente externo -> IP_PUB_A:25 -> Postfix-empresa1
@@ -1363,7 +1363,7 @@ Los puertos internos (`1002x`–`1005x`) son sólo loopback; **no** se abren en 
 7. Dovecot escribe en Maildir: /var/mail/empresa1.com/usuario/Maildir (NFS)
 ```
 
-### Saliente autenticado (empresa1.com)
+#### Saliente autenticado (empresa1.com)
 
 ```text
 1. Cliente -> IP_PUB_A:587 con STARTTLS
@@ -1377,9 +1377,9 @@ Los puertos internos (`1002x`–`1005x`) son sólo loopback; **no** se abren en 
 
 ---
 
-# 17. Pruebas y verificación
+## 17. Pruebas y verificación
 
-## 17.1. Montaje NFS
+### 17.1. Montaje NFS
 
 ```bash
 mount | grep /var/mail
@@ -1389,14 +1389,14 @@ sudo -u vmail touch /var/mail/empresa1.com/.test_write \
 ls -ln /var/mail/empresa1.com | head -5   # uid debe ser 5000
 ```
 
-## 17.2. Conectividad MySQL
+### 17.2. Conectividad MySQL
 
 ```bash
 mysql -h 10.0.0.10 -u mailuser_a -pSecretA maildb_empresa1 \
   -e "SELECT email FROM virtual_users LIMIT 5;"
 ```
 
-## 17.3. Mapas Postfix
+### 17.3. Mapas Postfix
 
 ```bash
 postmap -q "empresa1.com" mysql:/etc/postfix-empresa1/mysql/virtual_domains.cf
@@ -1404,7 +1404,7 @@ postmap -q "usuario@empresa1.com" mysql:/etc/postfix-empresa1/mysql/virtual_mail
 postmap -q "info@empresa1.com" mysql:/etc/postfix-empresa1/mysql/virtual_aliases.cf
 ```
 
-## 17.4. Instancias Postfix
+### 17.4. Instancias Postfix
 
 ```bash
 postmulti -l
@@ -1412,14 +1412,14 @@ postmulti -i postfix-empresa1 -p status
 postqueue -c /etc/postfix-empresa1 -p
 ```
 
-## 17.5. Autenticación Dovecot
+### 17.5. Autenticación Dovecot
 
 ```bash
 doveadm auth test usuario@empresa1.com mipassword
 doveadm user usuario@empresa1.com
 ```
 
-## 17.6. Entrega de correo
+### 17.6. Entrega de correo
 
 ```bash
 swaks --to usuario@empresa1.com --from test@externo.com \
@@ -1427,21 +1427,21 @@ swaks --to usuario@empresa1.com --from test@externo.com \
 journalctl -t postfix-empresa1 -f
 ```
 
-## 17.7. Amavis y DKIM
+### 17.7. Amavis y DKIM
 
 ```bash
 systemctl status amavis-empresa1
 amavisd-new -c /etc/amavis/conf.d/50-empresa1 testkeys
 ```
 
-## 17.8. Policy daemons
+### 17.8. Policy daemons
 
 ```bash
 printf 'request=smtpd_access_policy\nsasl_username=usuario@empresa1.com\nsender=usuario@empresa1.com\nrecipient=x@y.com\n\n' \
   | nc 127.0.0.1 10040
 ```
 
-## 17.9. Aislamiento entre tenants
+### 17.9. Aislamiento entre tenants
 
 ```bash
 # Un usuario de empresa1 NO debe autenticar contra el backend de empresa2.
@@ -1451,9 +1451,9 @@ doveadm auth test usuario@empresa1.com mipassword   # OK
 
 ---
 
-# 18. Mantenimiento y rotación de logs
+## 18. Mantenimiento y rotación de logs
 
-## 18.1. Logrotate
+### 18.1. Logrotate
 
 ```text
 # /etc/logrotate.d/mail-multitenant
@@ -1468,7 +1468,7 @@ doveadm auth test usuario@empresa1.com mipassword   # OK
 }
 ```
 
-## 18.2. Limpieza de cuarentena de Amavis
+### 18.2. Limpieza de cuarentena de Amavis
 
 ```bash
 # /etc/cron.weekly/amavis-cleanup
@@ -1478,7 +1478,7 @@ find /var/lib/amavis/empresa1/tmp -name "*.tmp" -mtime +1 -delete
 find /var/lib/amavis/empresa2/tmp -name "*.tmp" -mtime +1 -delete
 ```
 
-## 18.3. Estado global
+### 18.3. Estado global
 
 ```bash
 # /usr/local/bin/mail-status.sh
@@ -1493,7 +1493,7 @@ echo "== Puertos en escucha =="
 ss -tlnp | grep -E ':(25|465|587|143|993|110|995|4190)'
 ```
 
-## 18.4. Actualización de SpamAssassin
+### 18.4. Actualización de SpamAssassin
 
 ```text
 # /etc/cron.d/spamassassin
@@ -1502,13 +1502,13 @@ ss -tlnp | grep -E ':(25|465|587|143|993|110|995|4190)'
 
 ---
 
-## Referencias
+### Referencias
 
-- [Postfix Virtual README](https://www.postfix.org/VIRTUAL_README.html)
-- [Postfix postmulti(1)](https://www.postfix.org/postmulti.1.html)
-- [Dovecot: autenticación SQL](https://doc.dovecot.org/configuration_manual/authentication/sql/)
-- [Dovecot: NFS](https://doc.dovecot.org/configuration_manual/nfs/)
-- [Amavisd-new](https://www.amavis.org/)
-- [SpamAssassin](https://spamassassin.apache.org/doc.html)
+- <a href="https://www.postfix.org/VIRTUAL_README.html" target="_blank">Postfix Virtual README</a>
+- <a href="https://www.postfix.org/postmulti.1.html" target="_blank">Postfix postmulti(1)</a>
+- <a href="https://doc.dovecot.org/configuration_manual/authentication/sql/" target="_blank">Dovecot: autenticación SQL</a>
+- <a href="https://doc.dovecot.org/configuration_manual/nfs/" target="_blank">Dovecot: NFS</a>
+- <a href="https://www.amavis.org/" target="_blank">Amavisd-new</a>
+- <a href="https://spamassassin.apache.org/doc.html" target="_blank">SpamAssassin</a>
 
 > **Seguridad:** guarda las contraseñas de base de datos en archivos con permisos `600` (o un gestor de secretos). Nunca uses contraseñas en texto plano en archivos legibles por todos.

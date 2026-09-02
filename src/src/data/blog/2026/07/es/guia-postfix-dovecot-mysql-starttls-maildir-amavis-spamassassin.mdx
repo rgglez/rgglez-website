@@ -79,16 +79,16 @@ En la guía se utilizará el siguiente software y versiones aproximadas. Es pref
 
 | Software | Función | Enlace |
 |---|---|---|
-| Postfix | MTA: recibe, enruta y entrega correo SMTP | [postfix.org](https://www.postfix.org/) |
-| Dovecot | Servidor IMAP/POP3/LMTP y proveedor SASL | [dovecot.org](https://www.dovecot.org/) |
-| MySQL | Base de datos de dominios, buzones, alias y políticas | [mysql.com](https://www.mysql.com/) |
-| MariaDB | Alternativa compatible a MySQL | [mariadb.org](https://mariadb.org/) |
-| Amavis (amavisd-new) | Filtro de contenido entre Postfix y los motores antivirus/antispam | [gitlab.com/amavis/amavis](https://gitlab.com/amavis/amavis) |
-| SpamAssassin | Motor antispam | [spamassassin.apache.org](https://spamassassin.apache.org/) |
-| ClamAV (`clamd`) | Motor antivirus invocado por Amavis | [clamav.net](https://www.clamav.net/) |
-| MaxMind GeoLite2 | Base de datos GeoIP para el control por país | [maxmind.com](https://www.maxmind.com/en/geoip-databases) |
-| Let's Encrypt / Certbot | Emisión de certificados TLS para STARTTLS | [certbot.eff.org](https://certbot.eff.org/) |
-| Python 3 | Runtime del policy daemon (rate limit + GeoIP) | [python.org](https://www.python.org/) |
+| Postfix | MTA: recibe, enruta y entrega correo SMTP | <a href="https://www.postfix.org/" target="_blank">postfix.org</a> |
+| Dovecot | Servidor IMAP/POP3/LMTP y proveedor SASL | <a href="https://www.dovecot.org/" target="_blank">dovecot.org</a> |
+| MySQL | Base de datos de dominios, buzones, alias y políticas | <a href="https://www.mysql.com/" target="_blank">mysql.com</a> |
+| MariaDB | Alternativa compatible a MySQL | <a href="https://mariadb.org/" target="_blank">mariadb.org</a> |
+| Amavis (amavisd-new) | Filtro de contenido entre Postfix y los motores antivirus/antispam | <a href="https://gitlab.com/amavis/amavis" target="_blank">gitlab.com/amavis/amavis</a> |
+| SpamAssassin | Motor antispam | <a href="https://spamassassin.apache.org/" target="_blank">spamassassin.apache.org</a> |
+| ClamAV (`clamd`) | Motor antivirus invocado por Amavis | <a href="https://www.clamav.net/" target="_blank">clamav.net</a> |
+| MaxMind GeoLite2 | Base de datos GeoIP para el control por país | <a href="https://www.maxmind.com/en/geoip-databases" target="_blank">maxmind.com</a> |
+| Let's Encrypt / Certbot | Emisión de certificados TLS para STARTTLS | <a href="https://certbot.eff.org/" target="_blank">certbot.eff.org</a> |
+| Python 3 | Runtime del policy daemon (rate limit + GeoIP) | <a href="https://www.python.org/" target="_blank">python.org</a> |
 
 ## Supuestos de la guía
 
@@ -127,9 +127,9 @@ En esta guía se configura STARTTLS en los puertos estándar. No se configura IM
 
 ---
 
-# 1. Preparar el sistema
+## 1. Preparar el sistema
 
-## 1.1. Actualizar el índice de paquetes
+### 1.1. Actualizar el índice de paquetes
 
 El siguiente comando actualiza el índice local de paquetes disponibles.
 
@@ -143,7 +143,7 @@ Donde:
 - `apt`: invoca el gestor de paquetes de Debian/Ubuntu.
 - `update`: descarga la lista actualizada de paquetes desde los repositorios configurados.
 
-## 1.2. Instalar Postfix, Dovecot, Amavis, SpamAssassin y ClamAV
+### 1.2. Instalar Postfix, Dovecot, Amavis, SpamAssassin y ClamAV
 
 El siguiente comando instala los componentes principales.
 
@@ -202,7 +202,7 @@ Después modificaremos la configuración manualmente.
 
 ---
 
-# 2. Crear el usuario virtual `vmail`
+## 2. Crear el usuario virtual `vmail`
 
 No conviene crear un usuario Unix por cada buzón. Usaremos un solo usuario del sistema, llamado `vmail`, propietario de todos los buzones virtuales.
 
@@ -265,7 +265,7 @@ Donde:
 
 ---
 
-# 3. Crear la base de datos de correo
+## 3. Crear la base de datos de correo
 
 La base de datos contendrá:
 
@@ -449,7 +449,7 @@ ALTER TABLE virtual_aliases
 
 ---
 
-# 4. Generar hashes de contraseña para Dovecot
+## 4. Generar hashes de contraseña para Dovecot
 
 Dovecot debe recibir contraseñas hasheadas. No guardes contraseñas en texto plano.
 
@@ -489,7 +489,7 @@ Donde:
 
 ---
 
-# 5. Configurar mapas MySQL para Postfix
+## 5. Configurar mapas MySQL para Postfix
 
 Postfix consultará MySQL para saber:
 
@@ -511,7 +511,7 @@ Donde:
 - `-p`: no falla si el directorio ya existe y crea padres intermedios.
 - `/etc/postfix/mysql`: directorio donde guardaremos mapas SQL.
 
-## 5.1. Mapa de dominios virtuales
+### 5.1. Mapa de dominios virtuales
 
 Crea el archivo:
 
@@ -565,7 +565,7 @@ Donde:
 - `chmod`: cambia permisos.
 - `640`: propietario lee/escribe; grupo lee; otros no acceden.
 
-## 5.2. Mapa de buzones virtuales
+### 5.2. Mapa de buzones virtuales
 
 Crea el archivo:
 
@@ -603,7 +603,7 @@ sudo chown root:postfix /etc/postfix/mysql/virtual_mailbox_maps.cf
 sudo chmod 640 /etc/postfix/mysql/virtual_mailbox_maps.cf
 ```
 
-## 5.3. Mapa de alias virtuales
+### 5.3. Mapa de alias virtuales
 
 Crea el archivo:
 
@@ -639,7 +639,7 @@ sudo chown root:postfix /etc/postfix/mysql/virtual_alias_maps.cf
 sudo chmod 640 /etc/postfix/mysql/virtual_alias_maps.cf
 ```
 
-## 5.4. Mapa de propietarios de login SMTP
+### 5.4. Mapa de propietarios de login SMTP
 
 Este mapa ayuda a impedir que un usuario autenticado envíe como otra dirección.
 
@@ -679,7 +679,7 @@ sudo chmod 640 /etc/postfix/mysql/sender_login_maps.cf
 
 ---
 
-# 6. Configurar Dovecot
+## 6. Configurar Dovecot
 
 Dovecot hará cuatro cosas:
 
@@ -688,7 +688,7 @@ Dovecot hará cuatro cosas:
 3. exponer POP3;
 4. recibir correo desde Postfix mediante LMTP y guardarlo en Maildir++.
 
-## 6.1. Activar protocolos
+### 6.1. Activar protocolos
 
 Edita:
 
@@ -710,7 +710,7 @@ protocols = imap pop3 lmtp
 listen = *, ::
 ```
 
-## 6.2. Configurar ubicación Maildir++
+### 6.2. Configurar ubicación Maildir++
 
 Edita:
 
@@ -744,7 +744,7 @@ first_valid_uid = 5000
 first_valid_gid = 5000
 ```
 
-## 6.3. Configurar autenticación
+### 6.3. Configurar autenticación
 
 Edita:
 
@@ -800,7 +800,7 @@ userdb {
 }
 ```
 
-## 6.4. Configurar SQL de Dovecot
+### 6.4. Configurar SQL de Dovecot
 
 Edita:
 
@@ -857,7 +857,7 @@ sudo chown root:dovecot /etc/dovecot/dovecot-sql.conf.ext
 sudo chmod 640 /etc/dovecot/dovecot-sql.conf.ext
 ```
 
-## 6.5. Configurar TLS/STARTTLS en Dovecot
+### 6.5. Configurar TLS/STARTTLS en Dovecot
 
 Edita:
 
@@ -886,7 +886,7 @@ ssl_min_protocol = TLSv1.2
 ssl_prefer_server_ciphers = yes
 ```
 
-## 6.6. Configurar sockets para LMTP y SASL
+### 6.6. Configurar sockets para LMTP y SASL
 
 Edita:
 
@@ -966,7 +966,7 @@ service auth {
 }
 ```
 
-## 6.7. Reiniciar y probar Dovecot
+### 6.7. Reiniciar y probar Dovecot
 
 El siguiente comando verifica la configuración.
 
@@ -1020,9 +1020,9 @@ Donde:
 
 ---
 
-# 7. Configurar Postfix
+## 7. Configurar Postfix
 
-## 7.1. Configuración principal de Postfix
+### 7.1. Configuración principal de Postfix
 
 Edita:
 
@@ -1200,7 +1200,7 @@ Notas importantes:
 - `reject_rbl_client` consulta DNSBL. Si una IP está listada, Postfix puede rechazarla.
 - `check_policy_service inet:127.0.0.1:10040` llamará a nuestro policy daemon para rate limit y GeoIP.
 
-## 7.2. Configurar servicios en `master.cf`
+### 7.2. Configurar servicios en `master.cf`
 
 Edita:
 
@@ -1301,9 +1301,9 @@ sudo systemctl status postfix --no-pager
 
 ---
 
-# 8. Configurar Amavis-new y SpamAssassin
+## 8. Configurar Amavis-new y SpamAssassin
 
-## 8.1. Habilitar SpamAssassin dentro de Amavis
+### 8.1. Habilitar SpamAssassin dentro de Amavis
 
 Edita:
 
@@ -1331,7 +1331,7 @@ use strict;
 1;  # asegura un valor de retorno definido
 ```
 
-## 8.2. Configuración básica de Amavis
+### 8.2. Configuración básica de Amavis
 
 Edita:
 
@@ -1435,7 +1435,7 @@ Sobre la configuración por dominio de este archivo:
 - Los `@spam_*_level_maps` fijan umbrales de spam por dominio destinatario; los escalares `$sa_*_deflt` quedan como fallback global. Para políticas más ricas (por buzón, listas blancas por tenant) Amavis soporta *policy banks* y lookup SQL, fuera del alcance de esta guía.
 - Los `dkim_key` y `@dkim_signature_options_bysender_maps` firman el correo saliente con la clave del dominio del remitente. La generación de claves y los registros DNS se cubren en la sección 17.
 
-## 8.3. Configurar SpamAssassin
+### 8.3. Configurar SpamAssassin
 
 Edita:
 
@@ -1474,7 +1474,7 @@ use_pyzor 1
 normalize_charset 1
 ```
 
-## 8.4. Actualizar reglas de SpamAssassin
+### 8.4. Actualizar reglas de SpamAssassin
 
 El siguiente comando actualiza reglas antispam.
 
@@ -1508,11 +1508,11 @@ sudo systemctl status amavis --no-pager
 sudo systemctl status spamassassin --no-pager
 ```
 
-## 8.5. Instalar y configurar ClamAV
+### 8.5. Instalar y configurar ClamAV
 
 Amavis delega el escaneo antivirus en ClamAV. En la sección 1.2 ya instalamos `clamav`, `clamav-daemon` y `clamav-freshclam`. Aquí actualizamos las firmas, dejamos `clamd` escuchando en TCP y conectamos Amavis con él.
 
-### 8.5.1. Actualizar las firmas de virus
+#### 8.5.1. Actualizar las firmas de virus
 
 `freshclam` descarga la base de firmas. El servicio `clamav-freshclam` lo hace de forma periódica, pero conviene forzar una primera actualización. Debe detenerse el servicio antes de ejecutar `freshclam` manualmente para que no compitan por el bloqueo.
 
@@ -1522,7 +1522,7 @@ sudo freshclam
 sudo systemctl start clamav-freshclam
 ```
 
-### 8.5.2. Configurar `clamd` para escuchar en TCP 3310
+#### 8.5.2. Configurar `clamd` para escuchar en TCP 3310
 
 Por defecto, en Debian `clamd` sólo escucha en el socket Unix `/var/run/clamav/clamd.ctl`. Para que Amavis lo consulte por TCP en `127.0.0.1:3310`, edita:
 
@@ -1549,7 +1549,7 @@ Reinicia el demonio.
 sudo systemctl restart clamav-daemon
 ```
 
-### 8.5.3. Permitir que ClamAV lea los archivos temporales de Amavis
+#### 8.5.3. Permitir que ClamAV lea los archivos temporales de Amavis
 
 Amavis escribe cada mensaje en un directorio temporal que `clamd` debe poder leer. En Debian se resuelve agregando el usuario `clamav` al grupo `amavis`.
 
@@ -1558,7 +1558,7 @@ sudo adduser clamav amavis
 sudo systemctl restart clamav-daemon
 ```
 
-### 8.5.4. Conectar Amavis con ClamAV
+#### 8.5.4. Conectar Amavis con ClamAV
 
 Amavis trae definiciones de escáneres en `/etc/amavis/conf.d/15-av_scanners`. La entrada de ClamAV suele venir preparada para el socket Unix. Si prefieres usar el puerto TCP que acabamos de habilitar, edita ese archivo:
 
@@ -1582,7 +1582,7 @@ Reinicia Amavis para tomar la configuración.
 sudo systemctl restart amavis
 ```
 
-### 8.5.5. Verificar que ClamAV funciona
+#### 8.5.5. Verificar que ClamAV funciona
 
 Comprueba que `clamd` responde y que Amavis lo detecta.
 
@@ -1605,7 +1605,7 @@ curl -s https://secure.eicar.org/eicar.com.txt | clamdscan -
 
 ---
 
-# 9. DNSBL en Postfix
+## 9. DNSBL en Postfix
 
 Ya agregamos esto en `smtpd_recipient_restrictions`:
 
@@ -1638,7 +1638,7 @@ Esto evita que tus usuarios autenticados sean rechazados por DNSBL si están env
 
 ---
 
-# 10. Rate limit y GeoIP con policy daemon respaldado por MySQL
+## 10. Rate limit y GeoIP con policy daemon respaldado por MySQL
 
 Postfix permite consultar servicios externos de política mediante `check_policy_service`.
 
@@ -1663,7 +1663,7 @@ o:
 action=reject mensaje
 ```
 
-## 10.1. Instalar dependencias Python
+### 10.1. Instalar dependencias Python
 
 El siguiente comando instala dependencias para el policy daemon.
 
@@ -1694,7 +1694,7 @@ Donde:
 - `mkdir`: crea directorios.
 - `-p`: crea padres y no falla si existe.
 
-## 10.2. Descargar base GeoLite2
+### 10.2. Descargar base GeoLite2
 
 Debes obtener una base GeoIP compatible con MaxMind DB, por ejemplo:
 
@@ -1710,7 +1710,7 @@ sudo mkdir -p /var/lib/GeoIP
 
 El proceso exacto de descarga depende de tu proveedor GeoIP y de la licencia que uses.
 
-## 10.3. Crear el policy daemon
+### 10.3. Crear el policy daemon
 
 Edita:
 
@@ -2028,7 +2028,7 @@ Donde:
 - `+x`: agrega permiso de ejecución.
 - archivo: script Python.
 
-## 10.4. Crear servicio systemd para el policy daemon
+### 10.4. Crear servicio systemd para el policy daemon
 
 Edita:
 
@@ -2099,9 +2099,9 @@ sudo systemctl status postfix-policy --no-pager
 
 ---
 
-# 11. Probar mapas de Postfix
+## 11. Probar mapas de Postfix
 
-## 11.1. Probar dominio virtual
+### 11.1. Probar dominio virtual
 
 El siguiente comando consulta un mapa Postfix.
 
@@ -2121,7 +2121,7 @@ Debe devolver:
 1
 ```
 
-## 11.2. Probar buzón virtual
+### 11.2. Probar buzón virtual
 
 ```bash
 postmap -q usuario@example.com mysql:/etc/postfix/mysql/virtual_mailbox_maps.cf
@@ -2133,7 +2133,7 @@ Debe devolver algo como:
 example.com/usuario/
 ```
 
-## 11.3. Probar alias virtual
+### 11.3. Probar alias virtual
 
 ```bash
 postmap -q postmaster@example.com mysql:/etc/postfix/mysql/virtual_alias_maps.cf
@@ -2147,9 +2147,9 @@ usuario@example.com
 
 ---
 
-# 12. Probar STARTTLS
+## 12. Probar STARTTLS
 
-## 12.1. Probar SMTP puerto 25
+### 12.1. Probar SMTP puerto 25
 
 El siguiente comando abre una conexión SMTP con STARTTLS.
 
@@ -2167,7 +2167,7 @@ Donde:
 
 Debes ver el certificado y una sesión TLS negociada.
 
-## 12.2. Probar Submission puerto 587
+### 12.2. Probar Submission puerto 587
 
 ```bash
 openssl s_client -starttls smtp -connect mail.example.com:587 -servername mail.example.com
@@ -2175,7 +2175,7 @@ openssl s_client -starttls smtp -connect mail.example.com:587 -servername mail.e
 
 En puerto 587 la autenticación debe estar disponible después de STARTTLS.
 
-## 12.3. Probar IMAP STARTTLS
+### 12.3. Probar IMAP STARTTLS
 
 ```bash
 openssl s_client -starttls imap -connect mail.example.com:143 -servername mail.example.com
@@ -2186,7 +2186,7 @@ Donde:
 - `-starttls imap`: usa el flujo STARTTLS específico de IMAP.
 - `-connect mail.example.com:143`: conecta al puerto IMAP estándar.
 
-## 12.4. Probar POP3 STARTTLS
+### 12.4. Probar POP3 STARTTLS
 
 ```bash
 openssl s_client -starttls pop3 -connect mail.example.com:110 -servername mail.example.com
@@ -2194,7 +2194,7 @@ openssl s_client -starttls pop3 -connect mail.example.com:110 -servername mail.e
 
 ---
 
-# 13. Probar envío autenticado
+## 13. Probar envío autenticado
 
 Puedes probar con `swaks`.
 
@@ -2241,7 +2241,7 @@ Donde:
 
 ---
 
-# 14. Probar IMAP
+## 14. Probar IMAP
 
 Instala `telnet` si no está disponible.
 
@@ -2272,7 +2272,7 @@ Donde:
 
 ---
 
-# 15. Probar POP3
+## 15. Probar POP3
 
 Conecta:
 
@@ -2298,9 +2298,9 @@ Donde:
 
 ---
 
-# 16. Registros importantes
+## 16. Registros importantes
 
-## 16.1. Logs de Postfix
+### 16.1. Logs de Postfix
 
 ```bash
 sudo journalctl -u postfix -f
@@ -2324,19 +2324,19 @@ Donde:
 - `-f`: sigue nuevos registros.
 - `/var/log/mail.log`: archivo típico de correo.
 
-## 16.2. Logs de Dovecot
+### 16.2. Logs de Dovecot
 
 ```bash
 sudo journalctl -u dovecot -f
 ```
 
-## 16.3. Logs de Amavis
+### 16.3. Logs de Amavis
 
 ```bash
 sudo journalctl -u amavis -f
 ```
 
-## 16.4. Logs del policy daemon
+### 16.4. Logs del policy daemon
 
 ```bash
 sudo journalctl -u postfix-policy -f
@@ -2344,7 +2344,7 @@ sudo journalctl -u postfix-policy -f
 
 ---
 
-# 17. Reglas SPF, DKIM y DMARC
+## 17. Reglas SPF, DKIM y DMARC
 
 Aunque esta guía se centra en Postfix, Dovecot, Amavis y SpamAssassin, un servidor real debe publicar y validar:
 
@@ -2368,7 +2368,7 @@ Donde:
 - `mx`: los servidores MX del dominio pueden enviar correo.
 - `-all`: todo lo demás falla.
 
-## 17.1. DKIM por dominio con Amavis
+### 17.1. DKIM por dominio con Amavis
 
 Como Amavis ya está en la ruta del correo, lo usamos también para firmar DKIM, con **una clave por dominio**. No hace falta OpenDKIM ni otro daemon. En la sección 8.2 ya activamos `$enable_dkim_signing` y declaramos los `dkim_key(...)`; aquí generamos las claves y publicamos los TXT.
 
@@ -2412,7 +2412,7 @@ sudo amavisd-new testkeys
 
 **Multitenant:** por cada dominio nuevo repite: `dkim_key(...)` en `50-user`, `genrsa`, y el TXT `mail._domainkey.<dominio>`.
 
-## 17.2. DMARC
+### 17.2. DMARC
 
 ```ini
 _dmarc.example.com. IN TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
@@ -2428,9 +2428,9 @@ Publica un `_dmarc.<dominio>` por cada tenant.
 
 ---
 
-# 18. Endurecimiento recomendado
+## 18. Endurecimiento recomendado
 
-## 18.1. No abrir relay
+### 18.1. No abrir relay
 
 Comprueba que tienes:
 
@@ -2444,7 +2444,7 @@ smtpd_recipient_restrictions =
 
 `reject_unauth_destination` es crítico. Sin esa regla, puedes convertir tu servidor en open relay.
 
-## 18.2. Requerir TLS en Submission
+### 18.2. Requerir TLS en Submission
 
 En `master.cf`, puerto 587:
 
@@ -2454,7 +2454,7 @@ En `master.cf`, puerto 587:
 
 Esto obliga STARTTLS antes de autenticación.
 
-## 18.3. Restringir remitente autenticado
+### 18.3. Restringir remitente autenticado
 
 En `main.cf`:
 
@@ -2470,7 +2470,7 @@ reject_sender_login_mismatch
 
 Así evitas que `usuario@example.com` envíe como `admin@example.com` si no le corresponde.
 
-## 18.4. Firewall
+### 18.4. Firewall
 
 Ejemplo con UFW:
 
@@ -2492,7 +2492,7 @@ Donde:
 - `110/tcp`: POP3.
 - `enable`: activa firewall.
 
-## 18.5. Certificado por dominio con SNI (opcional, multitenant)
+### 18.5. Certificado por dominio con SNI (opcional, multitenant)
 
 Por defecto todos los tenants conectan al host compartido `mail.example.com` con un único certificado. Esto funciona: el hostname del servidor es independiente del dominio de correo. Sólo necesitas SNI si quieres que cada tenant use su **propio** hostname (`mail.sudominio.com`) con su propio certificado.
 
@@ -2536,9 +2536,9 @@ Nota: los clientes de cada tenant deben configurar su servidor entrante/saliente
 
 ---
 
-# 19. Mantenimiento
+## 19. Mantenimiento
 
-## 19.1. Actualizar reglas antispam periódicamente
+### 19.1. Actualizar reglas antispam periódicamente
 
 Crea un timer o cron para:
 
@@ -2553,7 +2553,7 @@ Donde:
 - `systemctl restart`: reinicia servicios.
 - `spamassassin amavis`: servicios reiniciados.
 
-## 19.2. Limpiar registros antiguos de rate limit
+### 19.2. Limpiar registros antiguos de rate limit
 
 Los registros de `smtp_send_log` crecerán con el tiempo.
 
@@ -2570,7 +2570,7 @@ Donde:
 - conserva datos recientes para auditoría básica;
 - evita crecimiento indefinido de la tabla.
 
-## 19.3. Revisar cola de Postfix
+### 19.3. Revisar cola de Postfix
 
 ```bash
 mailq
@@ -2590,9 +2590,9 @@ Donde:
 
 ---
 
-# 20. Troubleshooting frecuente
+## 20. Troubleshooting frecuente
 
-## 20.1. Error: SASL authentication failed
+### 20.1. Error: SASL authentication failed
 
 Revisa:
 
@@ -2609,7 +2609,7 @@ Posibles causas:
 - socket `/var/spool/postfix/private/auth` no existe;
 - `smtpd_sasl_path` incorrecto.
 
-## 20.2. Error: Relay access denied
+### 20.2. Error: Relay access denied
 
 Causas comunes:
 
@@ -2619,7 +2619,7 @@ Causas comunes:
 - falta `reject_unauth_destination`;
 - el dominio destino no es local y el cliente no está autenticado.
 
-## 20.3. No aparece el buzón Maildir
+### 20.3. No aparece el buzón Maildir
 
 Revisa:
 
@@ -2633,7 +2633,7 @@ Si no existe, envía un correo local de prueba o verifica LMTP:
 sudo journalctl -u dovecot -f
 ```
 
-## 20.4. Amavis genera bucle de correo
+### 20.4. Amavis genera bucle de correo
 
 Verifica en `master.cf` que el servicio `127.0.0.1:10025` tenga:
 
@@ -2643,7 +2643,7 @@ Verifica en `master.cf` que el servicio `127.0.0.1:10025` tenga:
 
 Sin esa línea, el correo reinyectado puede volver a enviarse a Amavis indefinidamente.
 
-## 20.5. DNSBL rechaza usuarios legítimos
+### 20.5. DNSBL rechaza usuarios legítimos
 
 Asegúrate de que `permit_sasl_authenticated` esté antes de `reject_rbl_client`.
 
@@ -2670,7 +2670,7 @@ En la segunda, usuarios autenticados desde IPs residenciales listadas pueden ser
 
 ---
 
-# 21. Resumen de archivos modificados
+## 21. Resumen de archivos modificados
 
 | Archivo | Uso |
 |---|---|
@@ -2699,7 +2699,7 @@ En la segunda, usuarios autenticados desde IPs residenciales listadas pueden ser
 
 ---
 
-# 22. Checklist final
+## 22. Checklist final
 
 Antes de considerar listo el servidor:
 
@@ -2727,7 +2727,7 @@ Antes de considerar listo el servidor:
 
 ---
 
-# 23. Conclusión
+## 23. Conclusión
 
 Con esta configuración tienes una pila de correo funcional y razonablemente endurecida:
 

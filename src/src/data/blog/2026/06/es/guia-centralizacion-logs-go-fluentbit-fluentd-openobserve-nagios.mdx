@@ -29,7 +29,7 @@ import Aside from '@rgglez/astro-aside';
 
 ## Introducción
 
-Esta guía muestra cómo construir una tubería de centralización de logs para una granja de servidores que ejecutan servicios desarrollados en Go. La aplicación genera logs estructurados con [`github.com/rs/zerolog`](https://github.com/rs/zerolog), el proceso está supervisado por **DJB daemontools**, el log local se escribe con **multilog**, los agentes de cada servidor son **Fluent Bit**, el agregador central es **Fluentd**, y la interfaz web de consulta, visualización y alertas será **OpenObserve**.
+Esta guía muestra cómo construir una tubería de centralización de logs para una granja de servidores que ejecutan servicios desarrollados en Go. La aplicación genera logs estructurados con <a href="https://github.com/rs/zerolog" target="_blank"><code>github.com/rs/zerolog</code></a>, el proceso está supervisado por **DJB daemontools**, el log local se escribe con **multilog**, los agentes de cada servidor son **Fluent Bit**, el agregador central es **Fluentd**, y la interfaz web de consulta, visualización y alertas será **OpenObserve**.
 
 La arquitectura final será:
 
@@ -56,6 +56,13 @@ La guía está escrita para **Ubuntu Server 24.04 LTS** tanto en los servidores 
 <Aside type="note">
 Aunque esta guía usa Ubuntu 24.04, la arquitectura aplica casi igual a Debian, Rocky Linux, AlmaLinux u otras distribuciones. Lo que cambia principalmente es la instalación de paquetes, rutas de servicio y nombres de usuarios del sistema.
 </Aside>
+
+
+---
+
+## Tabla de contenido
+
+---
 
 ## Objetivo operacional
 

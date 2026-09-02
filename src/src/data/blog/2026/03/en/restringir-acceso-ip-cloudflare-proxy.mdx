@@ -26,12 +26,12 @@ import proxy_inverso from '@/assets/posts/2026/03/restringir-acceso-ip-cloudflar
 There are many web applications that need access restricted to only certain IP
 addresses. This can normally be achieved at the web server level:
 
-* **Apache** with [mod_authz_host](https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html),
-as explained [here](https://httpd.apache.org/docs/2.4/howto/access.html).
-* **nginx** with [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html).
-* **lighttpd** with [mod_access](https://doc.lighttpd.net/lighttpd2/mod_access.html).
+* **Apache** with <a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html" target="_blank">mod_authz_host</a>,
+as explained <a href="https://httpd.apache.org/docs/2.4/howto/access.html" target="_blank">here</a>.
+* **nginx** with <a href="https://nginx.org/en/docs/http/ngx_http_access_module.html" target="_blank">ngx_http_access_module</a>.
+* **lighttpd** with <a href="https://doc.lighttpd.net/lighttpd2/mod_access.html" target="_blank">mod_access</a>.
 
-However, using [Cloudflare](https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/)
+However, using <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank">Cloudflare</a>
 as a reverse proxy is becoming increasingly popular. A reverse proxy is a service
 that receives requests from clients and forwards them to one or more origin servers
 located behind it. Clients do not communicate directly with those servers, but
@@ -46,20 +46,7 @@ real client IP.
 
 ---
 
-## Table of Contents
-
-- [Cloudflare](#cloudflare)
-  - [In the Cloudflare console](#in-the-cloudflare-console)
-  - [On the web server](#on-the-web-server)
-- [Apache](#apache)
-- [nginx](#nginx)
-- [lighttpd](#lighttpd)
-- [On the firewall](#on-the-firewall)
-- [Verification](#verification)
-- [Defense model summary](#defense-model-summary)
-- [Bonus](#bonus)
-  - [How do I get my "outgoing" IP address?](#how-do-i-get-my-outgoing-ip-address)
-  - [Scripts](#scripts)
+## Table of contents
 
 ---
 
@@ -438,5 +425,5 @@ your public outgoing IP address.
 
 ### Scripts
 
-You can find the scripts at [https://github.com/rgglez/cloudflare-scripts](https://github.com/rgglez/cloudflare-scripts),
-under the [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) license.
+You can find the scripts at <a href="https://github.com/rgglez/cloudflare-scripts" target="_blank">https://github.com/rgglez/cloudflare-scripts</a>,
+under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL 3.0</a> license.

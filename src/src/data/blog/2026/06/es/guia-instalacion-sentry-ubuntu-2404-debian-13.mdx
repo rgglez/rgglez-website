@@ -281,7 +281,7 @@ Qué significa:
 
 ---
 
-# Parte A: instalación recomendada con Docker Compose
+## Parte A: instalación recomendada con Docker Compose
 
 Esta es la ruta mantenida para Sentry self-hosted moderno.
 
@@ -327,7 +327,7 @@ Esto evita problemas con cookies, CSRF, DSNs, sourcemaps, callbacks e integracio
 
 ---
 
-## 7. Instalar Docker Engine en Ubuntu 24.04
+### 7. Instalar Docker Engine en Ubuntu 24.04
 
 <Aside type="warning">
 
@@ -464,7 +464,7 @@ docker compose version
 
 ---
 
-## 8. Instalar Docker Engine en Debian 13
+### 8. Instalar Docker Engine en Debian 13
 
 <Aside type="warning">
 
@@ -549,7 +549,7 @@ docker compose version
 
 ---
 
-## 9. Permitir usar Docker sin `sudo` opcionalmente
+### 9. Permitir usar Docker sin `sudo` opcionalmente
 
 Agrega tu usuario al grupo `docker`:
 
@@ -590,7 +590,7 @@ Pertenecer al grupo `docker` equivale prácticamente a tener privilegios de root
 
 ---
 
-## 10. Instalar Caddy como reverse proxy HTTPS
+### 10. Instalar Caddy como reverse proxy HTTPS
 
 Caddy simplifica TLS porque obtiene y renueva certificados automáticamente.
 
@@ -652,7 +652,7 @@ Qué significa:
 
 ---
 
-## 11. Descargar Sentry self-hosted
+### 11. Descargar Sentry self-hosted
 
 Crea el directorio base:
 
@@ -719,7 +719,7 @@ Qué significa:
 
 ---
 
-## 12. Ejecutar el instalador de Sentry self-hosted
+### 12. Ejecutar el instalador de Sentry self-hosted
 
 Desde `/opt/sentry/self-hosted`, ejecuta:
 
@@ -775,7 +775,7 @@ Qué significa:
 
 ---
 
-## 13. Ajustar URL pública de Sentry
+### 13. Ajustar URL pública de Sentry
 
 Edita el archivo principal de configuración:
 
@@ -813,7 +813,7 @@ Qué significa:
 
 ---
 
-## 14. Configurar Caddy para publicar Sentry con HTTPS
+### 14. Configurar Caddy para publicar Sentry con HTTPS
 
 Edita el Caddyfile:
 
@@ -878,7 +878,7 @@ https://sentry.example.com
 
 ---
 
-## 15. Configurar correo SMTP en Sentry
+### 15. Configurar correo SMTP en Sentry
 
 Sentry puede enviar correos para invitaciones, alertas y recuperación de contraseña.
 
@@ -924,7 +924,7 @@ Prueba desde la interfaz web creando una invitación o configurando alertas.
 
 ---
 
-## 16. Ajustar retención de eventos
+### 16. Ajustar retención de eventos
 
 Por defecto, Sentry self-hosted conserva eventos durante cierto número de días. Reducir retención ahorra disco.
 
@@ -952,7 +952,7 @@ docker compose up -d
 
 ---
 
-## 17. Comandos de operación diaria con Docker
+### 17. Comandos de operación diaria con Docker
 
 Ver servicios:
 
@@ -1022,7 +1022,7 @@ Qué significa:
 
 ---
 
-## 18. Actualizar Sentry self-hosted con Docker
+### 18. Actualizar Sentry self-hosted con Docker
 
 Entra al directorio:
 
@@ -1080,7 +1080,7 @@ docker compose ps
 
 ---
 
-## 19. Backups mínimos en la ruta Docker
+### 19. Backups mínimos en la ruta Docker
 
 Sentry incluye bases internas y datos en volúmenes Docker. Para una copia básica del directorio y metadatos:
 
@@ -1107,13 +1107,13 @@ Para producción, usa snapshots del servidor o una estrategia formal de backup/r
 
 ---
 
-# Parte B: instalación desde fuentes, modo manual
+## Parte B: instalación desde fuentes, modo manual
 
 Esta parte documenta una instalación nativa experimental. No es la ruta recomendada para producción.
 
 El objetivo de esta sección es mostrar cómo se compone una instalación desde fuentes y qué piezas hacen falta. En Sentry moderno, instalar solo el paquete Python `sentry` no equivale a tener Sentry self-hosted completo.
 
-## 20. Por qué la instalación nativa es difícil
+### 20. Por qué la instalación nativa es difícil
 
 Sentry moderno está compuesto por varios servicios:
 
@@ -1149,7 +1149,7 @@ No uses esta ruta cuando:
 
 ---
 
-## 21. Crear usuario y directorios para instalación nativa
+### 21. Crear usuario y directorios para instalación nativa
 
 Crea un usuario de sistema:
 
@@ -1197,7 +1197,7 @@ sudo chown -R sentry:sentry /opt/sentry-native /etc/sentry
 
 ---
 
-## 22. Instalar dependencias de compilación
+### 22. Instalar dependencias de compilación
 
 Instala herramientas y bibliotecas:
 
@@ -1243,7 +1243,7 @@ Qué instala:
 
 ---
 
-## 23. Instalar PostgreSQL y Redis nativos
+### 23. Instalar PostgreSQL y Redis nativos
 
 Instala PostgreSQL y Redis desde APT:
 
@@ -1301,7 +1301,7 @@ Qué significa:
 
 ---
 
-## 24. Instalar ClickHouse nativo
+### 24. Instalar ClickHouse nativo
 
 ClickHouse provee paquetes `.deb` oficiales para Debian/Ubuntu.
 
@@ -1352,7 +1352,7 @@ ClickHouse es usado indirectamente mediante Snuba. Instalar ClickHouse no basta;
 
 ---
 
-## 25. Instalar Kafka nativo en modo KRaft
+### 25. Instalar Kafka nativo en modo KRaft
 
 Kafka requiere Java 17 o superior.
 
@@ -1487,7 +1487,7 @@ Prueba listar topics:
 
 ---
 
-## 26. Compilar Python 3.13 para Sentry nativo
+### 26. Compilar Python 3.13 para Sentry nativo
 
 La imagen oficial de Sentry usa Python 3.13 en versiones modernas. Ubuntu 24.04 no trae Python 3.13 como Python principal. Para evitar mezclar PPAs entre Ubuntu y Debian, esta guía usa una instalación local bajo `/opt/python/3.13.1`.
 
@@ -1563,7 +1563,7 @@ Verifica:
 
 ---
 
-## 27. Clonar y preparar Sentry desde fuentes
+### 27. Clonar y preparar Sentry desde fuentes
 
 Clona el repositorio principal:
 
@@ -1662,7 +1662,7 @@ Si este paso falla, revisa:
 
 ---
 
-## 28. Configurar Sentry nativo
+### 28. Configurar Sentry nativo
 
 Copia archivos de configuración base:
 
@@ -1733,7 +1733,7 @@ CSRF_COOKIE_SECURE = True
 
 ---
 
-## 29. Migraciones y usuario administrador en modo nativo
+### 29. Migraciones y usuario administrador en modo nativo
 
 Ejecuta migraciones:
 
@@ -1764,7 +1764,7 @@ Este paso puede no bastar en versiones modernas si Snuba, Kafka, ClickHouse, Rel
 
 ---
 
-## 30. Crear unidades systemd nativas para Sentry
+### 30. Crear unidades systemd nativas para Sentry
 
 Crea unidad para web:
 
@@ -1893,7 +1893,7 @@ Qué significa:
 
 ---
 
-## 31. Configurar Caddy para la instalación nativa
+### 31. Configurar Caddy para la instalación nativa
 
 La configuración de Caddy es igual que en Docker, porque el servicio web nativo escucha en `127.0.0.1:9000`.
 
@@ -1919,7 +1919,7 @@ sudo systemctl reload caddy
 
 ---
 
-## 32. Limitaciones explícitas de la ruta nativa
+### 32. Limitaciones explícitas de la ruta nativa
 
 La instalación anterior puede arrancar el proceso web y workers, pero una instalación Sentry completa requiere operar también Snuba, Relay, Symbolicator y esquemas en ClickHouse/Kafka.
 
@@ -1940,7 +1940,7 @@ Si haces instalación nativa total, debes construir o instalar equivalentes nati
 
 ---
 
-# Parte C: instalación desde fuentes usando `checkinstall`
+## Parte C: instalación desde fuentes usando `checkinstall`
 
 `checkinstall` observa una instalación manual, crea un paquete `.deb` local y registra los archivos en la base de datos de paquetes. Es útil cuando quieres desinstalar limpiamente lo que instalaste desde fuentes.
 
@@ -1950,7 +1950,7 @@ Usaremos `checkinstall` para empaquetar el árbol nativo bajo `/opt/sentry-nativ
 
 ---
 
-## 33. Instalar `checkinstall`
+### 33. Instalar `checkinstall`
 
 ```bash
 sudo apt install -y checkinstall
@@ -1968,7 +1968,7 @@ checkinstall --version
 
 ---
 
-## 34. Preparar staging para paquete local
+### 34. Preparar staging para paquete local
 
 Crea un directorio de staging:
 
@@ -2017,7 +2017,7 @@ sudo chown -R root:root "$HOME/sentry-native-package/stage"
 
 ---
 
-## 35. Crear script de instalación para `checkinstall`
+### 35. Crear script de instalación para `checkinstall`
 
 Crea script:
 
@@ -2052,7 +2052,7 @@ chmod +x "$HOME/sentry-native-package/install.sh"
 
 ---
 
-## 36. Generar paquete `.deb` local con `checkinstall`
+### 36. Generar paquete `.deb` local con `checkinstall`
 
 Entra al directorio:
 
@@ -2123,9 +2123,9 @@ sudo apt remove sentry-native-local
 
 ---
 
-# Parte D: ¿existe paquete `.deb` oficial de Sentry?
+## Parte D: ¿existe paquete `.deb` oficial de Sentry?
 
-## 37. Estado de paquetes `.deb`
+### 37. Estado de paquetes `.deb`
 
 Para Sentry self-hosted moderno, no hay un paquete `.deb` oficial equivalente a:
 
@@ -2163,7 +2163,7 @@ No asumas que un paquete llamado `sentry` equivale al servidor self-hosted moder
 
 ---
 
-## 38. PyPI no equivale a un `.deb`
+### 38. PyPI no equivale a un `.deb`
 
 Existe un paquete `sentry` en PyPI, pero eso no significa que sea la ruta moderna recomendada para self-hosted.
 
@@ -2183,7 +2183,7 @@ apt install sentry
 
 ---
 
-## 39. Snap de Sentry
+### 39. Snap de Sentry
 
 Existe un snap llamado `sentry` publicado por Snapcrafters. No es un `.deb`, no es la ruta self-hosted oficial actual y puede estar desactualizado.
 
@@ -2198,9 +2198,9 @@ Razones:
 
 ---
 
-# Parte E: endurecimiento, monitoreo y mantenimiento
+## Parte E: endurecimiento, monitoreo y mantenimiento
 
-## 40. Recomendaciones de seguridad
+### 40. Recomendaciones de seguridad
 
 Usa HTTPS siempre:
 
@@ -2228,7 +2228,7 @@ Cuida datos sensibles:
 
 ---
 
-## 41. Variables y archivos que conviene respaldar
+### 41. Variables y archivos que conviene respaldar
 
 Ruta Docker:
 
@@ -2267,7 +2267,7 @@ Datos externos:
 
 ---
 
-## 42. Pruebas de salud
+### 42. Pruebas de salud
 
 Prueba HTTP local:
 
@@ -2310,11 +2310,11 @@ Qué significa:
 
 ---
 
-# Apéndice A: integración de Sentry en Svelte + Vite
+## Apéndice A: integración de Sentry en Svelte + Vite
 
 Este ejemplo muestra una integración mínima en una app Svelte con Vite. No es una aplicación completa; solo los archivos importantes.
 
-## A.1. Crear proyecto en Sentry
+### A.1. Crear proyecto en Sentry
 
 En la interfaz web de Sentry:
 
@@ -2332,7 +2332,7 @@ No es una contraseña, pero conviene tratarlo con cuidado porque identifica el e
 
 ---
 
-## A.2. Instalar SDK de Sentry para Svelte
+### A.2. Instalar SDK de Sentry para Svelte
 
 En tu proyecto Svelte:
 
@@ -2359,7 +2359,7 @@ yarn add @sentry/svelte
 
 ---
 
-## A.3. Crear archivo de configuración de Sentry
+### A.3. Crear archivo de configuración de Sentry
 
 Crea `src/sentry.ts`:
 
@@ -2401,7 +2401,7 @@ Sentry.init({
 
 ---
 
-## A.4. Importar Sentry al arrancar la app
+### A.4. Importar Sentry al arrancar la app
 
 Edita `src/main.ts`:
 
@@ -2424,7 +2424,7 @@ export default app;
 
 ---
 
-## A.5. Configurar variable de entorno
+### A.5. Configurar variable de entorno
 
 Crea `.env.local`:
 
@@ -2445,7 +2445,7 @@ En `.gitignore`:
 
 ---
 
-## A.6. Página/componente de prueba
+### A.6. Página/componente de prueba
 
 Crea `src/SentryDemo.svelte`:
 
@@ -2542,7 +2542,7 @@ Para probarlo desde `App.svelte`:
 
 ---
 
-## A.7. Subida de sourcemaps con Vite
+### A.7. Subida de sourcemaps con Vite
 
 Sin sourcemaps, Sentry puede mostrar stack traces minificados difíciles de leer. Para subir sourcemaps durante build, instala el plugin:
 
@@ -2609,7 +2609,7 @@ El plugin subirá sourcemaps durante el build de producción. No esperes que sub
 
 ---
 
-# Apéndice B: nota para SvelteKit
+## Apéndice B: nota para SvelteKit
 
 Si tu app es SvelteKit en vez de Svelte puro con Vite, usa el SDK específico:
 
@@ -2649,7 +2649,7 @@ src/routes/sentry-demo/+page.svelte
 
 ---
 
-# Apéndice C: comandos rápidos de diagnóstico
+## Apéndice C: comandos rápidos de diagnóstico
 
 Ver uso de disco:
 
@@ -2697,7 +2697,7 @@ journalctl -u sentry-web -u sentry-worker -u sentry-cron -f
 
 ---
 
-# Referencias consultadas
+## Referencias consultadas
 
 - Sentry Developer Documentation: Self-Hosted Sentry. <a href="https://develop.sentry.dev/self-hosted/" target="_blank" rel="noopener noreferrer">https://develop.sentry.dev/self-hosted/</a>
 - Sentry Developer Documentation: Self-Hosted Configuration. <a href="https://develop.sentry.dev/self-hosted/configuration/" target="_blank" rel="noopener noreferrer">https://develop.sentry.dev/self-hosted/configuration/</a>

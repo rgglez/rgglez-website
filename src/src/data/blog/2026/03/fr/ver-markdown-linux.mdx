@@ -19,9 +19,16 @@ licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
 
 ## Qu'est-ce que markdown ?
 
-[Markdown](https://fr.wikipedia.org/wiki/Markdown) est un langage de balisage léger créé par John Gruber et Aaron Swartz qui vise à obtenir une lisibilité et une facilité de publication maximales aussi bien en entrée qu'en sortie, en s'inspirant de nombreuses conventions existantes pour baliser des messages électroniques en texte brut. John Gruber a créé le langage markdown en 2004, avec une aide importante d'Aaron Swartz pour la syntaxe. L'objectif de Gruber était que les gens « puissent écrire en utilisant un format de texte brut facile à lire, facile à écrire et avec la possibilité de convertir leur document en HTML valide ».
+<a href="https://fr.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a> est un langage de balisage léger créé par John Gruber et Aaron Swartz qui vise à obtenir une lisibilité et une facilité de publication maximales aussi bien en entrée qu'en sortie, en s'inspirant de nombreuses conventions existantes pour baliser des messages électroniques en texte brut. John Gruber a créé le langage markdown en 2004, avec une aide importante d'Aaron Swartz pour la syntaxe. L'objectif de Gruber était que les gens « puissent écrire en utilisant un format de texte brut facile à lire, facile à écrire et avec la possibilité de convertir leur document en HTML valide ».
 
 Les fichiers markdown peuvent être convertis en une représentation visuelle en HTML, mais aussi en PDF, par exemple.
+
+
+---
+
+## Table des matières
+
+---
 
 ## Comment afficher des fichiers markdown sous Linux
 
@@ -44,7 +51,7 @@ Supposons que nous ayons le document markdown suivant dans un fichier appelé `t
 
 ### pandoc
 
-Depuis la ligne de commande, nous pouvons utiliser le programme [`pandoc`](https://pandoc.org/) pour convertir le fichier en PDF, puis utiliser n'importe quel visionneur pour ouvrir le fichier PDF résultant :
+Depuis la ligne de commande, nous pouvons utiliser le programme <a href="https://pandoc.org/" target="_blank"><code>pandoc</code></a> pour convertir le fichier en PDF, puis utiliser n'importe quel visionneur pour ouvrir le fichier PDF résultant :
 
 ```bash
 pandoc test.md -o test.pdf
@@ -60,7 +67,7 @@ sudo apt install okular okular-extra-backends
 okular test.md
 ```
 
-Généralement, [`okular`](https://okular.kde.org/) est installé avec KDE, mais il faut installer séparément le paquet `okular-extra-backends`.
+Généralement, <a href="https://okular.kde.org/" target="_blank"><code>okular</code></a> est installé avec KDE, mais il faut installer séparément le paquet `okular-extra-backends`.
 
 ### Visual Studio Code
 

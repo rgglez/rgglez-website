@@ -27,12 +27,12 @@ Il est fréquent d'avoir des applications web auxquelles il faut restreindre
 l'accès à certaines adresses IP seulement. Cela peut normalement se faire au
 niveau du serveur web :
 
-* **Apache** avec [mod_authz_host](https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html),
-comme expliqué [ici](https://httpd.apache.org/docs/2.4/howto/access.html).
-* **nginx** avec [ngx_http_access_module](https://nginx.org/en/docs/http/ngx_http_access_module.html).
-* **lighttpd** avec [mod_access](https://doc.lighttpd.net/lighttpd2/mod_access.html).
+* **Apache** avec <a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html" target="_blank">mod_authz_host</a>,
+comme expliqué <a href="https://httpd.apache.org/docs/2.4/howto/access.html" target="_blank">ici</a>.
+* **nginx** avec <a href="https://nginx.org/en/docs/http/ngx_http_access_module.html" target="_blank">ngx_http_access_module</a>.
+* **lighttpd** avec <a href="https://doc.lighttpd.net/lighttpd2/mod_access.html" target="_blank">mod_access</a>.
 
-Cependant, l'utilisation de [Cloudflare](https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/)
+Cependant, l'utilisation de <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank">Cloudflare</a>
 comme proxy inverse est de plus en plus répandue. Un proxy inverse est un service
 qui reçoit les requêtes des clients et les transmet à un ou plusieurs serveurs
 d'origine situés derrière lui. Les clients ne communiquent pas directement avec
@@ -48,19 +48,6 @@ maintenir la restriction en utilisant la vraie adresse IP du client.
 ---
 
 ## Table des matières
-
-- [Cloudflare](#cloudflare)
-  - [Dans la console Cloudflare](#dans-la-console-cloudflare)
-  - [Sur le serveur web](#sur-le-serveur-web)
-- [Apache](#apache)
-- [nginx](#nginx)
-- [lighttpd](#lighttpd)
-- [Dans le pare-feu](#dans-le-pare-feu)
-- [Vérification](#vérification)
-- [Résumé du modèle de défense](#résumé-du-modèle-de-défense)
-- [Bonus](#bonus)
-  - [Comment obtenir mon adresse IP de sortie ?](#comment-obtenir-mon-adresse-ip-de-sortie-)
-  - [Scripts](#scripts)
 
 ---
 
@@ -442,5 +429,5 @@ l'adresse IP publique de votre sortie.
 
 ### Scripts
 
-Vous pouvez trouver les scripts à [https://github.com/rgglez/cloudflare-scripts](https://github.com/rgglez/cloudflare-scripts),
-sous licence [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html).
+Vous pouvez trouver les scripts à <a href="https://github.com/rgglez/cloudflare-scripts" target="_blank">https://github.com/rgglez/cloudflare-scripts</a>,
+sous licence <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL 3.0</a>.
