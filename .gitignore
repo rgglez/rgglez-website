@@ -7,3 +7,6 @@ src/.wrangler/
 .vscode/
 .astro/
 node_modules/
+.tmp_blur/
+.playwright-mcp/
+.remember/
