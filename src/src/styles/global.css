@@ -85,7 +85,8 @@ html[data-theme="dark"] {
   .progress-container,
   #share-links,
   #post-comments,
-  #post-nav {
+  #post-nav,
+  #license-modal {
     display: none !important;
   }
 

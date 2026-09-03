@@ -1,0 +1,147 @@
+License
+=======
+
+This repository contains software and original content under different
+terms. A license notice on a specific work (for example a blog post's
+front matter or the license shown on that page) controls for that work
+and prevails over the defaults below.
+
+Nothing in this file licenses third-party material.
+
+1. Software
+-----------
+
+The website software in this repository — including the
+[Astro Paper](https://github.com/satnaing/astro-paper) theme and
+customizations to that software — is licensed under the MIT License.
+
+Copyright (c) 2023 Sat Naing (Astro Paper)
+Copyright (c) 2026 Rodolfo González González (customizations)
+
+The full MIT License text is at the end of this file and in
+`src/LICENSE_ASTROPAPER`.
+
+This software license does not apply to original writing, original
+images, or other content described in the following sections.
+
+2. Blog posts and original hero images
+--------------------------------------
+
+Each blog post states its own license in its front matter and on the
+published page. That statement is the license for:
+
+- the original textual content of that post; and
+- the original hero image created for that post (`header.webp` or the
+  image referenced as `ogImage`), when that image is original to this
+  site.
+
+Many posts are offered under Creative Commons Attribution-NonCommercial-
+NoDerivatives 4.0 International (CC BY-NC-ND 4.0):
+
+https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en
+
+A later post, translation, or revision may use CC BY-NC-ND 4.0, a
+different Creative Commons license, another license, or no public
+license at all. Do not assume that every post is CC BY-NC-ND 4.0.
+Read the notice on the work you intend to use.
+
+If a post has no license notice, it is not licensed here. See section 4.
+
+3. Third-party material
+-----------------------
+
+Screenshots of other software or services, book covers, photographs,
+audio, video, embedded third-party pages, and similar material remain
+the property of their respective owners. Appearance in a post or in
+this repository does not relicense that material, including where the
+surrounding post is under CC BY-NC-ND 4.0 or another license.
+
+Third-party images are included solely to illustrate the articles, not
+for profit. They are used as crestomatía under Mexican law and, where
+it applies, as fair use in other jurisdictions.
+
+Videos are embedded from YouTube. Authorship remains with the channels
+from which those videos come.
+
+All trademarks mentioned in this repository belong to their respective
+owners.
+
+4. Everything else
+------------------
+
+Unless a work itself grants a license, all other original material is
+copyright Rodolfo González González. All rights reserved. No license is
+granted to copy, modify, distribute, or create derivative works of that
+material.
+
+This default includes, without limitation:
+
+- pages such as About and Intro, and any other original prose that does
+  not carry its own license notice;
+- original images that are not a post's original hero image;
+- documentation and notes in this repository (for example `AGENTS.md`
+  and `PORTAFOLIOS.md`), unless a notice on that file says otherwise.
+
+5. Forking this repository
+--------------------------
+
+If you want the Astro Paper theme, fork the upstream repository
+instead: https://github.com/satnaing/astro-paper
+
+If you still fork or reuse this repository for the software (MIT), do
+not copy original content unless that content's own license allows it.
+In particular, remove `src/src/data/blog/` and `src/src/assets/posts/`
+unless you have a license to those files, and do not assume that About,
+Intro, or other unlicensed pages may be reused.
+
+6. Disclaimer
+-------------
+
+Blog posts and other original content in this repository and on the
+site are provided as-is and as-available, for information only, with
+no representations or warranties of any kind, whether express, implied,
+statutory, or other. This includes, without limitation, warranties of
+title, merchantability, fitness for a particular purpose,
+non-infringement, absence of defects, accuracy, completeness, or the
+presence or absence of errors, whether or not known or discoverable.
+
+To the extent possible, the author is not liable for any loss, cost,
+expense, or damage arising from this material or from relying on it,
+on any legal theory. Where a disclaimer or limitation is not allowed
+in full, it applies to the maximum extent permitted.
+
+Nothing here is professional advice (including legal, financial,
+medical, or security advice). Commands, configurations, and similar
+instructions can be wrong, outdated, or unsafe in your environment.
+You use them at your own risk.
+
+Where a work is licensed under CC BY-NC-ND 4.0, this section restates
+the disclaimer and limitation of liability in that license; it does
+not add terms to it. See Section 5 of:
+
+https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en
+
+MIT License
+-----------
+
+Copyright (c) 2023 Sat Naing
+Copyright (c) 2026 Rodolfo González González
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

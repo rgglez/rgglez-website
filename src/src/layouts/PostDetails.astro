@@ -19,6 +19,7 @@ import IconScale from "@/assets/icons/IconScale.svg";
 import IconAuthor from "@/assets/icons/IconAuthor.svg";
 import { getImage } from "astro:assets";
 import { SITE } from "@/config";
+import { DEFAULT_LICENSE_URL } from "@/data/licenses";
 import type { JsonLd } from "@rgglez/astro-seo/types";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
@@ -45,7 +46,6 @@ const {
   hideEditPost,
   license,
   licenseUrl,
-
 } = post.data;
 
 const { Content } = await render(post);
@@ -62,7 +62,13 @@ if (typeof initOgImage === "string") {
   ogImageUrl = initOgImage; // Remote OG image (absolute URL)
 } else if (initOgImage) {
   // Convert local asset to JPEG — Facebook/WhatsApp crawlers don't support WebP
-  const optimized = await getImage({ src: initOgImage, format: "jpeg", width: 1200, height: 630, fit: "cover" });
+  const optimized = await getImage({
+    src: initOgImage,
+    format: "jpeg",
+    width: 1200,
+    height: 630,
+    fit: "cover",
+  });
   ogImageUrl = optimized.src;
 }
 
@@ -77,19 +83,19 @@ const ogImage = ogImageUrl
   : undefined;
 
 // Load JSON-LD companion file if one exists for this post (e.g., glosario articles)
-const jsonldModules = import.meta.glob<{ default: (baseUrl: string) => JsonLd }>(
-  "../data/jsonld/**/*.ts",
-  { eager: true }
-);
+const jsonldModules = import.meta.glob<{
+  default: (baseUrl: string) => JsonLd;
+}>("../data/jsonld/**/*.ts", { eager: true });
 const blogRelPath = post.filePath?.match(/data\/blog\/(.+)\.mdx?$/)?.[1] ?? "";
 const jsonLdFn = blogRelPath
   ? jsonldModules[`../data/jsonld/${blogRelPath}.ts`]?.default
   : undefined;
-const canonicalHref = canonicalURL ?? new URL(getPath(post.id, post.filePath), SITE.website).href;
+const canonicalHref =
+  canonicalURL ?? new URL(getPath(post.id, post.filePath), SITE.website).href;
 const jsonLd = jsonLdFn ? jsonLdFn(canonicalHref.toString()) : undefined;
 
 const layoutProps = {
-  title: `${title.replace(/\.$/, '')} | ${SITE.title}`,
+  title: `${title.replace(/\.$/, "")} | ${SITE.title}`,
 
   author,
   description,
@@ -113,7 +119,9 @@ const navPosts = posts.map((p: CollectionEntry<"blog">) => ({
   filePath: p.filePath,
 }));
 
-const currentPostIndex = navPosts.findIndex((a: { id: string }) => a.id === post.id);
+const currentPostIndex = navPosts.findIndex(
+  (a: { id: string }) => a.id === post.id
+);
 
 const prevPost = currentPostIndex !== 0 ? navPosts[currentPostIndex - 1] : null;
 const nextPost =
@@ -131,12 +139,18 @@ const nextPost =
   >
     <h1
       transition:name={slugifyStr(title.replaceAll(".", "-"))}
-      class="inline-block text-2xl font-bold text-[#161d2e] dark:text-white sm:text-3xl"
+      class="inline-block text-2xl font-bold text-[#161d2e] sm:text-3xl dark:text-white"
     >
       {title}
     </h1>
     <div class="my-2 flex flex-wrap items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="sm" lang={postLang} />
+      <Datetime
+        {pubDatetime}
+        {modDatetime}
+        {timezone}
+        size="sm"
+        lang={postLang}
+      />
       <span aria-hidden="true" class="text-foreground/40">|</span>
       <ViewCounter slug={slug} />
       <span
@@ -148,13 +162,14 @@ const nextPost =
       >
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
       {
-        license && licenseUrl && (
+        license && (
           <>
-            <span aria-hidden="true" class="text-foreground/40">|</span>
+            <span aria-hidden="true" class="text-foreground/40">
+              |
+            </span>
             <a
-              href={licenseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={licenseUrl ?? DEFAULT_LICENSE_URL}
+              data-license-modal-open
               class="inline-flex items-center gap-1 text-sm text-foreground/70 hover:text-foreground/75"
             >
               <IconScale class="inline-block size-6 min-w-5.5 flex-none" />
@@ -163,17 +178,21 @@ const nextPost =
           </>
         )
       }
-      <div class="inline-flex items-center gap-1 text-sm text-foreground/70 max-sm:w-full">
+      <div
+        class="inline-flex items-center gap-1 text-sm text-foreground/70 max-sm:w-full"
+      >
         <span aria-hidden="true" class="max-sm:hidden">|</span>
         <IconAuthor class="inline-block size-6 min-w-5.5 flex-none" />{author}
       </div>
       {
         translations.length > 1 && (
           <div class="flex items-center gap-2 max-sm:w-full">
-            <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">|</span>
+            <span aria-hidden="true" class="text-foreground/40 max-sm:hidden">
+              |
+            </span>
             {translations.map(({ lang, href, isCurrent }) =>
               isCurrent ? (
-                <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent dark:text-white dark:border-white">
+                <span class="rounded border border-accent px-1.5 py-0.5 text-xs font-medium text-accent dark:border-white dark:text-white">
                   {lang}
                 </span>
               ) : (
@@ -207,7 +226,11 @@ const nextPost =
     <EditPost class="sm:hidden" {hideEditPost} {post} />
 
     <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
+      {
+        tags.map((tag: string) => (
+          <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+        ))
+      }
     </ul>
 
     <BackToTopButton />
@@ -224,7 +247,11 @@ const nextPost =
     <hr class="my-6 border-dashed" />
 
     <!-- Previous/Next Post Buttons -->
-    <div id="post-nav" data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div
+      id="post-nav"
+      data-pagefind-ignore
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2"
+    >
       {
         prevPost && (
           <a
@@ -255,7 +282,7 @@ const nextPost =
       }
     </div>
   </main>
-  <Footer />
+  <Footer {license} {licenseUrl} />
 </Layout>
 
 <script is:inline data-astro-rerun>
@@ -326,7 +353,10 @@ const nextPost =
    * allowing users to copy code easily. */
   function attachCopyButtons() {
     const copyButtonLabel = "Copy";
-    const codeBlocks = Array.from(document.querySelectorAll("pre:not(.mermaid)"));
+    // Only code blocks inside the article: the license modal has its own <pre>.
+    const codeBlocks = Array.from(
+      document.querySelectorAll("#article pre:not(.mermaid)")
+    );
 
     for (const codeBlock of codeBlocks) {
       const wrapper = document.createElement("div");
@@ -383,7 +413,9 @@ const nextPost =
   let themeObserver: MutationObserver | null = null;
 
   function getTheme() {
-    return document.documentElement.dataset.theme === "dark" ? "dark" : "forest";
+    return document.documentElement.dataset.theme === "dark"
+      ? "dark"
+      : "forest";
   }
 
   async function renderMermaid() {
@@ -396,7 +428,9 @@ const nextPost =
       el.replaceWith(pre);
     });
 
-    const blocks = Array.from(document.querySelectorAll<HTMLPreElement>("pre.mermaid"));
+    const blocks = Array.from(
+      document.querySelectorAll<HTMLPreElement>("pre.mermaid")
+    );
     if (!blocks.length) return;
 
     const mermaidMod = await import("mermaid");
@@ -416,19 +450,21 @@ const nextPost =
       },
     });
 
-    await Promise.all(blocks.map(async pre => {
-      const source = (pre.textContent ?? "").trim();
-      const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
-      try {
-        const { svg } = await mermaid.render(id, source);
-        const wrapper = document.createElement("div");
-        wrapper.className = "my-6 flex justify-center overflow-x-auto";
-        wrapper.dataset.mermaid = source;
-        wrapper.innerHTML = svg;
-        pre.replaceWith(wrapper);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {}
-    }));
+    await Promise.all(
+      blocks.map(async pre => {
+        const source = (pre.textContent ?? "").trim();
+        const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
+        try {
+          const { svg } = await mermaid.render(id, source);
+          const wrapper = document.createElement("div");
+          wrapper.className = "my-6 flex justify-center overflow-x-auto";
+          wrapper.dataset.mermaid = source;
+          wrapper.innerHTML = svg;
+          pre.replaceWith(wrapper);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (err) {}
+      })
+    );
   }
 
   document.addEventListener("astro:page-load", () => {
@@ -444,7 +480,7 @@ const nextPost =
 
 <script>
   // ── reading-position persistence ─────────────────────────────────────────────
-  const RP_PREFIX   = "rp:";
+  const RP_PREFIX = "rp:";
   const THROTTLE_MS = 400;
 
   function rpKey(): string {
@@ -490,10 +526,14 @@ const nextPost =
   function setupTracking() {
     if (!document.getElementById("article")) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    window.addEventListener("scroll", () => {
-      clearTimeout(timer);
-      timer = setTimeout(savePosition, THROTTLE_MS);
-    }, { passive: true });
+    window.addEventListener(
+      "scroll",
+      () => {
+        clearTimeout(timer);
+        timer = setTimeout(savePosition, THROTTLE_MS);
+      },
+      { passive: true }
+    );
   }
 
   function initReadingPos() {

@@ -1,0 +1,615 @@
+---
+title: "How to install Request Tracker 6 with Apache and mod_fcgid on Ubuntu 24.04."
+description: >-
+  A guide to installing Request Tracker 6 with MySQL and publishing it through
+  Apache and mod_fcgid on Ubuntu 24.04, without loading RT into Apache with
+  mod_perl.
+slug: "install-rt6-fcgi"
+pubDatetime: 2026-09-02T00:00:00-06:00
+modDatetime: 2026-09-02T00:00:00-06:00
+lang: en
+ogImage: "../../../../../assets/posts/2026/09/instalar-rt6-fcgi/header.webp"
+featured: false
+draft: false
+tags:
+  - request-tracker
+  - rt6
+  - apache
+  - mod-fcgid
+  - fastcgi
+  - ubuntu
+  - mysql
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
+---
+
+import Aside from "@rgglez/astro-aside";
+
+## Introduction
+
+<a href="https://github.com/bestpractical/rt" target="_blank">
+  Request Tracker
+</a>
+6, the ticket tracking system abbreviated as **RT6**, can run behind Apache with
+`mod_perl`, `mod_fcgid`, or `mod_proxy_fcgi`. This guide uses `mod_fcgid`:
+Apache starts and manages persistent `rt-server.fcgi` processes, but RT is not
+loaded inside the web server processes as it is with `mod_perl`.
+
+The result will be a new installation with this execution path:
+
+```text
+HTTPS client -> Apache -> mod_fcgid -> rt-server.fcgi -> MySQL
+```
+
+The guide uses the example domain `rt.example.com` and the standard RT6 paths
+under `/opt/rt6`. Replace the domain, email addresses, and passwords before
+running the steps.
+
+<Aside type="warning" title="This guide is not an upgrade procedure">
+
+The commands initialize an empty database. Do not run them on an existing
+installation. To migrate from RT5 or update another RT6 version, back up the
+database and follow the `UPGRADING` notes for every version involved.
+
+</Aside>
+
+---
+
+## Table of contents
+
+---
+
+## Why use mod_fcgid instead of mod_perl
+
+`mod_perl` embeds the Perl interpreter in Apache. It can provide good
+performance, but it couples RT's lifecycle and memory consumption to the web
+server workers. `mod_fcgid` keeps separate FastCGI processes, and Apache
+controls how many it creates, when it recycles them, and how long it waits for
+each response.
+
+This separation simplifies three operational tasks:
+
+- restarting RT processes with an Apache `reload`;
+- limiting the RT pool without changing the number of Apache workers;
+- removing `mod_perl`-specific configuration such as `PerlResponseHandler`
+  and PSGI application preloading.
+
+However, the RT6 documentation requires the `prefork` MPM when using
+`mod_fcgid`. Ubuntu normally enables `mpm_event`, so this change affects every
+virtual host on the instance. Prefer a server dedicated to RT, and first check
+whether another site depends on `mpm_event` or HTTP/2.
+
+## Prerequisites
+
+- An up-to-date Ubuntu Server 24.04 LTS installation.
+- Access to `sudo`.
+- At least 2 GiB of RAM for a small installation.
+- A DNS `A` or `AAAA` record for `rt.example.com`.
+- TCP ports `80` and `443` reachable while issuing the certificate.
+- A backup if the server previously hosted another RT installation.
+
+<Aside type="warning" title="Verified on September 2, 2026">
+
+This guide was reviewed for `RT 6.0.3` on `Ubuntu 24.04 LTS` for `amd64`,
+with `Apache 2.4.58-1ubuntu8.15`, `mod_fcgid 2.3.9-4`, `Perl 5.38.2`, and
+`MySQL 8.0.46`. Ubuntu security package revisions may change without altering
+these instructions. RT `6.0.3` also requires the official patch shown in step 2. Check the sources linked at the end before using later versions.
+
+</Aside>
+
+## Step 1: install Apache, MySQL, and the build dependencies
+
+Update the package index and install Apache, `mod_fcgid`, MySQL, Certbot, and
+the tools needed to compile RT's Perl modules:
+
+```bash
+sudo apt update
+sudo apt install \
+  apache2 \
+  build-essential \
+  ca-certificates \
+  certbot \
+  cpanminus \
+  curl \
+  graphviz \
+  libapache2-mod-fcgid \
+  libdbd-mysql-perl \
+  libexpat1-dev \
+  libfcgi-perl \
+  libgd-dev \
+  libgmp-dev \
+  libicu-dev \
+  libmysqlclient-dev \
+  libssl-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  mysql-server \
+  openssl \
+  patch \
+  perl \
+  perl-doc \
+  python3-certbot-apache \
+  zlib1g-dev
+```
+
+Confirm the installed versions. Do not expect the package revision suffixes to
+match this guide exactly: Ubuntu publishes security updates within the same LTS
+release.
+
+```bash
+lsb_release -ds
+apache2ctl -v
+perl -v
+mysql --version
+dpkg-query -W libapache2-mod-fcgid
+```
+
+## Step 2: download RT6, verify it, and apply the security patch
+
+Work outside `/opt/rt6`; that path will be the installation destination, not
+the source tree.
+
+```bash
+mkdir -p "$HOME/src"
+cd "$HOME/src"
+
+RT_VERSION="6.0.3"
+curl -fsSL \
+  -o "rt-${RT_VERSION}.tar.gz" \
+  "https://download.bestpractical.com/pub/rt/release/rt-${RT_VERSION}.tar.gz"
+
+echo \
+  "117b53e7a46e82ade662050d98920f1255865ca873d6bec80036085b17dd3dc6  rt-${RT_VERSION}.tar.gz" \
+  | sha256sum --check
+```
+
+The last command must print:
+
+```text
+rt-6.0.3.tar.gz: OK
+```
+
+Extract the archive and apply the patch Best Practical published to complete
+the mitigation for `CVE-2026-41073`, which was accidentally omitted from RT
+`6.0.3`:
+
+```bash
+tar -xzf "rt-${RT_VERSION}.tar.gz"
+cd "rt-${RT_VERSION}"
+
+curl -fsSL -o cve-2026-41073.patch \
+  "https://github.com/bestpractical/rt/commit/525547751b76cc422015960bae3056f4e8d4351f.patch"
+
+patch -p1 < cve-2026-41073.patch
+```
+
+<Aside type="note" title="When RT 6.0.4 or a later version is available">
+
+Do not blindly apply this patch to another version. Download the current
+release from the official site, use the checksum published in its release
+notes, and confirm whether the fix is already included.
+
+</Aside>
+
+## Step 3: build RT with the FastCGI handler
+
+Configure only the components this deployment needs. The database settings and
+credentials will go into `RT_SiteConfig.pm` later, not into your shell history
+or `RT_Config.pm`.
+
+```bash
+./configure \
+  --prefix=/opt/rt6 \
+  --with-db-type=mysql \
+  --with-web-handler=fastcgi \
+  --with-web-user=www-data \
+  --with-web-group=www-data \
+  --with-rt-group=www-data
+```
+
+Check the dependencies, use `cpanm` to install anything missing, and repeat
+the check:
+
+```bash
+make testdeps
+sudo env RT_FIX_DEPS_CMD=/usr/bin/cpanm make fixdeps
+make testdeps
+```
+
+Do not continue while `make testdeps` reports missing required modules. If a
+CPAN module fails to compile, find the missing header in its error and install
+the corresponding `-dev` package; repeatedly running `make fixdeps` will not
+fix a missing system library.
+
+Install RT in `/opt/rt6`:
+
+```bash
+sudo make install
+```
+
+Confirm that the FastCGI handler exists and is executable:
+
+```bash
+sudo -u www-data test -x /opt/rt6/sbin/rt-server.fcgi
+```
+
+## Step 4: create the MySQL database and user
+
+Generate a base64 password. The command stores the value only in a session
+variable; the value is not written to your shell history.
+
+```bash
+RT_DB_PASSWORD="$(openssl rand -base64 32)"
+```
+
+Create the database and user. The password is sent to `mysql` through standard
+input rather than as an argument visible in the process list:
+
+```bash
+printf '%s\n' \
+  "CREATE DATABASE rt6 CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;" \
+  "CREATE USER 'rt_user'@'localhost' IDENTIFIED BY '${RT_DB_PASSWORD}';" \
+  "GRANT ALL PRIVILEGES ON rt6.* TO 'rt_user'@'localhost';" \
+  | sudo mysql
+```
+
+Display the password once, save it in a password manager, and use it in the
+next step:
+
+```bash
+printf 'rt_user password: %s\n' "$RT_DB_PASSWORD"
+unset RT_DB_PASSWORD
+```
+
+Confirm the database and privileges without displaying the secret:
+
+```bash
+sudo mysql --execute="SHOW CREATE DATABASE rt6;"
+sudo mysql --execute="SHOW GRANTS FOR 'rt_user'@'localhost';"
+```
+
+## Step 5: configure RT_SiteConfig.pm
+
+Do not edit `/opt/rt6/etc/RT_Config.pm`: it contains the values distributed
+with RT and is replaced during upgrades. Create your overrides in
+`/opt/rt6/etc/RT_SiteConfig.pm`:
+
+```perl
+# /opt/rt6/etc/RT_SiteConfig.pm
+
+Set($rtname, 'rt.example.com');
+Set($Organization, 'example.com');
+Set($Timezone, 'America/Mexico_City');
+
+Set($WebDomain, 'rt.example.com');
+Set($WebPort, 443);
+Set($WebPath, '');
+Set($WebBaseURL, 'https://rt.example.com');
+Set($WebSecureCookies, 1);
+
+Set($DatabaseType, 'mysql');
+Set($DatabaseHost, 'localhost');
+Set($DatabasePort, 3306);
+Set($DatabaseName, 'rt6');
+Set($DatabaseUser, 'rt_user');
+Set($DatabasePassword, 'PASTE_THE_GENERATED_PASSWORD_HERE');
+
+Set($CorrespondAddress, 'rt@example.com');
+Set($CommentAddress, 'rt-comment@example.com');
+
+1;
+```
+
+Protect the file: Apache must be able to read it because it starts
+`rt-server.fcgi`, but other local users must not see the password.
+
+```bash
+sudo chown root:www-data /opt/rt6/etc/RT_SiteConfig.pm
+sudo chmod 0640 /opt/rt6/etc/RT_SiteConfig.pm
+sudo -u www-data perl -c /opt/rt6/etc/RT_SiteConfig.pm
+```
+
+The last command must end with:
+
+```text
+/opt/rt6/etc/RT_SiteConfig.pm syntax OK
+```
+
+## Step 6: initialize the RT database
+
+Before creating the tables, set a different password for RT's `root`
+administrator. This is not the `root` user from Linux or MySQL. Create it in a
+temporary file that the RT process can read:
+
+```bash
+sudo install \
+  --owner=root \
+  --group=www-data \
+  --mode=0640 \
+  /dev/null \
+  /etc/rt6-root-password
+
+sudo bash -c '
+  read -rsp "Initial password for the RT administrator: " password
+  printf "\n"
+  read -rsp "Repeat the password: " confirmation
+  printf "\n"
+  if [[ -z "$password" || "$password" != "$confirmation" ]]; then
+    printf "The passwords are empty or do not match.\n" >&2
+    exit 1
+  fi
+  printf "%s\n" "$password" > /etc/rt6-root-password
+  unset password confirmation
+'
+```
+
+The database and user already exist, so `--skip-create` avoids requiring MySQL
+administrator privileges. `--root-password-file` prevents use of RT's default
+`password` password:
+
+```bash
+sudo -u www-data /opt/rt6/sbin/rt-setup-database \
+  --action init \
+  --skip-create \
+  --root-password-file /etc/rt6-root-password
+
+sudo rm /etc/rt6-root-password
+```
+
+Run `init` only once. For an existing database, use the appropriate upgrade
+procedure, never `--action init`.
+
+## Step 7: enable prefork and mod_fcgid
+
+First check the active MPM and the modules related to RT:
+
+```bash
+sudo a2query -M
+sudo apache2ctl -M | grep -E 'fcgid|mpm_|perl|speling|cache'
+```
+
+On a server dedicated to RT, disable `mpm_event`, enable `mpm_prefork`, and
+enable `mod_fcgid`:
+
+```bash
+sudo a2dismod mpm_event
+sudo a2enmod mpm_prefork fcgid setenvif
+```
+
+If you are migrating from `mod_perl`, remove the `SetHandler modperl`,
+`PerlResponseHandler`, `PerlSetVar` directives and the `<Perl>` block from
+RT's virtual host. Disable the global module only if no other virtual host uses
+it:
+
+```bash
+sudo a2dismod perl
+```
+
+Do not enable `mod_speling` or `mod_cache` for RT. Best Practical documents
+that the first breaks CSS and JavaScript loading and that the second can cache
+cookies and deliver incorrect sessions.
+
+## Step 8: create the Apache virtual host
+
+Create `/etc/apache2/sites-available/rt6.conf` with this initial HTTP
+configuration. Certbot will add HTTPS and the redirect in the next step:
+
+```apache
+<VirtualHost *:80>
+    ServerName rt.example.com
+
+    AddDefaultCharset UTF-8
+    DocumentRoot /opt/rt6/share/html
+
+    ScriptAlias / /opt/rt6/sbin/rt-server.fcgi/
+
+    <Location />
+        Require all granted
+        Options +ExecCGI
+        AddHandler fcgid-script fcgi
+    </Location>
+
+    # Allow attachments up to 100 MiB. The limit includes the entire request.
+    FcgidMaxRequestLen 104857600
+
+    # Conservative starting point for a small installation.
+    FcgidCmdOptions /opt/rt6/sbin/rt-server.fcgi \
+        MaxProcesses 4 \
+        MinProcesses 1 \
+        MaxRequestsPerProcess 1000 \
+        IOTimeout 300
+
+    # Required if you use token authentication with REST2.
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+    ErrorLog ${APACHE_LOG_DIR}/rt6-error.log
+    CustomLog ${APACHE_LOG_DIR}/rt6-access.log combined
+</VirtualHost>
+```
+
+`FcgidMaxRequestLen` must reflect the actual maximum size of your attachments.
+The default value in `mod_fcgid 2.3.9` is only `131072` bytes, which is
+insufficient for most RT installations. Do not increase the limit to several
+GiB without also setting limits on the frontend proxy and monitoring temporary
+storage, memory, and upload times.
+
+The four-process pool is a starting point, not a universal value. Measure each
+process's RSS under real load before increasing `MaxProcesses`:
+
+```bash
+ps -eo pid,rss,etime,cmd \
+  | grep '[r]t-server.fcgi'
+```
+
+Enable the site, disable the default virtual host, and validate the syntax:
+
+```bash
+sudo a2dissite 000-default
+sudo a2ensite rt6
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+```
+
+`configtest` must print:
+
+```text
+Syntax OK
+```
+
+Confirm that Apache started RT before requesting the certificate:
+
+```bash
+sudo systemctl --no-pager --full status apache2
+curl --head --resolve rt.example.com:80:127.0.0.1 \
+  http://rt.example.com/
+```
+
+## Step 9: enable HTTPS with Certbot
+
+Confirm that `rt.example.com` resolves to the server and that port `80` is
+reachable from the Internet. Then request the certificate and allow Certbot to
+configure the HTTPS redirect:
+
+```bash
+getent ahosts rt.example.com
+sudo certbot --apache --redirect -d rt.example.com
+```
+
+Validate Apache again and test automatic renewal:
+
+```bash
+sudo apache2ctl configtest
+sudo systemctl reload apache2
+sudo certbot renew --dry-run
+curl --head https://rt.example.com/
+```
+
+Do not sign in over HTTP. The configuration uses secure cookies and assumes
+that the public URL is `https://rt.example.com`.
+
+## Step 10: validate RT and change the initial configuration
+
+Confirm that RT loads its configuration and can query the database:
+
+```bash
+sudo -u www-data /opt/rt6/sbin/rt-validator --check
+sudo tail -n 100 /var/log/apache2/rt6-error.log
+```
+
+Open `https://rt.example.com/`, sign in as `root` with the password chosen in
+step 6, and immediately create a named administrative account. Reserve `root`
+for recovery, configure users, groups, queues, and permissions, and test these
+operations before publishing the service:
+
+1. sign in and sign out;
+2. create a ticket containing non-ASCII characters;
+3. attach a file close to the configured limit;
+4. download the attachment and compare its checksum;
+5. create a reply and verify outgoing email;
+6. restart Apache and confirm that the session and tickets persist.
+
+<Aside type="tip" title="How to confirm that you are not using mod_perl">
+
+`apache2ctl -M` must show `fcgid_module` and `mpm_prefork_module`. It must not
+show `perl_module` if you disabled it globally. In addition, `ps` must list
+`/opt/rt6/sbin/rt-server.fcgi` processes separately from the Apache processes.
+
+</Aside>
+
+## Step 11: schedule the minimum maintenance
+
+RT needs to clean up sessions and run its scheduled processes. Create
+`/etc/cron.d/rt6`:
+
+```text
+0 0 * * * www-data /opt/rt6/sbin/rt-clean-sessions
+*/15 * * * * www-data /opt/rt6/bin/rt-run-scheduled-processes
+```
+
+Email digest and dashboard tasks are only needed if you enable those features.
+Add them when you configure them; do not schedule processes your installation
+does not use.
+
+## Troubleshooting
+
+| Problem                                                | Check and solution                                                                                                                                                                                                                     |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Apache does not start after changing the MPM**       | Run `sudo apache2ctl configtest` and `sudo apache2ctl -M`. Disable `mpm_event` before enabling `mpm_prefork`, and review the dependencies Apache reports. Keep in mind that HTTP/2 does not normally operate with `prefork`.           |
+| **`End of script output before headers` or error 500** | Check `/var/log/apache2/rt6-error.log` and use `sudo -u www-data test -r /opt/rt6/etc/RT_SiteConfig.pm` to confirm that Apache can read the configuration. Run `make testdeps` again from the source tree if a Perl module is missing. |
+| **Attachments larger than 128 KiB fail**               | Run `sudo apache2ctl -t -D DUMP_INCLUDES` and confirm that `rt6.conf` is included. Then check `FcgidMaxRequestLen` in `/etc/apache2/sites-enabled/rt6.conf` and the limits of any frontend proxy.                                      |
+| **A long operation times out**                         | Look for timeout errors in the log and cautiously increase `IOTimeout` inside `FcgidCmdOptions`. Do not hide a slow query by setting an unlimited timeout.                                                                             |
+| **RT appears without CSS or JavaScript**               | Confirm that `mod_speling` is not active and that `ScriptAlias`, `DocumentRoot`, and `Location` match `/opt/rt6`. Do not use `mod_cache` in front of RT.                                                                               |
+| **Signing in always returns to the login screen**      | Confirm that you are using HTTPS and that `$WebDomain`, `$WebPort`, `$WebBaseURL`, and `$WebSecureCookies` describe the public URL. Check the server time with `timedatectl`.                                                          |
+| **Apache uses too much memory**                        | Measure the RSS of each `rt-server.fcgi` process and reduce `MaxProcesses`. A limit that is too high lets multiple RT copies exhaust RAM; one that is too low increases the request queue.                                             |
+| **REST2 returns 401 with a valid token**               | Confirm that the virtual host contains `SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1` and that `setenvif_module` is loaded.                                                                                                     |
+| **Certbot cannot validate the domain**                 | Check DNS, the firewall, and public access to port `80`. If a CDN proxy is active, temporarily disable it or use the DNS method supported by your provider.                                                                            |
+
+## Verified sources
+
+- <a href="https://docs.bestpractical.com/rt/6.0.3/README.html" target="_blank">
+    Official RT 6.0.3 README and installation guide
+  </a>
+- <a
+    href="https://docs.bestpractical.com/rt/6.0.3/configure.html"
+    target="_blank"
+  >
+    RT 6.0.3 configure options
+  </a>
+- <a
+    href="https://docs.bestpractical.com/rt/6.0.3/README.MySQL.html"
+    target="_blank"
+  >
+    Official RT 6.0.3 notes for MySQL
+  </a>
+- <a
+    href="https://docs.bestpractical.com/rt/6.0.3/web_deployment.html"
+    target="_blank"
+  >
+    RT 6.0.3 web deployment with Apache and mod_fcgid
+  </a>
+- <a
+    href="https://docs.bestpractical.com/rt/6.0.3/rt-setup-database.html"
+    target="_blank"
+  >
+    rt-setup-database reference
+  </a>
+- <a
+    href="https://docs.bestpractical.com/release-notes/rt/6.0.3"
+    target="_blank"
+  >
+    RT 6.0.3 release notes and SHA-256 checksum
+  </a>
+- <a
+    href="https://github.com/bestpractical/rt/commit/525547751b76cc422015960bae3056f4e8d4351f.patch"
+    target="_blank"
+  >
+    Official patch completing the mitigation for CVE-2026-41073
+  </a>
+- <a
+    href="https://httpd.apache.org/mod_fcgid/en/mod/mod_fcgid.html"
+    target="_blank"
+  >
+    Apache mod_fcgid directive reference
+  </a>
+- <a href="https://packages.ubuntu.com/noble/apache2" target="_blank">
+    Ubuntu 24.04 LTS apache2 package
+  </a>
+- <a
+    href="https://packages.ubuntu.com/noble/libapache2-mod-fcgid"
+    target="_blank"
+  >
+    Ubuntu 24.04 LTS libapache2-mod-fcgid package
+  </a>
+- <a href="https://packages.ubuntu.com/noble/perl" target="_blank">
+    Ubuntu 24.04 LTS Perl package
+  </a>
+- <a href="https://packages.ubuntu.com/noble/mysql-server-8.0" target="_blank">
+    Ubuntu 24.04 LTS MySQL 8.0 package
+  </a>
+- <a
+    href="https://eff-certbot.readthedocs.io/en/stable/using.html#apache"
+    target="_blank"
+  >
+    Official Certbot Apache plugin guide
+  </a>
