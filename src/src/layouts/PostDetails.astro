@@ -3,6 +3,7 @@ import { render, type CollectionEntry } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import LicenseModal from "@/components/LicenseModal.astro";
 import Tag from "@/components/Tag.astro";
 import Datetime from "@/components/Datetime.astro";
 import EditPost from "@/components/EditPost.astro";
@@ -233,6 +234,23 @@ const nextPost =
       }
     </ul>
 
+    {
+      license && (
+        <div class="mb-8 flex flex-col items-center gap-1 text-center text-sm sm:items-start sm:text-left">
+          <a
+            href={licenseUrl ?? DEFAULT_LICENSE_URL}
+            data-license-modal-open
+            class="whitespace-normal"
+          >
+            Read the License for the original content
+          </a>
+          <p class="text-xs text-foreground/70 sm:text-sm">
+            Non-original content is included or referenced under fair use.
+          </p>
+        </div>
+      )
+    }
+
     <BackToTopButton />
     <TocButton />
 
@@ -282,7 +300,8 @@ const nextPost =
       }
     </div>
   </main>
-  <Footer {license} {licenseUrl} />
+  <Footer />
+  {license && <LicenseModal {license} {licenseUrl} />}
 </Layout>
 
 <script is:inline data-astro-rerun>
