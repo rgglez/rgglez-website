@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T11:54:45.072Z",
+  "generatedAt": "2026-09-21T12:05:52.487Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -44,6 +44,20 @@
   ],
   "repos": [
     {
+      "name": "music-midi2tonejs",
+      "description": "Converts Standard MIDI Files (.mid) into the JSON format used by Tone.js.",
+      "url": "https://github.com/rgglez/music-midi2tonejs",
+      "homepage": null,
+      "language": "Rust",
+      "topics": [
+        "music"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-09-21T07:11:34Z"
+    },
+    {
       "name": "rgglez",
       "description": "Global readme",
       "url": "https://github.com/rgglez/rgglez",
@@ -53,7 +67,7 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-09-14T04:05:20Z"
+      "pushedAt": "2026-09-21T04:15:45Z"
     },
     {
       "name": "rgglez-website",
@@ -67,7 +81,7 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-09-07T11:40:39Z"
+      "pushedAt": "2026-09-18T07:38:51Z"
     },
     {
       "name": "rgglez-dev-skills",
