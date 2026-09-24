@@ -15,12 +15,12 @@ explícitamente a qué idiomas traducirlo. No crear directorios `en/`, `fr/`,
 
 ## Ubicación de archivos
 
-| Qué | Dónde |
-| :-- | :-- |
-| Post | `src/src/data/blog/<AAAA>/<MM>/<lang>/<nombre-base>.mdx` |
-| Imágenes | `src/src/assets/posts/<AAAA>/<MM>/<nombre-base>/` |
-| Plantilla | `src/src/data/blog/_template.mdx` |
-| Schema del frontmatter | `src/src/content.config.ts` (fuente de verdad) |
+| Qué                   | Dónde                                                     |
+| :--------------------- | :--------------------------------------------------------- |
+| Post                   | `src/src/data/blog/<AAAA>/<MM>/<lang>/<nombre-base>.mdx` |
+| Imágenes              | `src/src/assets/posts/<AAAA>/<MM>/<nombre-base>/`        |
+| Plantilla              | `src/src/data/blog/_template.mdx`                        |
+| Schema del frontmatter | `src/src/content.config.ts` (fuente de verdad)           |
 
 `<nombre-base>` es el nombre del archivo en español, en kebab-case, y **es el
 mismo en todos los idiomas**. Lo que cambia entre idiomas es el campo `slug`

@@ -1,0 +1,3 @@
+Generado con la herramienta integrada imagegen.
+
+Genera una imagen apta tanto para og:image como para hero header de un blog post. Fondo blanco. Trazos negros. Escala de grises. Caricaturezco y minimalista. Un programador nerd con gafas sentado en un escritorio, pensando muy concentrado frente a la pantalla de la computadora, con gráficos de histogramas, dispersión y líneas flotando por el aire a su alrededor. Composición horizontal panorámica, sin texto ni letras ni marcas de agua.

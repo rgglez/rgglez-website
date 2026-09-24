@@ -1,0 +1,1357 @@
+---
+title: "Análisis exploratorio de datos con Python para aprendizaje automático."
+description: >-
+  Aprende a explorar datos con Python antes de entrenar un modelo: calidad,
+  distribuciones, relaciones, sesgos y fuga de información. Incluye ejemplos
+  reproducibles, gráficos interpretados y criterios para decidir qué hacer.
+slug: "analisis-exploratorio-datos"
+pubDatetime: 2026-09-23T00:00:00-06:00
+modDatetime: 2026-09-24T00:00:00-06:00
+lang: es
+ogImage: "../../../../../assets/posts/2026/09/analisis-exploratorio-datos/header.webp"
+featured: false
+draft: false
+tags:
+  - python
+  - analisis-exploratorio
+  - ciencia-de-datos
+  - aprendizaje-automatico
+  - estadistica
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@rgglez/astro-aside";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+import { Image } from "astro:assets";
+import descarga from "@/assets/posts/2026/09/analisis-exploratorio-datos/analisis.py?url";
+import objetivo from "@/assets/posts/2026/09/analisis-exploratorio-datos/01-objetivo.webp";
+import ausencias from "@/assets/posts/2026/09/analisis-exploratorio-datos/02-ausencias.webp";
+import distribuciones from "@/assets/posts/2026/09/analisis-exploratorio-datos/03-distribuciones.webp";
+import atipicos from "@/assets/posts/2026/09/analisis-exploratorio-datos/04-atipicos.webp";
+import relaciones from "@/assets/posts/2026/09/analisis-exploratorio-datos/05-relaciones-objetivo.webp";
+import correlaciones from "@/assets/posts/2026/09/analisis-exploratorio-datos/06-correlaciones.webp";
+import noLineal from "@/assets/posts/2026/09/analisis-exploratorio-datos/07-no-lineal.webp";
+import pca from "@/assets/posts/2026/09/analisis-exploratorio-datos/08-pca.webp";
+import tiempo from "@/assets/posts/2026/09/analisis-exploratorio-datos/09-tiempo.webp";
+import regresion from "@/assets/posts/2026/09/analisis-exploratorio-datos/10-regresion.webp";
+import precisionRecall from "@/assets/posts/2026/09/analisis-exploratorio-datos/11-precision-recall.webp";
+
+## Introducción
+
+Antes de elegir un algoritmo, necesitas saber qué representan tus datos, cómo se
+obtuvieron y qué permiten predecir. Una tabla puede parecer impecable y contener
+una variable que revela el futuro, clientes duplicados o una mezcla de
+poblaciones que vuelve engañoso cualquier promedio.
+
+El **análisis exploratorio de datos**, o **EDA** por _Exploratory Data
+Analysis_, es el proceso de formular preguntas sobre un conjunto de datos,
+examinarlo con resúmenes y visualizaciones, y revisar las explicaciones que
+surgen. Su resultado útil es una lista de hallazgos, limitaciones y decisiones
+justificadas. Los gráficos son instrumentos para llegar a ese resultado.
+
+En aprendizaje automático, el EDA ayuda a definir la partición de los datos,
+detectar información que no estará disponible al predecir, elegir variables,
+proponer transformaciones y diseñar una evaluación acorde con el problema.
+También puede revelar que necesitas mejores datos antes de entrenar.
+
+En esta guía trabajarás con un caso de abandono de clientes, y después con
+ejemplos de regresión y series temporales. Cada figura incluye su código, una
+lectura de lo que muestra y las precauciones necesarias para interpretarla.
+Necesitas conocer las estructuras básicas de Python; los conceptos estadísticos
+se introducen cuando se utilizan.
+
+<Aside type="note" title="Datos sintéticos y resultados reproducibles">
+
+Los datos de esta guía se generan con semillas fijas. Las figuras y las cifras
+proceden de ejecutar el programa descargable; no son mediciones de una empresa
+real. Los patrones se introducen deliberadamente para que puedas reconocerlos y
+discutirlos. En datos reales, descubrir el mecanismo que los produce es parte
+del trabajo y puede requerir información externa.
+
+</Aside>
+
+---
+
+## Tabla de contenido
+
+---
+
+## Qué debes obtener de un EDA
+
+Puedes organizar la exploración en cuatro niveles. En el **estructural**
+compruebas filas, tipos, identificadores, unidades y fechas. En el
+**univariante** estudias una variable: su distribución, sus valores faltantes o
+sus categorías. En el **bivariante** comparas dos variables. En el
+**multivariante** buscas patrones que dependen de varias a la vez, como una
+asociación que cambia según el plan contratado.
+
+El proceso es iterativo: una cola larga en un histograma puede llevarte a
+separar clientes particulares y empresas; esa separación puede revelar un error
+de unidades o explicar valores que parecían anómalos.
+
+| Pregunta                               | Evidencia que necesitas                          | Decisión que puede cambiar                    |
+| :------------------------------------- | :----------------------------------------------- | :-------------------------------------------- |
+| ¿Qué representa una fila?              | Clave de negocio, periodo y origen               | Partir por filas, personas, grupos o tiempo   |
+| ¿Qué información existirá al predecir? | Momento de captura de cada variable              | Excluir fugas y construir ventanas históricas |
+| ¿A quién representan los datos?        | Cobertura, muestreo, filtros y exclusiones       | Limitar el alcance o recopilar otra muestra   |
+| ¿Qué problemas de calidad existen?     | Ausencias, duplicados, rangos e inconsistencias  | Corregir, imputar, marcar o investigar        |
+| ¿Qué relaciones aparecen?              | Gráficos, tamaños de efecto y tamaños muestrales | Proponer variables y transformaciones         |
+| ¿Cómo se evaluará el modelo?           | Coste de errores y condiciones de uso            | Elegir métricas, particiones y referencias    |
+
+**Explorar y confirmar son actividades distintas.** Si pruebas cien
+comparaciones y solo presentas la más llamativa, su aparente claridad puede ser
+fruto de la búsqueda. Registra las hipótesis descubiertas y compruébalas con
+datos nuevos o con un diseño de validación previsto. Un valor _p_ pequeño
+después de explorar muchas alternativas no convierte una hipótesis en un hecho,
+ni una correlación en una relación causal.
+
+## Paso 1: define la pregunta y la unidad de observación
+
+El caso principal plantea esta pregunta: **con la información disponible hoy,
+¿qué clientes activos abandonarán el servicio durante los próximos 30 días?**
+
+Cada fila representa un cliente en una única fecha de corte. Las sesiones y las
+incidencias corresponden a los 30 días anteriores; el objetivo se observa
+durante los 30 siguientes. Esta separación temporal forma parte de la definición
+del problema, incluso si la tabla final no incluye fechas.
+
+| Variable               | Significado y tipo conceptual                             | Uso previsto                               |
+| :--------------------- | :-------------------------------------------------------- | :----------------------------------------- |
+| `cliente_id`           | Identificador, aunque esté almacenado como entero         | Comprobar unicidad; excluir como predictor |
+| `plan`                 | Categoría nominal: Básico, Pro o Empresa                  | Predictor categórico                       |
+| `antiguedad_meses`     | Tiempo desde el alta hasta el corte                       | Predictor numérico                         |
+| `sesiones_30d`         | Conteo de sesiones anteriores al corte                    | Predictor numérico                         |
+| `incidencias_30d`      | Conteo de incidencias anteriores al corte                 | Predictor numérico                         |
+| `gasto_mensual`        | Gasto conocido al corte, en unidades monetarias ficticias | Predictor numérico con ausencias           |
+| `gasto_anual_estimado` | Doce veces el gasto mensual, salvo redondeo               | Ejemplo de redundancia                     |
+| `abandono_30d`         | 1 si abandona después del corte; 0 si permanece           | Variable objetivo                          |
+| `reembolso_posterior`  | Reembolso conocido después del abandono                   | Fuga de información: excluir               |
+
+Una columna numérica no es necesariamente una cantidad. Promediar `cliente_id`
+carece de significado. Tampoco debes asignar a los planes los valores 1, 2 y 3 y
+asumir que sus distancias son comparables. El tipo de Python describe el
+almacenamiento; el diccionario de datos describe el significado.
+
+En una aplicación real, escribe también la población elegible, la fuente de cada
+columna, la moneda, la zona horaria, los filtros de extracción y la fecha de
+actualización. Comprueba que cada cliente tenga seguimiento suficiente: una
+observación de ayer todavía no tiene una etiqueta completa a 30 días. Tratarla
+como «no abandonó» introduciría etiquetas incorrectas.
+
+## Paso 2: prepara Python y genera los datos
+
+Usaremos `pandas` y `NumPy` para manipular tablas, `Matplotlib` para dibujar,
+`SciPy` para estadísticas y `scikit-learn` para transformaciones y validación.
+`Pillow` permite guardar las figuras como WebP. No necesitas GPU ni descargar un
+conjunto de datos.
+
+<Aside type="note" title="Ejecución verificada el 23 de septiembre de 2026">
+
+El programa se ejecutó con Python `3.14.7`, NumPy `2.4.6`, pandas `2.3.3`,
+Matplotlib `3.10.9+dfsg1`, SciPy `1.17.1`, scikit-learn `1.9.0` y Pillow
+`12.3.0`. El sufijo de Matplotlib corresponde al paquete de la distribución
+Linux. Estas son las versiones probadas, no una afirmación de que sean las más
+recientes. La instalación siguiente obtiene las versiones compatibles que
+resuelva `pip`; registra las tuyas para comparar ejecuciones.
+
+</Aside>
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install numpy pandas matplotlib scipy scikit-learn pillow
+python -m pip freeze > requirements-eda.txt
+python analisis.py
+```
+
+Antes del último comando, guarda el <a href={descarga} download="analisis.py">programa completo como `analisis.py`</a> en tu directorio de trabajo. En PowerShell, activa el entorno
+con `.venv\Scripts\Activate.ps1`. El programa crea `graficos-eda/` con las 11
+figuras, `auditoria.csv` y `resultados.json`.
+
+Los ejemplos siguientes muestran fragmentos del mismo archivo. **Ejecuta los
+bloques Python en orden y en la misma sesión**, o ejecuta el programa completo.
+Los marcadores `# %%` permiten abrirlo como celdas en editores que admiten ese
+formato. El backend `Agg` guarda imágenes sin abrir ventanas; en un cuaderno
+puedes visualizar los archivos producidos.
+
+```python
+from pathlib import Path
+import json
+import platform
+from importlib.metadata import version
+
+import numpy as np
+import pandas as pd
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from scipy import stats
+from sklearn.compose import ColumnTransformer
+from sklearn.decomposition import PCA
+from sklearn.dummy import DummyClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (
+    average_precision_score,
+    mean_absolute_error,
+    precision_recall_curve,
+    roc_auc_score,
+)
+from sklearn.model_selection import (
+    StratifiedKFold,
+    cross_val_predict,
+    cross_validate,
+    train_test_split,
+)
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+SALIDA = Path.cwd() / "graficos-eda"
+SALIDA.mkdir(exist_ok=True)
+plt.rcParams.update({
+    "figure.dpi": 150,
+    "font.size": 11,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.grid": True,
+    "grid.alpha": 0.18,
+    "axes.axisbelow": True,
+    "savefig.facecolor": "white",
+})
+AZUL, NARANJA = "#0072B2", "#D55E00"
+resultados = {}
+
+
+def guardar(fig, nombre):
+    fig.savefig(SALIDA / nombre, format="webp", bbox_inches="tight")
+    plt.close(fig)
+
+
+print("Python:", platform.python_version())
+for paquete in ["numpy", "pandas", "matplotlib", "scipy", "scikit-learn", "pillow"]:
+    print(paquete, version(paquete))
+```
+
+Generamos 2400 clientes con diferentes planes y niveles de actividad. La
+probabilidad de abandono depende de la antigüedad, las sesiones, las incidencias
+y el plan. Esa probabilidad se convierte en una etiqueta aleatoria: dos clientes
+parecidos pueden tener resultados distintos. Así evitamos un ejemplo donde una
+regla clasifica perfectamente todos los casos.
+
+Introducimos también ausencias de gasto más frecuentes en el plan Básico, una
+antigüedad inválida y doce filas repetidas. El reembolso posterior revela la
+etiqueta por construcción y sirve para explicar una fuga que ningún
+preprocesamiento estadístico puede volver legítima.
+
+```python
+rng = np.random.default_rng(42)
+n = 2400
+plan = rng.choice(["Básico", "Pro", "Empresa"], n, p=[0.62, 0.30, 0.08])
+antiguedad = rng.integers(1, 73, n)
+sesiones = rng.poisson(12, n)
+incidencias = rng.poisson(1.2, n)
+gasto = rng.lognormal(3.4, 0.7, n) * np.select(
+    [plan == "Pro", plan == "Empresa"], [1.8, 3.2], default=1.0
+)
+logit = (
+    -0.8 - 0.025 * antiguedad - 0.08 * sesiones
+    + 0.65 * incidencias + 0.55 * (plan == "Básico")
+)
+abandono = rng.binomial(1, 1 / (1 + np.exp(-logit)))
+df = pd.DataFrame({
+    "cliente_id": np.arange(n),
+    "plan": plan,
+    "antiguedad_meses": antiguedad,
+    "sesiones_30d": sesiones,
+    "incidencias_30d": incidencias,
+    "gasto_mensual": gasto.round(2),
+    "gasto_anual_estimado": (12 * gasto).round(2),
+    "abandono_30d": abandono,
+    "reembolso_posterior": abandono * rng.uniform(10, 100, n),
+})
+# La ausencia depende de una variable observada: el plan.
+falta_gasto = rng.random(n) < np.where(plan == "Básico", 0.22, 0.04)
+df.loc[falta_gasto, ["gasto_mensual", "gasto_anual_estimado"]] = np.nan
+df.loc[0, "antiguedad_meses"] = -5
+df = pd.concat([df, df.iloc[:12]], ignore_index=True)
+```
+
+La función logística transforma un número real en una probabilidad entre cero y
+uno. No necesitas estudiar su fórmula para hacer el EDA: aquí solo forma parte
+de la simulación. En un proyecto real recibirías los datos y tendrías que
+investigar si asociaciones parecidas existen.
+
+## Paso 3: audita la estructura y reserva la prueba
+
+Antes de mirar relaciones con el objetivo, revisa el contrato de datos:
+dimensiones, nombres, tipos, claves, duplicados y restricciones de dominio. Si
+cargas un CSV real, especifica identificadores como texto cuando tengan ceros
+iniciales y declara qué cadenas representan ausencias. Comprueba las
+conversiones de fechas y cantidades; una coma decimal mal interpretada puede
+producir una columna de texto que parece numérica.
+
+En el ejemplo llegan **2412 filas y 9 columnas**, con **12 duplicados exactos**.
+Se detectan dos filas con antigüedad negativa porque la fila inválida también
+está duplicada. Después de quitar copias quedan 2400 clientes y una antigüedad
+inválida, que se transforma en ausente mediante una regla de dominio fijada de
+antemano: el tiempo desde el alta no puede ser negativo.
+
+```python
+print("Dimensiones recibidas:", df.shape)
+print("Duplicados exactos:", int(df.duplicated().sum()))
+print("Antigüedades inválidas:", int((df.antiguedad_meses < 0).sum()))
+df = df.drop_duplicates().copy()
+# Regla de dominio prefijada; no estima parámetros del conjunto completo.
+df.loc[df.antiguedad_meses < 0, "antiguedad_meses"] = np.nan
+assert df.cliente_id.is_unique
+assert df.abandono_30d.isin([0, 1]).all()
+train, test = train_test_split(
+    df, test_size=0.2, stratify=df.abandono_30d, random_state=42
+)
+train, test = train.copy(), test.copy()
+assert set(train.cliente_id).isdisjoint(test.cliente_id)
+print("Filas de entrenamiento y prueba:", len(train), len(test))
+auditoria = pd.DataFrame({
+    "tipo": train.dtypes.astype(str),
+    "ausentes_pct": train.isna().mean().mul(100),
+    "valores_distintos": train.nunique(dropna=False),
+})
+print(auditoria.round(2).to_string())
+auditoria.to_csv(SALIDA / "auditoria.csv")
+resultados["filas"] = {"entrenamiento": len(train), "prueba": len(test)}
+```
+
+La eliminación de duplicados está justificada porque cada fila debe representar
+un cliente único y sabemos que las doce copias son errores de exportación. **No
+borres filas iguales automáticamente en otros problemas**: dos compras por el
+mismo importe pueden ser transacciones distintas. Si una clave tiene filas
+contradictorias, investiga la versión y la procedencia; conservar la primera no
+resuelve el conflicto.
+
+Reservamos un 20 % como prueba: quedan **1920 filas de entrenamiento y 480 de
+prueba**. La estratificación mantiene aproximadamente la proporción de clases.
+Desde este momento, las figuras del caso de clientes usan exclusivamente
+`train`.
+
+La partición aleatoria es apropiada para esta simulación de clientes
+independientes en un mismo corte. No basta para todos los problemas:
+
+| Situación                                                           | Partición que debes considerar                             | Motivo                                                                     |
+| :------------------------------------------------------------------ | :--------------------------------------------------------- | :------------------------------------------------------------------------- |
+| Filas independientes de una misma población                         | `train_test_split` y `StratifiedKFold` en clasificación    | Representar ambas clases sin mezclar observaciones dependientes            |
+| Varias filas por persona, paciente o dispositivo                    | `GroupShuffleSplit`, `GroupKFold` o `StratifiedGroupKFold` | Evitar que la identidad del mismo individuo aparezca a ambos lados         |
+| Predicción de fechas futuras                                        | Corte cronológico y `TimeSeriesSplit` cuando corresponda   | Entrenar solo con el pasado                                                |
+| Ventanas temporales solapadas o etiquetas que tardan en completarse | Separación temporal con una distancia o purga adecuada     | Evitar que información del horizonte de evaluación llegue al entrenamiento |
+| Generalización a otra región o centro                               | Bloques geográficos o separación por centro                | Reproducir la distancia entre entrenamiento y uso real                     |
+
+Consulta los ejemplos de <a href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank">validación cruzada de scikit-learn</a> para implementar el diseño que corresponda. En datos
+irregulares, `gap` cuenta filas, no días; comprueba que la separación realmente
+cubra el horizonte de las etiquetas.
+
+<Aside type="warning" title="La prueba no dirige la exploración">
+
+No elijas variables, imputaciones, límites de atípicos ni transformaciones
+mirando la prueba. El EDA detallado pertenece al entrenamiento. La validación
+sirve para comparar decisiones, y la prueba se consulta al final con el
+procedimiento ya fijado. Explorar repetidamente la validación también puede
+adaptar tus decisiones a ella: registra los intentos y reserva una evaluación
+final independiente.
+
+</Aside>
+
+## Paso 4: entiende la variable objetivo
+
+En clasificación, empieza por contar las clases y revisar qué significa cada
+etiqueta. En regresión, examina la distribución y las unidades del objetivo. En
+ambos casos verifica quién etiqueta, qué retraso existe y si faltan resultados
+de ciertos grupos.
+
+```python
+conteo = train.abandono_30d.value_counts().sort_index()
+fig, ax = plt.subplots(figsize=(8, 4))
+barras = ax.bar(["Permanece (0)", "Abandona (1)"], conteo, color=[AZUL, NARANJA])
+ax.bar_label(barras, labels=[f"{v} ({v / len(train):.1%})" for v in conteo], padding=5)
+ax.set(ylabel="Clientes", title="Objetivo en entrenamiento", ylim=(0, conteo.max() * 1.18))
+guardar(fig, "01-objetivo.webp")
+resultados["abandono_pct"] = float(train.abandono_30d.mean() * 100)
+```
+
+<Image
+  src={objetivo}
+  alt="Barras con 1510 clientes que permanecen y 410 que abandonan, equivalentes al 78,6 y al 21,4 por ciento del entrenamiento."
+/>
+
+Hay **410 abandonos entre 1920 clientes**, aproximadamente un **21,35 %**. Un
+clasificador que siempre responda «permanece» acertará el **78,65 %** y
+detectará cero abandonos. Ese porcentaje es la referencia que un resultado
+aparentemente bueno debe superar, y explica por qué la exactitud no basta.
+
+Para decidir las métricas, traduce los errores a consecuencias. Un falso
+positivo significa intervenir sobre un cliente que no iba a abandonar; un falso
+negativo significa no detectar a alguien que sí abandonará. El coste de ambos
+errores y la capacidad de intervención determinan el umbral útil.
+
+La **precisión** pregunta qué fracción de los clientes señalados realmente
+abandona; la **exhaustividad**, o _recall_, pregunta qué fracción de todos los
+abandonos detectas. Examina también la curva precisión–recall y, si utilizarás
+las probabilidades como riesgos individuales, su calibración.
+
+No equilibres clases antes de separar los datos. Si experimentas con
+sobremuestreo, aplícalo dentro de cada partición de entrenamiento; la evaluación
+debe reflejar la prevalencia esperada. El desbalance tampoco obliga a generar
+ejemplos sintéticos: comienza con una referencia simple y mide.
+
+## Paso 5: investiga los datos faltantes
+
+Un valor ausente puede significar «no se midió», «no aplica», «falló la captura»
+o «la persona decidió no responder». Sustituir todos esos casos por cero mezcla
+significados diferentes. Además, un cero puede ser un valor real: un cliente con
+cero sesiones sí aporta información.
+
+Calcula la proporción de ausencias por columna y después por grupos relevantes.
+`isna()` detecta los marcadores de ausencia de pandas; cadenas como `"?"` o
+`"desconocido"` requieren un tratamiento explícito si significan falta de
+información en tu fuente. La <a href="https://pandas.pydata.org/docs/user_guide/missing_data.html" target="_blank">documentación de datos ausentes de pandas</a> explica sus distintos marcadores y
+comportamientos.
+
+```python
+columnas = ["gasto_mensual", "gasto_anual_estimado", "antiguedad_meses"]
+ausencias = train[columnas].isna().mean().mul(100).sort_values()
+por_plan = train.assign(falta_gasto=train.gasto_mensual.isna()).groupby("plan").falta_gasto.mean().mul(100)
+fig, axs = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+axs[0].barh(ausencias.index, ausencias, color=AZUL)
+axs[0].set(xlabel="Valores ausentes (%)", title="¿Qué columnas faltan?")
+axs[1].bar(por_plan.index, por_plan, color=AZUL)
+axs[1].set(ylabel="Gasto ausente (%)", title="¿En qué grupos faltan?")
+guardar(fig, "02-ausencias.webp")
+resultados["gasto_ausente_por_plan_pct"] = por_plan.round(2).to_dict()
+```
+
+<Image
+  src={ausencias}
+  alt="A la izquierda, cerca del 14,8 por ciento de ausencia en las dos columnas de gasto; a la derecha, la ausencia de gasto es mayor en Básico que en Empresa y Pro."
+/>
+
+El gasto falta en el **14,79 %** del entrenamiento. Por plan, las ausencias son
+**20,97 % en Básico**, **6,63 % en Empresa** y **4,09 % en Pro**. Si eliminas
+todas esas filas, alteras la composición de la muestra. El segundo panel explica
+algo que el porcentaje global oculta.
+
+Conviene distinguir tres mecanismos:
+
+- **MCAR**: la ausencia no depende de valores observados ni no observados. Una
+  pérdida completamente aleatoria durante una transferencia podría aproximarse a
+  este caso.
+- **MAR**: una vez consideradas ciertas variables observadas, la ausencia no
+  depende del valor que falta. En nuestra simulación, la probabilidad de no
+  observar gasto se determina a partir del plan.
+- **MNAR**: la ausencia sigue dependiendo del valor no observado incluso al
+  condicionar por la información disponible. Por ejemplo, importes muy altos
+  podrían omitirse por razones no registradas.
+
+Conocemos el mecanismo del ejemplo porque lo programamos. **En datos reales, un
+gráfico de ausencias no demuestra MAR ni descarta MNAR.** Para aclararlo
+necesitas conocer la captura, comparar fuentes y considerar análisis de
+sensibilidad.
+
+Como primera aproximación predictiva, puedes imputar la mediana y añadir un
+indicador de ausencia. La mediana debe aprenderse solo con el entrenamiento de
+cada pliegue. El indicador puede ser útil si el proceso de captura es estable,
+pero también puede aprender un fallo operativo que desaparezca en producción. La
+imputación simple tampoco reconstruye la variabilidad real ni garantiza
+inferencias estadísticas válidas.
+
+## Paso 6: estudia distribuciones, escalas y transformaciones
+
+Un resumen numérico comprime la información. La **media** es el promedio; la
+**mediana** deja aproximadamente la mitad de observaciones a cada lado. La
+**desviación estándar** resume dispersión alrededor de la media, mientras que
+los **cuartiles** delimitan el 25 %, 50 % y 75 % acumulado. El rango
+intercuartílico, `IQR = Q3 - Q1`, describe la amplitud de la mitad central.
+
+Cuando hay una cola larga, unos pocos valores elevados pueden arrastrar la
+media. Por eso revisamos simultáneamente resúmenes y gráficos.
+
+```python
+g = train.gasto_mensual.dropna()
+fig, axs = plt.subplots(1, 3, figsize=(13, 4), layout="constrained")
+axs[0].hist(g, bins="fd", color=AZUL, edgecolor="white")
+axs[0].axvline(g.mean(), color=NARANJA, label="Media")
+axs[0].axvline(g.median(), color="black", linestyle="--", label="Mediana")
+axs[0].set(xlabel="Gasto (unidades monetarias)", ylabel="Clientes", title="Escala original")
+axs[0].legend()
+axs[1].hist(np.log1p(g), bins=25, color=AZUL, edgecolor="white")
+axs[1].set(xlabel="log(1 + gasto)", ylabel="Clientes", title="Transformación logarítmica")
+axs[2].ecdf(g, color=AZUL)
+axs[2].axhline(0.9, color=NARANJA, linestyle="--")
+axs[2].set(xlabel="Gasto (unidades monetarias)", ylabel="Proporción acumulada", title="Distribución acumulada")
+guardar(fig, "03-distribuciones.webp")
+resumen = g.describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.99])
+print(resumen.round(2).to_string())
+resultados["gasto"] = resumen.round(2).to_dict()
+```
+
+<Image
+  src={distribuciones}
+  alt="Tres paneles del gasto: histograma con cola derecha y media mayor que mediana, histograma de logaritmo de uno más gasto y distribución acumulada con una referencia al 90 por ciento."
+/>
+
+En los **1636 gastos observados**, la media es **57,56**, la mediana **39,50**,
+el percentil 90 **118,20** y el máximo **900,83**. Interpreta cada panel de
+forma diferente:
+
+1. **Histograma original.** La altura indica cuántos clientes caen en cada
+   intervalo. La mayoría se concentra en importes pequeños y aparece una cola
+   hacia la derecha. La media queda a la derecha de la mediana. El número y
+   ancho de los intervalos pueden cambiar la apariencia; `bins="fd"` usa una
+   regla automática basada en el IQR y el tamaño de la muestra.
+2. **Histograma transformado.** `log1p(x)` calcula el logaritmo natural de
+   `1 + x`; comprime los importes grandes y admite cero. Es una representación
+   distinta de los mismos datos, no una corrección de errores. Aquí produce una
+   forma menos asimétrica.
+3. **Distribución acumulada empírica o ECDF.** Para cada importe, muestra la
+   fracción de gastos observados menores o iguales que él. La altura 0,90
+   corresponde aproximadamente a 118,20. Permite leer percentiles sin elegir
+   intervalos de histograma.
+
+Estas estadísticas describen los gastos **observados**, no necesariamente todos
+los clientes: las ausencias dependen del plan. La distribución calculada después
+de imputar tendría un pico artificial en el valor de sustitución. Conserva la
+distinción entre datos medidos e imputados.
+
+Un logaritmo puede facilitar ciertos modelos lineales y visualizaciones. No es
+obligatorio hacer normales todas las variables. La regresión lineal no exige que
+cada predictor tenga una distribución normal, y los árboles no necesitan
+estandarización para comparar umbrales de una variable. Los métodos basados en
+distancias y muchos modelos regularizados sí son sensibles a las escalas.
+
+Si utilizas una densidad suavizada o **KDE**, comprueba el ancho de banda y el
+soporte de la variable: puede dibujar densidad en valores imposibles o crear una
+impresión engañosa de varios picos. En conteos pequeños, barras o histogramas
+alineados con enteros suelen ser más claros. El tutorial de <a href="https://seaborn.pydata.org/tutorial/distributions.html" target="_blank">distribuciones de Seaborn</a> compara estos recursos.
+
+## Paso 7: distingue atípicos, errores y casos importantes
+
+Un **valor atípico** es inusual respecto a una referencia. Puede ser una captura
+incorrecta, un evento raro real o un miembro normal de otro grupo. Esa
+definición depende del contexto: un gasto de empresa puede ser extraordinario
+entre particulares y habitual entre empresas.
+
+El diagrama de caja muestra la mediana, la caja entre `Q1` y `Q3`, y bigotes que
+en esta configuración llegan a las observaciones más extremas dentro de 1,5 IQR
+de la caja. Los puntos restantes quedan señalados para revisión. La regla
+habitual es:
+
+$$
+x < Q_1 - 1{,}5\,IQR
+\quad \text{o} \quad
+x > Q_3 + 1{,}5\,IQR.
+$$
+
+**Símbolos:** $x$ es una observación; $Q_1$ y $Q_3$ son los cuartiles primero y
+tercero; $IQR = Q_3 - Q_1$. Los límites no son fronteras universales entre datos
+correctos e incorrectos.
+
+```python
+q1, q3 = g.quantile([0.25, 0.75])
+iqr = q3 - q1
+limite = q3 + 1.5 * iqr
+marcados = train.gasto_mensual > limite
+fig, axs = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+axs[0].boxplot(g, orientation="horizontal")
+axs[0].axvline(limite, color=NARANJA, linestyle="--", label="Q3 + 1.5 IQR")
+axs[0].set(xlabel="Gasto", yticks=[], title="Regla global de revisión")
+axs[0].legend()
+planes = ["Básico", "Pro", "Empresa"]
+axs[1].boxplot(
+    [train.loc[train.plan == p, "gasto_mensual"].dropna() for p in planes],
+    tick_labels=planes,
+)
+axs[1].set(ylabel="Gasto", title="El contexto cambia la interpretación")
+guardar(fig, "04-atipicos.webp")
+resultados["atipicos"] = {"limite": round(float(limite), 2), "n": int(marcados.sum())}
+```
+
+<Image
+  src={atipicos}
+  alt="Diagrama de caja global del gasto con límite superior cercano a 142 y cajas separadas por plan que muestran importes más altos en Empresa."
+/>
+
+El límite superior global es **141,99** y marca **116 clientes**. En el panel
+por plan se aprecia que Empresa tiene una escala de gasto mayor. La regla global
+mezcla poblaciones y marca parte de esa diferencia como excepcional. No
+eliminamos esos valores: el generador no introdujo errores de gasto.
+
+Ante un extremo real, consulta unidades, comprobantes, límites físicos,
+historial y grupos comparables. Si es un error confirmado, corrígelo o márcalo
+como ausente; si es válido, considera transformaciones, pérdidas robustas o
+métricas por segmento. En fraude o fallos de equipos, esos casos raros pueden
+ser precisamente el objetivo.
+
+La puntuación _z_ mide distancia a la media en desviaciones estándar, pero puede
+ser poco informativa con colas largas. El IQR y la desviación absoluta mediana
+ofrecen referencias más robustas. Para anomalías multivariables,
+`IsolationForest` o `LocalOutlierFactor` pueden ayudar a priorizar revisiones;
+sus puntuaciones tampoco demuestran que una observación sea errónea.
+
+Si decides recortar valores por percentiles, estima los límites dentro del
+entrenamiento de cada pliegue y aplica esos mismos límites a la validación.
+Documenta cuántas observaciones modificas y cómo afecta a los grupos.
+
+## Paso 8: compara predictores con el objetivo
+
+El gráfico apropiado depende del tipo de ambas variables. Para una cantidad y
+una clase puedes comparar cajas, histogramas o ECDF por clase. Para dos
+categorías, usa una tabla de contingencia y tasas con denominadores. Para dos
+cantidades, empieza por dispersión y utiliza transparencia o agregación si
+muchos puntos se superponen.
+
+```python
+tasas = train.groupby("plan").abandono_30d.agg(["sum", "count", "mean"]).reindex(planes)
+# Wilson: intervalos puntuales aproximados al 95 % para proporciones.
+z = stats.norm.ppf(0.975)
+p, m = tasas["mean"], tasas["count"]
+centro = (p + z**2 / (2 * m)) / (1 + z**2 / m)
+radio = z * np.sqrt(p * (1 - p) / m + z**2 / (4 * m**2)) / (1 + z**2 / m)
+tasas["inferior"], tasas["superior"] = centro - radio, centro + radio
+fig, axs = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+axs[0].boxplot(
+    [train.loc[train.abandono_30d == y, "incidencias_30d"] for y in [0, 1]],
+    tick_labels=["Permanece", "Abandona"],
+)
+axs[0].set(ylabel="Incidencias en 30 días", title="Numérica frente a clase")
+axs[1].errorbar(
+    np.arange(len(tasas)), p * 100,
+    yerr=np.vstack([p - tasas.inferior, tasas.superior - p]) * 100,
+    fmt="o", color=AZUL, capsize=5,
+)
+axs[1].set(
+    xticks=np.arange(len(tasas)),
+    xticklabels=[f"{plan}\nn={n}" for plan, n in zip(tasas.index, m)],
+    ylabel="Abandono (%)", title="Tasa e intervalo de Wilson (95 %)",
+)
+guardar(fig, "05-relaciones-objetivo.webp")
+print(tasas.round(3).to_string())
+resultados["tasas_por_plan"] = tasas.round(4).to_dict(orient="index")
+```
+
+<Image
+  src={relaciones}
+  alt="Comparación de incidencias entre quienes permanecen y abandonan, seguida por tasas de abandono por plan con intervalos de Wilson y tamaños de muestra."
+/>
+
+La distribución de incidencias de quienes abandonan se desplaza hacia valores
+más altos, pero ambas clases se superponen. La asociación puede ayudar a
+predecir; no proporciona una regla determinista ni demuestra que reducir
+incidencias evitará un número concreto de abandonos.
+
+El segundo panel contiene estas tasas:
+
+| Plan    | Clientes | Abandonos |    Tasa | Intervalo de Wilson del 95 % |
+| :------ | -------: | --------: | ------: | :--------------------------- |
+| Básico  |     1192 |       290 | 24,33 % | 21,98–26,84 %                |
+| Pro     |      562 |        94 | 16,73 % | 13,87–20,04 %                |
+| Empresa |      166 |        26 | 15,66 % | 10,92–21,96 %                |
+
+No compares solo números de abandonos: Básico tiene muchos más clientes. La tasa
+divide abandonos entre clientes de cada plan. La diferencia entre Básico y Pro
+es de **7,60 puntos porcentuales**; no equivale a un aumento relativo del 7,60
+%.
+
+Las barras de incertidumbre son intervalos de Wilson, apropiados para resumir
+una proporción binomial bajo observaciones independientes. Empresa tiene un
+intervalo más amplio porque su muestra es menor. Un intervalo del 95 % describe
+la cobertura del procedimiento en muestreos repetidos bajo sus supuestos; no
+elimina sesgos de selección ni de medición.
+
+Estos intervalos son **puntuales**, no un ajuste simultáneo por todas las
+comparaciones que podrías explorar. El solapamiento visual no sustituye una
+estimación específica de la diferencia entre dos tasas. Si repites clientes,
+necesitas considerar la dependencia; si comparas docenas de segmentos, debes
+tratar la multiplicidad antes de presentar hallazgos confirmatorios.
+
+## Paso 9: examina correlaciones y busca lo que ocultan
+
+La correlación resume una clase de relación entre dos variables. **Pearson**
+mide asociación lineal; **Spearman** aplica la correlación a rangos y recoge
+relaciones monótonas, donde una variable tiende a aumentar o disminuir cuando
+aumenta la otra. Ambas suelen tomar valores entre −1 y 1 cuando están definidas.
+Una variable constante no tiene una correlación informativa.
+
+```python
+variables = ["antiguedad_meses", "sesiones_30d", "incidencias_30d", "gasto_mensual", "gasto_anual_estimado"]
+etiquetas = ["Antigüedad", "Sesiones", "Incidencias", "Gasto/mes", "Gasto/año"]
+corr = train[variables].corr(method="spearman")
+fig, ax = plt.subplots(figsize=(7, 6), layout="constrained")
+im = ax.imshow(corr, vmin=-1, vmax=1, cmap="RdBu_r")
+ax.set(xticks=range(5), yticks=range(5), xticklabels=etiquetas, yticklabels=etiquetas, title="Correlación de Spearman entre predictores")
+plt.setp(ax.get_xticklabels(), rotation=35, ha="right")
+ax.grid(False)
+for i in range(5):
+    for j in range(5):
+        ax.text(j, i, f"{corr.iloc[i, j]:.2f}", ha="center", va="center", color="white" if abs(corr.iloc[i, j]) > 0.6 else "black")
+fig.colorbar(im, ax=ax, shrink=0.8)
+guardar(fig, "06-correlaciones.webp")
+print("Correlación gasto mensual/anual:", corr.loc["gasto_mensual", "gasto_anual_estimado"])
+```
+
+<Image
+  src={correlaciones}
+  alt="Matriz de Spearman con correlación prácticamente uno entre gasto mensual y anual y asociaciones pequeñas entre los demás predictores."
+/>
+
+Los gastos mensual y anual tienen correlación prácticamente **1** porque el
+segundo es doce veces el primero, salvo redondeo. Conservar ambos no agrega
+información al modelo y dificulta interpretar coeficientes. Eliminamos la
+columna anual en el ejemplo posterior. En otros conjuntos, una correlación alta
+requiere investigar la definición y la calidad de ambas mediciones antes de
+decidir cuál conservar.
+
+El color usa la misma escala de −1 a 1 para todas las celdas. La diagonal es 1
+por definición para variables no constantes; no representa un hallazgo. Además,
+pandas calcula estas correlaciones con pares disponibles: si cada columna tiene
+ausencias diferentes, las celdas pueden basarse en muestras distintas. Revisa
+también cuántos pares completos sostienen cada resultado.
+
+**Una correlación cercana a cero no implica independencia.** El siguiente
+ejemplo separado genera una relación en U: valores de `x` muy negativos o muy
+positivos producen valores grandes de `y`.
+
+```python
+rng_curva = np.random.default_rng(12)
+x = np.linspace(-3, 3, 500)
+y_curva = x**2 + rng_curva.normal(0, 0.4, len(x))
+pearson = stats.pearsonr(x, y_curva).statistic
+spearman = stats.spearmanr(x, y_curva).statistic
+fig, ax = plt.subplots(figsize=(8, 4), layout="constrained")
+ax.scatter(x, y_curva, s=12, alpha=0.5, color=AZUL)
+ax.set(xlabel="x", ylabel="y", title=f"Relación en U: Pearson={pearson:.3f}; Spearman={spearman:.3f}")
+guardar(fig, "07-no-lineal.webp")
+resultados["curva"] = {"pearson": float(pearson), "spearman": float(spearman)}
+```
+
+<Image
+  src={noLineal}
+  alt="Nube de puntos en forma de U con Pearson aproximadamente menos 0,003 y Spearman aproximadamente cero, pese a una relación evidente."
+/>
+
+Pearson vale aproximadamente **−0,003** y Spearman aproximadamente **0**. La
+relación es fuerte visualmente, pero no es lineal ni monótona. Un filtro que
+elimine todas las variables de correlación pequeña descartaría `x`, que sí
+contiene información sobre `y`. Investiga curvas, interacciones o estimadores de
+información mutua dentro de un proceso de validación; no interpretes una única
+estadística como un detector universal de utilidad.
+
+Tampoco concluyas causalidad a partir de una asociación. Una variable común
+puede explicar ambas, el sentido temporal puede ser el contrario al supuesto o
+el muestreo puede inducir el patrón. La <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html" target="_blank">referencia de `pearsonr` de SciPy</a> incluye ejemplos de dependencia que una correlación
+nula no descarta.
+
+## Paso 10: explora segmentos y proyecciones multivariables
+
+Una relación agregada puede cambiar al separar grupos. Imagina dos campañas
+evaluadas en clientes nuevos y antiguos:
+
+| Segmento | Campaña A                  | Campaña B         |
+| :------- | :------------------------- | :---------------- |
+| Nuevos   | 9 conversiones de 10: 90 % | 80 de 100: 80 %   |
+| Antiguos | 20 de 100: 20 %            | 1 de 10: 10 %     |
+| Total    | 29 de 110: 26,4 %          | 81 de 110: 73,6 % |
+
+A tiene una tasa mayor en cada segmento, pero B gana al agregar porque fue
+asignada principalmente al grupo de mayor conversión. Es una ilustración de la
+**paradoja de Simpson**. Antes de recomendar una campaña necesitas estudiar la
+asignación; ni el total ni las tablas segmentadas identifican por sí solos un
+efecto causal.
+
+Para explorar varias columnas numéricas puedes utilizar **PCA**, análisis de
+componentes principales. Construye combinaciones lineales que capturan
+direcciones de variación. Aquí imputamos y estandarizamos cuatro predictores de
+entrenamiento antes de proyectarlos a dos dimensiones.
+
+```python
+numericas = ["antiguedad_meses", "sesiones_30d", "incidencias_30d", "gasto_mensual"]
+proyeccion = Pipeline([
+    ("imputar", SimpleImputer(strategy="median")),
+    ("escalar", StandardScaler()),
+    ("pca", PCA(n_components=2)),
+])
+coords = proyeccion.fit_transform(train[numericas])
+varianza = proyeccion.named_steps["pca"].explained_variance_ratio_
+fig, ax = plt.subplots(figsize=(8, 5), layout="constrained")
+for clase, color, marca, nombre in [(0, AZUL, "o", "Permanece"), (1, NARANJA, "^", "Abandona")]:
+    mascara = train.abandono_30d.to_numpy() == clase
+    ax.scatter(coords[mascara, 0], coords[mascara, 1], s=16, alpha=0.35, c=color, marker=marca, label=nombre)
+ax.set(xlabel=f"PC1 ({varianza[0]:.1%})", ylabel=f"PC2 ({varianza[1]:.1%})", title="PCA de cuatro predictores numéricos")
+ax.legend()
+guardar(fig, "08-pca.webp")
+resultados["pca_varianza_pct"] = (varianza * 100).round(2).tolist()
+```
+
+<Image
+  src={pca}
+  alt="Proyección PCA con círculos para quienes permanecen y triángulos para quienes abandonan; ambas clases se superponen y los dos ejes conservan aproximadamente el 51,1 por ciento de la varianza."
+/>
+
+El primer eje conserva **26,08 %** de la varianza y el segundo **25,05 %**:
+juntos muestran aproximadamente **51,13 %** de la variación estandarizada. Casi
+la mitad queda fuera de la figura. El solapamiento no demuestra que el problema
+sea imposible: PCA busca variación de los predictores, sin utilizar la etiqueta
+para encontrar las direcciones que mejor separan clases.
+
+Los colores y símbolos se añaden después de ajustar la proyección. Este PCA es
+descriptivo y no se incorpora automáticamente al clasificador. Si lo probaras
+como transformación del modelo, tendrías que ajustarlo dentro de cada pliegue.
+La <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html" target="_blank">implementación de PCA de scikit-learn</a> centra las variables, pero no las escala por ti.
+
+Una figura con UMAP o t-SNE puede ayudar a inspeccionar vecindarios, pero sus
+islas no constituyen por sí mismas grupos reales. Cambia semillas y parámetros,
+revisa estabilidad y vuelve a las variables originales. En agrupamiento,
+comprueba también tamaños, interpretabilidad y sensibilidad al escalado; un
+valor alto de una métrica interna no garantiza segmentos útiles.
+
+## Paso 11: reconoce tendencias y cambios temporales
+
+Cuando los registros tienen fechas, el tiempo debe formar parte del EDA.
+Comprueba orden, frecuencia, duplicados temporales, huecos, zonas horarias y
+cambios de definición. Después mira tendencia, estacionalidad, ciclos y cambios
+abruptos.
+
+Este ejemplo **independiente del conjunto de clientes** simula 180 días de
+pedidos. Añadimos crecimiento, un ciclo semanal, ruido y un salto de nivel en el
+día 120. No es una evaluación de pronóstico: toda la figura es una exploración
+de un histórico de desarrollo.
+
+```python
+rng_tiempo = np.random.default_rng(7)
+fechas = pd.date_range("2025-01-01", periods=180, freq="D")
+t = np.arange(len(fechas))
+serie = pd.Series(
+    100 + 0.12 * t + 15 * np.sin(2 * np.pi * t / 7)
+    + 25 * (t >= 120) + rng_tiempo.normal(0, 4, len(t)),
+    index=fechas, name="pedidos",
+)
+fig, axs = plt.subplots(1, 2, figsize=(12, 4), layout="constrained")
+axs[0].plot(serie.index, serie, alpha=0.45, color=AZUL, label="Diario")
+axs[0].plot(serie.index, serie.rolling(7).mean(), color="black", label="Media de 7 días")
+axs[0].axvline(serie.index[120], color=NARANJA, linestyle="--", label="Cambio simulado")
+axs[0].set(ylabel="Pedidos simulados", title="Tendencia, ciclo semanal y cambio de nivel")
+axs[0].tick_params(axis="x", rotation=30)
+axs[0].legend(fontsize=9)
+axs[1].ecdf(serie.iloc[:90], label="Primeros 90 días", color=AZUL)
+axs[1].ecdf(serie.iloc[90:], label="Últimos 90 días", color=NARANJA)
+axs[1].set(xlabel="Pedidos", ylabel="Proporción acumulada", title="Comparación descriptiva de periodos")
+axs[1].legend()
+guardar(fig, "09-tiempo.webp")
+# Variables para predecir el día t: usan exclusivamente días anteriores.
+historico = pd.DataFrame({
+    "objetivo": serie,
+    "retardo_1": serie.shift(1),
+    "media_previa_7": serie.shift(1).rolling(7).mean(),
+})
+assert pd.isna(historico.media_previa_7.iloc[6])
+assert np.isclose(historico.media_previa_7.iloc[7], serie.iloc[:7].mean())
+```
+
+<Image
+  src={tiempo}
+  alt="Serie con oscilaciones semanales, crecimiento y un salto de nivel; las ECDF de los dos periodos muestran valores mayores en los últimos noventa días."
+/>
+
+La media móvil de siete días suaviza el ciclo semanal y deja ver el aumento de
+nivel. En la ECDF, la curva del segundo periodo se desplaza hacia la derecha:
+para una misma fracción acumulada, necesitas un número mayor de pedidos. Eso
+describe un cambio entre periodos; el gráfico no identifica su causa. Podría ser
+demanda, una campaña o una modificación de la medición.
+
+Para predecir el día `t`, la media de los siete días anteriores se construye con
+`shift(1).rolling(7).mean()`. Si usas directamente la media móvil que incluye el
+día `t`, incorporas parte del objetivo al predictor. Una media móvil válida para
+describir el pasado puede ser inválida como característica de un pronóstico.
+
+La autocorrelación compara la serie con versiones desplazadas de sí misma. Picos
+en retardos de 7, 14 o 21 días pueden orientar hacia una periodicidad semanal,
+pero una tendencia también induce autocorrelación. Revisa el gráfico original y
+la frecuencia antes de interpretar una ACF o una descomposición STL. El módulo
+temporal de <a href="https://www.statsmodels.org/stable/tsa.html" target="_blank">statsmodels</a> incluye herramientas para estos análisis.
+
+En producción, distingue cambios en los predictores, en la prevalencia y en la
+relación entre predictores y objetivo. Ver un cambio en `X` no demuestra una
+caída predictiva; necesitas etiquetas cuando estén disponibles y métricas por
+periodo. Las pruebas de dos muestras tampoco dan por sí solas la importancia
+práctica del cambio, y la dependencia temporal invalida los supuestos de muchas
+pruebas aplicadas ingenuamente fila a fila.
+
+## Paso 12: adapta el análisis a una regresión
+
+Si predices un precio, una duración o una cantidad, estudia primero el rango del
+objetivo, sus unidades, ceros, límites de medición y colas. Una media del error
+puede ocultar que el modelo falla especialmente en valores altos.
+
+El siguiente ejemplo independiente genera superficies y precios de viviendas
+ficticias. La relación media es lineal, pero la dispersión del precio aumenta
+con la superficie. Después ajustamos una regresión simple y miramos sus errores
+en un subconjunto de validación.
+
+```python
+rng_reg = np.random.default_rng(21)
+superficie = rng_reg.uniform(30, 180, 600)
+precio = 50000 + 1800 * superficie + rng_reg.normal(0, 450 * superficie)
+X_reg = superficie.reshape(-1, 1)
+Xa, Xv, ya, yv = train_test_split(X_reg, precio, test_size=0.25, random_state=42)
+reg = LinearRegression().fit(Xa, ya)
+pred = reg.predict(Xv)
+residuos = yv - pred
+fig, axs = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+axs[0].scatter(superficie, precio / 1000, s=12, alpha=0.45, color=AZUL)
+axs[0].set(xlabel="Superficie (m²)", ylabel="Precio (miles de unidades)", title="Datos sintéticos: variabilidad creciente")
+axs[1].scatter(pred / 1000, residuos / 1000, s=18, alpha=0.55, color=AZUL)
+axs[1].axhline(0, color="black", linestyle="--")
+axs[1].set(xlabel="Predicción (miles)", ylabel="Residuo (miles)", title="Residuos en validación")
+guardar(fig, "10-regresion.webp")
+resultados["regresion_mae"] = round(float(mean_absolute_error(yv, pred)), 2)
+```
+
+<Image
+  src={regresion}
+  alt="Dispersión de superficie frente a precio con variabilidad creciente y residuos de validación cuyo rango se amplía para predicciones mayores."
+/>
+
+Un **residuo** es el valor observado menos la predicción. En el panel derecho,
+un residuo positivo significa que el modelo predijo demasiado bajo; uno negativo
+significa que predijo demasiado alto. Busca tres tipos de patrón:
+
+- Una curva alrededor de cero sugiere que la forma de la relación no está bien
+  representada.
+- Una apertura en abanico sugiere **heterocedasticidad**: la variabilidad del
+  error cambia con el nivel de la predicción.
+- Puntos aislados pueden indicar errores, casos difíciles o subpoblaciones que
+  el modelo no representa adecuadamente.
+
+Aquí la variabilidad creciente se introdujo en la simulación y se aprecia en la
+figura. El error absoluto medio en validación es aproximadamente **38 345,46
+unidades monetarias**. Para juzgarlo necesitas compararlo con una referencia y
+con la tolerancia del problema; su tamaño aislado no determina si el modelo
+sirve.
+
+El **MAE** promedia magnitudes absolutas de error. El **RMSE** penaliza más los
+errores grandes y conserva las unidades del objetivo. Evalúa también por
+segmentos o rangos de precio. Un objetivo estrictamente positivo podría
+beneficiarse de una transformación logarítmica, pero eso cambia qué errores
+priorizas; invertir la transformación no recupera automáticamente la media
+condicional en la escala original.
+
+Este diagnóstico es una continuación del EDA después de ajustar una referencia.
+Si utilizas los residuos para elegir nuevas variables o modelos, esa muestra ya
+es validación y no una prueba final intacta.
+
+## Paso 13: convierte los hallazgos en un pipeline evaluable
+
+Volvamos al abandono. Los hallazgos sugieren conservar antigüedad, sesiones,
+incidencias, gasto y plan; imputar numéricas; añadir indicadores de ausencia; y
+codificar el plan mediante **one-hot**, una columna indicadora por categoría.
+Excluimos identificador, gasto anual redundante y reembolso posterior.
+
+La exclusión del reembolso se basa en **cuándo se conoce**, no en cuánto se
+correlaciona con la etiqueta. Una fuga puede sobrevivir a una validación cruzada
+bien programada si esa variable ilícita está presente en todos los pliegues.
+Revisa también variables acumuladas tras el evento, tablas unidas sin respetar
+fechas y etiquetas codificadas indirectamente en nombres o rutas.
+
+Un `Pipeline` permite volver a ajustar imputación, escalado y codificación
+dentro de cada pliegue. Compáralo con la guía de <a href="https://scikit-learn.org/stable/common_pitfalls.html" target="_blank">errores habituales y fuga de información de scikit-learn</a> . El código usa regresión
+logística como referencia interpretable, sin una búsqueda de hiperparámetros.
+
+```python
+X = train[numericas + ["plan"]]
+y = train.abandono_30d
+preparar = ColumnTransformer([
+    ("numericas", Pipeline([
+        ("imputar", SimpleImputer(strategy="median", add_indicator=True)),
+        ("escalar", StandardScaler()),
+    ]), numericas),
+    ("categoricas", Pipeline([
+        ("imputar", SimpleImputer(strategy="most_frequent")),
+        ("codificar", OneHotEncoder(handle_unknown="ignore")),
+    ]), ["plan"]),
+])
+modelo = Pipeline([
+    ("preparar", preparar),
+    ("clasificar", LogisticRegression(max_iter=2000)),
+])
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+metricas = {"roc_auc": "roc_auc", "ap": "average_precision", "accuracy": "accuracy"}
+evaluacion = {}
+for nombre, estimador in [
+    ("Referencia", DummyClassifier(strategy="prior")),
+    ("Regresión logística", modelo),
+]:
+    scores = cross_validate(estimador, X, y, cv=cv, scoring=metricas, n_jobs=1)
+    evaluacion[nombre] = {
+        metrica: f"{scores['test_' + metrica].mean():.3f} ± {scores['test_' + metrica].std():.3f}"
+        for metrica in metricas
+    }
+print(pd.DataFrame(evaluacion).T.to_string())
+# Cada probabilidad se obtiene sin entrenar con la fila correspondiente.
+prob_oof = cross_val_predict(modelo, X, y, cv=cv, method="predict_proba", n_jobs=1)[:, 1]
+precision, recall, _ = precision_recall_curve(y, prob_oof)
+fig, ax = plt.subplots(figsize=(8, 4), layout="constrained")
+ax.step(recall, precision, where="post", color=AZUL, label=f"AP OOF={average_precision_score(y, prob_oof):.3f}")
+ax.axhline(y.mean(), color=NARANJA, linestyle="--", label=f"Prevalencia={y.mean():.3f}")
+ax.set(xlabel="Exhaustividad (recall)", ylabel="Precisión (precision)", xlim=(0, 1), ylim=(0, 1.03), title="Predicciones fuera de pliegue en entrenamiento")
+ax.legend()
+guardar(fig, "11-precision-recall.webp")
+assert np.isfinite(prob_oof).all() and len(prob_oof) == len(train)
+resultados["validacion_cruzada"] = evaluacion
+resultados["oof"] = {
+    "ap": round(float(average_precision_score(y, prob_oof)), 4),
+    "roc_auc": round(float(roc_auc_score(y, prob_oof)), 4),
+}
+```
+
+En los cinco pliegues de entrenamiento se obtuvo:
+
+| Modelo                     | ROC AUC       | Average precision | Exactitud     |
+| :------------------------- | :------------ | :---------------- | :------------ |
+| Referencia por prevalencia | 0,500 ± 0,000 | 0,214 ± 0,000     | 0,786 ± 0,000 |
+| Regresión logística        | 0,734 ± 0,049 | 0,469 ± 0,084     | 0,792 ± 0,022 |
+
+Cada celda muestra **media ± desviación estándar entre pliegues**, redondeada a
+tres decimales; no es un intervalo de confianza. La exactitud cambia poco, pero
+la capacidad de ordenar clientes por riesgo mejora respecto a la referencia. ROC
+AUC resume ordenación a través de umbrales; no describe por sí sola la precisión
+que obtendrás en el umbral de intervención.
+
+<Image
+  src={precisionRecall}
+  alt="Curva precisión–recall de probabilidades fuera de pliegue, con average precision 0,443 y una línea de referencia de prevalencia 0,214."
+/>
+
+Cada probabilidad de esta curva se calculó con un modelo entrenado sin esa fila,
+mediante predicciones **fuera de pliegue**, u **OOF**. Al aumentar la
+exhaustividad, normalmente aceptas más falsos positivos y pierdes precisión. La
+línea horizontal representa la prevalencia como referencia de una ordenación sin
+información en expectativa.
+
+**Average precision**, abreviado **AP**, resume la precisión ponderando los
+incrementos de exhaustividad. No es necesariamente igual al área calculada por
+integración trapezoidal de la curva. La AP de todas las predicciones OOF juntas
+es **0,443**, distinta de la media de AP por pliegue, **0,469**: agregar
+predicciones y promediar métricas no son operaciones equivalentes.
+
+La curva permite discutir compromisos, pero el umbral definitivo debe elegirse
+con costes y capacidad operativa explícitos. Si comparas muchas variantes usando
+estos mismos pliegues, el resultado también se adapta a ellos. Las 480 filas de
+prueba siguen reservadas; el tutorial no las utiliza para afirmar un rendimiento
+final.
+
+Como siguiente experimento podrías comparar el gasto original con `log1p`,
+retirar el indicador de ausencia o probar un modelo no lineal. Esas son
+hipótesis para validar, no mejoras garantizadas por la forma de un gráfico.
+
+## Casos de uso frecuentes y herramientas apropiadas
+
+La elección de una herramienta debe seguir a la pregunta y al tamaño de los
+datos. Esta tabla amplía el caso tabular sin exigir que instales todo.
+
+<div className="overflow-x-auto" role="region" aria-label="Casos de uso y herramientas" tabIndex={0}>
+
+| Caso                        | Qué explorar                                                             | Herramientas de Python                                                 | Cómo interpretar y actuar                                                                                 |
+| :-------------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Clasificación tabular       | Clases, tasas por grupo, ausencias, disponibilidad temporal              | `pandas`, Matplotlib o Seaborn; validación de `scikit-learn`           | Contrasta con prevalencia y costes; evita variables posteriores al evento                                 |
+| Regresión                   | Objetivo, colas, dispersión, residuos y error por rango                  | `pandas`, `scipy.stats`, `statsmodels`, `scikit-learn`                 | Relaciona el error con las unidades y revisa curvatura o variabilidad creciente                           |
+| Series temporales           | Tendencia, ciclos, huecos, retardos y cambios de nivel                   | Índices temporales de `pandas`; ACF y STL de `statsmodels`             | Conserva el orden temporal y evita ventanas que incorporen el futuro                                      |
+| Segmentación sin etiquetas  | Escalas, redundancia, estabilidad y tamaño de grupos                     | PCA, K-means y DBSCAN de `scikit-learn`                                | Comprueba si los grupos se mantienen y tienen sentido en las variables originales                         |
+| Anomalías o fraude          | Colas, inconsistencias, extremos multivariables y grupos poco frecuentes | Reglas de dominio, `IsolationForest`, `LocalOutlierFactor`             | Usa puntuaciones para revisión; no borres automáticamente los casos raros                                 |
+| Texto                       | Idioma, longitud, textos vacíos, duplicados y vocabulario por clase      | `pandas`, expresiones regulares, `CountVectorizer` y `TfidfVectorizer` | Inspecciona ejemplos; separa autores o documentos relacionados y evita firmas que revelen la etiqueta     |
+| Imágenes                    | Resolución, canales, brillo, balance de clases y duplicados              | Pillow, Matplotlib, OpenCV                                             | Crea mosaicos por clase y fuente; evita dividir recortes de una misma imagen entre entrenamiento y prueba |
+| Geografía                   | Coordenadas, cobertura, densidad, sistema de referencia y vecindad       | GeoPandas, Shapely y mapas                                             | Un grupo puede reflejar cobertura de captura; valida por bloques espaciales cuando corresponda            |
+| Millones de filas           | Tipos, cardinalidad, agregaciones y cobertura de una muestra             | Polars, DuckDB, formatos columnares como Parquet                       | Calcula resúmenes sobre todos los datos cuando sea viable y muestrea gráficos sin perder grupos raros     |
+| Inventario rápido de tablas | Tipos, ausencias, duplicados y asociaciones iniciales                    | `ydata-profiling`                                                      | Utiliza el informe para priorizar preguntas; sus alertas no conocen el dominio ni prueban causalidad      |
+
+</div>
+
+Para muchas tareas tabulares, `pandas` y Matplotlib son suficientes. Seaborn
+facilita comparaciones estadísticas con `histplot`, `ecdfplot`, `boxplot`,
+`scatterplot` y `heatmap`. Un `pairplot` de cincuenta columnas genera una matriz
+enorme: selecciona variables por pregunta o trabaja por bloques.
+
+Para gráficos interactivos, Plotly o Altair permiten inspeccionar puntos y
+subconjuntos. Para una publicación, exporta una figura legible con unidades,
+denominadores y una explicación que no dependa de pasar el cursor. Para nubes
+muy densas, usa `hexbin`, densidades o muestreo documentado; una capa opaca de
+puntos no comunica bien la frecuencia.
+
+Las guías oficiales de <a href="https://docs.pola.rs/" target="_blank">Polars</a> y <a href="https://duckdb.org/docs/current/clients/python/overview" target="_blank">DuckDB para Python</a> son puntos de partida para tablas grandes. Aun con herramientas
+rápidas, una muestra conveniente puede excluir periodos o casos raros: mide su
+cobertura. Consulta también la documentación de <a href="https://docs.profiling.ydata.ai/latest/" target="_blank">YData Profiling</a> si necesitas automatizar el inventario inicial.
+
+## Cómo redactar conclusiones útiles
+
+Una conclusión de EDA debe separar **observación**, **posible explicación**,
+**decisión** y **comprobación pendiente**. «Hay muchos outliers» no comunica
+cuántos, respecto a qué regla ni qué harás con ellos.
+
+| Observación en este ejemplo                                    | Decisión inicial                                          | Qué falta comprobar                                           |
+| :------------------------------------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------ |
+| Faltan gastos de forma desigual entre planes                   | Imputación dentro del pipeline e indicador de ausencia    | Estabilidad de la captura y efecto en validación por grupo    |
+| La cola de gasto eleva la media sobre la mediana               | Conservar extremos válidos; comparar una transformación   | Si cambia el rendimiento y el error en clientes de gasto alto |
+| Gasto anual y mensual son casi equivalentes                    | Excluir gasto anual estimado                              | Que no contenga otra información en la fuente real            |
+| El reembolso ocurre después del objetivo                       | Excluirlo                                                 | Disponibilidad temporal de todas las demás columnas           |
+| Hay alrededor de un 21 % de positivos                          | Evaluar precisión, exhaustividad y AP además de exactitud | Coste de intervención, capacidad y calibración                |
+| Los dos componentes PCA conservan solo la mitad de la varianza | Usarlos como vista parcial                                | Patrones en las dimensiones omitidas                          |
+
+Registra también hallazgos negativos: una hipótesis razonable que no se sostuvo
+evita repetir trabajo. Guarda la versión de los datos, la semilla, las reglas de
+exclusión, el código, los tamaños muestrales y las decisiones. No publiques
+identificadores personales ni ejemplos sensibles en un informe de diagnóstico.
+
+```python
+# La prueba queda reservada: no se utiliza para gráficos ni selección.
+(SALIDA / "resultados.json").write_text(
+    json.dumps(resultados, ensure_ascii=False, indent=2), encoding="utf-8"
+)
+assert len(list(SALIDA.glob("[0-9][0-9]-*.webp"))) == 11
+print("Resultados y gráficos guardados en:", SALIDA)
+```
+
+Antes de pasar a modelos más complejos, deberías poder contestar qué fila
+predices, con qué información, para qué población y cómo sabrás si funciona. Si
+alguna respuesta depende de una suposición no verificada, déjala escrita.
+
+## Ejercicios para practicar la interpretación
+
+1. Cambia la semilla y repite el programa. Identifica qué cifras fluctúan y qué
+   patrones se mantienen. Explica por qué una tasa de un grupo pequeño varía más
+   que la de un grupo grande.
+2. Haz que la ausencia de gasto dependa de su importe, no solo del plan. Compara
+   la distribución de los valores observados con la distribución completa que
+   conoces en la simulación. Describe el sesgo que introduce eliminar filas
+   incompletas.
+3. Compara la curva precisión–recall con y sin `reembolso_posterior`, solo como
+   demostración de fuga y manteniendo intacta la prueba. Explica por qué una
+   mejora espectacular puede invalidar el experimento.
+4. En la relación en U, compara una recta con una representación que incluya
+   `x**2` usando validación separada. Relaciona el resultado con el fracaso de
+   usar correlación marginal como único filtro.
+5. Repite el análisis temporal con huecos en el calendario. Comprueba qué
+   significa ahora una ventana de siete filas y cómo difiere de siete días.
+6. Redacta una ficha con una observación, dos explicaciones alternativas y una
+   comprobación para distinguirlas. Así practicas el razonamiento que acompaña
+   al código.
+
+## Libros y artículos para seguir estudiando
+
+Selección revisada el **23 de septiembre de 2026**. Distingo los recursos para
+aprender los fundamentos de la investigación reciente sobre automatización: un
+artículo de agentes no sustituye una introducción a muestreo, distribuciones y
+validación.
+
+| Recurso                                                                                                                                                                                               | Fecha o edición                                                    | Qué aporta                                                                                                                                                                   |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Allen B. Downey, <a href="https://allendowney.github.io/ThinkStats/" target="_blank">Think Stats</a>                                                                                                  | 3.ª edición, 2025                                                  | Un recorrido con Python por EDA, distribuciones, estimación y relaciones; empieza por los capítulos iniciales y reproduce sus ejercicios                                     |
+| James, Witten, Hastie, Tibshirani y Taylor, <a href="https://www.statlearning.com/" target="_blank">An Introduction to Statistical Learning with Applications in Python</a>                           | 2023                                                               | Conecta la exploración con regresión, clasificación, remuestreo y aprendizaje no supervisado; incluye laboratorios y PDF en el sitio de los autores                          |
+| Wes McKinney, <a href="https://wesmckinney.com/book/" target="_blank">Python for Data Analysis</a>                                                                                                    | 3.ª edición, 2022; edición web actualizada para pandas 2.0 en 2023 | Profundiza en carga, limpieza, agrupación, uniones y series temporales; útil cuando el obstáculo es preparar correctamente la tabla                                          |
+| Manatkar, Akella, Narayanam y Mehta, <a href="https://ojs.aaai.org/index.php/AAAI/article/view/35360" target="_blank">Question-guided Insights Generation for Automated Exploratory Data Analysis</a> | AAAI 2025, artículo de demostración                                | Presenta QUIS, un sistema que guía la exploración mediante preguntas y búsqueda de subespacios; permite estudiar cómo priorizar candidatos a hallazgos                       |
+| Liu y colaboradores, <a href="https://arxiv.org/abs/2604.06474" target="_blank">DataSTORM: Deep Research on Large-Scale Databases using Exploratory Data Analysis and Data Storytelling</a>           | Prepublicación de abril de 2026; revisión de agosto de 2026        | Investiga exploración y construcción de narrativas con agentes sobre bases estructuradas y fuentes web; es investigación avanzada, no una garantía de conclusiones correctas |
+
+La tercera edición de _Think Stats_ fue publicada en abril de 2025, según la <a href="https://www.oreilly.com/library/view/think-stats-3rd/9781098190248/" target="_blank">ficha de O’Reilly</a> . Los libros anteriores siguen siendo útiles para fundamentos,
+pero contrasta las llamadas a bibliotecas con su documentación actual.
+
+Al leer trabajos de automatización, examina cómo verifican los hallazgos, qué
+datos utilizan, qué comparaciones descartan y cuánto depende el resultado de
+decisiones humanas. Una narración convincente debe poder rastrearse hasta
+cálculos reproducibles y un diseño de análisis defendible.
+
+## Videos para acompañar la práctica
+
+Estos seis tutoriales ofrecen práctica en español, inglés, francés y alemán.
+Úsalos para observar cómo se formulan preguntas y se revisan tablas y gráficos;
+adapta las llamadas antiguas a las versiones de las bibliotecas que utilices.
+
+En español, el video de Profe Zero combina exploración y visualización con
+pandas y Seaborn; el de Codificando Bits se concentra en crear gráficos con
+Seaborn. En francés, OpenAcademyCode presenta cómo explorar e interpretar los
+datos con Python. En alemán, Dennis Patrick dedica una lección de su curso de
+pandas a la exploración de datos. Los dos tutoriales en inglés complementan
+estos recorridos con ejemplos de EDA en pandas.
+
+<div className="not-prose grid grid-cols-1 gap-6 md:grid-cols-2">
+  <YouTubeEmbed
+    id="Vqu-Ny4TSuw"
+    title="Español · Profe Zero: EDA y visualización con Python, pandas y Seaborn"
+  />
+  <YouTubeEmbed
+    id="4Ez4mbhIk_I"
+    title="Español · Codificando Bits: Seaborn desde cero"
+  />
+  <YouTubeEmbed
+    id="xi0vhXFPegw"
+    title="Inglés · Rob Mulla: Exploratory Data Analysis with Pandas Python"
+  />
+  <YouTubeEmbed
+    id="Liv6eeb1VfE"
+    title="Inglés · Alex The Analyst: Exploratory Data Analysis in Pandas"
+  />
+  <YouTubeEmbed
+    id="za66GmpGz4g"
+    title="Francés · OpenAcademyCode: Comment explorer les donnees"
+  />
+  <YouTubeEmbed
+    id="HYtOVmdhEy8"
+    title="Alemán · Dennis Patrick: Datenexploration con Python y pandas"
+  />
+</div>
+
+Si un video no se reproduce, abre el enlace de su autor en YouTube:
+
+- Español: <a href="https://www.youtube.com/watch?v=Vqu-Ny4TSuw" target="_blank">Profe Zero</a> y <a href="https://www.youtube.com/watch?v=4Ez4mbhIk_I" target="_blank">Codificando Bits</a>.
+- Inglés: <a href="https://www.youtube.com/watch?v=xi0vhXFPegw" target="_blank">Rob Mulla</a> y <a href="https://www.youtube.com/watch?v=Liv6eeb1VfE" target="_blank">Alex The Analyst</a>.
+- Francés: <a href="https://www.youtube.com/watch?v=za66GmpGz4g" target="_blank">OpenAcademyCode</a>.
+- Alemán: <a href="https://www.youtube.com/watch?v=HYtOVmdhEy8" target="_blank">Dennis Patrick</a>.
+
+## Resolución de problemas
+
+| Problema                                                 | Comprobación y solución                                                                                                          |
+| :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `ModuleNotFoundError`                                    | Activa el entorno e instala con `python -m pip`; comprueba que el intérprete del cuaderno sea el mismo                           |
+| El script termina sin abrir gráficos                     | Utiliza el backend `Agg`: abre las imágenes guardadas en `graficos-eda/`                                                         |
+| Un bloque falla porque falta `train` o `guardar`         | Ejecuta las celdas en orden o el archivo completo; los fragmentos comparten estado                                               |
+| Una columna numérica aparece como texto                  | Revisa separadores decimales, símbolos, unidades y cadenas usadas como ausencias antes de convertir                              |
+| Una correlación aparece como `NaN`                       | Comprueba variables constantes, cantidad de pares completos y tipos de datos                                                     |
+| La distribución cambia mucho al modificar los intervalos | Compara varios anchos de histograma y una ECDF; no concluyas multimodalidad a partir de una sola configuración                   |
+| El modelo parece casi perfecto                           | Investiga variables posteriores al objetivo, duplicados, entidades compartidas y preprocesamiento ajustado fuera de los pliegues |
+| Un informe automático consume demasiada memoria          | Reduce columnas, usa un modo mínimo o una muestra documentada; conserva conteos y grupos raros                                   |
+| Los resultados cambian entre ejecuciones                 | Guarda versiones, semillas, reglas y datos de entrada; comprueba también cambios en orden o dependencias numéricas               |
+| Los grupos parecen muy distintos con pocas filas         | Muestra denominadores e incertidumbre y recopila más observaciones antes de generalizar                                          |
+
+## Fuentes verificadas
+
+- <a
+    href="https://allendowney.github.io/ThinkStats/chap01.html"
+    target="_blank"
+  >
+    {
+      "Allen B. Downey: capítulo de análisis exploratorio de Think Stats, tercera edición."
+    }
+  </a>
+- <a
+    href="https://www.oreilly.com/library/view/think-stats-3rd/9781098190248/"
+    target="_blank"
+  >
+    {"O’Reilly: ficha y fecha de publicación de Think Stats, tercera edición."}
+  </a>
+- <a href="https://www.statlearning.com/" target="_blank">
+    {
+      "An Introduction to Statistical Learning: ediciones, autores y materiales."
+    }
+  </a>
+- <a href="https://wesmckinney.com/book/" target="_blank">
+    {"Wes McKinney: Python for Data Analysis, edición abierta."}
+  </a>
+- <a
+    href="https://pandas.pydata.org/docs/user_guide/missing_data.html"
+    target="_blank"
+  >
+    {"pandas: tratamiento de datos ausentes."}
+  </a>
+- <a
+    href="https://seaborn.pydata.org/tutorial/distributions.html"
+    target="_blank"
+  >
+    {"Seaborn: visualización de distribuciones."}
+  </a>
+- <a href="https://seaborn.pydata.org/tutorial.html" target="_blank">
+    {"Seaborn: guía de visualización estadística."}
+  </a>
+- <a
+    href="https://scikit-learn.org/stable/common_pitfalls.html"
+    target="_blank"
+  >
+    {
+      "scikit-learn: errores habituales, preprocesamiento y fuga de información."
+    }
+  </a>
+- <a
+    href="https://scikit-learn.org/stable/modules/cross_validation.html"
+    target="_blank"
+  >
+    {"scikit-learn: diseños de validación cruzada."}
+  </a>
+- <a
+    href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"
+    target="_blank"
+  >
+    {"scikit-learn: PCA y varianza explicada."}
+  </a>
+- <a
+    href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html"
+    target="_blank"
+  >
+    {"SciPy: correlación de Pearson y ejemplos de sus límites."}
+  </a>
+- <a href="https://www.statsmodels.org/stable/tsa.html" target="_blank">
+    {"statsmodels: análisis de series temporales."}
+  </a>
+- <a href="https://docs.pola.rs/" target="_blank">
+    {"Polars: guía de usuario."}
+  </a>
+- <a
+    href="https://duckdb.org/docs/current/clients/python/overview"
+    target="_blank"
+  >
+    {"DuckDB: API para Python."}
+  </a>
+- <a href="https://docs.profiling.ydata.ai/latest/" target="_blank">
+    {"YData Profiling: documentación de informes exploratorios."}
+  </a>
+- <a
+    href="https://ojs.aaai.org/index.php/AAAI/article/view/35360"
+    target="_blank"
+  >
+    {
+      "Manatkar y colaboradores (2025): exploración automática guiada por preguntas, AAAI."
+    }
+  </a>
+- <a href="https://arxiv.org/abs/2604.06474" target="_blank">
+    {"Liu y colaboradores (2026): DataSTORM, prepublicación."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=xi0vhXFPegw" target="_blank">
+    {"Rob Mulla: Exploratory Data Analysis with Pandas Python."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=Liv6eeb1VfE" target="_blank">
+    {"Alex The Analyst: Exploratory Data Analysis in Pandas."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=Vqu-Ny4TSuw" target="_blank">
+    {"Profe Zero: EDA y visualización con Python, pandas y Seaborn (español)."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=4Ez4mbhIk_I" target="_blank">
+    {"Codificando Bits: Seaborn desde cero (español)."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=za66GmpGz4g" target="_blank">
+    {"OpenAcademyCode: Comment explorer les donnees (francés)."}
+  </a>
+- <a href="https://www.youtube.com/watch?v=HYtOVmdhEy8" target="_blank">
+    {"Dennis Patrick: exploración con Python y pandas (alemán)."}
+  </a>
+- <a
+    href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html"
+    target="_blank"
+  >
+    {"scikit-learn: definición de average precision."}
+  </a>
+- <a
+    href="https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportion_confint.html"
+    target="_blank"
+  >
+    {"statsmodels: intervalos para proporciones, incluido Wilson."}
+  </a>
+- <a
+    href="https://scikit-learn.org/stable/modules/outlier_detection.html"
+    target="_blank"
+  >
+    {"scikit-learn: detección de anomalías y novedades."}
+  </a>
