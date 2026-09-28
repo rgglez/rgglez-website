@@ -1,0 +1,427 @@
+---
+title: "Cómo abrir y compartir los videos .h264 de una cámara Easytao"
+description: >-
+  Análisis de los archivos .h264 que graba en su tarjeta una cámara de
+  vigilancia Easytao: por qué VLC no los abre, cómo identificar que en realidad
+  son HEVC crudo y cómo convertirlos con FFmpeg a MP4 compatible con WhatsApp.
+slug: "videos-de-camara-easytao"
+author: "Rodolfo González González"
+pubDatetime: 2026-09-28T00:00:00-06:00
+modDatetime: 2026-09-28T00:00:00-06:00
+lang: es
+ogImage: "../../../../../assets/posts/2026/09/videos-de-camara-easytao/header.webp"
+featured: false
+draft: false
+tags:
+  - ffmpeg
+  - hevc
+  - h264
+  - video
+  - camaras-de-vigilancia
+  - whatsapp
+  - bash
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@rgglez/astro-aside";
+import { Image } from "astro:assets";
+import easytaoq25 from "@/assets/posts/2026/09/videos-de-camara-easytao/easytaoq25.jpg";
+
+## Introducción
+
+Hace un año compré una cámara de vigilancia económica de la marca Easytao,
+listada en <a href="https://www.amazon.com.mx/dp/B0CNN3Q783" target="_blank">Amazon
+como *modelo Q25*</a>. Estas cámaras son poco menos que genéricas, aunque tienen un
+desempeño decente. No se comparan con otras opciones económicas como las de marca
+Imou, pero son relativamente más baratas y descartables si son dañadas o robadas.
+
+<Image
+  src={easytaoq25}
+  alt="Cámara Easytao Q25 con panel solar, antenas y soporte de pared."
+  loading="lazy"
+  class="float-right mb-4 ml-6 h-auto w-2/5 max-w-50"
+/>
+
+Recientemente tuve la necesidad de revisar los videos grabados en la tarjeta
+microSD de la cámara y luego compartirlos por WhatsApp. Extraje la tarjeta y la
+conecté a mi computadora (Debian Sid), pero VLC no reproducía los archivos con
+extensión `.h264`. El comando `file` tampoco los reconocía y sólo respondía
+`data`. Esto me llevó a investigar qué formato tenían en realidad y cómo
+convertirlos a un contenedor MP4 compatible con WhatsApp. Claro, con la ayuda de
+"Claudio" y FFmpeg.
+
+<Aside type="warning" title="Seguridad">
+
+Aunque estas cámaras reciben actualizaciones de firmware, no puedo asegurar que
+sean seguras. Es recomendable conectarla a una red Wi-Fi aislada de la red
+doméstica.
+
+</Aside>
+
+---
+
+## Tabla de contenido
+
+---
+
+## Los archivos
+
+Las cámaras de vigilancia económicas, como las de la marca Easytao, guardan sus
+grabaciones en una tarjeta microSD con nombres como este:
+
+```text
+17.37.43-17.37.48[R][@0][0].h264
+```
+
+El nombre contiene la hora de inicio y de fin del clip. La letra entre
+corchetes parece indicar el tipo de grabación: la mayoría de los clips llevan
+`R` y algunos llevan `A`, probablemente por una alarma de movimiento. La
+extensión promete un video H.264, pero VLC no lo reproduce y el comando `file`
+sólo responde `data`.
+
+En este artículo analizarás el contenido del archivo byte por byte y
+descubrirás qué formato tiene en realidad. Luego lo convertirás a MP4 sin
+perder calidad y lo recodificarás para compartirlo por WhatsApp. Al final
+tendrás un script de Bash que detecta el formato de entrada por sí mismo, sin
+confiar en la extensión.
+
+<Aside type="note" title="Verificado el 28 de septiembre de 2026">
+
+Los comandos se probaron con `FFmpeg 9.0.2` en Debian, sobre clips de 5 a 11
+segundos grabados por la cámara a 2560×1440. Otros modelos o versiones de
+firmware pueden usar otro códec o un encabezado distinto; el método de
+detección del último script cubre esos casos.
+
+</Aside>
+
+## Qué hay dentro del archivo
+
+Un archivo sin contenedor no tiene metadatos que lo identifiquen, así que hay
+que leer sus primeros bytes. `od` viene instalado en cualquier sistema Linux:
+
+```bash
+od -A x -t x1 -N 48 '23.40.19-23.40.24[R][@0][0].h264'
+```
+
+```text
+000000 00 00 01 fc 13 0c 40 b4 13 7a 6f 6a ce e0 00 00
+000010 00 00 00 01 40 01 0c 01 ff ff 01 60 00 00 03 00
+000020 b0 00 00 03 00 00 03 00 99 ac 09 00 00 00 01 42
+```
+
+Los videos H.264 y H.265 (HEVC) sin contenedor usan el formato _Annex B_: una
+secuencia de unidades NAL (_Network Abstraction Layer_), cada una precedida por
+el código de inicio `00 00 01` o `00 00 00 01`. El byte que sigue al código
+de inicio es el encabezado de la unidad y codifica su tipo.
+
+Aquí conviven dos cosas distintas:
+
+1. **Un bloque propietario de 16 bytes** que empieza con `00 00 01 FC`. No
+   pertenece a ningún estándar de video y su estructura no está documentada.
+   Algunos de sus campos cambian de un archivo a otro, así que probablemente
+   guardan una marca de tiempo o un contador del fabricante.
+2. **El video en sí**, a partir del offset `0x10`, donde aparece el código de
+   inicio `00 00 00 01` seguido del byte `40`.
+
+### H.264 y HEVC calculan el tipo de NAL de forma distinta
+
+El mismo byte significa cosas diferentes en cada estándar:
+
+- En **H.264**, el tipo son los 5 bits menos significativos: `byte & 0x1F`.
+- En **HEVC**, el tipo ocupa los 6 bits que siguen al bit prohibido:
+  `(byte >> 1) & 0x3F`. El encabezado de HEVC mide además dos bytes, y el
+  segundo suele ser `01`.
+
+Si aplicas las dos fórmulas a los bytes que siguen a cada código de inicio del
+archivo, obtienes esta tabla:
+
+| Byte | Como HEVC                    | Como H.264                          |
+| :--- | :--------------------------- | :---------------------------------- |
+| `40` | 32: VPS (_Video Parameter Set_) | 0: sin especificar                  |
+| `42` | 33: SPS                      | 2: partición A de un _slice_        |
+| `44` | 34: PPS                      | 4: partición C de un _slice_        |
+| `4E` | 39: SEI                      | 14: prefijo de NAL (extensión SVC)  |
+| `26` | 19: cuadro IDR (keyframe)    | 6: SEI                              |
+
+Leído como HEVC, el archivo tiene la secuencia de arranque canónica: VPS, SPS,
+PPS, SEI y un keyframe. Leído como H.264 no tiene sentido: no aparecen ni SPS
+ni PPS, y el keyframe se confunde con un mensaje SEI. La pareja `XX 01`
+después de cada código de inicio delata también el encabezado de dos bytes de
+HEVC.
+
+**Conclusión: el archivo es HEVC crudo en formato Annex B**, con un bloque
+propietario al inicio, aunque su extensión diga `.h264`. Las cámaras baratas
+suelen grabar en H.265 para ahorrar espacio en la tarjeta, y su firmware
+conserva la extensión de los modelos anteriores.
+
+<Aside type="tip" title="Por qué el bloque propietario no daña el video">
+
+El byte `FC` que sigue a `00 00 01` tiene el bit más significativo en 1. En
+ambos estándares ese bit es el `forbidden_zero_bit` y debe valer 0, así que
+cualquier decodificador descarta esa unidad como inválida y sigue con la
+siguiente. Por eso FFmpeg muestra el aviso
+`Failed to parse header of NALU (type 0)`, pero decodifica todos los cuadros.
+
+</Aside>
+
+## Por qué VLC y la autodetección de FFmpeg fallan
+
+Un stream Annex B carece de "número mágico" propio: el código de inicio es
+igual en H.264 y en HEVC. Los reproductores tienen que adivinar, y adivinan
+mal por dos razones:
+
+- **La extensión engaña.** Con `.h264`, FFmpeg elige el demuxer de H.264,
+  anuncia un stream válido y después decodifica **0 cuadros**. El registro se
+  llena de mensajes `missing picture in access unit` y
+  `Picture timing SEI payload too large`, que corresponden a la columna
+  derecha de la tabla anterior.
+- **El bloque propietario oculta la firma.** Si renombras el archivo sin
+  extensión o con una extensión falsa, el detector de FFmpeg encuentra primero
+  la unidad inválida `FC` y responde `Invalid data found when processing input`.
+
+Puedes comprobarlo con `ffprobe`. La opción `-count_frames` obliga a
+decodificar el stream completo y a contar los cuadros que realmente salen:
+
+```bash
+f='23.40.19-23.40.24[R][@0][0].h264'
+ffprobe -v quiet -select_streams v:0 -count_frames \
+  -show_entries stream=codec_name,width,height,nb_read_frames -of csv=p=0 "$f"
+ffprobe -v quiet -f hevc -select_streams v:0 -count_frames \
+  -show_entries stream=codec_name,width,height,nb_read_frames -of csv=p=0 "$f"
+```
+
+```text
+h264,0,0,N/A
+hevc,2560,1440,65
+```
+
+Con la autodetección, FFmpeg no obtiene ni la resolución. Al forzar el formato
+con `-f hevc`, aparecen la resolución de 2560×1440 y los 65 cuadros del clip.
+
+## Recuperar el video sin recodificar
+
+Ya que sabes el formato, basta con pasar el stream a un contenedor MP4.
+`-c copy` copia los datos comprimidos tal cual, así que la conversión es
+instantánea y no pierde calidad:
+
+```bash
+ffmpeg -f hevc -framerate 12.5 -i '17.37.43-17.37.48[R][@0][0].h264' \
+  -c copy salida.mp4
+```
+
+Un stream crudo no guarda marcas de tiempo, así que el contenedor no sabe a
+qué velocidad reproducir los cuadros. Por eso hace falta `-framerate`. Para
+calcular el valor, divide los cuadros del clip entre su duración, que sale del
+nombre del archivo: 65 cuadros entre 17:37:43 y 17:37:48 dan unos 12.5 cuadros
+por segundo. Si el resultado se ve acelerado o en cámara lenta, prueba con 15
+o 25, que son frecuencias habituales en estas cámaras.
+
+Para convertir una carpeta completa:
+
+```bash
+for f in *.h264; do
+  ffmpeg -nostdin -v error -f hevc -framerate 12.5 -i "$f" -c copy "${f%.h264}.mp4"
+done
+```
+
+<Aside type="warning" title="Usa -nostdin dentro de un bucle">
+
+FFmpeg lee la entrada estándar para aceptar comandos interactivos. Dentro de un
+`for` o un `while read`, puede consumir caracteres que no le corresponden y
+provocar que el bucle se salte archivos al azar. `-nostdin` desactiva esa
+lectura.
+
+</Aside>
+
+El MP4 resultante se reproduce en VLC y en la mayoría de los reproductores de
+escritorio, pero sigue siendo HEVC por dentro.
+
+## Convertir para WhatsApp
+
+WhatsApp no garantiza la reproducción de HEVC en todos los teléfonos: según el
+dispositivo, rechaza el archivo o lo envía como documento en lugar de video.
+La combinación más compatible es H.264 con audio AAC dentro de un MP4, así que
+esta vez sí hay que recodificar:
+
+```bash
+ffmpeg -nostdin -f hevc -framerate 12.5 -i '10.04.47-10.04.58[A][@0][0].h264' \
+  -vf "scale=-2:1080:out_range=tv,format=yuv420p,fps=25" \
+  -c:v libx264 -preset medium -crf 23 -profile:v high -level 4.0 \
+  -movflags +faststart salidcam2whatsapp.mp4
+```
+
+Cada opción resuelve un problema concreto:
+
+| Opción                                   | Motivo                                                                                                                                                              |
+| :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `-c:v libx264 -profile:v high -level 4.0` | H.264 High, nivel 4.0: cualquier teléfono de la última década lo decodifica por hardware en 1080p.                                                                   |
+| `scale=-2:1080`                          | Reduce 2560×1440 a 1920×1080. WhatsApp vuelve a comprimir el video de todos modos, así que enviar 1440p sólo gasta datos. `-2` calcula un ancho par que respeta la proporción. |
+| `out_range=tv,format=yuv420p`            | La cámara graba en rango de color completo (`yuvj420p`). Algunos reproductores lo muestran deslavado o no lo reproducen; el rango limitado es el estándar para video.  |
+| `fps=25`                                 | Duplica cuadros hasta una frecuencia constante de 25 fps. Algunos reproductores móviles se atoran con frecuencias poco comunes como 12.5.                               |
+| `-crf 23 -preset medium`                 | Calidad visual constante con un tamaño razonable: unos 2.8 MB por cada 10 segundos de este video.                                                                    |
+| `-movflags +faststart`                   | Coloca el índice del MP4 al principio del archivo, para que la reproducción empiece antes de terminar la descarga.                                                    |
+
+Sin `format=yuv420p`, FFmpeg conserva el formato `yuvj420p` de la cámara aunque
+indiques `-pix_fmt yuv420p`. Compruébalo en el archivo de salida:
+
+```bash
+ffprobe -v error -show_entries stream=codec_name,profile,pix_fmt,color_range \
+  salidcam2whatsapp.mp4
+```
+
+```text
+[STREAM]
+codec_name=h264
+profile=High
+pix_fmt=yuv420p
+color_range=tv
+[/STREAM]
+```
+
+Si necesitas archivos más pequeños, usa `scale=-2:720` o sube el valor a
+`-crf 26`. Cualquiera de los dos cambios reduce el tamaño a la mitad,
+aproximadamente.
+
+## Detectar el formato de forma genérica
+
+El comando anterior depende de saber de antemano que el archivo es HEVC. Si
+mezclas grabaciones de varias cámaras, o si un firmware nuevo cambia el códec,
+necesitas detectar el formato automáticamente.
+
+Como ya viste, ni la extensión, ni `file`, ni la autodetección de FFmpeg
+sirven con estos archivos. La estrategia robusta es empírica: **probar varios
+formatos candidatos y quedarse con el que decodifique más cuadros**. La
+autodetección entra como un candidato más, y así los MP4, MKV o AVI normales
+se procesan con su contenedor.
+
+Contar cuadros descarta los falsos positivos de forma natural: el demuxer de
+H.264 "abre" el archivo HEVC sin error, pero produce 0 cuadros, así que pierde
+frente a `-f hevc`. El costo es bajo: decodificar un clip de 10 segundos toma
+menos de un segundo.
+
+## El script completo
+
+Guarda el script como `cam2whatsapp.sh`. Recibe una lista de archivos, detecta
+el formato de cada uno y escribe los resultados en una carpeta `whatsapp/`:
+
+```bash
+# cam2whatsapp.sh
+#!/usr/bin/env bash
+# Convierte videos (con contenedor o streams crudos de cámara) a MP4 compatible con WhatsApp.
+# Uso: ./cam2whatsapp.sh archivo... ; salida en ./whatsapp/
+# FPS para streams crudos sin timestamps (la cámara graba ~12.5).
+FPS_CRUDO=${FPS_CRUDO:-12.5}
+
+# Devuelve cuántos cuadros se decodifican con el formato dado ("" = autodetección).
+cuadros() {
+  local fmt=$1 f=$2
+  ffprobe -v quiet ${fmt:+-f $fmt} -select_streams v:0 -count_frames \
+    -show_entries stream=nb_read_frames -of csv=p=0 "$f" | tr -dc 0-9
+}
+
+mkdir -p whatsapp
+for f in "$@"; do
+  mejor= max=0
+  # Lista fija de candidatos; agrega mjpeg o mpeg4 si tu cámara usa otro códec.
+  for fmt in "" hevc h264; do
+    n=$(cuadros "$fmt" "$f"); n=${n:-0}
+    (( n > max )) && max=$n mejor=${fmt:-auto}
+  done
+  if (( max == 0 )); then echo "✗ $f: formato no reconocido"; continue; fi
+  echo "→ $f: $mejor ($max cuadros)"
+
+  entrada=(-i "$f")
+  [[ $mejor != auto ]] && entrada=(-f "$mejor" -framerate "$FPS_CRUDO" -i "$f")
+  ffmpeg -nostdin -v error -y "${entrada[@]}" -map 0:v:0 -map '0:a:0?' \
+    -vf "scale=-2:'min(1080,ih)':out_range=tv,format=yuv420p,fps=25" \
+    -c:v libx264 -preset medium -crf 23 -profile:v high -level 4.0 \
+    -c:a aac -b:a 128k -movflags +faststart \
+    "whatsapp/$(basename "${f%.*}").mp4" 2>&1 | grep -v -e NALU -e PPS
+done
+```
+
+Algunos detalles de la implementación:
+
+- **`${fmt:+-f $fmt}`** agrega `-f formato` sólo si el candidato no está
+  vacío. Con el candidato vacío, `ffprobe` usa su autodetección normal.
+- **`tr -dc 0-9`** limpia la salida de `ffprobe`, que puede traer saltos de
+  línea o `N/A`. Si no queda ningún dígito, `${n:-0}` lo convierte en cero.
+- **`-framerate` sólo se aplica a los streams crudos.** Un archivo con
+  contenedor ya trae sus marcas de tiempo y no debe sobrescribirse.
+- **`-map '0:a:0?'`** copia la primera pista de audio si existe. El signo de
+  interrogación evita un error cuando el archivo no tiene audio, como ocurre
+  con esta cámara. Las comillas impiden que el shell interprete `?` como
+  comodín.
+- **`min(1080,ih)`** reduce la resolución sólo si es mayor que 1080p. Un video
+  de 720p conserva su tamaño en lugar de agrandarse.
+- **`grep -v -e NALU -e PPS`** oculta los avisos que provoca el bloque
+  propietario de la cámara. Son inofensivos, y sin el filtro llenan la
+  terminal.
+- los archivos se almacenan en el subdirectorio `whatsapp/` con el mismo nombre
+  base y extensión `.mp4`. Modifica el script de ser necesario para cambiar la
+  carpeta de salida.
+
+## Uso
+
+Asumamos que los archivos de video de la cámara están en el directorio `videos`.
+
+Dale al script permisos de ejecución y pásale los archivos que quieras convertir:
+
+```bash
+chmod +x cam2whatsapp.sh
+cd videos
+../cam2whatsapp.sh *.h264
+```
+
+El script informa qué formato eligió para cada archivo:
+
+```text
+→ 23.40.19-23.40.24[R][@0][0].h264: hevc (65 cuadros)
+→ copia-sin-extension: hevc (65 cuadros)
+→ otro-video.mkv: auto (50 cuadros)
+```
+
+La segunda línea corresponde al mismo archivo sin extensión, y la tercera a un
+MKV normal con video HEVC y audio MP3. En los tres casos, el resultado es H.264
+con `yuv420p`, más AAC cuando el original trae audio.
+
+Si el video de otra cámara se ve acelerado o lento, cambia la frecuencia
+supuesta para los streams crudos:
+
+```bash
+FPS_CRUDO=15 ../cam2whatsapp.sh *.h264
+```
+
+## Resolución de problemas
+
+| Problema                                                   | Comprobación y solución                                                                                                                                                                                           |
+| :--------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`✗ formato no reconocido`**                              | Revisa los primeros bytes con `od -A x -t x1 -N 64`. Si no aparecen códigos de inicio `00 00 01`, el archivo no es Annex B; prueba `ffmpeg -formats` y agrega el formato adecuado a la lista de candidatos.        |
+| **El video se reproduce demasiado rápido o lento**         | Cuenta los cuadros con `ffprobe -f hevc -count_frames` y divídelos entre la duración que indica el nombre del archivo. Usa ese valor en `FPS_CRUDO`.                                                                |
+| **Aparecen `PPS id out of range` o `Failed to parse header`** | Son los bloques propietarios de la cámara, que el decodificador descarta. Confirma que el número de cuadros de la salida coincide con el de `-count_frames`.                                                      |
+| **WhatsApp envía el video como documento**                 | Comprueba con `ffprobe` que la salida sea `h264` con `yuv420p`. Si el archivo es muy grande, reduce la resolución a 720p o sube el valor de `-crf`.                                                                |
+| **Los colores se ven deslavados en el teléfono**           | Falta la conversión de rango. Verifica que el filtro incluya `out_range=tv,format=yuv420p` y que `ffprobe` reporte `color_range=tv`.                                                                              |
+| **El bucle se salta archivos**                             | Falta `-nostdin` en alguna llamada a `ffmpeg` dentro del bucle.                                                                                                                                                   |
+
+## Fuentes
+
+- <a href="https://www.itu.int/rec/T-REC-H.265" target="_blank">
+    Recomendación ITU-T H.265: codificación de video de alta eficiencia (HEVC)
+  </a>
+- <a href="https://www.itu.int/rec/T-REC-H.264" target="_blank">
+    Recomendación ITU-T H.264: codificación avanzada de video (AVC)
+  </a>
+- <a href="https://ffmpeg.org/ffmpeg-formats.html" target="_blank">
+    Documentación de los formatos de FFmpeg
+  </a>
+- <a href="https://ffmpeg.org/ffprobe.html" target="_blank">
+    Documentación de ffprobe
+  </a>
+- <a href="https://ffmpeg.org/ffmpeg-filters.html#scale-1" target="_blank">
+    Filtro scale de FFmpeg y la opción out_range
+  </a>
+- <a href="https://trac.ffmpeg.org/wiki/Encode/H.264" target="_blank">
+    Guía de codificación H.264 con FFmpeg y libx264
+  </a>
