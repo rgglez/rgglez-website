@@ -2,6 +2,7 @@
 export const MAX_CUSTOM_PRESETS = 5;
 export const MIN_BEAMS = 5;
 export const MAX_BEAMS = 10;
+export const MAX_SHORT_NAME_LENGTH = 16;
 
 // English keys are the public data format; labels belong to the Spanish UI.
 // CSS colors are fixed here instead of accepting arbitrary styles from storage.
@@ -20,7 +21,10 @@ export interface Beam {
   color?: LaserColor;
 }
 export interface Preset {
+  /** Full name displayed below the instrument heading. */
   name: string;
+  /** Button label; optional for compatibility with older props and storage. */
+  shortName?: string;
   /** Array order is beam order, from left to right; duplicate notes are allowed. */
   beams: Beam[];
 }
@@ -46,14 +50,16 @@ export const NOTE_OPTIONS = Array.from(
   (_, midi) => `${PITCH_CLASSES[midi % 12]}${Math.floor(midi / 12) - 1}`
 );
 
-// Keep the existing nine-note default intact.
+// Keep the configured default pitches intact.
 // Source: Brian Havis's transcription, tracks 9 and 10:
 // https://www.midi-karaoke.info/212dfee5.html (not an official score).
 export const DEFAULT_PRESET: Preset = {
   name: "Second Rendez-Vous · Jean-Michel Jarre",
-  beams: ["C1", "F1", "G1", "Ab1", "Bb1", "B1", "C2", "D2", "Eb2"].map(
-    note => ({ note, color: "green" })
-  ),
+  shortName: "Jarre",
+  beams: ["C1", "F1", "G1", "Ab1", "Bb1", "C2", "D2", "Eb2"].map(note => ({
+    note,
+    color: "green",
+  })),
 };
 
 /** Validate both server props and untrusted browser storage before use. */
@@ -69,6 +75,21 @@ export function parsePresets(value: unknown): Preset[] {
       preset.name.trim().length > 40
     ) {
       throw new Error("Each preset needs a name of 1–40 characters.");
+    }
+    // Older saved libraries only contain a full name. Derive their button
+    // label without discarding any notes or requiring a storage-key migration.
+    const shortName =
+      preset.shortName === undefined
+        ? preset.name.trim().slice(0, MAX_SHORT_NAME_LENGTH)
+        : preset.shortName;
+    if (
+      typeof shortName !== "string" ||
+      !shortName.trim() ||
+      shortName.trim().length > MAX_SHORT_NAME_LENGTH
+    ) {
+      throw new Error(
+        `Each preset needs a short name of 1–${MAX_SHORT_NAME_LENGTH} characters.`
+      );
     }
     if (
       !Array.isArray(preset.beams) ||
@@ -96,6 +117,6 @@ export function parsePresets(value: unknown): Preset[] {
       }
       return { note: beam.note, color: color as LaserColor };
     });
-    return { name: preset.name.trim(), beams };
+    return { name: preset.name.trim(), shortName: shortName.trim(), beams };
   });
 }

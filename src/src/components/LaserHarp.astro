@@ -3,6 +3,7 @@ import {
   DEFAULT_PRESET,
   MIN_BEAMS,
   MAX_BEAMS,
+  MAX_SHORT_NAME_LENGTH,
   parsePresets,
   type Preset,
 } from "./laser-harp/presets";
@@ -27,7 +28,9 @@ const initialPresets = parsePresets(presets);
       <strong>Arpa láser</strong>
       <span data-preset-title>{DEFAULT_PRESET.name}</span>
     </div>
-    <span class="harp-badge">ELKA SYNTHEX · SÍNTESIS</span>
+    <button type="button" data-power aria-pressed="false" disabled
+      >Activar sonido</button
+    >
   </div>
   <p class="harp-instructions">
     Activa el sonido y mantén pulsado un rayo con el mouse o el dedo; puedes
@@ -66,13 +69,21 @@ const initialPresets = parsePresets(presets);
     aria-label="Seleccionar preset"
     data-preset-buttons
   >
-    <button type="button" data-preset="-1" aria-pressed="true">Jarre</button>
+    {
+      [DEFAULT_PRESET, ...initialPresets].map((preset, index) => (
+        <button
+          type="button"
+          data-preset={index - 1}
+          aria-pressed={index === 0 ? "true" : "false"}
+          title={preset.name}
+        >
+          {preset.shortName ?? preset.name}
+        </button>
+      ))
+    }
   </div>
   <div class="harp-controls">
     <button type="button" data-open-presets disabled>Presets</button>
-    <button type="button" data-power aria-pressed="false" disabled
-      >Activar sonido</button
-    >
     <label
       >Volumen <input
         type="range"
@@ -90,7 +101,7 @@ const initialPresets = parsePresets(presets);
       <h2>Presets</h2>
       <p>
         Hasta cinco presets personalizados de {MIN_BEAMS} a {MAX_BEAMS} rayos. El
-        preset original de Jarre conserva sus nueve notas y siempre está disponible.
+        preset original de RV2 conserva sus nueve notas y siempre está disponible.
       </p>
       <label>Preset personalizado <select data-edit-preset></select></label>
       <div class="harp-editor-actions">
@@ -100,6 +111,13 @@ const initialPresets = parsePresets(presets);
       <fieldset>
         <legend>Configuración del preset</legend>
         <label>Nombre <input data-preset-name required maxlength="40" /></label>
+        <label
+          >Nombre corto (botón) <input
+            data-preset-short-name
+            required
+            maxlength={MAX_SHORT_NAME_LENGTH}
+          /></label
+        >
         <label
           >Número de rayos <select data-beam-count>
             {

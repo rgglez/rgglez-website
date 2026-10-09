@@ -1,6 +1,7 @@
 import {
   LASER_COLORS,
   MAX_CUSTOM_PRESETS,
+  MAX_SHORT_NAME_LENGTH,
   MIN_BEAMS,
   NOTE_OPTIONS,
   parsePresets,
@@ -23,6 +24,9 @@ export function createPresetEditor(
     dialog.querySelector<HTMLSelectElement>("[data-edit-preset]")!;
   const nameInput =
     dialog.querySelector<HTMLInputElement>("[data-preset-name]")!;
+  const shortNameInput = dialog.querySelector<HTMLInputElement>(
+    "[data-preset-short-name]"
+  )!;
   const countInput =
     dialog.querySelector<HTMLSelectElement>("[data-beam-count]")!;
   const rows = dialog.querySelector<HTMLElement>("[data-beam-rows]")!;
@@ -93,6 +97,7 @@ export function createPresetEditor(
     deleteButton.disabled = draft.length === 0;
     addButton.disabled = draft.length >= MAX_CUSTOM_PRESETS;
     nameInput.value = draft[selectedIndex]?.name ?? "";
+    shortNameInput.value = draft[selectedIndex]?.shortName ?? "";
     countInput.value = String(draft[selectedIndex]?.beams.length ?? MIN_BEAMS);
     message.textContent = `${draft.length} de ${MAX_CUSTOM_PRESETS} presets personalizados. Los cambios se aplican al guardar.`;
     renderRows();
@@ -106,6 +111,16 @@ export function createPresetEditor(
       if (selectedIndex < 0) return;
       draft[selectedIndex].name = nameInput.value;
       selector.options[selectedIndex].text = nameInput.value || "Sin nombre";
+    },
+    events
+  );
+  // Keep the short label independent: changing the full name must not replace
+  // the user's chosen button text. Both fields remain part of the draft.
+  shortNameInput.addEventListener(
+    "input",
+    () => {
+      if (selectedIndex < 0) return;
+      draft[selectedIndex].shortName = shortNameInput.value;
     },
     events
   );
@@ -150,6 +165,7 @@ export function createPresetEditor(
       if (draft.length >= MAX_CUSTOM_PRESETS) return;
       draft.push({
         name: `Preset ${draft.length + 1}`,
+        shortName: `Preset ${draft.length + 1}`,
         beams: ["C4", "D4", "E4", "G4", "A4"].map(note => ({
           note,
           color: "green",
@@ -180,8 +196,7 @@ export function createPresetEditor(
         onSave(presets, selectedIndex);
         dialog.close();
       } catch {
-        message.textContent =
-          "Revisa los nombres (1–40 caracteres), las notas y los colores de todos los presets.";
+        message.textContent = `Revisa los nombres (1–40 caracteres), los nombres cortos (1–${MAX_SHORT_NAME_LENGTH}), las notas y los colores de todos los presets.`;
       }
     },
     events

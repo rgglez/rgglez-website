@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   DEFAULT_PRESET,
   LASER_COLORS,
+  MAX_SHORT_NAME_LENGTH,
   NOTE_OPTIONS,
   parsePresets,
 } from "./presets";
@@ -56,6 +57,41 @@ test("accepts five custom presets with five to ten beams and every palette color
   assert.deepEqual(parsePresets([]), []);
 });
 
+test("short labels stay independent of full names and survive storage round trips", () => {
+  const preset = {
+    ...makePreset(),
+    name: "  A long descriptive preset name  ",
+    shortName: "  Solo  ",
+  };
+  const parsed = parsePresets([preset]);
+  assert.equal(parsed[0].name, "A long descriptive preset name");
+  assert.equal(parsed[0].shortName, "Solo");
+  assert.deepEqual(parsePresets(JSON.parse(JSON.stringify(parsed))), parsed);
+  assert.equal(preset.shortName, "  Solo  ");
+  for (const shortName of ["", " ", "x".repeat(17), 123, null]) {
+    assert.throws(() => parsePresets([{ ...preset, shortName }]));
+  }
+  assert.equal(
+    parsePresets([{ ...preset, shortName: "x".repeat(16) }])[0].shortName,
+    "x".repeat(16)
+  );
+});
+
+test("older libraries derive short labels without losing names or assignments", () => {
+  const input = [{ ...makePreset(), name: "Legacy preset with a long name" }];
+  const parsed = parsePresets(input);
+  assert.equal(parsed[0].name, input[0].name);
+  assert.equal(
+    parsed[0].shortName,
+    input[0].name.slice(0, MAX_SHORT_NAME_LENGTH)
+  );
+  assert.deepEqual(
+    parsed[0].beams.map(beam => beam.note),
+    input[0].beams.map(beam => beam.note)
+  );
+  assert.equal("shortName" in input[0], false);
+});
+
 test("rejects invalid saved data and limits instead of silently truncating it", () => {
   for (const value of [
     null,
@@ -83,10 +119,12 @@ test("rejects invalid saved data and limits instead of silently truncating it", 
   }
 });
 
-test("the original Jarre default keeps its nine notes", () => {
+test("the built-in preset provides both names and keeps its configured pitches", () => {
+  assert.equal(DEFAULT_PRESET.name, "Second Rendez-Vous · Jean-Michel Jarre");
+  assert.equal(DEFAULT_PRESET.shortName, "Jarre");
   assert.deepEqual(
     DEFAULT_PRESET.beams.map(beam => beam.note),
-    ["C1", "F1", "G1", "Ab1", "Bb1", "B1", "C2", "D2", "Eb2"]
+    ["C1", "F1", "G1", "Ab1", "Bb1", "C2", "D2", "Eb2"]
   );
   assert.ok(DEFAULT_PRESET.beams.every(beam => beam.color === "green"));
   assert.equal(NOTE_OPTIONS.length, 128);

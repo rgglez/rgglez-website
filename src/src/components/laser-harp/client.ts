@@ -179,7 +179,8 @@ export function mountHarp(root: HTMLElement, signal: AbortSignal) {
         const button = document.createElement("button");
         button.type = "button";
         button.dataset.preset = String(index - 1);
-        button.textContent = index === 0 ? "Jarre" : preset.name;
+        button.textContent = preset.shortName ?? preset.name;
+        button.title = preset.name;
         button.setAttribute(
           "aria-pressed",
           String(index - 1 === selectedPresetIndex)

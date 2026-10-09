@@ -21,13 +21,17 @@ keep `LaserHarp.astro` beside this folder and install `tone`, `three`, and the
 ## Presets
 
 The original **Second Rendez-Vous** preset remains available as the **Jarre**
-button. It keeps all nine original green beams and cannot be edited or deleted.
+button. It keeps its configured green beams and cannot be edited or deleted.
+The default and custom preset buttons are generated from the same data.
 In addition, you can create **up to five custom presets**, each with **five to
 ten beams**. A preset's array length determines its visible beam count, its
 note-button count, and its synth voice count. Array order is left to right;
 notes are not sorted, and repeated notes can have independent colors.
 
-Open **Presets**, click **Nuevo preset**, and choose a name and beam count.
+Open **Presets**, click **Nuevo preset**, and choose a full name, a short name,
+and a beam count. The full `name` (1–40 characters) appears below **Arpa láser**
+and in the editor's preset dropdown. The `shortName` (1–16 characters) appears
+on its button; hovering the button displays the full name as a tooltip.
 Every beam has a note dropdown and a color dropdown. All 128 MIDI pitches are
 available using scientific pitch notation (`C4` = MIDI 60). Accidentals use
 flats, for example `Db4`, rather than enharmonic sharps such as `C#4`.
@@ -55,6 +59,9 @@ Storage is validated before use. If storage is unavailable, editing still works
 for the current page and a visible message explains that it cannot persist.
 Invalid stored data falls back to the supplied initial presets without being
 overwritten until the user explicitly saves.
+Older presets without `shortName` use the first 16 characters of their full
+name as the initial button label. Edit this label in the modal; saving persists
+both names under the existing storage key without losing note assignments.
 
 You can supply initial presets as arrays from an MDX file:
 
@@ -66,6 +73,7 @@ import LaserHarp from "@/components/LaserHarp.astro";
   presets={[
     {
       name: "Five colors",
+      shortName: "Colors",
       beams: [
         { note: "C3", color: "red" },
         { note: "D3", color: "blue" },
@@ -125,7 +133,7 @@ high pitches. The historical reference is
 [Paul Wiffen's account](https://www.soundonsound.com/reviews/elka-synthex-retrozone).
 `Tone.Oscillator.sync()` follows the transport; it does not implement hard sync.
 
-The default pitches are `C1 F1 G1 Ab1 Bb1 B1 C2 D2 Eb2`, taken from the
+The configured default pitches are `C1 F1 G1 Ab1 Bb1 C2 D2 Eb2`, based on the
 `SynBass1` and `Bass & Ld` solo tracks in
 [Brian Havis's MIDI transcription](https://www.midi-karaoke.info/212dfee5.html).
 This is a third-party transcription, not Jarre's official beam assignment.
@@ -142,7 +150,8 @@ bun run build
 
 Browser checks should cover silent hover, click/drag/release, multitouch,
 shared-beam ownership, keyboard playing, all six colors, and the modal's
-create/edit/delete/save/cancel operations. Verify the five-preset limit,
+create/edit/delete/save/cancel operations, independent full and short names,
+and migration of saved libraries without short names. Verify the five-preset limit,
 five-to-ten-beam limits, reload persistence, preset changes during a held
 note, recovery from invalid storage, and component removal/navigation.
 Check desktop and narrow mobile layouts, including modal scrolling.
