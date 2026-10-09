@@ -1,0 +1,107 @@
+---
+title: "Tocando la luz"
+description: >-
+  Bernard Szajner, creador del arpa láser, falleció el 2 de septiembre de 2026. Este instrumento, que combina la música y la tecnología, ha dejado un legado duradero en la música electrónica y experimental.
+slug: "tocando-la-luz"
+ogImage: "../../../../../assets/posts/2026/09/tocando-la-luz/header.webp"
+pubDatetime: 2026-10-08T00:00:00-06:00
+modDatetime: 2026-10-08T00:00:00-06:00
+lang: es
+featured: false
+draft: false
+tags:
+  - música-electrónica
+  - arpa-láser
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import { Image } from "astro:assets";
+import LaserHarp from "@/components/LaserHarp.astro";
+import SpotifyEmbed from "@/components/SpotifyEmbed.astro";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+import szajner from "@/assets/posts/2026/09/tocando-la-luz/bs.jpg";
+
+<LaserHarp />
+
+---
+
+La música electrónica, es decir, la música generada mediante instrumentos que
+utilizan la electricidad como fuente de energía, surgió, aunque no lo parezca, a finales del siglo XIX y principios del XX. Uno de los primeros instrumentos electrónicos fue el Theremin, inventado por el ruso Lev Termen en 1920.
+
+Damos un salto a la década de 1970. Se desarrollan los primeros sintetizadores, y con ellos, la música electrónica comienza a ganar popularidad entre el público general, más allá del ambiente experimental. Surgen grupos como Kraftwerk o Tangerine Dream, referentes del género. Y por supuesto, un invitado asiduo de este blog, Jean-Michel Jarre, tiene su primer éxito en 1976 con el álbum *Oxygène*, que justamente cumple 50 años en estos días. Pero algo que caracterizaba a las presentaciones en vivo de estos grupos seminales era la falta de interacción con el público. Los músicos se encontraban detrás de sus sintetizadores, y el público, aunque emocionado, no podía interactuar con ellos.
+De hecho, muchas veces aparecían estáticos o de espaldas al público, lo que generaba una barrera entre el artista y su audiencia.
+
+<Image
+  src={szajner}
+  alt="Bernard Szajner toca el arpa láser: haces verdes en abanico, interrumpidos por las manos, sobre un fondo rojo."
+  loading="lazy"
+  class="float-right mb-4 ml-6 h-auto w-2/5 max-w-50"
+/>
+
+Fue en este contexto en el que Bernard Szajner, un artista francés, decidió crear un instrumento que rompiera con esta barrera. En 1980, Szajner inventó el arpa láser (*Syringe*), un instrumento que utiliza haces de luz para "disparar" sonidos. Los músicos podían tocar la luz con sus manos, creando una experiencia visual y sonora única para el público. Digo disparar porque los rayos no generan por sí mismos los sonidos, sino que, al interrumpir el haz de luz, se activa un sensor que produce el sonido correspondiente mediante un sintetizador. De esta manera, el público podía ver cómo la música se generaba en tiempo real, y los músicos podían interactuar con su audiencia de una manera completamente nueva.
+
+Michel Geiss, ingeniero de sonido y colaborador de Jarre, fue uno de los primeros en ver el potencial del arpa láser. Geiss descubrió el instrumento en 1980 durante una pieza creada por Pierre Henry y presentada en la Salle Favart del Opéra-Comique, *Les Noces chymiques*. Szajner también había creado un efecto espectacular con conos de luz que seguían los movimientos de los bailarines.
+
+Geiss le presentó al inventor y su instrumento a Jarre, a quien le interesó mucho la idea de poder tocar la luz y crear música de una manera tan visual. Jarre siempre había tenido la idea de que las presentaciones en vivo debían ser un espectáculo visual, y no solo un grupo de músicos tocando de forma robótica, y el arpa láser de Szajner le ofrecía la oportunidad de llevar esta idea a un nuevo nivel. Durante su gira por China, Jarre utilizó el arpa láser en varias de sus presentaciones, y el público quedó fascinado con la experiencia.
+
+Además de inventor, Szajner también fue un músico y artista visual talentoso. Su música, que combinaba elementos de la electrónica, el rock y la música experimental, fue innovadora y vanguardista. Aquí va una muestra de algunos de sus álbumes:
+
+<div className="not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {[
+    "6XFp54ndyF4eKv2Im8OdVc",
+    "5cDJVQeeoaMbQlNg5wUHaN",
+    "6DnSA2Iyp8XJtAAb1NENzy",
+    "1fzDEkXmG8gKif40bokz44",
+  ].map((albumId, index) => (
+    <SpotifyEmbed
+      type="album"
+      id={albumId}
+      title={`Álbum en Spotify ${index + 1}`}
+    />
+  ))}
+</div>
+
+Comenta Geiss: "de descendencia judía, Bernard fue primero una víctima de la ideología nazi en Alemania, y luego del antisemitismo en Francia al llegar".
+
+Bernard Szajner nació el 27 de junio de 1944 en Grenoble, en una familia de
+judíos polacos que había pasado por Alemania antes de establecerse en Francia.
+Nació con el nombre falso de Wolf y pasó sus primeros meses escondido en un
+sótano: de día, solo la luz del tragaluz; de noche, ninguna.
+
+Hacia 1969 empezó en el audiovisual con Patricia Negro, su socia, y dos
+proyectores Kodak Carousel. De esos ensayos salieron los light shows para
+Magma y Gong. En mayo de 1975 el montaje ya usaba varios láseres de
+helio-neón, en el Kinopanorama de París, con Tim Blake al sintetizador. A
+finales de ese año fundaron
+<a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank">Laser Graphics</a>,
+la compañía dedicada a los usos escénicos del láser. Con ella trabajaron en
+la gira europea de The Who (1975), en los conciertos de Go —Stomu Yamashta y
+Stevie Winwood— en el Royal Albert Hall y en París (1976), durante un mes en
+Saint-Eustache (diciembre de 1976) y en el Planetario de París (mayo de 1977).
+También hubo encargos para Cartier y Renault. En *Les Noces chymiques* el
+láser no figura a su nombre, sino como Groupe Laser Graphics.
+
+La música llegó por el mismo camino. Si los grupos trataban la luz como un
+efecto, él decidió componer lo que la acompañara. Entre 1979 y 1983 publicó
+*Visions of Dune* (1979, firmado como Zed), *Some Deaths Take Forever*
+(1980, pensado en parte como banda sonora de un cortometraje de Amnesty
+International),
+*Superficial Music* (1981) y *Brute Reason* (1983, Island, con letras de
+Howard Devoto). En paralelo, con Karel Beer, formó The (Hypothetical)
+Prophets (*Wallenberg*, 1982). A finales de la década dejó la industria y
+volvió a la imagen, el teatro y otros instrumentos interactivos.
+
+Bernard Szajner, músico y artista visual, falleció el 31 de agosto de 2026. Su legado, sin embargo, perdura en la música electrónica y experimental, y su arpa láser sigue siendo un símbolo de la innovación y la creatividad en la música.
+
+<YouTubeEmbed
+  id="SCKrpev1okc?start=458"
+  title="Crestomatía: Ripley's Believe It or Not (1983): el arpa láser, desde 7:37"
+/>
+
+## Más información
+
+* <a href="https://www.muzines.co.uk/articles/concert-review/6095?theme=2" target="_blank" rel="noopener noreferrer">Concert Review: Bernard Szajner</a> (Muzines, 1983)
+* <a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank" rel="noopener noreferrer">Laser Graphics</a> (Sound International, junio de 1978)
+* <a href="https://web.archive.org/web/20130630022416/http://szajner.net/about/" target="_blank" rel="noopener noreferrer">Bernard Szajner: Biography</a> (LTM Recordings)

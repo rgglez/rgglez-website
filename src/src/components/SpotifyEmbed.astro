@@ -1,0 +1,38 @@
+---
+interface Props {
+  /** Spotify resource ID: the final path segment of its sharing URL. */
+  id: string;
+  type?: "album" | "track" | "playlist" | "artist" | "episode" | "show";
+  /** Use a descriptive, localized title for screen readers. */
+  title?: string;
+  height?: number;
+}
+
+// In MDX: import SpotifyEmbed from "@/components/SpotifyEmbed.astro";
+// Then use <SpotifyEmbed type="album" id="..." title="Album name" />.
+const {
+  id,
+  type = "album",
+  title = "Spotify player",
+  height = 352,
+} = Astro.props;
+const src = `https://open.spotify.com/embed/${type}/${encodeURIComponent(id)}`;
+---
+
+<!-- Encrypted media permission is required for playback beyond previews. -->
+<iframe
+  {title}
+  {src}
+  width="100%"
+  {height}
+  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+  loading="lazy"></iframe>
+
+<style>
+  iframe {
+    display: block;
+    min-width: 0;
+    border: 0;
+    border-radius: 12px;
+  }
+</style>

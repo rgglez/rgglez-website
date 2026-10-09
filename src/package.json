@@ -53,7 +53,9 @@
     "satori": "^0.18.4",
     "sharp": "^0.34.5",
     "slugify": "^1.6.9",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "three": "^0.186.1",
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
@@ -61,6 +63,7 @@
     "@shikijs/transformers": "^3.23.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/lodash.kebabcase": "^4.1.9",
+    "@types/three": "^0.186.0",
     "@typescript-eslint/parser": "^8.60.1",
     "eslint": "^9.39.4",
     "eslint-plugin-astro": "^1.7.0",

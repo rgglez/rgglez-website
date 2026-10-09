@@ -1,0 +1,150 @@
+---
+title: "Das Licht spielen"
+description: >-
+  Bernard Szajner, Erfinder der Laserharfe, starb am 2. September 2026. Das
+  Instrument, das Musik und Technik verbindet, hat ein dauerhaftes Erbe in
+  der elektronischen und experimentellen Musik hinterlassen.
+slug: "das-licht-spielen"
+ogImage: "../../../../../assets/posts/2026/09/tocando-la-luz/header.webp"
+pubDatetime: 2026-10-08T00:00:00-06:00
+modDatetime: 2026-10-08T00:00:00-06:00
+lang: de
+featured: false
+draft: false
+tags:
+  - elektronische-musik
+  - laserharfe
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.de"
+---
+
+import { Image } from "astro:assets";
+import LaserHarp from "@/components/LaserHarp.astro";
+import SpotifyEmbed from "@/components/SpotifyEmbed.astro";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+import szajner from "@/assets/posts/2026/09/tocando-la-luz/bs.jpg";
+
+<LaserHarp />
+
+---
+
+Elektronische Musik, also Musik, die mit Instrumenten erzeugt wird, die
+Elektrizität als Energiequelle nutzen, entstand — so unwahrscheinlich es
+klingt — Ende des 19. und Anfang des 20. Jahrhunderts. Eines der ersten
+elektronischen Instrumente war das Theremin, das der Russe Lew Termen 1920
+erfand.
+
+Springen wir in die 1970er Jahre. Die ersten Synthesizer entstehen, und mit
+ihnen erreicht die elektronische Musik ein allgemeines Publikum, jenseits der
+experimentellen Szene. Gruppen wie Kraftwerk oder Tangerine Dream treten
+hervor, Bezugspunkte des Genres. Und natürlich ein Stammgast dieses Blogs,
+Jean-Michel Jarre, hat 1976 seinen ersten Erfolg mit dem Album *Oxygène*, das
+gerade 50 Jahre alt wird. Was die Live-Auftritte dieser wegweisenden Gruppen
+jedoch prägte, war der fehlende Austausch mit dem Publikum. Die Musiker
+standen hinter ihren Synthesizern, und das Publikum konnte, so bewegt es auch
+war, nicht mit ihnen interagieren. Oft wirkten sie starr oder kehrten dem
+Publikum den Rücken zu, was eine Barriere zwischen Künstler und Zuhörern
+schuf.
+
+<Image
+  src={szajner}
+  alt="Bernard Szajner spielt die Laserharfe: grüne Strahlen im Fächer, von den Händen unterbrochen, vor rotem Hintergrund."
+  loading="lazy"
+  class="float-right mb-4 ml-6 h-auto w-2/5 max-w-50"
+/>
+
+In diesem Zusammenhang beschloss Bernard Szajner, ein französischer Künstler,
+ein Instrument zu bauen, das diese Barriere durchbrechen sollte. 1980 erfand
+Szajner die Laserharfe (*Syringe*), ein Instrument, das Lichtstrahlen nutzt,
+um Klänge „auszulösen“. Die Musiker konnten das Licht mit den Händen spielen
+und so ein visuelles und klangliches Erlebnis schaffen, das das Publikum so
+nicht kannte. Ich sage auslösen, weil die Strahlen die Klänge nicht von sich
+aus erzeugen: Unterbricht man den Strahl, aktiviert das einen Sensor, der den
+entsprechenden Klang über einen Synthesizer erzeugt. Das Publikum konnte so
+sehen, wie die Musik in Echtzeit entstand, und die Musiker konnten auf eine
+völlig neue Weise mit ihrem Publikum interagieren.
+
+Michel Geiss, Toningenieur und Mitarbeiter Jarres, gehörte zu den Ersten, die
+das Potenzial der Laserharfe erkannten. Geiss entdeckte das Instrument 1980
+während eines Stücks von Pierre Henry, aufgeführt in der Salle Favart der
+Opéra-Comique: *Les Noces chymiques*. Szajner hatte außerdem einen
+spektakulären Effekt geschaffen: Lichtkegel, die den Bewegungen der Tänzer
+folgten.
+
+Geiss stellte Jarre den Erfinder und sein Instrument vor. Die Idee, Licht zu
+spielen und Musik auf so visuelle Weise zu erzeugen, interessierte ihn sehr.
+Jarre hatte immer die Vorstellung gehabt, dass Live-Auftritte ein visuelles
+Spektakel sein sollten und nicht nur eine Gruppe von Musikern, die
+roboterhaft spielt. Szajners Laserharfe bot ihm die Möglichkeit, diese Idee
+weiterzutreiben. Auf seiner Chinatournee setzte Jarre die Laserharfe in
+mehreren Auftritten ein, und das Publikum war fasziniert.
+
+Szajner war nicht nur Erfinder, sondern auch ein begabter Musiker und
+bildender Künstler. Seine Musik, die Elektronik, Rock und experimentelle
+Musik verband, war innovativ und avantgardistisch. Hier eine Auswahl einiger
+seiner Alben:
+
+<div className="not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {[
+    "6XFp54ndyF4eKv2Im8OdVc",
+    "5cDJVQeeoaMbQlNg5wUHaN",
+    "6DnSA2Iyp8XJtAAb1NENzy",
+    "1fzDEkXmG8gKif40bokz44",
+  ].map((albumId, index) => (
+    <SpotifyEmbed
+      type="album"
+      id={albumId}
+      title={`Album auf Spotify ${index + 1}`}
+    />
+  ))}
+</div>
+
+Geiss bemerkt: „jüdischer Herkunft, war Bernard zuerst ein Opfer der
+nationalsozialistischen Ideologie in Deutschland und dann, bei der Ankunft,
+des Antisemitismus in Frankreich“.
+
+Bernard Szajner wurde am 27. Juni 1944 in Grenoble geboren, in einer Familie
+polnischer Juden, die über Deutschland nach Frankreich gekommen war. Er kam
+unter dem falschen Namen Wolf zur Welt und verbrachte seine ersten Monate in
+einem Keller versteckt: tagsüber nur das Licht der Kellerluke, nachts keines.
+
+Um 1969 begann er in der Audiovision, mit Patricia Negro, seiner
+Geschäftspartnerin, und zwei Kodak-Carousel-Projektoren. Aus diesen Versuchen
+entstanden die Lightshows für Magma und Gong. Im Mai 1975 nutzte der Aufbau
+bereits mehrere Helium-Neon-Laser, im Kinopanorama in Paris, mit Tim Blake am
+Synthesizer. Ende jenes Jahres gründeten sie
+<a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank" rel="noopener noreferrer">Laser Graphics</a>,
+das Unternehmen für den bühnentechnischen Einsatz des Lasers. Damit
+arbeiteten sie an der Europatournee von The Who (1975), an den Konzerten von
+Go — Stomu Yamashta und Stevie Winwood — in der Royal Albert Hall und in
+Paris (1976), einen Monat lang in Saint-Eustache (Dezember 1976) und im
+Planetarium von Paris (Mai 1977). Es gab auch Aufträge für Cartier und
+Renault. In *Les Noces chymiques* steht der Laser nicht auf seinen Namen,
+sondern als Groupe Laser Graphics.
+
+Die Musik kam auf demselben Weg. Wenn die Gruppen das Licht als Effekt
+behandelten, beschloss er, das zu komponieren, was es begleiten sollte.
+Zwischen 1979 und 1983 veröffentlichte er *Visions of Dune* (1979, als Zed
+gezeichnet), *Some Deaths Take Forever* (1980, zum Teil als Soundtrack eines
+Kurzfilms von Amnesty International gedacht), *Superficial Music* (1981) und
+*Brute Reason* (1983, Island, mit Texten von Howard Devoto). Parallel dazu
+gründete er mit Karel Beer The (Hypothetical) Prophets (*Wallenberg*, 1982).
+Ende des Jahrzehnts verließ er die Industrie und kehrte zu Bild, Theater und
+anderen interaktiven Instrumenten zurück.
+
+Bernard Szajner, Musiker und bildender Künstler, starb am 31. August 2026.
+Sein Erbe bleibt jedoch in der elektronischen und experimentellen Musik
+bestehen, und seine Laserharfe ist weiterhin ein Symbol für Innovation und
+Kreativität in der Musik.
+
+<YouTubeEmbed
+  id="SCKrpev1okc?start=458"
+  title="Ausschnitt: Ripley's Believe It or Not (1983): die Laserharfe, ab 7:37"
+/>
+
+## Weitere Informationen
+
+* <a href="https://www.muzines.co.uk/articles/concert-review/6095?theme=2" target="_blank" rel="noopener noreferrer">Concert Review: Bernard Szajner</a> (Muzines, 1983)
+* <a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank" rel="noopener noreferrer">Laser Graphics</a> (Sound International, Juni 1978)
+* <a href="https://web.archive.org/web/20130630022416/http://szajner.net/about/" target="_blank" rel="noopener noreferrer">Bernard Szajner: Biography</a> (LTM Recordings)

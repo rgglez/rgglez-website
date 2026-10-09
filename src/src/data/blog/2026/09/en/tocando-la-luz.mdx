@@ -1,0 +1,141 @@
+---
+title: "Playing the light"
+description: >-
+  Bernard Szajner, creator of the laser harp, died on 2 September 2026. The
+  instrument, which combines music and technology, has left a lasting legacy
+  in electronic and experimental music.
+slug: "playing-the-light"
+ogImage: "../../../../../assets/posts/2026/09/tocando-la-luz/header.webp"
+pubDatetime: 2026-10-08T00:00:00-06:00
+modDatetime: 2026-10-08T00:00:00-06:00
+lang: en
+featured: false
+draft: false
+tags:
+  - electronic-music
+  - laser-harp
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en"
+---
+
+import { Image } from "astro:assets";
+import LaserHarp from "@/components/LaserHarp.astro";
+import SpotifyEmbed from "@/components/SpotifyEmbed.astro";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+import szajner from "@/assets/posts/2026/09/tocando-la-luz/bs.jpg";
+
+<LaserHarp />
+
+---
+
+Electronic music — that is, music made with instruments that use electricity
+as their power source — appeared, unlikely as it seems, in the late nineteenth
+and early twentieth centuries. One of the first electronic instruments was the
+theremin, invented by the Russian Lev Termen in 1920.
+
+Jump to the 1970s. The first synthesizers are developed, and with them
+electronic music begins to reach a general audience, beyond the experimental
+scene. Groups such as Kraftwerk and Tangerine Dream emerge, reference points
+for the genre. And of course a regular guest on this blog, Jean-Michel Jarre,
+has his first hit in 1976 with the album *Oxygène*, which is turning 50 right
+about now. What marked the live shows of these seminal groups, though, was the
+lack of interaction with the audience. The musicians stood behind their
+synthesizers, and the audience, however moved, could not interact with them.
+In fact, they often appeared motionless, or with their backs to the crowd,
+which put a barrier between the artist and the audience.
+
+<Image
+  src={szajner}
+  alt="Bernard Szajner plays the laser harp: green beams in a fan, broken by his hands, against a red background."
+  loading="lazy"
+  class="float-right mb-4 ml-6 h-auto w-2/5 max-w-50"
+/>
+
+It was in this context that Bernard Szajner, a French artist, decided to
+create an instrument that would break that barrier. In 1980 Szajner invented
+the laser harp (*Syringe*), an instrument that uses beams of light to
+"trigger" sounds. Musicians could play the light with their hands, creating a
+visual and sonic experience the audience had not seen before. I say trigger
+because the beams do not produce the sounds by themselves: interrupting a beam
+activates a sensor, which produces the corresponding sound through a
+synthesizer. The audience could thus see the music being generated in real
+time, and the musicians could interact with their audience in an entirely new
+way.
+
+Michel Geiss, a sound engineer and collaborator of Jarre's, was one of the
+first to see the potential of the laser harp. Geiss discovered the instrument
+in 1980 during a piece by Pierre Henry presented at the Salle Favart of the
+Opéra-Comique, *Les Noces chymiques*. Szajner had also created a spectacular
+effect: cones of light that followed the dancers' movements.
+
+Geiss introduced the inventor and his instrument to Jarre, who was very
+interested in the idea of playing light and making music in such a visual way.
+Jarre had always thought that live performances should be a visual spectacle,
+not just a group of musicians playing robotically, and Szajner's laser harp
+gave him the chance to take that idea further. During his tour of China, Jarre
+used the laser harp in several performances, and the audience was fascinated.
+
+Besides being an inventor, Szajner was a talented musician and visual artist.
+His music, which combined electronic, rock and experimental elements, was
+innovative and ahead of its time. Here is a sample of some of his albums:
+
+<div className="not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {[
+    "6XFp54ndyF4eKv2Im8OdVc",
+    "5cDJVQeeoaMbQlNg5wUHaN",
+    "6DnSA2Iyp8XJtAAb1NENzy",
+    "1fzDEkXmG8gKif40bokz44",
+  ].map((albumId, index) => (
+    <SpotifyEmbed
+      type="album"
+      id={albumId}
+      title={`Album on Spotify ${index + 1}`}
+    />
+  ))}
+</div>
+
+Geiss comments: "of Jewish descent, Bernard was first a victim of Nazi ideology
+in Germany, and then of antisemitism in France upon arrival".
+
+Bernard Szajner was born on 27 June 1944 in Grenoble, into a family of Polish
+Jews who had passed through Germany before settling in France. He was born
+under the false name Wolf and spent his first months hidden in a cellar: by
+day, only the light from the basement window; at night, none.
+
+Around 1969 he started in audiovisual work with Patricia Negro, his business
+partner, and two Kodak Carousel projectors. Those experiments led to the light
+shows for Magma and Gong. By May 1975 the rig already used several helium-neon
+lasers, at the Kinopanorama in Paris, with Tim Blake on synthesizer. At the
+end of that year they founded
+<a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank" rel="noopener noreferrer">Laser Graphics</a>,
+the company devoted to stage uses of the laser. With it they worked on The
+Who's European tour (1975), on the Go concerts —Stomu Yamashta and Stevie
+Winwood— at the Royal Albert Hall and in Paris (1976), for a month at
+Saint-Eustache (December 1976) and at the Paris Planetarium (May 1977). There
+were also commissions for Cartier and Renault. In *Les Noces chymiques* the
+laser is not credited under his name, but as Groupe Laser Graphics.
+
+The music came by the same path. If the bands treated light as an effect, he
+decided to compose what would accompany it. Between 1979 and 1983 he released
+*Visions of Dune* (1979, credited as Zed), *Some Deaths Take Forever* (1980,
+conceived in part as the soundtrack of an Amnesty International short film),
+*Superficial Music* (1981) and *Brute Reason* (1983, Island, with lyrics by
+Howard Devoto). In parallel, with Karel Beer, he formed The (Hypothetical)
+Prophets (*Wallenberg*, 1982). At the end of the decade he left the industry
+and returned to image, theatre and other interactive instruments.
+
+Bernard Szajner, musician and visual artist, died on 31 August 2026. His
+legacy, however, endures in electronic and experimental music, and his laser
+harp remains a symbol of innovation and creativity in music.
+
+<YouTubeEmbed
+  id="SCKrpev1okc?start=458"
+  title="Clip: Ripley's Believe It or Not (1983): the laser harp, from 7:37"
+/>
+
+## Further reading
+
+* <a href="https://www.muzines.co.uk/articles/concert-review/6095?theme=2" target="_blank" rel="noopener noreferrer">Concert Review: Bernard Szajner</a> (Muzines, 1983)
+* <a href="http://www.muzines.co.uk/articles/laser-graphics/8620" target="_blank" rel="noopener noreferrer">Laser Graphics</a> (Sound International, June 1978)
+* <a href="https://web.archive.org/web/20130630022416/http://szajner.net/about/" target="_blank" rel="noopener noreferrer">Bernard Szajner: Biography</a> (LTM Recordings)

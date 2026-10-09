@@ -1,0 +1,359 @@
+---
+import {
+  DEFAULT_PRESET,
+  MIN_BEAMS,
+  MAX_BEAMS,
+  parsePresets,
+  type Preset,
+} from "./laser-harp/presets";
+
+interface Props {
+  /** Initial custom presets; saved browser data takes precedence. */
+  presets?: Preset[];
+  /** Separate keys give multiple instruments independent saved libraries. */
+  storageKey?: string;
+}
+const { presets = [], storageKey = "laser-harp:presets:v1" } = Astro.props;
+// Validate props on the server and serialize through escaped HTML attributes.
+const initialPresets = parsePresets(presets);
+---
+
+<laser-harp
+  data-presets={JSON.stringify(initialPresets)}
+  data-storage-key={storageKey}
+>
+  <div class="harp-heading">
+    <div>
+      <strong>Arpa láser</strong>
+      <span data-preset-title>{DEFAULT_PRESET.name}</span>
+    </div>
+    <span class="harp-badge">ELKA SYNTHEX · SÍNTESIS</span>
+  </div>
+  <p class="harp-instructions">
+    Activa el sonido y mantén pulsado un rayo con el mouse o el dedo; puedes
+    deslizarte entre rayos. También puedes enfocar una nota y mantener Espacio o
+    Enter. Pasar el mouse sin pulsar no produce sonido.
+  </p>
+  <div class="harp-stage">
+    <canvas aria-hidden="true"></canvas>
+    <span class="harp-stage-caption">TOCA LA LUZ</span>
+    <span class="harp-emitter" aria-hidden="true"></span>
+  </div>
+  <div
+    class="harp-notes"
+    role="group"
+    aria-label="Notas del arpa, de izquierda a derecha"
+    data-notes
+    style={`--beam-count: ${DEFAULT_PRESET.beams.length}`}
+  >
+    {
+      DEFAULT_PRESET.beams.map(({ note }, index) => (
+        <button
+          type="button"
+          data-note={index}
+          aria-label={`Tocar ${note}`}
+          disabled
+        >
+          {note.replace("b", "♭")}
+        </button>
+      ))
+    }
+  </div>
+  <!-- These buttons are rebuilt from the same arrays as the beams and voices. -->
+  <div
+    class="harp-presets"
+    role="group"
+    aria-label="Seleccionar preset"
+    data-preset-buttons
+  >
+    <button type="button" data-preset="-1" aria-pressed="true">Jarre</button>
+  </div>
+  <div class="harp-controls">
+    <button type="button" data-open-presets disabled>Presets</button>
+    <button type="button" data-power aria-pressed="false" disabled
+      >Activar sonido</button
+    >
+    <label
+      >Volumen <input
+        type="range"
+        min="0"
+        max="80"
+        value="45"
+        data-volume
+      /></label
+    >
+  </div>
+  <p class="harp-status" role="status" data-status>Cargando el instrumento…</p>
+  <!-- Native modal semantics supply focus trapping and Escape dismissal. -->
+  <dialog class="harp-editor" aria-label="Configurar presets">
+    <form>
+      <h2>Presets</h2>
+      <p>
+        Hasta cinco presets personalizados de {MIN_BEAMS} a {MAX_BEAMS} rayos. El
+        preset original de Jarre conserva sus nueve notas y siempre está disponible.
+      </p>
+      <label>Preset personalizado <select data-edit-preset></select></label>
+      <div class="harp-editor-actions">
+        <button type="button" data-add-preset>Nuevo preset</button>
+        <button type="button" data-delete-preset>Eliminar preset</button>
+      </div>
+      <fieldset>
+        <legend>Configuración del preset</legend>
+        <label>Nombre <input data-preset-name required maxlength="40" /></label>
+        <label
+          >Número de rayos <select data-beam-count>
+            {
+              Array.from({ length: MAX_BEAMS - MIN_BEAMS + 1 }, (_, index) => (
+                <option value={MIN_BEAMS + index}>{MIN_BEAMS + index}</option>
+              ))
+            }
+          </select></label
+        >
+        <div data-beam-rows></div>
+      </fieldset>
+      <p data-editor-status role="status"></p>
+      <div class="harp-editor-actions">
+        <button type="button" data-cancel-presets>Cancelar</button>
+        <button type="submit">Guardar cambios</button>
+      </div>
+    </form>
+  </dialog>
+  <noscript>Activa JavaScript para tocar el arpa.</noscript>
+</laser-harp>
+
+<script>
+  class LaserHarp extends HTMLElement {
+    private controller?: AbortController;
+
+    connectedCallback() {
+      // Astro can reconnect the same element. Each connection gets a fresh
+      // controller, which also guards against a late lazy-import resolution.
+      if (this.controller) return;
+      const controller = new AbortController();
+      this.controller = controller;
+      import("./laser-harp/client")
+        .then(({ mountHarp }) => {
+          if (!controller.signal.aborted) mountHarp(this, controller.signal);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            this.querySelector("[data-status]")!.textContent =
+              "No se pudo cargar el instrumento. Recarga la página para reintentar.";
+          }
+        });
+    }
+
+    disconnectedCallback() {
+      // Abort releases listeners, audio, the modal, and GPU resources without
+      // changing the shared Tone context or any other component instance.
+      this.controller?.abort();
+      this.controller = undefined;
+    }
+  }
+  if (!customElements.get("laser-harp"))
+    customElements.define("laser-harp", LaserHarp);
+</script>
+
+<style>
+  laser-harp {
+    display: block;
+    overflow: hidden;
+    margin-block: 2rem;
+    padding: 1.25rem;
+    border: 1px solid #284c3c;
+    border-radius: 1rem;
+    background: #07110e;
+    color: #e1f9ea;
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  .harp-heading,
+  .harp-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .harp-heading strong {
+    display: block;
+    color: #effff5;
+    font-size: 1.35rem;
+  }
+  .harp-heading span,
+  .harp-instructions,
+  .harp-status {
+    font-size: 0.85rem;
+    color: #a6c6b3;
+  }
+  .harp-badge {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.12em;
+  }
+  .harp-instructions {
+    margin: 0.8rem 0 1rem;
+  }
+  .harp-stage {
+    position: relative;
+    height: clamp(280px, 55vw, 400px);
+    background: radial-gradient(ellipse at 50% 95%, #14502c55, transparent 65%);
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  canvas[hidden] {
+    display: none;
+  }
+  .harp-stage-caption {
+    position: absolute;
+    top: 43%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: #a0c4ad;
+    pointer-events: none;
+  }
+  .harp-emitter {
+    position: absolute;
+    bottom: 3%;
+    left: 39%;
+    width: 22%;
+    height: 8px;
+    border-radius: 50%;
+    background: #183f2a;
+    box-shadow: 0 0 20px #3bff8244;
+    pointer-events: none;
+  }
+  .harp-notes {
+    display: grid;
+    grid-template-columns: repeat(var(--beam-count, 9), minmax(0, 1fr));
+    gap: 0.3rem;
+    margin-block: 0.7rem 1rem;
+  }
+  laser-harp :global(button) {
+    min-height: 44px;
+    border: 1px solid #406d52;
+    border-radius: 0.4rem;
+    background: #10261b;
+    color: #d9fbe6;
+    padding: 0.45rem 0.8rem;
+    font: inherit;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .harp-notes :global(button) {
+    border-top: 3px solid var(--beam-color, #43ff87);
+    padding: 0.4rem 0;
+    font-size: 0.8rem;
+  }
+  .harp-notes :global(button[data-active]) {
+    background: var(--beam-color, #9bffb9);
+    color: #05200f;
+    box-shadow: 0 0 15px var(--beam-color, #62ff78);
+  }
+  laser-harp :global(button:disabled) {
+    opacity: 0.5;
+    cursor: default;
+  }
+  laser-harp :global(button:focus-visible),
+  laser-harp :global(input:focus-visible),
+  laser-harp :global(select:focus-visible) {
+    outline: 2px solid #c3ff93;
+    outline-offset: 4px;
+  }
+  .harp-controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.85rem;
+  }
+  input[type="range"] {
+    width: 110px;
+    accent-color: #79ee9b;
+  }
+  .harp-status {
+    min-height: 1.5em;
+    margin: 0.9rem 0 0;
+  }
+  .harp-presets,
+  .harp-editor-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block: 1rem;
+  }
+  .harp-presets :global(button) {
+    overflow-wrap: anywhere;
+  }
+  .harp-presets :global(button[aria-pressed="true"]) {
+    border-color: #b4ffd0;
+    background: #245335;
+  }
+  .harp-editor {
+    box-sizing: border-box;
+    width: min(560px, calc(100vw - 24px));
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    padding: 1.25rem;
+    border: 1px solid #406d52;
+    border-radius: 1rem;
+    background: #0b1b13;
+    color: #e1f9ea;
+    color-scheme: dark;
+  }
+  .harp-editor::backdrop {
+    background: #000b;
+    backdrop-filter: blur(4px);
+  }
+  .harp-editor h2 {
+    margin: 0;
+    color: inherit;
+    font-size: 1.4rem;
+  }
+  .harp-editor p {
+    font-size: 0.85rem;
+  }
+  .harp-editor fieldset {
+    padding: 0.8rem;
+    border: 1px solid #406d52;
+    min-width: 0;
+  }
+  .harp-editor :global(label) {
+    display: grid;
+    gap: 0.35rem;
+    margin-block: 0.6rem;
+    font-size: 0.85rem;
+  }
+  .harp-editor :global(select),
+  .harp-editor input {
+    box-sizing: border-box;
+    min-height: 44px;
+    min-width: 0;
+    width: 100%;
+    border: 1px solid #406d52;
+    border-radius: 0.3rem;
+    padding: 0.4rem;
+    background: #10261b;
+    color: #e1f9ea;
+    font: inherit;
+  }
+  .harp-editor :global(.harp-beam-row) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  @media (max-width: 450px) {
+    laser-harp {
+      padding: 0.75rem;
+    }
+    .harp-notes {
+      gap: 0.15rem;
+    }
+  }
+</style>
