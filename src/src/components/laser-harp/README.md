@@ -100,6 +100,14 @@ Releasing contact, cancellation, or leaving the playable area releases notes.
 Multiple fingers can share a beam without prematurely releasing its voice.
 
 The note buttons also support Space, Enter, and screen-reader activation.
+On a hardware keyboard, hold `1` through `9`, then `0`, to play beams from
+left to right (`0` is the tenth beam). Release a key to release its note; keys
+without an assigned beam are silent. Multiple keys can be held together.
+Activate sound and keep focus inside the harp; pressing the canvas also
+focuses it. Number shortcuts ignore text fields, modified keys, and the preset
+modal. Leaving the harp releases held number keys, and only the focused
+instrument responds when a page contains several harps. The number-key hint
+is hidden on touch devices; touch interaction remains unchanged.
 Switch presets using the buttons above the main controls. Switching clears
 all held contacts, disposes the previous audio graph and effect tails, rebuilds
 the visuals and buttons, and restores the enabled state. Audio initialization

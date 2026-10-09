@@ -1,3 +1,12 @@
+/** Number-row order: 0 addresses the tenth beam, rather than the first. */
+export const BEAM_KEYS = "1234567890";
+
+/** Unassigned keys stay silent when the selected preset has fewer beams. */
+export function beamForKey(key: string, count: number) {
+  const index = BEAM_KEYS.indexOf(key);
+  return key.length === 1 && index >= 0 && index < count ? index : -1;
+}
+
 /** Normalized canvas coordinates use x=0 at the left and y=0 at the top. */
 export function beamX(index: number, y: number, count: number) {
   const spread = 0.15 + 0.75 * (1 - y);

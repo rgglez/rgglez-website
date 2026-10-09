@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import { hitBeam } from "./notes";
+import { BEAM_KEYS, beamForKey, hitBeam } from "./notes";
 import { createHarpSynth } from "./synth";
 import { createHarpScene } from "./scene";
 import { createPresetEditor } from "./editor";
@@ -163,6 +163,8 @@ export function mountHarp(root: HTMLElement, signal: AbortSignal) {
       button.type = "button";
       button.dataset.note = String(index);
       button.textContent = beam.note.replace("b", "♭");
+      button.setAttribute("aria-keyshortcuts", BEAM_KEYS[index]);
+      button.title = `Tecla ${BEAM_KEYS[index]}: ${beam.note}`;
       const color = LASER_COLORS[beam.color ?? "green"];
       button.style.setProperty("--beam-color", color.hex);
       button.setAttribute(
@@ -242,13 +244,20 @@ export function mountHarp(root: HTMLElement, signal: AbortSignal) {
       const button = (event.target as Element).closest<HTMLButtonElement>(
         "[data-preset]"
       );
-      if (button) selectPreset(Number(button.dataset.preset));
+      if (button) {
+        // The selected button is replaced; retain keyboard focus on the harp.
+        root.focus({ preventScroll: true });
+        selectPreset(Number(button.dataset.preset));
+      }
     },
     events
   );
   power.addEventListener(
     "click",
     () => {
+      // Activation temporarily disables this button during async setup.
+      // Move focus first so number keys work as soon as audio becomes ready.
+      root.focus({ preventScroll: true });
       if (enabled) stop();
       else void start();
     },
@@ -315,6 +324,8 @@ export function mountHarp(root: HTMLElement, signal: AbortSignal) {
     event => {
       if (!enabled || dialog.open || event.button !== 0) return;
       event.preventDefault();
+      // Keep number shortcuts scoped to the harp the player just touched.
+      root.focus({ preventScroll: true });
       pressedPointers.add(event.pointerId);
       canvas.setPointerCapture(event.pointerId);
       move(event);
@@ -408,6 +419,50 @@ export function mountHarp(root: HTMLElement, signal: AbortSignal) {
     "keydown",
     event => {
       if (event.key === "Escape" && !dialog.open) stop();
+      // A focused harp owns its shortcuts, so multiple instances cannot play
+      // together by accident. Typing in controls or editing presets stays safe.
+      if (
+        !enabled ||
+        dialog.open ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.isComposing ||
+        (event.target as Element).closest(
+          "input, textarea, select, [contenteditable]"
+        )
+      )
+        return;
+      const index = beamForKey(event.key, selectedPreset.beams.length);
+      if (index < 0) return;
+      event.preventDefault();
+      // Each physical key owns one contact. Auto-repeat does not retrigger,
+      // and mouse/touch contacts on the same beam keep their own ownership.
+      if (!event.repeat) setHeld(`number:${event.code}`, index);
+    },
+    events
+  );
+  window.addEventListener(
+    "keyup",
+    event => {
+      // Release even if focus or modifiers changed since the key went down.
+      const id = `number:${event.code}`;
+      if (held.has(id)) setHeld(id, -1);
+    },
+    events
+  );
+  root.addEventListener(
+    "focusout",
+    event => {
+      if (
+        event.relatedTarget instanceof Node &&
+        root.contains(event.relatedTarget)
+      )
+        return;
+      for (const id of held.keys()) {
+        if (id.startsWith("number:")) setHeld(id, -1);
+      }
     },
     events
   );

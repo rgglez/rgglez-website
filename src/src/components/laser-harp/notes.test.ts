@@ -1,6 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { beamX, hitBeam } from "./notes";
+import { BEAM_KEYS, beamForKey, beamX, hitBeam } from "./notes";
+
+test("number keys map left to right and ignore unassigned beams", () => {
+  for (const count of [5, 6, 7, 8, 9, 10]) {
+    [...BEAM_KEYS].forEach((key, index) => {
+      assert.equal(beamForKey(key, count), index < count ? index : -1);
+    });
+    for (const key of ["", "12", "Enter", "a", "!", " "]) {
+      assert.equal(beamForKey(key, count), -1);
+    }
+  }
+});
 
 test("all supported beam counts remain separated on mobile and desktop", () => {
   // Include the nine-note default and the full custom preset range of 5–10.

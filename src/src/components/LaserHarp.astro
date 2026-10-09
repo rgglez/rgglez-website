@@ -7,6 +7,7 @@ import {
   parsePresets,
   type Preset,
 } from "./laser-harp/presets";
+import { BEAM_KEYS } from "./laser-harp/notes";
 
 interface Props {
   /** Initial custom presets; saved browser data takes precedence. */
@@ -20,6 +21,9 @@ const initialPresets = parsePresets(presets);
 ---
 
 <laser-harp
+  tabindex="0"
+  role="group"
+  aria-label="Arpa láser"
   data-presets={JSON.stringify(initialPresets)}
   data-storage-key={storageKey}
 >
@@ -36,6 +40,10 @@ const initialPresets = parsePresets(presets);
     Activa el sonido y mantén pulsado un rayo con el mouse o el dedo; puedes
     deslizarte entre rayos. También puedes enfocar una nota y mantener Espacio o
     Enter. Pasar el mouse sin pulsar no produce sonido.
+    <span class="harp-keyboard-instructions">
+      Con el arpa enfocada, mantén las teclas 1 a 0 para tocar los rayos de
+      izquierda a derecha; 0 corresponde al décimo rayo.
+    </span>
   </p>
   <div class="harp-stage">
     <canvas aria-hidden="true"></canvas>
@@ -55,6 +63,8 @@ const initialPresets = parsePresets(presets);
           type="button"
           data-note={index}
           aria-label={`Tocar ${note}`}
+          aria-keyshortcuts={BEAM_KEYS[index]}
+          title={`Tecla ${BEAM_KEYS[index]}: ${note}`}
           disabled
         >
           {note.replace("b", "♭")}
@@ -173,6 +183,18 @@ const initialPresets = parsePresets(presets);
 </script>
 
 <style>
+  laser-harp:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+  .harp-keyboard-instructions {
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .harp-keyboard-instructions {
+      display: inline;
+    }
+  }
   laser-harp {
     display: block;
     overflow: hidden;
