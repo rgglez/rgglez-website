@@ -44,6 +44,30 @@ const supported = SITE.supportedLangs as readonly string[] | undefined;
 const resolvedLang =
   lang ?? (supported?.includes(pathLang) ? pathLang : (SITE.lang ?? "en"));
 
+// og:locale por idioma de la página (formato ll_TT de Open Graph).
+const OG_LOCALES: Record<string, string> = {
+  es: "es_MX",
+  en: "en_US",
+  fr: "fr_FR",
+  de: "de_DE",
+  zh: "zh_CN",
+};
+const ogLocale = OG_LOCALES[resolvedLang] ?? "en_US";
+
+// Límites recomendados para vistas previas: og:title 60, og:description 160.
+const truncate = (text: string, max: number) => {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  // Cortar en el último espacio salvo que deje menos de la mitad del texto.
+  return `${(lastSpace > max / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+};
+const cleanTitle = title.endsWith(` | ${SITE.title}`)
+  ? title.slice(0, -` | ${SITE.title}`.length)
+  : title;
+const ogTitle = truncate(cleanTitle, 60);
+const ogDescription = truncate(description, 160);
+
 const socialImageURL = new URL(ogImage, Astro.url);
 
 const canonicalHref = canonicalURL.toString();
@@ -102,14 +126,20 @@ const structuredData = jsonLd ?? articleStructuredData;
       canonical={canonicalHref}
       languageAlternates={hreflangAlternates}
       openGraph={{
-        title,
-        description,
+        title: ogTitle,
+        description: ogDescription,
         url: canonicalHref,
         type: ogType,
+        site_name: SITE.title,
+        locale: ogLocale,
         images: [
           {
             url: socialImageHref,
             type: "image/jpeg",
+            // PostDetails genera el JPEG a 1200x630; public/og.jpg mide igual.
+            width: 1200,
+            height: 630,
+            alt: cleanTitle,
           },
         ],
         article: pubDatetime
@@ -121,8 +151,8 @@ const structuredData = jsonLd ?? articleStructuredData;
       }}
       twitter={{
         card: "summary_large_image",
-        title,
-        description,
+        title: ogTitle,
+        description: ogDescription,
         image: socialImageHref,
       }}
       jsonLd={structuredData}

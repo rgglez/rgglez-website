@@ -52,11 +52,36 @@ campos nuevos. Valores fijos de este sitio:
 - `ogImage`: ruta **relativa** desde el `.mdx`, cinco niveles arriba, apuntando
   al `<nombre-base>` en español:
   `"../../../../../assets/posts/<AAAA>/<MM>/<nombre-base>/header.webp"`.
-  El alias `@/` NO funciona aquí.
+  El alias `@/` NO funciona aquí. La imagen debe tener proporción 1.91:1
+  (el layout la recorta a 1200×630 y la sirve como JPEG; Facebook y WhatsApp
+  no leen WebP).
 - `tags`: kebab-case, minúsculas. Los tags técnicos (`cloudflare`, `astro`,
   `d1`) se dejan igual en todos los idiomas; solo se traducen los descriptivos.
-- `description`: bloque `>-`, 2–4 líneas; se usa en `<meta description>` y en
-  las tarjetas del índice.
+- `description`: bloque `>-`, 2–4 líneas; se usa en `<meta description>`, en
+  `og:description` y en las tarjetas del índice. **Entre 100 y 160
+  caracteres** contados sobre el texto ya unido en una línea; el layout corta
+  en 160 para `og:description`, pero hay que escribirla completa dentro del
+  límite.
+- `title`: **máximo 60 caracteres** recomendados. El layout añade
+  ` | rodolfo.gg` al `<title>` y lo quita de `og:title`, que recorta a 60 con
+  `…`; con 47 o menos no se recorta nada.
+
+### Tags Open Graph que se generan solos
+
+No se escriben en el frontmatter; los emite `src/src/layouts/Layout.astro`:
+
+| Tag                                | Origen                                          |
+| :--------------------------------- | :---------------------------------------------- |
+| `og:title`                         | `title` sin sufijo, máx. 60                     |
+| `og:description`                   | `description`, máx. 160                         |
+| `og:site_name`                     | `SITE.title` (`config.ts`)                      |
+| `og:locale`                        | carpeta de idioma: `es_MX`, `en_US`, `fr_FR`, `de_DE`, `zh_CN` |
+| `og:image`                         | `ogImage`, convertida a JPEG                    |
+| `og:image:width`, `og:image:height` | 1200 y 630 (fijos)                             |
+| `og:image:alt`                     | `title` sin sufijo                              |
+
+Si se añade un idioma a `SITE.supportedLangs`, hay que añadirlo también al
+mapa `OG_LOCALES` de `Layout.astro`.
 
 ## Estructura del cuerpo
 
@@ -155,6 +180,9 @@ prompt base, **invariable**, más una frase final que describe el contenido:
 > Genera una imagen apta tanto para og:image como para hero header de un blog
 > post. Fondo blanco. Trazos negros. Escala de grises. Caricaturezco y
 > minimalista.
+
+El motivo debe quedar centrado y con margen: el layout recorta la imagen a
+1200×630 (1.91:1) con `fit: "cover"`.
 
 Al escribir un post nuevo, proponer la frase específica que se le añade al
 prompt (qué debe aparecer en la imagen). No generar la imagen: yo la produzco.
