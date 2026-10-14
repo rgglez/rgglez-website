@@ -94,7 +94,13 @@ z = \mathbf{w}^{\mathsf T}\mathbf{x} + b,
 a = \phi(z)
 $$
 
-**Símbolos:** $\mathbf{x}$ es el vector de entrada; $\mathbf{w}$, el vector de pesos; $\mathsf T$ indica transposición; $b$ es el sesgo; $z$, la combinación lineal; $\phi$, la función de activación; y $a$, la salida de la unidad.
+**Símbolos:** $\mathbf{x}$ reúne los valores que recibe la neurona, como las
+características de un ejemplo; $\mathbf{w}$ contiene un peso por entrada, cuyo
+signo y magnitud regulan su contribución. $\mathsf T$ indica transposición: el
+producto $\mathbf{w}^{\mathsf T}\mathbf{x}$ produce una única suma ponderada.
+$b$ es el sesgo aprendido que desplaza esa suma y $z$ es el resultado antes de
+la activación. $\phi$ transforma ese valor y $a$ es la salida que la neurona
+entrega a la siguiente etapa.
 
 ### Peso (_weight_)
 
@@ -116,7 +122,12 @@ $$
 \sigma(z)=\frac{1}{1+e^{-z}}
 $$
 
-**Símbolos:** $z$ es la entrada de la activación; $\sigma(z)$, su salida; y $e$, la constante de Euler.
+**Símbolos:** $z$ es el valor real que recibe la activación, normalmente una
+suma ponderada con sesgo. $\sigma(z)$ es la salida, siempre entre cero y uno:
+vale $0.5$ cuando $z=0$, se acerca a uno para entradas muy positivas y a cero
+para entradas muy negativas. $e\approx2.71828$ es la constante de Euler, base
+de la función exponencial; es una constante matemática, no un parámetro que
+se aprenda durante el entrenamiento.
 
 ### Perceptrón multicapa (MLP)
 
@@ -183,7 +194,12 @@ $$
 J(\theta)=\frac{1}{m}\sum_{i=1}^{m}\ell\!\left(f_\theta(x_i),y_i\right)
 $$
 
-**Símbolos:** $J$ es el coste promedio; $\theta$, el conjunto de parámetros del modelo; $m$, el número de ejemplos; $i$, el índice de cada ejemplo; $f_\theta(x_i)$, la predicción para la entrada $x_i$; $y_i$, su valor esperado; y $\ell$, la pérdida de un ejemplo.
+**Símbolos:** $\theta$ reúne los parámetros aprendibles, como pesos y sesgos,
+y $f_\theta$ representa el modelo con esos valores. $x_i$ es la entrada del
+ejemplo $i$, $f_\theta(x_i)$ es su predicción y $y_i$ es el objetivo conocido
+con el que se compara. $\ell$ mide el error de ese ejemplo; $J(\theta)$ resume
+el error promedio de los $m$ ejemplos considerados. Así, $i$ identifica un
+ejemplo concreto, mientras que $m$ indica cuántos intervienen en el cálculo.
 
 ### Error cuadrático medio (MSE)
 
@@ -194,7 +210,13 @@ $$
 \left\lVert f_\theta(x_i)-y_i\right\rVert_2^2
 $$
 
-**Símbolos:** $m$ es el número de ejemplos; $\theta$, los parámetros del modelo; $f_\theta(x_i)$, la predicción para $x_i$; $y_i$, el objetivo correspondiente; y $\lVert\cdot\rVert_2$, la norma euclídea, cuyo cuadrado mide la magnitud del error.
+**Símbolos:** $m$ es el número de ejemplos e $i$ identifica cada uno.
+$f_\theta(x_i)$ es el vector predicho para la entrada $x_i$ con los parámetros
+$\theta$; $y_i$ es el vector objetivo. $\lVert\cdot\rVert_2$ es la norma
+euclídea: al elevarla al cuadrado se suman los errores cuadrados de todas las
+componentes. Por ejemplo, un error vectorial $(2,-1)$ aporta $5$ a esa suma.
+En esta expresión se promedia entre ejemplos, sin dividir además entre el
+número de componentes de la salida.
 
 El cuadrado evita cancelaciones de signo y produce una función diferenciable.
 
@@ -211,7 +233,13 @@ $$
 =\lim_{h\to0}\frac{f(x_1,\ldots,x_j+h,\ldots)-f(\mathbf{x})}{h}
 $$
 
-**Símbolos:** $f$ es una función de varias variables; $\mathbf{x}$, su vector de entrada; $x_j$, la variable respecto de la cual se deriva; $j$, su índice; y $h$, una perturbación que tiende a cero.
+**Símbolos:** $f$ es la función cuyo cambio se estudia y $\mathbf{x}$ reúne
+sus variables de entrada. $x_j$ es la componente elegida mediante el índice
+$j$; las demás permanecen fijas. $h$ es un pequeño incremento aplicado solo
+a esa componente, que se hace tender a cero para obtener la variación local.
+$\partial f/\partial x_j$ expresa cuánto cambia aproximadamente $f$ por
+unidad de cambio en $x_j$: un valor positivo indica crecimiento local y uno
+negativo indica disminución.
 
 ### Gradiente
 
@@ -225,7 +253,13 @@ $$
 \right]^{\mathsf T}
 $$
 
-**Símbolos:** $J$ es la función objetivo; $\theta$ es el vector de parámetros; $\theta_1,\ldots,\theta_n$ son sus $n$ componentes; $\nabla J$ es el gradiente; y $\mathsf T$ indica que las derivadas se organizan como un vector columna.
+**Símbolos:** $J$ es la función objetivo y $\theta$ es el vector que contiene
+los $n$ parámetros ajustables. Cada $\theta_j$ representa uno de ellos y su
+derivada parcial indica la sensibilidad del coste a pequeños cambios en ese
+parámetro, manteniendo los otros fijos. $\nabla J(\theta)$ reúne esas
+sensibilidades en un vector con tantas componentes como parámetros.
+$\mathsf T$ indica transposición para escribirlo como vector columna. Su
+dirección señala el mayor aumento local del coste bajo la norma euclídea.
 
 ### Descenso de gradiente (_gradient descent_)
 
@@ -235,7 +269,14 @@ $$
 \theta_{t+1}=\theta_t-\eta\nabla_\theta J(\theta_t)
 $$
 
-**Símbolos:** $\theta_t$ contiene los parámetros en la iteración $t$; $\theta_{t+1}$, sus valores actualizados; $\eta$, la tasa de aprendizaje; $J$, el coste; y $\nabla_\theta J(\theta_t)$, su gradiente respecto de los parámetros actuales.
+**Símbolos:** $t$ cuenta las iteraciones de optimización; $\theta_t$ contiene
+los parámetros antes del paso y $\theta_{t+1}$ contiene los valores después
+de actualizarlo. $J$ es el coste que se busca reducir y
+$\nabla_\theta J(\theta_t)$ indica su sensibilidad a cada parámetro en la
+posición actual. El subíndice $\theta$ especifica respecto de qué variables
+se deriva. $\eta>0$ es la tasa de aprendizaje: escala el desplazamiento en la
+dirección contraria al gradiente, sin garantizar que cualquier tamaño de paso
+reduzca el coste.
 
 ### Tasa de aprendizaje (_learning rate_)
 
@@ -261,7 +302,12 @@ $$
 \frac{dy}{dx}=\frac{dy}{du}\frac{du}{dx}
 $$
 
-**Símbolos:** $x$ es la variable de entrada; $u=g(x)$, el valor intermedio; $y=f(u)$, la salida; y cada cociente diferencial expresa la sensibilidad de una variable respecto de otra.
+**Símbolos:** $x$ es la entrada, $u=g(x)$ es el resultado intermedio de la
+función $g$ y $y=f(u)$ es la salida de la función $f$. $du/dx$ mide cómo
+responde el valor intermedio al cambiar la entrada; $dy/du$ mide cómo responde
+la salida a ese valor intermedio. $dy/dx$ combina ambas sensibilidades. Por
+ejemplo, si en un punto son $2$ y $3$, respectivamente, la sensibilidad total
+de la salida respecto de la entrada es $6$.
 
 Es la base matemática para propagar la influencia de la pérdida a través de las capas.
 
@@ -455,7 +501,12 @@ $$
 \mathbf{y}=\phi\!\left(W\mathbf{x}+\mathbf{b}\right)
 $$
 
-**Símbolos:** $\mathbf{x}$ es el vector de entrada; $W$, la matriz de pesos; $\mathbf{b}$, el vector de sesgos; $\phi$, la función de activación; y $\mathbf{y}$, el vector de salida.
+**Símbolos:** $\mathbf{x}$ contiene las entradas de la capa y $W$ agrupa sus
+pesos: cada fila corresponde a una unidad de salida y cada columna a una
+entrada. $\mathbf{b}$ aporta un sesgo por unidad y $\phi$ aplica la activación
+a la transformación resultante. $\mathbf{y}$ reúne las salidas de la capa.
+Por ejemplo, con cuatro entradas y tres unidades, $W$ tiene forma $3\times4$,
+mientras que $\mathbf{b}$ y $\mathbf{y}$ tienen tres componentes cada uno.
 
 ### Compilación del modelo
 
@@ -469,7 +520,12 @@ $$
 \mathcal{L}=-\sum_{k=1}^{K} y_k\log \hat y_k
 $$
 
-**Símbolos:** $\mathcal{L}$ es la pérdida; $K$, el número de clases; $k$, el índice de clase; $y_k$, la etiqueta real para esa clase; y $\hat y_k$, la probabilidad que el modelo le asigna.
+**Símbolos:** $\mathcal{L}$ es la pérdida de un ejemplo, $K$ es el número de
+clases y $k$ identifica cada clase. Con etiquetas _one-hot_, $y_k$ vale uno
+para la clase correcta y cero para las demás; $\hat y_k$ es la probabilidad
+predicha para esa misma clase. El acento sobre $y$ distingue la predicción
+del objetivo. En ese caso solo contribuye la clase correcta: cuanto menor
+sea la probabilidad que recibe, mayor será la pérdida.
 
 ---
 
@@ -509,7 +565,12 @@ $$
 \tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}
 $$
 
-**Símbolos:** $z$ es la entrada; $\tanh(z)$, la salida de la activación; y $e$, la constante de Euler.
+**Símbolos:** $z$ es el valor real antes de aplicar la activación y
+$\tanh(z)$ es su salida, comprendida entre $-1$ y $1$. La salida conserva el
+signo de la entrada y vale cero cuando $z=0$; para entradas de gran magnitud
+se aproxima a uno de los extremos. $e\approx2.71828$ es la constante de Euler,
+base de las exponenciales que forman la expresión, y no cambia durante el
+entrenamiento.
 
 Aunque mejora el centrado respecto de la sigmoide, también se satura para entradas de gran magnitud.
 
@@ -521,7 +582,11 @@ $$
 \operatorname{ReLU}(z)=\max(0,z)
 $$
 
-**Símbolos:** $z$ es la entrada de la unidad y $\operatorname{ReLU}(z)$ es su salida rectificada.
+**Símbolos:** $z$ es el valor que recibe la activación, normalmente después
+de combinar entradas, pesos y sesgo. $\operatorname{ReLU}(z)$ es la salida
+rectificada: coincide con $z$ si es positivo y vale cero si es negativo o
+nulo. El cero fija el umbral de activación y no se aprende. Por ejemplo, una
+entrada de $3$ produce $3$, mientras que una entrada de $-3$ produce $0$.
 
 Es barata de calcular y no se satura en el tramo positivo, cualidades que favorecen el entrenamiento de redes profundas.
 
@@ -537,7 +602,12 @@ $$
 \operatorname{LeakyReLU}(z)=\max(\alpha z,z)
 $$
 
-**Símbolos:** $z$ es la entrada y $\alpha$ es la pendiente aplicada en la región negativa; en Leaky ReLU se fija como una constante pequeña y en PReLU se aprende como parámetro.
+**Símbolos:** $z$ es la entrada y $\operatorname{LeakyReLU}(z)$ es la salida.
+$\alpha$ controla cuánto se conserva de una entrada negativa: en la forma
+mostrada, con $0<\alpha<1$, la salida es $\alpha z$ para valores negativos y
+$z$ para positivos. Por ejemplo, con $\alpha=0.01$, una entrada de $-3$
+produce $-0.03$. En Leaky ReLU esta pendiente se fija como hiperparámetro;
+en PReLU se ajusta durante el aprendizaje.
 
 ### ELU
 
@@ -563,7 +633,13 @@ $$
 \operatorname{Var}(W)\approx\frac{2}{n_{\text{in}}+n_{\text{out}}}
 $$
 
-**Símbolos:** $W$ es la matriz de pesos; $\operatorname{Var}(W)$, la varianza buscada para sus valores; $n_{\text{in}}$ y $n_{\text{out}}$, los números de conexiones de entrada y salida; y $2$, el factor de escala de esta inicialización.
+**Símbolos:** $W$ es la matriz de pesos iniciales y $\operatorname{Var}(W)$
+representa aquí la varianza de la distribución de la que se extraen sus
+valores, normalmente centrada en cero. $n_{\text{in}}$ y $n_{\text{out}}$ son
+los números de conexiones de entrada y salida; en una capa densa coinciden
+con sus cantidades de entradas y unidades de salida. El factor $2$ hace que
+la escala dependa del promedio de ambas cantidades: al aumentar el tamaño de
+la capa, disminuye la dispersión inicial de los pesos.
 
 ### Inicialización He
 
@@ -573,7 +649,13 @@ $$
 \operatorname{Var}(W)\approx\frac{2}{n_{\text{in}}}
 $$
 
-**Símbolos:** $W$ es la matriz de pesos; $\operatorname{Var}(W)$, la varianza buscada; $n_{\text{in}}$, el número de conexiones de entrada; y $2$, el factor que compensa el efecto de las activaciones ReLU.
+**Símbolos:** $W$ contiene los pesos iniciales y $\operatorname{Var}(W)$ es
+la varianza buscada para la distribución que los genera, centrada en cero.
+$n_{\text{in}}$ cuenta las entradas que recibe cada unidad. El factor $2$
+compensa, bajo las hipótesis de esta inicialización, la anulación de valores
+negativos por ReLU. Si los pesos se extraen de una distribución normal, su
+desviación estándar es $\sqrt{2/n_{\text{in}}}$: no debe confundirse esa
+desviación con la varianza indicada en la fórmula.
 
 ### Normalización por lotes (_batch normalization_)
 
@@ -585,7 +667,14 @@ $$
 y_i=\gamma\hat{x}_i+\beta
 $$
 
-**Símbolos:** $x_i$ es la activación del ejemplo $i$; $B$, el minilote; $\mu_B$ y $\sigma_B^2$, su media y varianza; $\varepsilon$, una constante pequeña que evita inestabilidad numérica; $\hat{x}_i$, la activación normalizada; $\gamma$ y $\beta$, la escala y el desplazamiento aprendibles; y $y_i$, la salida transformada.
+**Símbolos:** Para una característica dada, $x_i$ es su activación en el
+ejemplo $i$ del minilote $B$; $\mu_B$ y $\sigma_B^2$ son la media y la
+varianza calculadas sobre ese lote. $\varepsilon$ es una constante positiva
+pequeña que estabiliza la división cuando la varianza es muy baja.
+$\hat{x}_i$ es el valor normalizado: aquí el acento indica normalización, no
+predicción. $\gamma$ y $\beta$ son parámetros aprendibles que ajustan la
+escala y el desplazamiento de cada característica; $y_i$ es la salida tras
+aplicar ese ajuste.
 
 Durante inferencia se emplean estadísticas acumuladas, no las de un lote nuevo.
 
@@ -599,7 +688,13 @@ v_t=\rho v_{t-1}-\eta\nabla J(\theta_t),
 \theta_{t+1}=\theta_t+v_t
 $$
 
-**Símbolos:** $v_t$ es la velocidad acumulada en la iteración $t$; $\rho$, el coeficiente que conserva parte de la velocidad anterior; $\eta$, la tasa de aprendizaje; $J$, el coste; $\theta_t$, los parámetros actuales; y $\nabla J(\theta_t)$, su gradiente.
+**Símbolos:** $t$ identifica la iteración; $v_{t-1}$ es el desplazamiento
+acumulado anterior y $v_t$ es el nuevo, ambos con una componente por parámetro.
+$\rho$, normalmente entre cero y uno, determina cuánto se conserva del
+anterior: con $\rho=0.9$ se retiene el 90 % antes de incorporar el gradiente
+actual. $\eta$ escala ese gradiente, $\nabla J(\theta_t)$, calculado para el
+coste $J$ en los parámetros actuales $\theta_t$. $\theta_{t+1}$ resulta de
+aplicar el desplazamiento acumulado completo.
 
 ### Momento de Nesterov
 
@@ -622,7 +717,14 @@ $$
 \eta\frac{\hat m_t}{\sqrt{\hat v_t}+\varepsilon}
 $$
 
-**Símbolos:** $\theta_t$ son los parámetros en la iteración $t$; $\eta$, la tasa de aprendizaje; $\hat m_t$, la estimación corregida del promedio del gradiente; $\hat v_t$, la estimación corregida del promedio de su cuadrado; y $\varepsilon$, una constante pequeña de estabilidad numérica.
+**Símbolos:** $\theta_t$ y $\theta_{t+1}$ son los parámetros antes y después
+de la iteración $t$; $\eta$ fija la escala global del paso. $\hat m_t$ estima
+el promedio móvil del gradiente y $\hat v_t$ el de sus cuadrados, no su
+varianza centrada. Los acentos indican la corrección del sesgo causado por
+inicializar esos promedios en cero. La raíz y la división se aplican por
+componente para adaptar cada actualización a su historial.
+$\varepsilon>0$ evita divisiones por cero o por denominadores demasiado
+pequeños.
 
 ### Decaimiento de la tasa de aprendizaje
 
@@ -648,7 +750,13 @@ $$
 J_{L2}(\theta)=J(\theta)+\lambda\sum_j w_j^2
 $$
 
-**Símbolos:** $J_{L2}$ es el coste regularizado; $J$ es el coste original; $\theta$, el conjunto de parámetros; $\lambda$, la intensidad de la penalización; y $w_j$, cada peso penalizado.
+**Símbolos:** $J(\theta)$ es el coste original y $J_{L2}(\theta)$ es el
+objetivo que se minimiza después de añadir la penalización. $\theta$ reúne
+todos los parámetros, mientras que $w_j$ identifica cada peso al que se
+aplica la regularización; $j$ recorre ese conjunto de pesos. $\lambda\ge0$ es
+un hiperparámetro que regula la importancia de la penalización frente al
+ajuste a los datos. Con $\lambda=0$ se recupera el coste original; al
+aumentarlo se penalizan más los pesos de gran magnitud.
 
 Favorece pesos pequeños y distribuidos; normalmente no se aplica a los términos de sesgo.
 
@@ -660,7 +768,13 @@ $$
 J_{L1}(\theta)=J(\theta)+\lambda\sum_j |w_j|
 $$
 
-**Símbolos:** $J_{L1}$ es el coste regularizado; $J$ es el coste original; $\theta$, el conjunto de parámetros; $\lambda$, la intensidad de la penalización; y $w_j$, cada peso penalizado.
+**Símbolos:** $J_{L1}(\theta)$ es el coste total con regularización y
+$J(\theta)$ mide el ajuste a los datos. $\theta$ contiene los parámetros del
+modelo y $w_j$ es el peso seleccionado por el índice $j$ dentro del conjunto
+penalizado. $\lambda\ge0$ controla la fuerza de esa penalización y se elige
+como hiperparámetro. Cada peso contribuye según su magnitud, con independencia
+del signo: pesos de $2$ y $-2$ aportan la misma cantidad, $2\lambda$, al
+coste regularizado.
 
 Tiende a producir soluciones dispersas, con numerosos pesos iguales o cercanos a cero.
 
@@ -740,7 +854,13 @@ $$
 y_{i,j,k}=b_k+\sum_{u,v,c}W_{u,v,c,k}\,x_{i+u,j+v,c}
 $$
 
-**Símbolos:** $y_{i,j,k}$ es la salida en la posición $(i,j)$ y el canal $k$; $b_k$, el sesgo del filtro $k$; $W_{u,v,c,k}$, su peso en el desplazamiento espacial $(u,v)$ y el canal de entrada $c$; y $x_{i+u,j+v,c}$, el valor de entrada cubierto por ese peso.
+**Símbolos:** $i$ y $j$ localizan una posición espacial de la salida, y $k$
+identifica el filtro y su canal de salida. $y_{i,j,k}$ es la respuesta antes
+de una posible activación, con un sesgo $b_k$ compartido por las posiciones
+del mismo canal. $u$ y $v$ recorren los desplazamientos dentro del filtro;
+$c$ recorre los canales de entrada. $W_{u,v,c,k}$ es el peso que multiplica
+a $x_{i+u,j+v,c}$, el dato situado bajo él. El mismo conjunto de pesos se
+reutiliza al desplazar el filtro por la entrada.
 
 Cada índice $k$ corresponde a un filtro y, por tanto, a un canal de salida.
 
@@ -764,7 +884,13 @@ $$
 N_{\text{salida}}=\left\lfloor\frac{N-F+2P}{S}\right\rfloor+1
 $$
 
-**Símbolos:** $N$ es el tamaño espacial de la entrada; $F$, el tamaño del filtro; $P$, el relleno aplicado a cada lado; $S$, el paso; y $N_{\text{salida}}$, el tamaño espacial resultante.
+**Símbolos:** $N$ es el tamaño de la entrada en una dimensión espacial, como
+el ancho; $F$ es el tamaño del filtro en esa misma dimensión. $P$ indica
+cuántas posiciones de relleno se añaden a cada lado y $S$ cuántas posiciones
+avanza el filtro en cada paso. $N_{\text{salida}}$ cuenta las posiciones
+resultantes y $\lfloor\cdot\rfloor$ conserva la parte entera inferior. Por
+ejemplo, $N=5$, $F=3$, $P=1$ y $S=1$ dan una salida de tamaño $5$. La fórmula
+supone un filtro sin dilatación.
 
 ### _Pooling_
 
@@ -881,7 +1007,13 @@ L(\theta)=\prod_{t=1}^{T}
 p(w_{t+j}\mid w_t;\theta)
 $$
 
-**Símbolos:** $L(\theta)$ es la verosimilitud; $\theta$, los parámetros de los vectores; $T$, la longitud de la secuencia; $t$, la posición de la palabra central $w_t$; $m$, el radio de la ventana; $j$, el desplazamiento dentro de ella; y $p(w_{t+j}\mid w_t;\theta)$, la probabilidad de una palabra de contexto dada la central.
+**Símbolos:** $L(\theta)$ evalúa cuánto favorecen los parámetros $\theta$ a
+los pares de palabras observados; aquí $\theta$ incluye los vectores que se
+aprenden. $T$ es la longitud de la secuencia y $t$ localiza la palabra central
+$w_t$. $m$ es el radio de contexto: con $m=2$ se consideran hasta dos palabras
+a cada lado. $j$ indica el desplazamiento respecto del centro, excluyendo
+cero. $p(w_{t+j}\mid w_t;\theta)$ es la probabilidad de la palabra vecina
+condicionada a la central; en los extremos se omiten posiciones inexistentes.
 
 El entrenamiento suele minimizar el logaritmo negativo, que transforma productos en sumas.
 
@@ -894,7 +1026,14 @@ $$
 \frac{\mathbf{u}^{\mathsf T}\mathbf{v}}{\lVert\mathbf{u}\rVert_2\lVert\mathbf{v}\rVert_2}
 $$
 
-**Símbolos:** $\mathbf{u}$ y $\mathbf{v}$ son los vectores comparados; $\mathbf{u}^{\mathsf T}\mathbf{v}$ es su producto escalar; y $\lVert\mathbf{u}\rVert_2$ y $\lVert\mathbf{v}\rVert_2$ son sus magnitudes euclídeas.
+**Símbolos:** $\mathbf{u}$ y $\mathbf{v}$ son vectores no nulos con el mismo
+número de componentes, por ejemplo dos representaciones de palabras.
+$\mathsf T$ indica transposición y $\mathbf{u}^{\mathsf T}\mathbf{v}$ es su
+producto escalar. Las normas $\lVert\mathbf{u}\rVert_2$ y
+$\lVert\mathbf{v}\rVert_2$ representan sus longitudes y permiten comparar la
+dirección independientemente de la magnitud. $\operatorname{cos}(\mathbf{u},
+\mathbf{v})$ vale $1$ para la misma dirección, $0$ para direcciones
+perpendiculares y $-1$ para direcciones opuestas.
 
 Valores cercanos a 1 indican direcciones similares.
 
@@ -907,7 +1046,13 @@ $$
 \frac{e^{z_i}}{\sum_{j=1}^{K}e^{z_j}}
 $$
 
-**Símbolos:** $z_i$ es la puntuación de la clase $i$; $K$, el número de clases; $j$, el índice usado para normalizar todas las puntuaciones; $e$, la constante de Euler; y $\operatorname{softmax}(z_i)$, la probabilidad asignada a la clase $i$.
+**Símbolos:** $z_i$ es la puntuación sin normalizar, o _logit_, de la clase
+$i$; puede ser cualquier número real. $K$ cuenta las clases y $j$ las recorre
+para construir un denominador común a todas. $e$ es la constante de Euler,
+cuya exponencial convierte cada puntuación en un valor positivo.
+$\operatorname{softmax}(z_i)$ representa la componente $i$ de la salida,
+aunque depende de todas las puntuaciones. Las probabilidades resultantes
+suman uno; si todos los _logits_ son iguales, cada clase recibe $1/K$.
 
 En Word2Vec, las puntuaciones pueden ser productos escalares entre vectores centrales y de contexto.
 
@@ -973,7 +1118,13 @@ $$
 \mathbf{h}_t=\tanh\!\left(W_{xh}\mathbf{x}_t+W_{hh}\mathbf{h}_{t-1}+\mathbf{b}_h\right)
 $$
 
-**Símbolos:** $\mathbf{x}_t$ es la entrada del paso $t$; $\mathbf{h}_{t-1}$ y $\mathbf{h}_t$, los estados ocultos anterior y actual; $W_{xh}$, la matriz de pesos de entrada a estado; $W_{hh}$, la matriz recurrente; $\mathbf{b}_h$, el sesgo; y $\tanh$, la activación.
+**Símbolos:** $t$ indica una posición de la secuencia y $\mathbf{x}_t$ es su
+entrada, como el vector de una palabra. $\mathbf{h}_{t-1}$ resume el contexto
+previo y $\mathbf{h}_t$ es el estado actualizado. $W_{xh}$ transforma la
+entrada al espacio del estado oculto; $W_{hh}$ transforma el estado anterior.
+Los subíndices identifican esas conexiones, y ambas matrices se comparten
+entre pasos. $\mathbf{b}_h$ es el vector de sesgos y $\tanh$ actúa por
+componente para combinar la información nueva con la anterior.
 
 ### Paso temporal (_time step_)
 
@@ -1003,7 +1154,14 @@ $$
 p(w_1,\ldots,w_T)=\prod_{t=1}^{T}p(w_t\mid w_1,\ldots,w_{t-1})
 $$
 
-**Símbolos:** $w_1,\ldots,w_T$ son los elementos de una secuencia de longitud $T$; $t$, la posición actual; $p(w_1,\ldots,w_T)$, la probabilidad de la secuencia completa; y $p(w_t\mid w_1,\ldots,w_{t-1})$, la probabilidad del elemento actual dado su historial.
+**Símbolos:** $w_1,\ldots,w_T$ son los elementos de una secuencia con $T$
+posiciones; pueden ser palabras o tokens, según la representación del modelo.
+$t$ identifica la posición que se está prediciendo.
+$p(w_1,\ldots,w_T)$ es la probabilidad conjunta de toda la secuencia, mientras
+que $p(w_t\mid w_1,\ldots,w_{t-1})$ es la probabilidad del elemento actual
+condicionada a los anteriores. La barra vertical se lee «dado el historial».
+Para $t=1$, ese historial está vacío o se representa mediante un marcador
+de inicio.
 
 Puede puntuar secuencias o generar nuevos elementos de forma autoregresiva.
 
@@ -1024,7 +1182,13 @@ $$
 \mathbf{g}\min\!\left(1,\frac{c}{\lVert\mathbf{g}\rVert_2}\right)
 $$
 
-**Símbolos:** $\mathbf{g}$ es el vector de gradiente; $c$, la norma máxima permitida; $\lVert\mathbf{g}\rVert_2$, su norma euclídea; y $\leftarrow$ indica que el gradiente se reemplaza por su versión reescalada.
+**Símbolos:** $\mathbf{g}$ reúne las derivadas respecto de los parámetros y
+$\lVert\mathbf{g}\rVert_2$ mide su magnitud total. $c>0$ es el umbral elegido
+para esa magnitud y $\leftarrow$ indica que se sustituye el gradiente por el
+resultado del recorte. Si la norma supera $c$, todas las componentes se
+reducen en la misma proporción, conservando la dirección y dejando la norma
+en $c$. Si no lo supera, el vector se conserva; un gradiente nulo se deja
+en cero sin evaluar la división.
 
 Mitiga gradientes explosivos, pero no resuelve los que se desvanecen.
 
@@ -1045,7 +1209,14 @@ $$
 +\mathbf{i}_t\odot\tilde{\mathbf{c}}_t
 $$
 
-**Símbolos:** $\mathbf{c}_t$ y $\mathbf{c}_{t-1}$ son los estados de celda actual y anterior; $\mathbf{f}_t$, la puerta de olvido; $\mathbf{i}_t$, la puerta de entrada; $\tilde{\mathbf{c}}_t$, la memoria candidata; y $\odot$, la multiplicación elemento a elemento.
+**Símbolos:** $\mathbf{c}_{t-1}$ es la memoria de la celda antes del paso $t$
+y $\mathbf{c}_t$ es la memoria actualizada. $\mathbf{f}_t$ contiene los
+valores de la puerta de olvido: cerca de uno conservan la memoria anterior y
+cerca de cero la descartan. $\mathbf{i}_t$ controla cuánto se incorpora de
+$\tilde{\mathbf{c}}_t$, la memoria candidata calculada con la información
+disponible. $\odot$ aplica el producto componente a componente, de modo que
+cada posición de la memoria tiene su propio grado de conservación y
+actualización.
 
 ### Puertas de una LSTM
 
@@ -1136,7 +1307,13 @@ $$
 G_t=\sum_{k=0}^{\infty}\gamma^k r_{t+k+1}
 $$
 
-**Símbolos:** $G_t$ es el retorno desde el paso $t$; $k$, la distancia hasta una recompensa futura; $\gamma$, el factor de descuento; y $r_{t+k+1}$, la recompensa recibida $k+1$ pasos después.
+**Símbolos:** $G_t$ es el retorno acumulado y descontado a partir del paso
+$t$. $k$ cuenta la distancia temporal: empieza en cero, por lo que la primera
+recompensa, $r_{t+1}$, entra sin descuento. $r_{t+k+1}$ es la recompensa
+recibida $k+1$ pasos después y $\gamma^k$ determina su peso. En tareas
+continuas suele usarse $0\le\gamma<1$; por ejemplo, con $\gamma=0.9$, una
+recompensa tres pasos después se multiplica por $0.9^2=0.81$. Cuanto menor sea
+$\gamma$, menor influencia tendrán las recompensas lejanas.
 
 ### Política óptima
 
@@ -1150,7 +1327,13 @@ $$
 V^\pi(s)=\mathbb E_\pi[G_t\mid S_t=s]
 $$
 
-**Símbolos:** $V^\pi(s)$ es el valor del estado $s$ bajo la política $\pi$; $G_t$, el retorno desde $t$; $S_t$, la variable aleatoria que representa el estado en ese paso; y $\mathbb E_\pi$, la esperanza sobre trayectorias generadas por la política.
+**Símbolos:** $s$ es un estado concreto y $S_t$ es la variable aleatoria que
+representa el estado en el paso $t$. La condición $S_t=s$ fija el punto de
+partida. $\pi$ es la política que determina cómo se eligen las acciones y
+$G_t$ es el retorno descontado desde ese momento. $\mathbb E_\pi$ promedia
+los retornos posibles considerando tanto las decisiones de la política como
+las transiciones del entorno. $V^\pi(s)$ expresa ese rendimiento esperado;
+el superíndice $\pi$ identifica la política, no una potencia.
 
 ### Función de valor de acción (Q)
 
@@ -1160,7 +1343,14 @@ $$
 Q^\pi(s,a)=\mathbb E_\pi[G_t\mid S_t=s,A_t=a]
 $$
 
-**Símbolos:** $Q^\pi(s,a)$ es el valor de ejecutar la acción $a$ en el estado $s$ y continuar con la política $\pi$; $G_t$ es el retorno; y $S_t$ y $A_t$ son las variables aleatorias de estado y acción en el paso $t$.
+**Símbolos:** $s$ y $a$ son un estado y una acción concretos; $S_t$ y $A_t$
+son las variables aleatorias correspondientes en el paso $t$. La condición
+$S_t=s,A_t=a$ fija ambos antes de calcular el retorno esperado. $G_t$ incluye
+la recompensa de esa acción y las posteriores, con descuento.
+$\mathbb E_\pi$ promedia los resultados posibles al continuar con la
+política $\pi$. $Q^\pi(s,a)$ permite comparar acciones desde el mismo estado,
+y su superíndice identifica la política que se seguirá después de la acción
+inicial.
 
 ### Ecuación de optimalidad de Bellman
 
@@ -1170,7 +1360,13 @@ $$
 Q^*(s,a)=\mathbb E\!\left[r+\gamma\max_{a'}Q^*(s',a')\mid s,a\right]
 $$
 
-**Símbolos:** $Q^*(s,a)$ es el valor óptimo de la acción $a$ en el estado $s$; $r$, la recompensa inmediata; $\gamma$, el factor de descuento; $s'$, el estado siguiente; $a'$, una posible acción en ese estado; y $\mathbb E$, la esperanza sobre las transiciones posibles.
+**Símbolos:** $Q^*(s,a)$ es el retorno esperado al ejecutar $a$ en $s$ y
+actuar óptimamente después; el asterisco indica optimalidad. $r$ es la
+recompensa inmediata y $s'$ es el estado alcanzado. $a'$ recorre las acciones
+posibles en ese nuevo estado para elegir la de mayor valor; las primas
+identifican el paso siguiente, no derivadas. $\gamma$ descuenta ese valor
+futuro. $\mathbb E$ promedia las recompensas y los estados siguientes según
+su probabilidad, condicionados al estado y la acción iniciales $s,a$.
 
 ### Iteración de valores
 
@@ -1485,7 +1681,15 @@ $$
 +\mathbb E_{\mathbf{z}\sim p_{\mathbf z}}[\log(1-D(G(\mathbf z)))]
 $$
 
-**Símbolos:** $G$ es el generador y $D$, el discriminador; $\mathbf{x}$ es una muestra real extraída de $p_{\text{data}}$; $\mathbf{z}$, un vector latente extraído de la distribución $p_{\mathbf z}$; $D(\mathbf{x})$, la probabilidad asignada a una muestra real; y $D(G(\mathbf z))$, la asignada a una muestra generada. $\mathbb E$ representa el promedio esperado sobre cada distribución.
+**Símbolos:** $G$ transforma un vector latente $\mathbf z$ en una muestra
+sintética y $D$ estima la probabilidad de que una muestra sea real.
+$\mathbf{x}\sim p_{\text{data}}$ indica que el ejemplo procede de la
+distribución de datos; $\mathbf z\sim p_{\mathbf z}$ indica que el vector se
+extrae de una distribución de ruido elegida. $D(\mathbf{x})$ y
+$D(G(\mathbf z))$ son las probabilidades de ser real asignadas a una muestra
+real y a una generada, respectivamente. $\mathbb E$ promedia cada término;
+los subíndices $G$ y $D$ en el objetivo identifican las redes cuyos parámetros
+se ajustan para minimizarlo o maximizarlo.
 
 Entrenar ambas redes requiere equilibrio; si una domina demasiado pronto, la otra recibe una señal poco útil.
 
