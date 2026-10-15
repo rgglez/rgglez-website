@@ -1,0 +1,92 @@
+---
+title: "Examen de entrenamiento: sistemas cognitivos artificiales."
+description: >-
+  Cuestionario sobre el glosario de sistemas cognitivos artificiales: opción
+  múltiple, respuesta múltiple y verdadero o falso, con corrección inmediata.
+slug: "quiz-sca"
+pubDatetime: 2026-10-15T00:00:00-06:00
+modDatetime: 2026-10-15T00:00:00-06:00
+lang: es
+featured: false
+draft: false
+ogImage: "../../../../../assets/posts/2026/10/quiz-sca/header.webp"
+tags:
+  - inteligencia-artificial
+  - deep-learning
+  - redes-neuronales
+  - aprendizaje-por-refuerzo
+  - sistemas-cognitivos
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@rgglez/astro-aside";
+import QuizWizard from "@/components/quiz/QuizWizard.tsx";
+
+## Introducción
+
+Este examen recorre el
+[glosario de sistemas cognitivos artificiales](/es/posts/2026/08/glosario-sistemas-cognitivos-artificiales).
+No sustituye su lectura: comprueba si distingues conceptos que el glosario
+presenta juntos y que resulta fácil intercambiar, como la retropropagación y
+el optimizador, _skip-gram_ y CBOW, o el paralelismo de datos y el de modelo.
+
+Son 48 preguntas, cuatro por cada una de las once secciones del glosario. Hay
+tres formatos: opción múltiple con una sola respuesta, respuesta múltiple y
+verdadero o falso. Las opciones incorrectas no son absurdas: reutilizan
+definiciones vecinas del propio glosario aplicadas al concepto equivocado.
+
+Avanza con **Anterior** y **Siguiente**. Puedes volver a una pregunta ya
+contestada: la tarjeta conserva la selección, el veredicto y la explicación.
+Nada se envía a un servidor.
+
+---
+
+## Tabla de contenido
+
+---
+
+## Cómo responder
+
+1. Lee el tipo de pregunta. En **respuesta múltiple** hay que marcar todas las
+   opciones correctas; una de más o una de menos cuenta como incorrecta.
+2. Pulsa **Comprobar**. Un icono verde marca el acierto y uno rojo el fallo.
+   Puedes cambiar la selección y volver a comprobarla; al cambiarla, se retira
+   el resultado anterior hasta que pulses **Comprobar** de nuevo.
+3. Pulsa **Explicar** para ver las opciones correctas y la razón por la que
+   las demás no lo son. Puedes abrirlo antes o después de comprobar.
+
+<Aside type="note" title="Criterio de corrección">
+
+En las preguntas de respuesta múltiple la tarjeta solo marca un acierto si
+coinciden exactamente las opciones correctas. No hay puntaje parcial.
+
+</Aside>
+
+## Examen
+
+<QuizWizard client:load bank="quiz-sca" />
+
+## Qué repasar si fallas
+
+| Sección del glosario                      | Señales de que conviene releerla                                                                                                |
+| :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| **Introducción al aprendizaje profundo**  | Confundir aprendizaje automático, aprendizaje de representaciones y aprendizaje profundo, o el papel del sesgo y la activación. |
+| **Entrenamiento**                         | Tratar la retropropagación como si actualizara los pesos, o cambiar de signo la dirección del gradiente.                        |
+| **Frameworks**                            | Mezclar grafo estático y dinámico, o dar por vigentes Theano, CNTK o MXNet.                                                     |
+| **Entrenamiento práctico**                | No distinguir saturación, ReLU muerta, inicialización He y el momento en que AdaGrad se detiene.                                |
+| **Redes convolucionales**                 | Confundir clasificación, detección, segmentación y recuperación, o el efecto del relleno y el paso.                             |
+| **Representaciones del lenguaje**         | Invertir _skip-gram_ y CBOW, o leer el coseno como si dependiera de la magnitud.                                                |
+| **Redes recurrentes**                     | Creer que el recorte de gradiente cura el desvanecimiento, o confundir las puertas de una LSTM.                                 |
+| **Aprendizaje por refuerzo**              | Pedirle a Q-learning la política óptima durante la recogida, o contar mal el exponente de γ.                                    |
+| **GPU y entrenamiento distribuido**       | Intercambiar paralelismo de datos y de modelo, o no reconocer un gradiente obsoleto.                                            |
+| **Puesta en producción**                  | Tomar el _training-serving skew_ por una brecha de métricas, o ignorar el coste de latencia del _batching_.                     |
+| **Modelos generativos y metaaprendizaje** | Tratar una GAN como modelo de densidad explícita, o la metaprueba como una repetición de las tareas de entrenamiento.           |
+
+## Fuentes verificadas
+
+- [Glosario de sistemas cognitivos artificiales](/es/posts/2026/08/glosario-sistemas-cognitivos-artificiales)
+- <a href="https://www.deeplearningbook.org/" target="_blank">
+    Goodfellow, Bengio y Courville, _Deep Learning_
+  </a>

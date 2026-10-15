@@ -2,6 +2,7 @@
 @import "./typography.css";
 
 @source "../../node_modules/@rgglez/astro-aside/src/**/*.astro";
+@source "../components/**/*.{astro,tsx,ts}";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
@@ -49,7 +50,7 @@ html[data-theme="dark"] {
     @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
   }
   a:not(.link-exempt) {
-    @apply text-[#161d2e] underline decoration-dashed underline-offset-4 decoration-[#a1bfef] hover:text-foreground/75 hover:decoration-accent dark:text-white dark:decoration-[#234c77];
+    @apply text-[#161d2e] underline decoration-[#a1bfef] decoration-dashed underline-offset-4 hover:text-foreground/75 hover:decoration-accent dark:text-white dark:decoration-[#234c77];
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -58,7 +59,7 @@ html[data-theme="dark"] {
 }
 
 @utility max-w-app {
-    @apply max-w-4xl xl:max-w-5xl;
+  @apply max-w-4xl xl:max-w-5xl;
 }
 
 @utility app-layout {
@@ -124,10 +125,18 @@ html[data-theme="dark"] {
   }
 
   /* Page breaks */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     break-after: avoid;
   }
-  pre, figure, img, table {
+  pre,
+  figure,
+  img,
+  table {
     break-inside: avoid;
   }
 
