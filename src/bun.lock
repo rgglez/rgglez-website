@@ -20,6 +20,7 @@
         "@rgglez/astro-seo": "^0.1.2",
         "@rgglez/astro-tocbutton": "0.1.5",
         "@rgglez/astro-ytembed": "0.1.4",
+        "@rgglez/music-laserharp": "file:../../music-laserharp",
         "@rgglez/shiki-pddl": "^0.0.3",
         "@tailwindcss/vite": "^4.3.0",
         "@types/react": "^19.2.16",
@@ -41,8 +42,6 @@
         "sharp": "^0.34.5",
         "slugify": "^1.6.9",
         "tailwindcss": "^4.3.0",
-        "three": "^0.186.1",
-        "tone": "^15.1.22",
       },
       "devDependencies": {
         "@astrojs/check": "0.9.9",
@@ -50,7 +49,6 @@
         "@shikijs/transformers": "^3.23.0",
         "@tailwindcss/typography": "^0.5.19",
         "@types/lodash.kebabcase": "^4.1.9",
-        "@types/three": "^0.186.0",
         "@typescript-eslint/parser": "^8.60.1",
         "eslint": "^9.39.4",
         "eslint-plugin-astro": "^1.7.0",
@@ -427,6 +425,8 @@
 
     "@rgglez/astro-ytembed": ["@rgglez/astro-ytembed@0.1.4", "", { "peerDependencies": { "astro": ">=4.0.0", "tailwindcss": ">=3.0.0" }, "optionalPeers": ["tailwindcss"] }, "sha512-Mh2FeOCx1K8IOe8sQYo62jR1SrOGTE5hv6fO+0eDDxdD1oB9kr++bq7Dc03jC+LMGyrV59q3oaBgBxweRAPBKA=="],
 
+    "@rgglez/music-laserharp": ["@rgglez/music-laserharp@file:../../music-laserharp", { "dependencies": { "@rgglez/i18n-gettext": "file:../i18n-gettext", "three": "^0.186.1", "tone": "^15.1.22" }, "devDependencies": { "@types/bun": "latest", "@types/react": "^19.3.0", "@types/three": "^0.186.0", "typescript": "^5.9.3" }, "peerDependencies": { "astro": ">=4.0.0", "react": ">=18.0.0", "svelte": ">=4.0.0" }, "optionalPeers": ["astro", "react", "svelte"] }],
+
     "@rgglez/shiki-pddl": ["@rgglez/shiki-pddl@0.0.3", "", { "peerDependencies": { "shiki": ">=1.0.0" }, "optionalPeers": ["shiki"] }, "sha512-NdN+iqY5R4FxdFmhwGwquyM/muVgSOlQ5l7fsY3Qw5rGOUmXWNVz6R3s+KRp37vbLWaZ2ucvJcNZ2vKH3TL44A=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-rc.3", "", {}, "sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q=="],
@@ -552,6 +552,8 @@
     "@types/babel__template": ["@types/babel__template@7.4.4", "", { "dependencies": { "@babel/parser": "^7.1.0", "@babel/types": "^7.0.0" } }, "sha512-h/NUaSyG5EyxBIp8YRxo4RMe2/qQgvyowRwVMzhYhBCONbW8PUsg4lkFMrhgZhUe5z3L3MiLDuvyJ/CaPa2A8A=="],
 
     "@types/babel__traverse": ["@types/babel__traverse@7.28.0", "", { "dependencies": { "@babel/types": "^7.28.2" } }, "sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q=="],
+
+    "@types/bun": ["@types/bun@1.4.3", "", { "dependencies": { "bun-types": "1.4.3" } }, "sha512-N67Pqy8JXbAY/j0tNraS3V5mubGvc6rrrNDmDCtZLlFzccbUJPDb0tvgUBC5q4m8ybkP93Jcn1QB+RYQ6PvBhw=="],
 
     "@types/d3": ["@types/d3@7.4.3", "", { "dependencies": { "@types/d3-array": "*", "@types/d3-axis": "*", "@types/d3-brush": "*", "@types/d3-chord": "*", "@types/d3-color": "*", "@types/d3-contour": "*", "@types/d3-delaunay": "*", "@types/d3-dispatch": "*", "@types/d3-drag": "*", "@types/d3-dsv": "*", "@types/d3-ease": "*", "@types/d3-fetch": "*", "@types/d3-force": "*", "@types/d3-format": "*", "@types/d3-geo": "*", "@types/d3-hierarchy": "*", "@types/d3-interpolate": "*", "@types/d3-path": "*", "@types/d3-polygon": "*", "@types/d3-quadtree": "*", "@types/d3-random": "*", "@types/d3-scale": "*", "@types/d3-scale-chromatic": "*", "@types/d3-selection": "*", "@types/d3-shape": "*", "@types/d3-time": "*", "@types/d3-time-format": "*", "@types/d3-timer": "*", "@types/d3-transition": "*", "@types/d3-zoom": "*" } }, "sha512-lZXZ9ckh5R8uiFVt8ogUNf+pIrK4EsWrx2Np75WvF/eTpJ0FMHNhjXk8CKEx/+gpHbNQyJWehbFaTvqmHWB3ww=="],
 
@@ -760,6 +762,8 @@
     "braces": ["braces@3.0.3", "", { "dependencies": { "fill-range": "7.1.1" } }, "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA=="],
 
     "browserslist": ["browserslist@4.28.2", "", { "dependencies": { "baseline-browser-mapping": "^2.10.12", "caniuse-lite": "^1.0.30001782", "electron-to-chromium": "^1.5.328", "node-releases": "^2.0.36", "update-browserslist-db": "^1.2.3" }, "bin": { "browserslist": "cli.js" } }, "sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg=="],
+
+    "bun-types": ["bun-types@1.4.3", "", { "dependencies": { "@types/node": "*", "undici-types": "*" } }, "sha512-tinRJNGOmUN+tEAsn2y2e942n9JHRHR42iUYzDH75NmhJqVBokGSQkkfSFdNWwsANIdrK6ACH9t01M452YyTwg=="],
 
     "callsites": ["callsites@3.1.0", "", {}, "sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ=="],
 
@@ -1866,6 +1870,10 @@
     "@mdx-js/mdx/unist-util-visit": ["unist-util-visit@5.0.0", "", { "dependencies": { "@types/unist": "3.0.3", "unist-util-is": "6.0.0", "unist-util-visit-parents": "6.0.1" } }, "sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg=="],
 
     "@poppinss/dumper/supports-color": ["supports-color@10.2.2", "", {}, "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="],
+
+    "@rgglez/music-laserharp/@rgglez/i18n-gettext": ["@rgglez/i18n-gettext@file:../../i18n-gettext", {}],
+
+    "@rgglez/music-laserharp/@types/react": ["@types/react@19.3.0", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg=="],
 
     "@rollup/pluginutils/@types/estree": ["@types/estree@1.0.7", "", {}, "sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ=="],
 
