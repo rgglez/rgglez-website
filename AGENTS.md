@@ -137,12 +137,14 @@ mapa `OG_LOCALES` de `Layout.astro`.
 
 ## Tono
 
-Técnico y directo. Segunda persona (`ejecuta`, `revisa`). Sin marketing ni
-adjetivos de relleno. Comandos y salidas literales en bloques de código,
-nunca parafraseados. Nombres de archivo, rutas, variables de entorno y
-paquetes siempre en backticks. Los pasos de una guía se numeran en el heading
-(`## Paso 1: ...`). Problemas y soluciones van en tabla al final, antes de las
-fuentes.
+Técnico y directo, pero narrativo, estilo clase escolar. Segunda persona
+(`ejecuta`, `revisa`). Sin marketing ni adjetivos de relleno. Comandos y salidas
+literales en bloques de código, nunca parafraseados. Nombres de archivo, rutas,
+variables de entorno y paquetes siempre en backticks. Los pasos de una guía se
+numeran en el heading (`## Paso 1: ...`). Problemas y soluciones van en tabla al
+final, antes de las fuentes. Evitar el uso excesivo de dos puntos (colon sign):
+"El árbol es verde. Esto se debe a que tiene colorofila" es preferible a "El
+árbol es verde: tiene clorofila".
 
 Prettier con `printWidth: 80`: envolver la prosa a 80 columnas.
 
