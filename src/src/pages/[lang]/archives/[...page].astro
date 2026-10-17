@@ -11,6 +11,7 @@ import getSortedPosts from "@/utils/getSortedPosts";
 import { getFileLang } from "@/utils/getTranslations";
 import { getMonthName } from "@/utils/formatDate";
 import { SITE } from "@/config";
+import { useGettext, sprintf } from "@/i18n";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const allPosts = await getCollection("blog", ({ data }) => !data.draft);
@@ -28,6 +29,7 @@ if (!SITE.showArchives) {
 
 const { page } = Astro.props;
 const { lang } = Astro.params;
+const { _ } = useGettext(Astro);
 const allPosts = await getCollection("blog");
 
 const langPosts = allPosts.filter(post => getFileLang(post.filePath) === lang);
@@ -39,9 +41,9 @@ const tagCloudTags = getTagsWithCount(langPosts).map(({ tag, tagName, count }) =
 ---
 
 <PostsListLayout
-  title={`Blog | ${SITE.title}`}
-  pageTitle="Archive"
-  pageDesc="All the articles I've archived."
+  title={sprintf("%s | %s", _("Blog"), SITE.title)}
+  pageTitle={_("Archive")}
+  pageDesc={_("All the articles I've archived.")}
   {tagCloudTags}
   showTagCloud={true}
   posts={allPosts}

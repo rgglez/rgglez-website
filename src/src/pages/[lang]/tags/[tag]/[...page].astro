@@ -10,6 +10,7 @@ import getPostsByTag from "@/utils/getPostsByTag";
 import getTagsWithCount from "@/utils/getTagsWithCount";
 import { getFileLang } from "@/utils/getTranslations";
 import { SITE } from "@/config";
+import { useGettext, sprintf } from "@/i18n";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const posts = await getCollection("blog");
@@ -33,6 +34,8 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 const { tag, lang } = Astro.params;
 const { page, tagName } = Astro.props;
 const allPosts = await getCollection("blog");
+const { _ } = useGettext(Astro);
+const pageTitle = sprintf(_("Tag: %s"), tagName);
 
 const langPosts = allPosts.filter(post => getFileLang(post.filePath) === lang);
 const tagCloudTags = getTagsWithCount(langPosts).map(({ tag: t, tagName: tn, count }) => ({
@@ -43,9 +46,9 @@ const tagCloudTags = getTagsWithCount(langPosts).map(({ tag: t, tagName: tn, cou
 ---
 
 <PostsListLayout
-  title={`Tag: ${tagName} | ${SITE.title}`}
-  pageTitle={`Tag: ${tagName}`}
-  pageDesc={`All the articles with the tag "${tagName}".`}
+  title={sprintf("%s | %s", pageTitle, SITE.title)}
+  {pageTitle}
+  pageDesc={sprintf(_("All the articles with the tag \"%s\"."), tagName)}
   {tagCloudTags}
   showTagCloud={true}
   posts={allPosts}

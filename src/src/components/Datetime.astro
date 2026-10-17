@@ -2,6 +2,7 @@
 import IconCalendar from "@/assets/icons/IconCalendar.svg";
 import { SITE } from "@/config";
 import { formatDate } from "@/utils/formatDate";
+import { useGettext } from "@/i18n";
 
 type Props = {
   class?: string;
@@ -20,6 +21,7 @@ const {
   timezone: postTimezone,
   lang = SITE.lang,
 } = Astro.props;
+const { _ } = useGettext(Astro);
 
 /* ========== Formatted Datetime ========== */
 const isModified = modDatetime && modDatetime > pubDatetime;
@@ -45,7 +47,7 @@ const isoString = new Date(activeDate).toISOString();
   {
     isModified && (
       <span class:list={["text-sm", { "sm:text-base": size === "lg" }]}>
-        Updated:
+        {_("Updated:")}
       </span>
     )
   }

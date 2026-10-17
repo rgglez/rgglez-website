@@ -1,4 +1,6 @@
 ---
+import { useGettext } from "@/i18n";
+
 interface TagItem {
   label: string;
   href?: string;
@@ -10,19 +12,20 @@ interface Props {
 }
 
 const { tags } = Astro.props;
+const { _ } = useGettext(Astro);
 ---
 
 <details class="tag-list" open>
   <summary class="tag-list-summary">
     <span class="arrow">▶</span>
-    <span class="summary-label">Browse tags</span>
+    <span class="summary-label">{_("Browse tags")}</span>
   </summary>
   <div class="tag-list-body">
     <input
       type="search"
       class="tag-filter"
-      placeholder="Filter…"
-      aria-label="Filter tags"
+      placeholder={_("Filter…")}
+      aria-label={_("Filter tags")}
       autocomplete="off"
     />
     <ul class="tag-entries">

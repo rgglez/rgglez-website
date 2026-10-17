@@ -1,17 +1,17 @@
 ---
 import type { PortfolioData, PortfolioRepo } from "@/data/portfolio/types";
 import { PORTFOLIO } from "@/data/portfolio/config";
+import { useGettext, sprintf } from "@/i18n";
 
 type Props = { data: PortfolioData };
 const { data } = Astro.props;
 
-// TODO: gettext
+const { _, _n } = useGettext(Astro);
 const labels = {
-  languages: "Languages",
-  topics: "Topics",
-  empty: "No repositories in this category.",
-  stars: "stars",
-  homepage: "site",
+  languages: _("Languages"),
+  topics: _("Topics"),
+  empty: _("No repositories in this category."),
+  homepage: _("site"),
 };
 
 const langTabs = data.languages.filter(lang =>
@@ -47,7 +47,7 @@ function reposFor(tab: Tab): PortfolioRepo[] {
       <div
         role="tablist"
         class="mb-6 flex flex-wrap items-center gap-2"
-        aria-label="Portfolio"
+        aria-label={_("Portfolio")}
       >
         {langTabs.length > 0 && (
           <span class="me-1 text-sm text-foreground/60">{labels.languages}</span>
@@ -151,7 +151,7 @@ function reposFor(tab: Tab): PortfolioRepo[] {
                       ))}
                       {repo.stars > 0 && (
                         <span>
-                          ★ {repo.stars} {labels.stars}
+                          ★ {sprintf(_n("%d star", "%d stars", repo.stars), repo.stars)}
                         </span>
                       )}
                       {repo.homepage && (

@@ -6,6 +6,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import PortfolioTabs from "@/components/PortfolioTabs.astro";
 import { SITE } from "@/config";
+import { useGettext, sprintf } from "@/i18n";
 import type { PortfolioData } from "@/data/portfolio/types";
 import reposJson from "@/data/portfolio/repos.json";
 
@@ -15,19 +16,19 @@ export const getStaticPaths = (() => {
 
 const data = reposJson as PortfolioData;
 
-// TODO: gettext for UI strings
+const { _ } = useGettext(Astro);
 const layoutProps = {
-  title: `Portfolio | ${SITE.title}`,
-  description: "Public GitHub projects by language and topics.",
+  title: sprintf("%s | %s", _("Portfolio"), SITE.title),
+  description: _("Public GitHub projects by language and topics."),
 };
 ---
 
 <Layout {...layoutProps}>
   <Header />
   <main id="main-content" class="app-layout py-8">
-    <h1 class="mb-2 text-2xl font-semibold">Portfolio</h1>
+    <h1 class="mb-2 text-2xl font-semibold">{_("Portfolio")}</h1>
     <p class="mb-8 text-foreground/75">
-      Public GitHub projects by language and topics.
+      {layoutProps.description}
     </p>
     <PortfolioTabs data={data} />
   </main>

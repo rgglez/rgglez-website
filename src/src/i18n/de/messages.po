@@ -1,0 +1,366 @@
+# German translations for rgglez-website package.
+# Copyright (C) 2026 THE rgglez-website'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the rgglez-website package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rgglez-website\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-16 20:43-0600\n"
+"PO-Revision-Date: 2026-10-16 20:43-0600\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/components/BackButton.astro:19
+#, javascript-format
+msgid "Go back"
+msgstr "Zurück"
+
+#: src/components/BackToTopButton.astro:33
+#, javascript-format
+msgid "Back To Top"
+msgstr "Nach oben"
+
+#: src/components/Breadcrumb.astro:16
+#, javascript-format
+msgid "Posts (page %s)"
+msgstr "Beiträge (Seite %s)"
+
+#: src/components/Breadcrumb.astro:27
+#, javascript-format
+msgid "%1$s (page %2$s)"
+msgstr "%1$s (Seite %2$s)"
+
+#: src/components/Breadcrumb.astro:32
+#, javascript-format
+msgid "breadcrumb"
+msgstr "Brotkrümelnavigation"
+
+#: src/components/Breadcrumb.astro:37
+#, javascript-format
+msgid "Home"
+msgstr "Startseite"
+
+#: src/components/Datetime.astro:50
+#, javascript-format
+msgid "Updated:"
+msgstr "Aktualisiert:"
+
+#: src/components/Footer.astro:33
+#, javascript-format
+msgid "Copyright © %1$s %2$s"
+msgstr "Copyright © %1$s %2$s"
+
+#: src/components/Header.astro:43
+#, javascript-format
+msgid "Skip to content"
+msgstr "Zum Inhalt springen"
+
+#: src/components/Header.astro:71 src/components/Header.astro:72
+#, javascript-format
+msgid "Open Menu"
+msgstr "Menü öffnen"
+
+#: src/components/Header.astro:73
+#, javascript-format
+msgid "Close Menu"
+msgstr "Menü schließen"
+
+#: src/components/Header.astro:94 src/pages/[lang]/about/index.astro:25
+#, javascript-format
+msgid "About"
+msgstr "Über mich"
+
+#: src/components/Header.astro:102 src/components/PortfolioTabs.astro:50
+#: src/pages/[lang]/portfolio/index.astro:21
+#: src/pages/[lang]/portfolio/index.astro:29
+#, javascript-format
+msgid "Portfolio"
+msgstr "Portfolio"
+
+#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
+#, javascript-format
+msgid "Blog"
+msgstr "Blog"
+
+#: src/components/Header.astro:120 src/components/Header.astro:121
+#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
+#: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
+#: src/pages/search.astro:17
+#, javascript-format
+msgid "Search"
+msgstr "Suche"
+
+#: src/components/Header.astro:132 src/components/Header.astro:133
+#: src/components/Header.astro:140
+#, javascript-format
+msgid "RSS Feed"
+msgstr "RSS-Feed"
+
+#: src/components/Header.astro:174
+#, javascript-format
+msgid "Toggles light & dark"
+msgstr "Zwischen hell und dunkel wechseln"
+
+#: src/components/LangMenu.astro:28 src/components/LangMenu.astro:29
+#: src/components/LangMenu.astro:34
+#, javascript-format
+msgid "Change language"
+msgstr "Sprache ändern"
+
+#: src/components/LicenseModal.astro:33
+#, javascript-format
+msgid "The full text of this license is not bundled on this site. Use the official license link above."
+msgstr "Der vollständige Text dieser Lizenz ist auf dieser Website nicht enthalten. Verwende den offiziellen Lizenzlink oben."
+
+#: src/components/LicenseModal.astro:36
+#, javascript-format
+msgid "Could not load the local license text. Use the official license link above."
+msgstr "Der lokale Lizenztext konnte nicht geladen werden. Verwende den offiziellen Lizenzlink oben."
+
+#: src/components/LicenseModal.astro:48
+#, javascript-format
+msgid "License for original content:"
+msgstr "Lizenz für Originalinhalte:"
+
+#: src/components/LicenseModal.astro:58 src/layouts/PostDetails.astro:252
+#, javascript-format
+msgid "Non-original content is included or referenced under fair use."
+msgstr "Nicht originale Inhalte werden im Rahmen der fairen Nutzung (Fair Use) eingebunden oder referenziert."
+
+#: src/components/LicenseModal.astro:65
+#, javascript-format
+msgid "Close license"
+msgstr "Lizenz schließen"
+
+#: src/components/LicenseModal.astro:80
+#, javascript-format
+msgid "Loading license…"
+msgstr "Lizenz wird geladen…"
+
+#: src/components/Pagination.astro:22
+#, javascript-format
+msgid "Pagination Navigation"
+msgstr "Seitennavigation"
+
+#: src/components/Pagination.astro:28
+#, javascript-format
+msgid "Go to previous page"
+msgstr "Zur vorherigen Seite"
+
+#: src/components/Pagination.astro:31
+#, javascript-format
+msgid "Prev"
+msgstr "Zurück"
+
+#: src/components/Pagination.astro:38
+#, javascript-format
+msgid "Go to next page"
+msgstr "Zur nächsten Seite"
+
+#: src/components/Pagination.astro:40
+#, javascript-format
+msgid "Next"
+msgstr "Weiter"
+
+#: src/components/PortfolioTabs.astro:11
+#, javascript-format
+msgid "Languages"
+msgstr "Sprachen"
+
+#: src/components/PortfolioTabs.astro:12
+#, javascript-format
+msgid "Topics"
+msgstr "Themen"
+
+#: src/components/PortfolioTabs.astro:13
+#, javascript-format
+msgid "No repositories in this category."
+msgstr "Keine Repositories in dieser Kategorie."
+
+#: src/components/PortfolioTabs.astro:14
+#, javascript-format
+msgid "site"
+msgstr "Website"
+
+#: src/components/PortfolioTabs.astro:154
+#, javascript-format
+msgid "%d star"
+msgid_plural "%d stars"
+msgstr[0] "%d Stern"
+msgstr[1] "%d Sterne"
+
+#: src/components/ShareLinks.astro:13
+#, javascript-format
+msgid "Share this post on:"
+msgstr "Diesen Beitrag teilen auf:"
+
+#: src/components/SpotifyEmbed.astro:19
+#, javascript-format
+msgid "Spotify player"
+msgstr "Spotify-Player"
+
+#: src/components/TagCloud.astro:36
+#, javascript-format
+msgid "Your browser does not support canvas."
+msgstr "Dein Browser unterstützt kein Canvas."
+
+#: src/components/TagList.astro:21
+#, javascript-format
+msgid "Browse tags"
+msgstr "Schlagwörter durchsuchen"
+
+#: src/components/TagList.astro:27
+#, javascript-format
+msgid "Filter…"
+msgstr "Filtern…"
+
+#: src/components/TagList.astro:28
+#, javascript-format
+msgid "Filter tags"
+msgstr "Schlagwörter filtern"
+
+#: src/layouts/PostDetails.astro:222
+#, javascript-format
+msgid "Copy"
+msgstr "Kopieren"
+
+#: src/layouts/PostDetails.astro:223
+#, javascript-format
+msgid "Copied"
+msgstr "Kopiert"
+
+#: src/layouts/PostDetails.astro:249
+#, javascript-format
+msgid "Read the License for the original content"
+msgstr "Lizenz für Originalinhalte lesen"
+
+#: src/layouts/PostDetails.astro:285
+#, javascript-format
+msgid "Previous Post"
+msgstr "Vorheriger Beitrag"
+
+#: src/layouts/PostDetails.astro:298
+#, javascript-format
+msgid "Next Post"
+msgstr "Nächster Beitrag"
+
+#: src/layouts/PostsListLayout.astro:57 src/layouts/PostsListLayout.astro:79
+#: src/pages/[lang]/posts/[...page].astro:72
+#: src/pages/[lang]/posts/[...page].astro:73
+#, javascript-format
+msgid "Posts"
+msgstr "Beiträge"
+
+#: src/layouts/PostsListLayout.astro:60 src/layouts/PostsListLayout.astro:85
+#, javascript-format
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#: src/pages/[lang]/404.astro:17
+#, javascript-format
+msgid "404 Not Found"
+msgstr "404 Nicht gefunden"
+
+#: src/pages/[lang]/404.astro:27
+#, javascript-format
+msgid "Page Not Found"
+msgstr "Seite nicht gefunden"
+
+#: src/pages/[lang]/404.astro:32
+#, javascript-format
+msgid "Go back home"
+msgstr "Zurück zur Startseite"
+
+#: src/pages/[lang]/archives/[...page].astro:45
+#, javascript-format
+msgid "Archive"
+msgstr "Archiv"
+
+#: src/pages/[lang]/archives/[...page].astro:46
+#, javascript-format
+msgid "All the articles I've archived."
+msgstr "Alle archivierten Artikel."
+
+#: src/pages/[lang]/index.astro:59
+#, javascript-format
+msgid "Recent Posts"
+msgstr "Neueste Beiträge"
+
+#: src/pages/[lang]/index.astro:73
+#, javascript-format
+msgid "Featured"
+msgstr "Empfohlen"
+
+#: src/pages/[lang]/index.astro:87
+#, javascript-format
+msgid "All Posts"
+msgstr "Alle Beiträge"
+
+#: src/pages/[lang]/portfolio/index.astro:22
+#, javascript-format
+msgid "Public GitHub projects by language and topics."
+msgstr "Öffentliche GitHub-Projekte nach Sprache und Thema."
+
+#: src/pages/[lang]/posts/[...page].astro:74
+#, javascript-format
+msgid "All the articles I've posted."
+msgstr "Alle veröffentlichten Artikel."
+
+#: src/pages/[lang]/search.astro:23 src/pages/search.astro:17
+#, javascript-format
+msgid "Search any article ..."
+msgstr "Durchsuche alle Artikel…"
+
+#: src/pages/[lang]/search.astro:28
+#, javascript-format
+msgid "No language selected."
+msgstr "Keine Sprache ausgewählt."
+
+#: src/pages/[lang]/search.astro:29
+#, javascript-format
+msgid "No results."
+msgstr "Keine Ergebnisse."
+
+#: src/pages/[lang]/search.astro:30 src/pages/[lang]/search.astro:31
+#, javascript-format
+msgid "%d result."
+msgid_plural "%d results."
+msgstr[0] "%d Ergebnis."
+msgstr[1] "%d Ergebnisse."
+
+#: src/pages/[lang]/search.astro:32
+#, javascript-format
+msgid "Showing the first %d."
+msgstr "Die ersten %d werden angezeigt."
+
+#: src/pages/[lang]/search.astro:37
+#, javascript-format
+msgid "Search ..."
+msgstr "Suchen…"
+
+#: src/pages/[lang]/search.astro:43
+#, javascript-format
+msgid "DEV mode warning!"
+msgstr "Warnung: DEV-Modus!"
+
+#: src/pages/[lang]/search.astro:43
+#, javascript-format
+msgid "You need to build the project at least once to see search results during development."
+msgstr "Du musst das Projekt mindestens einmal bauen, um während der Entwicklung Suchergebnisse zu sehen."
+
+#: src/pages/[lang]/tags/[tag]/[...page].astro:38
+#, javascript-format
+msgid "Tag: %s"
+msgstr "Schlagwort: %s"
+
+#: src/pages/[lang]/tags/[tag]/[...page].astro:51
+#, javascript-format
+msgid "All the articles with the tag \"%s\"."
+msgstr "Alle Artikel mit dem Schlagwort „%s“."

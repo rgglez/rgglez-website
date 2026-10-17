@@ -1,0 +1,501 @@
+{
+   "charset" : "utf-8",
+   "headers" : {
+      "PO-Revision-Date" : "2026-10-16 20:43-0600",
+      "Content-Transfer-Encoding" : "8bit",
+      "Last-Translator" : "Automatically generated",
+      "Language-Team" : "none",
+      "POT-Creation-Date" : "2026-10-16 20:43-0600",
+      "Content-Type" : "text/plain; charset=UTF-8",
+      "Plural-Forms" : "nplurals=2; plural=(n != 1);",
+      "MIME-Version" : "1.0",
+      "Report-Msgid-Bugs-To" : "",
+      "Language" : "en",
+      "Project-Id-Version" : "rgglez-website"
+   },
+   "translations" : {
+      "app" : {
+         "All the articles I've posted." : {
+            "msgid" : "All the articles I've posted.",
+            "msgstr" : [
+               "All the articles I've posted."
+            ],
+            "msgctxt" : "app"
+         },
+         "Blog" : {
+            "msgid" : "Blog",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Blog"
+            ]
+         },
+         "Close Menu" : {
+            "msgstr" : [
+               "Close Menu"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Close Menu"
+         },
+         "Prev" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Prev"
+            ],
+            "msgid" : "Prev"
+         },
+         "License for original content:" : {
+            "msgstr" : [
+               "License for original content:"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "License for original content:"
+         },
+         "Filter tags" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Filter tags"
+            ],
+            "msgid" : "Filter tags"
+         },
+         "Home" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Home"
+            ],
+            "msgid" : "Home"
+         },
+         "You need to build the project at least once to see search results during development." : {
+            "msgid" : "You need to build the project at least once to see search results during development.",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "You need to build the project at least once to see search results during development."
+            ]
+         },
+         "Spotify player" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Spotify player"
+            ],
+            "msgid" : "Spotify player"
+         },
+         "Search" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Search"
+            ],
+            "msgid" : "Search"
+         },
+         "Tag: %s" : {
+            "msgid" : "Tag: %s",
+            "msgstr" : [
+               "Tag: %s"
+            ],
+            "msgctxt" : "app"
+         },
+         "Back To Top" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Back To Top"
+            ],
+            "msgid" : "Back To Top"
+         },
+         "Go to next page" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Go to next page"
+            ],
+            "msgid" : "Go to next page"
+         },
+         "Go to previous page" : {
+            "msgstr" : [
+               "Go to previous page"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Go to previous page"
+         },
+         "Previous Post" : {
+            "msgid" : "Previous Post",
+            "msgstr" : [
+               "Previous Post"
+            ],
+            "msgctxt" : "app"
+         },
+         "Page Not Found" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Page Not Found"
+            ],
+            "msgid" : "Page Not Found"
+         },
+         "All Posts" : {
+            "msgid" : "All Posts",
+            "msgstr" : [
+               "All Posts"
+            ],
+            "msgctxt" : "app"
+         },
+         "No repositories in this category." : {
+            "msgstr" : [
+               "No repositories in this category."
+            ],
+            "msgctxt" : "app",
+            "msgid" : "No repositories in this category."
+         },
+         "Topics" : {
+            "msgid" : "Topics",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Topics"
+            ]
+         },
+         "Tags" : {
+            "msgstr" : [
+               "Tags"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Tags"
+         },
+         "Share this post on:" : {
+            "msgstr" : [
+               "Share this post on:"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Share this post on:"
+         },
+         "Change language" : {
+            "msgid" : "Change language",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Change language"
+            ]
+         },
+         "The full text of this license is not bundled on this site. Use the official license link above." : {
+            "msgid" : "The full text of this license is not bundled on this site. Use the official license link above.",
+            "msgstr" : [
+               "The full text of this license is not bundled on this site. Use the official license link above."
+            ],
+            "msgctxt" : "app"
+         },
+         "%1$s (page %2$s)" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "%1$s (page %2$s)"
+            ],
+            "msgid" : "%1$s (page %2$s)"
+         },
+         "Could not load the local license text. Use the official license link above." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Could not load the local license text. Use the official license link above."
+            ],
+            "msgid" : "Could not load the local license text. Use the official license link above."
+         },
+         "Search any article ..." : {
+            "msgid" : "Search any article ...",
+            "msgstr" : [
+               "Search any article ..."
+            ],
+            "msgctxt" : "app"
+         },
+         "Posts" : {
+            "msgid" : "Posts",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Posts"
+            ]
+         },
+         "Copy" : {
+            "msgid" : "Copy",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Copy"
+            ]
+         },
+         "Skip to content" : {
+            "msgid" : "Skip to content",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Skip to content"
+            ]
+         },
+         "Toggles light & dark" : {
+            "msgid" : "Toggles light & dark",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Toggles light & dark"
+            ]
+         },
+         "Languages" : {
+            "msgstr" : [
+               "Languages"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Languages"
+         },
+         "Open Menu" : {
+            "msgid" : "Open Menu",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Open Menu"
+            ]
+         },
+         "Archive" : {
+            "msgstr" : [
+               "Archive"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Archive"
+         },
+         "Featured" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Featured"
+            ],
+            "msgid" : "Featured"
+         },
+         "%d result." : {
+            "msgstr" : [
+               "%d result.",
+               "%d results."
+            ],
+            "msgctxt" : "app",
+            "msgid_plural" : "%d results.",
+            "msgid" : "%d result."
+         },
+         "Posts (page %s)" : {
+            "msgid" : "Posts (page %s)",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Posts (page %s)"
+            ]
+         },
+         "Next Post" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Next Post"
+            ],
+            "msgid" : "Next Post"
+         },
+         "Non-original content is included or referenced under fair use." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Non-original content is included or referenced under fair use."
+            ],
+            "msgid" : "Non-original content is included or referenced under fair use."
+         },
+         "Read the License for the original content" : {
+            "msgstr" : [
+               "Read the License for the original content"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Read the License for the original content"
+         },
+         "Search ..." : {
+            "msgid" : "Search ...",
+            "msgstr" : [
+               "Search ..."
+            ],
+            "msgctxt" : "app"
+         },
+         "Your browser does not support canvas." : {
+            "msgid" : "Your browser does not support canvas.",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Your browser does not support canvas."
+            ]
+         },
+         "Go back home" : {
+            "msgid" : "Go back home",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Go back home"
+            ]
+         },
+         "Showing the first %d." : {
+            "msgid" : "Showing the first %d.",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Showing the first %d."
+            ]
+         },
+         "Filter…" : {
+            "msgid" : "Filter…",
+            "msgstr" : [
+               "Filter…"
+            ],
+            "msgctxt" : "app"
+         },
+         "404 Not Found" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "404 Not Found"
+            ],
+            "msgid" : "404 Not Found"
+         },
+         "Loading license…" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Loading license…"
+            ],
+            "msgid" : "Loading license…"
+         },
+         "All the articles I've archived." : {
+            "msgid" : "All the articles I've archived.",
+            "msgstr" : [
+               "All the articles I've archived."
+            ],
+            "msgctxt" : "app"
+         },
+         "About" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "About"
+            ],
+            "msgid" : "About"
+         },
+         "site" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "site"
+            ],
+            "msgid" : "site"
+         },
+         "Portfolio" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Portfolio"
+            ],
+            "msgid" : "Portfolio"
+         },
+         "DEV mode warning!" : {
+            "msgid" : "DEV mode warning!",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "DEV mode warning!"
+            ]
+         },
+         "No language selected." : {
+            "msgid" : "No language selected.",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "No language selected."
+            ]
+         },
+         "Copied" : {
+            "msgid" : "Copied",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Copied"
+            ]
+         },
+         "Copyright © %1$s %2$s" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Copyright © %1$s %2$s"
+            ],
+            "msgid" : "Copyright © %1$s %2$s"
+         },
+         "%d star" : {
+            "msgctxt" : "app",
+            "msgid_plural" : "%d stars",
+            "msgstr" : [
+               "%d star",
+               "%d stars"
+            ],
+            "msgid" : "%d star"
+         },
+         "No results." : {
+            "msgstr" : [
+               "No results."
+            ],
+            "msgctxt" : "app",
+            "msgid" : "No results."
+         },
+         "Public GitHub projects by language and topics." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Public GitHub projects by language and topics."
+            ],
+            "msgid" : "Public GitHub projects by language and topics."
+         },
+         "Go back" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Go back"
+            ],
+            "msgid" : "Go back"
+         },
+         "Recent Posts" : {
+            "msgid" : "Recent Posts",
+            "msgstr" : [
+               "Recent Posts"
+            ],
+            "msgctxt" : "app"
+         },
+         "Close license" : {
+            "msgid" : "Close license",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Close license"
+            ]
+         },
+         "Pagination Navigation" : {
+            "msgid" : "Pagination Navigation",
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Pagination Navigation"
+            ]
+         },
+         "All the articles with the tag \"%s\"." : {
+            "msgstr" : [
+               "All the articles with the tag \"%s\"."
+            ],
+            "msgctxt" : "app",
+            "msgid" : "All the articles with the tag \"%s\"."
+         },
+         "breadcrumb" : {
+            "msgid" : "breadcrumb",
+            "msgstr" : [
+               "breadcrumb"
+            ],
+            "msgctxt" : "app"
+         },
+         "Next" : {
+            "msgstr" : [
+               "Next"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "Next"
+         },
+         "RSS Feed" : {
+            "msgstr" : [
+               "RSS Feed"
+            ],
+            "msgctxt" : "app",
+            "msgid" : "RSS Feed"
+         },
+         "Browse tags" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Browse tags"
+            ],
+            "msgid" : "Browse tags"
+         },
+         "Updated:" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Updated:"
+            ],
+            "msgid" : "Updated:"
+         }
+      },
+      "" : {
+         "" : {
+            "msgid" : "",
+            "msgstr" : [
+               "Project-Id-Version: rgglez-website\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2026-10-16 20:43-0600\nPO-Revision-Date: 2026-10-16 20:43-0600\nLast-Translator: Automatically generated\nLanguage-Team: none\nLanguage: en\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+            ]
+         }
+      }
+   }
+}

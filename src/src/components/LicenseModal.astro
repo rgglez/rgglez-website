@@ -5,6 +5,7 @@ import {
   DEFAULT_LICENSE_URL,
   getLocalLicensePath,
 } from "@/data/licenses";
+import { useGettext } from "@/i18n";
 
 type Props = {
   license?: string;
@@ -15,6 +16,7 @@ const { license = DEFAULT_LICENSE, licenseUrl = DEFAULT_LICENSE_URL } =
   Astro.props;
 
 const localSrc = getLocalLicensePath(license);
+const { _ } = useGettext(Astro);
 ---
 
 <dialog
@@ -27,6 +29,12 @@ const localSrc = getLocalLicensePath(license);
   ]}
   aria-labelledby="license-modal-title"
   data-license-src={localSrc ?? ""}
+  data-msg-not-bundled={_(
+    "The full text of this license is not bundled on this site. Use the official license link above."
+  )}
+  data-msg-load-error={_(
+    "Could not load the local license text. Use the official license link above."
+  )}
 >
   <div class="flex min-h-0 flex-1 flex-col">
     <div
@@ -37,7 +45,7 @@ const localSrc = getLocalLicensePath(license);
           id="license-modal-title"
           class="text-base font-semibold text-[#161d2e] dark:text-white"
         >
-            License for original content:
+            {_("License for original content:")}
             {
                 licenseUrl && (
                 <a href={licenseUrl} target="_blank" rel="noopener noreferrer">
@@ -47,14 +55,14 @@ const localSrc = getLocalLicensePath(license);
             }
         </h2>
         <p class="shrink-0 text-sm text-foreground/80">
-            Non-original content is included or referenced under fair use.
+            {_("Non-original content is included or referenced under fair use.")}
         </p>
       </div>
       <button
         type="button"
         data-license-modal-close
         class="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-foreground hover:bg-muted"
-        aria-label="Close license"
+        aria-label={_("Close license")}
       >
         <IconX class="size-5" />
       </button>
@@ -69,7 +77,7 @@ const localSrc = getLocalLicensePath(license);
           "font-mono text-[0.7rem] leading-snug break-words whitespace-pre-wrap",
           "sm:text-xs",
         ]}
-        style="font-family: ui-monospace, 'Courier New', Courier, monospace;">Loading license…</pre>
+        style="font-family: ui-monospace, 'Courier New', Courier, monospace;">{_("Loading license…")}</pre>
     </div>
   </div>
 </dialog>
@@ -86,8 +94,7 @@ const localSrc = getLocalLicensePath(license);
 
       const src = dialog.getAttribute("data-license-src");
       if (!src) {
-        pre.textContent =
-          "The full text of this license is not bundled on this site. Use the official license link above.";
+        pre.textContent = dialog.dataset.msgNotBundled;
         pre.dataset.loaded = "1";
         return;
       }
@@ -98,8 +105,7 @@ const localSrc = getLocalLicensePath(license);
         pre.textContent = await response.text();
         pre.dataset.loaded = "1";
       } catch {
-        pre.textContent =
-          "Could not load the local license text. Use the official license link above.";
+        pre.textContent = dialog.dataset.msgLoadError;
       }
     }
 

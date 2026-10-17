@@ -2,8 +2,10 @@
 import IconWorld from "@/assets/icons/IconWorld.svg";
 import { SITE } from "@/config";
 import { LANG_NAMES } from "@/utils/langNames";
+import { useGettext } from "@/i18n";
 import 'flag-icons/css/flag-icons.min.css';
 
+const { _ } = useGettext(Astro);
 const { pathname } = Astro.url;
 const currentPath =
   pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname;
@@ -23,13 +25,13 @@ const langIcons: Record<string, string> = {
   <button
     id="lang-btn"
     class="focus-outline flex p-3 sm:p-1 hover:[&>svg]:stroke-accent"
-    aria-label="Change language"
-    title="Change language"
+    aria-label={_("Change language")}
+    title={_("Change language")}
     aria-expanded="false"
     aria-haspopup="true"
   >
     <IconWorld />
-    <span class="sr-only">Change language</span>
+    <span class="sr-only">{_("Change language")}</span>
   </button>
   <ul
     id="lang-menu"

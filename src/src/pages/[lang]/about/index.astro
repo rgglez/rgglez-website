@@ -6,12 +6,14 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { SITE } from "@/config";
+import { useGettext, sprintf } from "@/i18n";
 
 export const getStaticPaths = (() => {
   return SITE.supportedLangs.map(lang => ({ params: { lang } }));
 }) satisfies GetStaticPaths;
 
 const { lang } = Astro.params;
+const { _ } = useGettext(Astro);
 
 const aboutEntry =
   (await getEntry("about", lang)) ?? (await getEntry("about", SITE.defaultLang));
@@ -20,7 +22,7 @@ const { Content: AboutContent } = aboutEntry
   : { Content: null };
 
 const layoutProps = {
-  title: `About | ${SITE.title}`,
+  title: sprintf("%s | %s", _("About"), SITE.title),
   description: SITE.desc,
 };
 ---

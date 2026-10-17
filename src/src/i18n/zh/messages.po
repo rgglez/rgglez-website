@@ -1,0 +1,364 @@
+# Chinese translations for rgglez-website package.
+# Copyright (C) 2026 THE rgglez-website'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the rgglez-website package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rgglez-website\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-16 20:43-0600\n"
+"PO-Revision-Date: 2026-10-16 20:43-0600\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/components/BackButton.astro:19
+#, javascript-format
+msgid "Go back"
+msgstr "返回"
+
+#: src/components/BackToTopButton.astro:33
+#, javascript-format
+msgid "Back To Top"
+msgstr "返回顶部"
+
+#: src/components/Breadcrumb.astro:16
+#, javascript-format
+msgid "Posts (page %s)"
+msgstr "文章（第 %s 页）"
+
+#: src/components/Breadcrumb.astro:27
+#, javascript-format
+msgid "%1$s (page %2$s)"
+msgstr "%1$s（第 %2$s 页）"
+
+#: src/components/Breadcrumb.astro:32
+#, javascript-format
+msgid "breadcrumb"
+msgstr "面包屑导航"
+
+#: src/components/Breadcrumb.astro:37
+#, javascript-format
+msgid "Home"
+msgstr "首页"
+
+#: src/components/Datetime.astro:50
+#, javascript-format
+msgid "Updated:"
+msgstr "更新于："
+
+#: src/components/Footer.astro:33
+#, javascript-format
+msgid "Copyright © %1$s %2$s"
+msgstr "版权所有 © %1$s %2$s"
+
+#: src/components/Header.astro:43
+#, javascript-format
+msgid "Skip to content"
+msgstr "跳到正文"
+
+#: src/components/Header.astro:71 src/components/Header.astro:72
+#, javascript-format
+msgid "Open Menu"
+msgstr "打开菜单"
+
+#: src/components/Header.astro:73
+#, javascript-format
+msgid "Close Menu"
+msgstr "关闭菜单"
+
+#: src/components/Header.astro:94 src/pages/[lang]/about/index.astro:25
+#, javascript-format
+msgid "About"
+msgstr "关于"
+
+#: src/components/Header.astro:102 src/components/PortfolioTabs.astro:50
+#: src/pages/[lang]/portfolio/index.astro:21
+#: src/pages/[lang]/portfolio/index.astro:29
+#, javascript-format
+msgid "Portfolio"
+msgstr "作品集"
+
+#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
+#, javascript-format
+msgid "Blog"
+msgstr "博客"
+
+#: src/components/Header.astro:120 src/components/Header.astro:121
+#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
+#: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
+#: src/pages/search.astro:17
+#, javascript-format
+msgid "Search"
+msgstr "搜索"
+
+#: src/components/Header.astro:132 src/components/Header.astro:133
+#: src/components/Header.astro:140
+#, javascript-format
+msgid "RSS Feed"
+msgstr "RSS 订阅"
+
+#: src/components/Header.astro:174
+#, javascript-format
+msgid "Toggles light & dark"
+msgstr "切换浅色/深色模式"
+
+#: src/components/LangMenu.astro:28 src/components/LangMenu.astro:29
+#: src/components/LangMenu.astro:34
+#, javascript-format
+msgid "Change language"
+msgstr "切换语言"
+
+#: src/components/LicenseModal.astro:33
+#, javascript-format
+msgid "The full text of this license is not bundled on this site. Use the official license link above."
+msgstr "本站未收录此许可协议的全文。请使用上方的官方许可协议链接。"
+
+#: src/components/LicenseModal.astro:36
+#, javascript-format
+msgid "Could not load the local license text. Use the official license link above."
+msgstr "无法加载本地许可协议文本。请使用上方的官方许可协议链接。"
+
+#: src/components/LicenseModal.astro:48
+#, javascript-format
+msgid "License for original content:"
+msgstr "原创内容许可协议："
+
+#: src/components/LicenseModal.astro:58 src/layouts/PostDetails.astro:252
+#, javascript-format
+msgid "Non-original content is included or referenced under fair use."
+msgstr "非原创内容依据合理使用原则收录或引用。"
+
+#: src/components/LicenseModal.astro:65
+#, javascript-format
+msgid "Close license"
+msgstr "关闭许可协议"
+
+#: src/components/LicenseModal.astro:80
+#, javascript-format
+msgid "Loading license…"
+msgstr "正在加载许可协议…"
+
+#: src/components/Pagination.astro:22
+#, javascript-format
+msgid "Pagination Navigation"
+msgstr "分页导航"
+
+#: src/components/Pagination.astro:28
+#, javascript-format
+msgid "Go to previous page"
+msgstr "前往上一页"
+
+#: src/components/Pagination.astro:31
+#, javascript-format
+msgid "Prev"
+msgstr "上一页"
+
+#: src/components/Pagination.astro:38
+#, javascript-format
+msgid "Go to next page"
+msgstr "前往下一页"
+
+#: src/components/Pagination.astro:40
+#, javascript-format
+msgid "Next"
+msgstr "下一页"
+
+#: src/components/PortfolioTabs.astro:11
+#, javascript-format
+msgid "Languages"
+msgstr "编程语言"
+
+#: src/components/PortfolioTabs.astro:12
+#, javascript-format
+msgid "Topics"
+msgstr "主题"
+
+#: src/components/PortfolioTabs.astro:13
+#, javascript-format
+msgid "No repositories in this category."
+msgstr "此类别下没有仓库。"
+
+#: src/components/PortfolioTabs.astro:14
+#, javascript-format
+msgid "site"
+msgstr "网站"
+
+#: src/components/PortfolioTabs.astro:154
+#, javascript-format
+msgid "%d star"
+msgid_plural "%d stars"
+msgstr[0] "%d 颗星"
+
+#: src/components/ShareLinks.astro:13
+#, javascript-format
+msgid "Share this post on:"
+msgstr "分享这篇文章到："
+
+#: src/components/SpotifyEmbed.astro:19
+#, javascript-format
+msgid "Spotify player"
+msgstr "Spotify 播放器"
+
+#: src/components/TagCloud.astro:36
+#, javascript-format
+msgid "Your browser does not support canvas."
+msgstr "你的浏览器不支持 canvas。"
+
+#: src/components/TagList.astro:21
+#, javascript-format
+msgid "Browse tags"
+msgstr "浏览标签"
+
+#: src/components/TagList.astro:27
+#, javascript-format
+msgid "Filter…"
+msgstr "筛选…"
+
+#: src/components/TagList.astro:28
+#, javascript-format
+msgid "Filter tags"
+msgstr "筛选标签"
+
+#: src/layouts/PostDetails.astro:222
+#, javascript-format
+msgid "Copy"
+msgstr "复制"
+
+#: src/layouts/PostDetails.astro:223
+#, javascript-format
+msgid "Copied"
+msgstr "已复制"
+
+#: src/layouts/PostDetails.astro:249
+#, javascript-format
+msgid "Read the License for the original content"
+msgstr "阅读原创内容许可协议"
+
+#: src/layouts/PostDetails.astro:285
+#, javascript-format
+msgid "Previous Post"
+msgstr "上一篇"
+
+#: src/layouts/PostDetails.astro:298
+#, javascript-format
+msgid "Next Post"
+msgstr "下一篇"
+
+#: src/layouts/PostsListLayout.astro:57 src/layouts/PostsListLayout.astro:79
+#: src/pages/[lang]/posts/[...page].astro:72
+#: src/pages/[lang]/posts/[...page].astro:73
+#, javascript-format
+msgid "Posts"
+msgstr "文章"
+
+#: src/layouts/PostsListLayout.astro:60 src/layouts/PostsListLayout.astro:85
+#, javascript-format
+msgid "Tags"
+msgstr "标签"
+
+#: src/pages/[lang]/404.astro:17
+#, javascript-format
+msgid "404 Not Found"
+msgstr "404 未找到"
+
+#: src/pages/[lang]/404.astro:27
+#, javascript-format
+msgid "Page Not Found"
+msgstr "页面未找到"
+
+#: src/pages/[lang]/404.astro:32
+#, javascript-format
+msgid "Go back home"
+msgstr "返回首页"
+
+#: src/pages/[lang]/archives/[...page].astro:45
+#, javascript-format
+msgid "Archive"
+msgstr "归档"
+
+#: src/pages/[lang]/archives/[...page].astro:46
+#, javascript-format
+msgid "All the articles I've archived."
+msgstr "所有已归档的文章。"
+
+#: src/pages/[lang]/index.astro:59
+#, javascript-format
+msgid "Recent Posts"
+msgstr "最新文章"
+
+#: src/pages/[lang]/index.astro:73
+#, javascript-format
+msgid "Featured"
+msgstr "精选"
+
+#: src/pages/[lang]/index.astro:87
+#, javascript-format
+msgid "All Posts"
+msgstr "全部文章"
+
+#: src/pages/[lang]/portfolio/index.astro:22
+#, javascript-format
+msgid "Public GitHub projects by language and topics."
+msgstr "按编程语言和主题分类的公开 GitHub 项目。"
+
+#: src/pages/[lang]/posts/[...page].astro:74
+#, javascript-format
+msgid "All the articles I've posted."
+msgstr "所有已发布的文章。"
+
+#: src/pages/[lang]/search.astro:23 src/pages/search.astro:17
+#, javascript-format
+msgid "Search any article ..."
+msgstr "搜索任意文章…"
+
+#: src/pages/[lang]/search.astro:28
+#, javascript-format
+msgid "No language selected."
+msgstr "未选择语言。"
+
+#: src/pages/[lang]/search.astro:29
+#, javascript-format
+msgid "No results."
+msgstr "没有结果。"
+
+#: src/pages/[lang]/search.astro:30 src/pages/[lang]/search.astro:31
+#, javascript-format
+msgid "%d result."
+msgid_plural "%d results."
+msgstr[0] "%d 条结果。"
+
+#: src/pages/[lang]/search.astro:32
+#, javascript-format
+msgid "Showing the first %d."
+msgstr "显示前 %d 条。"
+
+#: src/pages/[lang]/search.astro:37
+#, javascript-format
+msgid "Search ..."
+msgstr "搜索…"
+
+#: src/pages/[lang]/search.astro:43
+#, javascript-format
+msgid "DEV mode warning!"
+msgstr "开发模式警告！"
+
+#: src/pages/[lang]/search.astro:43
+#, javascript-format
+msgid "You need to build the project at least once to see search results during development."
+msgstr "开发期间需要至少构建一次项目才能看到搜索结果。"
+
+#: src/pages/[lang]/tags/[tag]/[...page].astro:38
+#, javascript-format
+msgid "Tag: %s"
+msgstr "标签：%s"
+
+#: src/pages/[lang]/tags/[tag]/[...page].astro:51
+#, javascript-format
+msgid "All the articles with the tag \"%s\"."
+msgstr "所有带有标签“%s”的文章。"

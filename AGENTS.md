@@ -189,6 +189,45 @@ El motivo debe quedar centrado y con margen: el layout recorta la imagen a
 Al escribir un post nuevo, proponer la frase específica que se le añade al
 prompt (qué debe aparecer en la imagen). No generar la imagen: yo la produzco.
 
+## Cadenas de UI de los `.astro` (gettext)
+
+Las cadenas estáticas de `components/`, `layouts/` y `pages/` se traducen con
+`@rgglez/astro-i18n-gettext`. No aplica a los `.mdx`.
+
+- Catálogos en `src/src/i18n/`: `messages.pot`, `<lang>/messages.po` (se
+  editan) y `<lang>/messages.json` (generados, no editar a mano).
+- msgid en inglés. `en/messages.po` lleva msgstr = msgid (`msgen`).
+- Marcar así; importar siempre de `@/i18n`, no del paquete:
+
+  ```astro
+  ---
+  import { useGettext, sprintf } from "@/i18n";
+  const { _, _n } = useGettext(Astro);
+  ---
+  <a aria-label={_("Open Menu")}>{_("Skip to content")}</a>
+  ```
+
+- Solo `_()` / `_n()`; no `<T>` (`xgettext` no lo extrae).
+- Interpolación siempre con `sprintf` (sprintf-js), placeholder dentro del
+  msgid: `sprintf(_("Tag: %s"), tag)`, posicionales `%1$s`/`%2$s` si hay
+  varios. Plurales: `sprintf(_n("%d star", "%d stars", n), n)`.
+- Títulos de página: `sprintf("%s | %s", _("Posts"), SITE.title)`. El formato
+  no se traduce porque `Layout.astro` quita el sufijo ` | rodolfo.gg` para
+  `og:title`.
+- Cadenas usadas en `<script>` de cliente: traducir en servidor y pasarlas por
+  `data-*`. No se envían catálogos al navegador.
+- Ciclo tras cambiar cadenas (desde `src/`):
+
+  ```bash
+  bun run i18n:extract   # xgettext -> messages.pot
+  bun run i18n:update    # msgmerge -> <lang>/messages.po (+ msgen para en)
+  # traducir los msgstr vacíos
+  bun run i18n:json      # msgfmt -c + po2json -> <lang>/messages.json
+  ```
+
+  `scripts/po2json.pl` es copia de `gettext-po2json` con dos fixes (flush del
+  temporal y split de cabeceras).
+
 ## Verificación
 
 Antes de dar por terminado un post:

@@ -10,7 +10,9 @@ import IconRss from "@/assets/icons/IconRss.svg";
 import LinkButton from "./LinkButton.astro";
 import LangMenu from "./LangMenu.astro";
 import { SITE } from "@/config";
+import { useGettext } from "@/i18n";
 
+const { _ } = useGettext(Astro);
 const { pathname } = Astro.url;
 
 // Remove trailing slash from current pathname if exists
@@ -38,7 +40,7 @@ const isActive = (path: string) => {
   href="#main-content"
   class="absolute start-16 -top-full z-50 bg-background px-3 py-2 text-accent backdrop-blur-lg transition-all focus:top-4"
 >
-  Skip to content
+  {_("Skip to content")}
 </a>
 
 <header
@@ -66,7 +68,9 @@ const isActive = (path: string) => {
       <button
         id="menu-btn"
         class="focus-outline self-end p-2 sm:hidden"
-        aria-label="Open Menu"
+        aria-label={_("Open Menu")}
+        data-label-open={_("Open Menu")}
+        data-label-close={_("Close Menu")}
         aria-expanded="false"
         aria-controls="menu-items"
       >
@@ -87,7 +91,7 @@ const isActive = (path: string) => {
             href={`/${currentLang}/about`}
             class:list={{ "active-nav": isActive(`/${currentLang}/about`) }}
           >
-            About
+            {_("About")}
           </a>
         </li>
         <li class="col-span-2">
@@ -95,7 +99,7 @@ const isActive = (path: string) => {
             href={`/${currentLang}/portfolio`}
             class:list={{ "active-nav": isActive(`/${currentLang}/portfolio`) }}
           >
-            Portfolio
+            {_("Portfolio")}
           </a>
         </li>
         <li class="col-span-2">
@@ -103,7 +107,7 @@ const isActive = (path: string) => {
             href={`/${currentLang}/posts`}
             class:list={{ "active-nav": isActive(`/${currentLang}/posts`) }}
           >
-            Blog
+            {_("Blog")}
           </a>
         </li>
         <li class="col-span-1 flex items-center justify-center">
@@ -113,11 +117,11 @@ const isActive = (path: string) => {
               "link-exempt focus-outline flex p-3 hover:text-accent sm:p-1",
               { "[&>svg]:stroke-accent": isActive(`/${currentLang}/search`) },
             ]}
-            title="Search"
-            aria-label="search"
+            title={_("Search")}
+            aria-label={_("Search")}
           >
             <IconSearch />
-            <span class="sr-only">Search</span>
+            <span class="sr-only">{_("Search")}</span>
           </LinkButton>
         </li>
         <li class="col-span-1 flex items-center justify-center">
@@ -125,15 +129,15 @@ const isActive = (path: string) => {
             target="_blank"
             href="/rss.xml"
             class="link-exempt inline-block"
-            aria-label="rss feed"
-            title="RSS Feed"
+            aria-label={_("RSS Feed")}
+            title={_("RSS Feed")}
           >
             <IconRss
               width={16}
               height={16}
               class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
             />
-            <span class="sr-only">Linkedin</span>
+            <span class="sr-only">{_("RSS Feed")}</span>
           </a>
         </li>
         <li class="col-span-1 flex items-center justify-center">
@@ -145,7 +149,7 @@ const isActive = (path: string) => {
             title="github.com/rgglez"
           >
             <IconGitHub />
-            <span class="sr-only">RSS Feed</span>
+            <span class="sr-only">github.com/rgglez</span>
           </a>
         </li>
         <li class="col-span-1 flex items-center justify-center">
@@ -157,7 +161,7 @@ const isActive = (path: string) => {
             title="linkedin.com/in/rggonzalez"
           >
             <IconLinkedin />
-            <span class="sr-only">RSS Feed</span>
+            <span class="sr-only">linkedin.com/in/rggonzalez</span>
           </a>
         </li>
         <LangMenu />
@@ -167,7 +171,7 @@ const isActive = (path: string) => {
               <button
                 id="theme-btn"
                 class="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-accent"
-                title="Toggles light & dark"
+                title={_("Toggles light & dark")}
                 aria-label="auto"
                 aria-live="polite"
               >
@@ -189,13 +193,17 @@ const isActive = (path: string) => {
     const menuIcon = document.querySelector("#menu-icon");
     const closeIcon = document.querySelector("#close-icon");
 
-    if (!menuBtn || !menuItems || !menuIcon || !closeIcon) return;
+    if (!(menuBtn instanceof HTMLElement) || !menuItems || !menuIcon || !closeIcon)
+      return;
 
     menuBtn.addEventListener("click", () => {
       const openMenu = menuBtn.getAttribute("aria-expanded") === "true";
 
       menuBtn.setAttribute("aria-expanded", openMenu ? "false" : "true");
-      menuBtn.setAttribute("aria-label", openMenu ? "Open Menu" : "Close Menu");
+      menuBtn.setAttribute(
+        "aria-label",
+        (openMenu ? menuBtn.dataset.labelOpen : menuBtn.dataset.labelClose) ?? ""
+      );
 
       menuItems.classList.toggle("hidden");
       menuIcon.classList.toggle("hidden");

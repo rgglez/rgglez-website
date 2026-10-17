@@ -6,34 +6,41 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { SITE } from "@/config";
 import { LANG_NAMES } from "@/utils/langNames";
+import { useGettext, sprintf } from "@/i18n";
 
 export async function getStaticPaths() {
   return SITE.supportedLangs.map(lang => ({ params: { lang } }));
 }
 
 const { lang } = Astro.params;
+const { _, _n } = useGettext(Astro);
 const supportedLangs = SITE.supportedLangs;
 const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 ---
 
-<Layout title={`Search | ${SITE.title}`}>
+<Layout title={sprintf("%s | %s", _("Search"), SITE.title)}>
   <Header />
-  <Main pageTitle="Search" pageDesc="Search any article ...">
+  <Main pageTitle={_("Search")} pageDesc={_("Search any article ...")}>
     <div
       id="pf-root"
       data-backurl={backUrl}
       data-supported={JSON.stringify(supportedLangs)}
+      data-msg-no-lang={_("No language selected.")}
+      data-msg-no-results={_("No results.")}
+      data-msg-result-one={_n("%d result.", "%d results.", 1)}
+      data-msg-result-many={_n("%d result.", "%d results.", 2)}
+      data-msg-showing={_("Showing the first %d.")}
     >
       <input
         id="pf-input"
         type="search"
-        placeholder="Search ..."
+        placeholder={_("Search ...")}
         autocomplete="off"
         class="w-full rounded border border-border bg-background px-3 py-2 outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
       />
 
       <div id="pf-dev-warning" class="mt-4 hidden rounded bg-muted/75 p-4 space-y-2">
-        <p><strong>DEV mode warning!</strong> You need to build the project at least once to see search results during development.</p>
+        <p><strong>{_("DEV mode warning!")}</strong> {_("You need to build the project at least once to see search results during development.")}</p>
         <code class="block bg-black text-white px-2 py-1 rounded">make build</code>
       </div>
 
@@ -67,6 +74,8 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 </Layout>
 
 <script>
+  import { sprintf } from "sprintf-js";
+
   // ── types ────────────────────────────────────────────────────────────────────
   type PFData     = { url: string; meta?: { title?: string }; excerpt?: string };
   type PFResult   = { id: string; data: () => Promise<PFData> };
@@ -141,6 +150,10 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
             .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
   }
 
+  function msg(key: string): string {
+    return document.getElementById("pf-root")?.dataset[key] ?? "";
+  }
+
   function setStatus(msg: string) {
     const el = document.getElementById("pf-status");
     if (el) el.textContent = msg;
@@ -181,7 +194,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 
     if (langs.length === 0) {
       clearResults();
-      setStatus("No language selected.");
+      setStatus(msg("msgNoLang"));
       return;
     }
 
@@ -206,10 +219,19 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
 
     renderResults(slice);
     const total = unique.length;
+    // ponytail: one/many picked by total === 1. Correct for es/en/fr/de/zh
+    // because 0 has its own message; a language with more plural forms needs
+    // the catalog's plural rule on the client.
+    const results = sprintf(
+      msg(total === 1 ? "msgResultOne" : "msgResultMany"),
+      total
+    );
     setStatus(
       total === 0
-        ? "No results."
-        : `${total} result${total !== 1 ? "s" : ""}${total > PAGE_SIZE ? ` (showing ${PAGE_SIZE})` : ""}.`
+        ? msg("msgNoResults")
+        : total > PAGE_SIZE
+          ? `${results} ${sprintf(msg("msgShowing"), PAGE_SIZE)}`
+          : results
     );
   }
 

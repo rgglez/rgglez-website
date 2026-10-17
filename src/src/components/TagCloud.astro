@@ -1,4 +1,6 @@
 ---
+import { useGettext } from "@/i18n";
+
 interface TagItem {
   label: string;
   href?: string;
@@ -19,6 +21,7 @@ const {
   textHeight = 18,
   maxSpeed = 0.04,
 } = Astro.props;
+const { _ } = useGettext(Astro);
 ---
 
 <div class="tagcloud-wrapper not-prose my-8 flex w-full justify-center overflow-hidden">
@@ -30,7 +33,7 @@ const {
     data-max-speed={maxSpeed}
     class="max-w-full"
   >
-    <p>Tu navegador no soporta canvas / Your browser does not support canvas.</p>
+    <p>{_("Your browser does not support canvas.")}</p>
   </canvas>
 </div>
 

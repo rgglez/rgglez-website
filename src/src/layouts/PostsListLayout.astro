@@ -8,6 +8,7 @@ import TagCloud from "@/components/TagCloud.astro";
 import TagList from "@/components/TagList.astro";
 import PostsAccordion from "@/components/PostsAccordion.astro";
 import { SITE } from "@/config";
+import { useGettext } from "@/i18n";
 
 interface TagItem {
   label: string;
@@ -37,6 +38,7 @@ const {
   lang,
 } = Astro.props;
 
+const { _ } = useGettext(Astro);
 const backUrl = SITE.showBackButton ? Astro.url.pathname : "/";
 const showSidebar = showTagCloud || posts.length > 0;
 ---
@@ -52,10 +54,10 @@ const showSidebar = showTagCloud || posts.length > 0;
         {showSidebar && (
           <nav class="flex md:hidden gap-4 mb-4 text-sm">
             {posts.length > 0 && (
-              <a href="#sidebar-posts" class="sidebar-jump-link">↓ Posts</a>
+              <a href="#sidebar-posts" class="sidebar-jump-link">↓ {_("Posts")}</a>
             )}
             {showTagCloud && tagCloudTags.length > 0 && (
-              <a href="#sidebar-tags" class="sidebar-jump-link">↓ Tags</a>
+              <a href="#sidebar-tags" class="sidebar-jump-link">↓ {_("Tags")}</a>
             )}
           </nav>
         )}
@@ -74,13 +76,13 @@ const showSidebar = showTagCloud || posts.length > 0;
                   { "border-b border-border": showTagCloud && tagCloudTags.length > 0 },
                 ]}
               >
-                <h2 class="text-2xl font-semibold tracking-wide">Posts</h2>
+                <h2 class="text-2xl font-semibold tracking-wide">{_("Posts")}</h2>
                 <PostsAccordion {posts} {lang} />
               </section>
             )}
             {showTagCloud && tagCloudTags.length > 0 && (
               <section id="sidebar-tags" class:list={[{ "pt-6": posts.length > 0 }]}>
-                <h2 class="text-2xl font-semibold tracking-wide">Tags</h2>
+                <h2 class="text-2xl font-semibold tracking-wide">{_("Tags")}</h2>
                 <TagList tags={tagCloudTags} />
                 <TagCloud tags={tagCloudTags} width={400} height={380} />
               </section>

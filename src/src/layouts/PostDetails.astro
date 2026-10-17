@@ -25,6 +25,7 @@ import type { JsonLd } from "@rgglez/astro-seo/types";
 import Comments from "@/components/Comments";
 import ImageHeroHeader from "@/components/ImageHeroHeader.astro";
 import ViewCounter from "@/components/ViewCounter.astro";
+import { useGettext } from "@/i18n";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -33,6 +34,7 @@ type Props = {
 };
 
 const { post, posts, allPosts } = Astro.props;
+const { _ } = useGettext(Astro);
 
 const {
   title,
@@ -217,6 +219,8 @@ const nextPost =
 
     <article
       id="article"
+      data-copy-label={_("Copy")}
+      data-copied-label={_("Copied")}
       class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
     >
       <Content />
@@ -242,10 +246,10 @@ const nextPost =
             data-license-modal-open
             class="whitespace-normal"
           >
-            Read the License for the original content
+            {_("Read the License for the original content")}
           </a>
           <p class="text-xs text-foreground/70 sm:text-sm">
-            Non-original content is included or referenced under fair use.
+            {_("Non-original content is included or referenced under fair use.")}
           </p>
         </div>
       )
@@ -278,7 +282,7 @@ const nextPost =
           >
             <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
             <div>
-              <span>Previous Post</span>
+              <span>{_("Previous Post")}</span>
               <div class="text-sm text-accent/85">{prevPost.title}</div>
             </div>
           </a>
@@ -291,7 +295,7 @@ const nextPost =
             class="flex w-full justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
           >
             <div>
-              <span>Next Post</span>
+              <span>{_("Next Post")}</span>
               <div class="text-sm text-accent/85">{nextPost.title}</div>
             </div>
             <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
@@ -371,7 +375,9 @@ const nextPost =
   /** Attaches copy buttons to code blocks in the document,
    * allowing users to copy code easily. */
   function attachCopyButtons() {
-    const copyButtonLabel = "Copy";
+    const article = document.getElementById("article");
+    const copyButtonLabel = article?.dataset.copyLabel ?? "Copy";
+    const copiedLabel = article?.dataset.copiedLabel ?? "Copied";
     // Only code blocks inside the article: the license modal has its own <pre>.
     const codeBlocks = Array.from(
       document.querySelectorAll("#article pre:not(.mermaid)")
@@ -393,7 +399,7 @@ const nextPost =
 
       const copyButton = document.createElement("button");
       copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
-      copyButton.innerHTML = copyButtonLabel;
+      copyButton.textContent = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);
 
@@ -413,7 +419,7 @@ const nextPost =
       await navigator.clipboard.writeText(text ?? "");
 
       // visual feedback that task is completed
-      button.innerText = "Copied";
+      button.innerText = copiedLabel;
 
       setTimeout(() => {
         button.innerText = copyButtonLabel;

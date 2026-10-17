@@ -1,4 +1,6 @@
 ---
+import { useGettext } from "@/i18n";
+
 interface Props {
   /** Spotify resource ID: the final path segment of its sharing URL. */
   id: string;
@@ -10,10 +12,11 @@ interface Props {
 
 // In MDX: import SpotifyEmbed from "@/components/SpotifyEmbed.astro";
 // Then use <SpotifyEmbed type="album" id="..." title="Album name" />.
+const { _ } = useGettext(Astro);
 const {
   id,
   type = "album",
-  title = "Spotify player",
+  title = _("Spotify player"),
   height = 352,
 } = Astro.props;
 const src = `https://open.spotify.com/embed/${type}/${encodeURIComponent(id)}`;
