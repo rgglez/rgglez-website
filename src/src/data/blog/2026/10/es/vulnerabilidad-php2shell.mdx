@@ -71,7 +71,7 @@ El mantenedor independiente <a href="https://github.com/sponsors/oerdnj" target=
 
 En muchos sitios se habla de mitigaciones temporales, como deshabilitar ciertas funciones de PHP o disminuir ciertos valores mediante configuración. Sin embargo, estas medidas no son completamente efectivas y no garantizan la seguridad del servidor. La única forma de protegerse completamente contra esta vulnerabilidad es actualizar PHP a una versión segura y reiniciar el proceso o el servidor para asegurarse de que se esté usando la versión actualizada.
 
-## ¿Quedó algún rastro en el servidor?
+## ¿Fue comprometido mi servidor? ¿Quedó algún rastro?
 
 El siguiente script no dice si entraron a un servidor. Es de solo lectura y busca los errores que estos fallos dejan en el arranque de la petición, más caídas de worker, sesiones y procesos hijos. Lee logs de Apache, nginx y PHP-FPM, incluidos los rotados en `.gz`, y el journal de esas unidades.
 
@@ -88,7 +88,7 @@ la pregunta.
 Guárdalo y ejecútalo como root. Hace falta bash 4 o posterior y `gzip` si
 los logs rotados están comprimidos.
 
-**Lee la nota de seguridad que aparece debajo del script.**
+**Lee primero el script y la nota de seguridad que aparece debajo del mismo.**
 
 ```bash
 #!/bin/bash
