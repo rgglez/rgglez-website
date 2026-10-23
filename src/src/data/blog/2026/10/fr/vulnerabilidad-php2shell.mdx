@@ -1,0 +1,764 @@
+---
+title: "PHP2Shell : vulnérabilités critiques de PHP"
+description: >-
+  Analyse de PHP2Shell, des vulnérabilités permettant d’exécuter du code
+  arbitraire sur un serveur web vulnérable, ainsi que des risques et des
+  correctifs.
+slug: "php2shell-vulnerabilites-critiques-php"
+pubDatetime: 2026-10-21T00:00:00-06:00
+modDatetime: 2026-10-22T00:00:00-06:00
+lang: fr
+featured: false
+draft: false
+ogImage: "../../../../../assets/posts/2026/10/vulnerabilidad-php2shell/header.webp"
+tags:
+  - securite-informatique
+  - vulnerabilites
+  - php
+  - exploit
+  - cybersecurite
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import Aside from "@rgglez/astro-aside";
+import YouTubeEmbed from "@rgglez/astro-ytembed";
+
+## Introduction
+
+Le 20 octobre 2026, tard dans la soirée, je suis tombé sur
+<a href="https://x.com/midudev/status/2112812718856044738" target="_blank">une
+publication de @midudev sur X</a> qui a attiré mon attention (et m’a laissé avec
+cette tête 😨). Une série de vulnérabilités critiques avait été découverte dans
+PHP. Elle permettait d’obtenir facilement un shell sur les serveurs compromis.
+Des correctifs étaient annoncés pour le lendemain, le 21 octobre. Ces
+vulnérabilités ont reçu le nom de **PHP2Shell**.
+
+<YouTubeEmbed id="CuvRrItIdKs" title="@midudev: ¡Han hackeado PHP!" />
+
+Ces vulnérabilités sont particulièrement inquiétantes, car de nombreux sites web
+utilisent PHP et leur exploitation est relativement simple pour une personne
+ayant des connaissances de base. PHP est l’un des langages les plus utilisés
+pour le développement web. De nombreuses applications populaires en dépendent,
+notamment WordPress, Joomla et Drupal. Leur exposition pourrait donc avoir des
+conséquences importantes sur la sécurité du Web.
+
+Leur score est de 9,2 sur 10 dans l’échelle CVSS v4.0. Leurs identifiants sont
+<a href="https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w" target="_blank">CVE-2026-109618</a>
+et
+<a href="https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp" target="_blank">CVE-2026-109619</a>.
+
+Des chercheurs de Wiz, Calif et OpenAI auraient découvert ces erreurs à l’aide
+de l’intelligence artificielle et commencé à les signaler le 11 août 2026. Des
+<a href="https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/" target="_blank">exploits
+publics</a> semblent déjà disponibles. Des attaquants pourraient ainsi
+compromettre des serveurs web sans connaissances avancées.
+
+Les vulnérabilités touchent toutes les versions de PHP depuis la 5.4, publiée le
+1er mars 2012. Selon la PHP Foundation, un audit du code réalisé en 2024 avait
+déjà repéré ces problèmes, mais des processus internes et la crainte de rompre
+la compatibilité avaient retardé leur correction.
+
+---
+
+## Table des matières
+
+---
+
+## Comment les vulnérabilités sont exploitées
+
+Le principal risque est la possibilité pour un attaquant d’exécuter du code
+arbitraire directement sur le serveur web touché. Une connexion au serveur
+exécutant la version vulnérable de PHP suffit. L’attaquant pourrait prendre le
+contrôle du serveur, accéder à des données sensibles, modifier des fichiers,
+installer des logiciels malveillants ou utiliser le serveur pour attaquer
+d’autres systèmes. PHP s’exécute normalement sous le compte du serveur web,
+comme `www-data` ou `nobody`. Si le serveur est mal configuré ou présente
+d’autres vulnérabilités, l’attaquant pourrait élever ses privilèges et obtenir
+un accès complet en tant que `root`. Même sans cela, l’exécution de code sous le
+compte du serveur web reste un risque majeur. L’attaquant pourrait, par exemple,
+installer un web shell pour parcourir les fichiers, les lire et les modifier,
+puis lancer des commandes système depuis un navigateur. Il pourrait aussi
+installer un logiciel malveillant pour voler des identifiants, des données de
+cartes bancaires ou des renseignements personnels. Enfin, le serveur compromis
+pourrait servir à mener des attaques DDoS, miner des cryptomonnaies, se déplacer
+latéralement dans le réseau ou envoyer du spam.
+
+<Aside title="Note de sécurité">
+
+L’exploitation de ces vulnérabilités ne demande pas de compétences avancées en
+programmation ou en piratage. Une personne ayant des connaissances de base
+pourrait utiliser des outils automatisés disponibles en ligne. Les
+administrateurs système et les développeurs web doivent donc agir immédiatement
+pour protéger leurs serveurs et leurs applications.
+
+Les applications n’ont pas besoin de présenter leurs propres failles pour être
+vulnérables à PHP2Shell. Les défauts se trouvent dans l’interpréteur PHP
+lui-même. Toute application exécutée avec une version vulnérable de PHP pourrait
+donc être exposée, qu’il s’agisse de WordPress, de Joomla, de Drupal ou d’une
+application développée en interne.
+
+</Aside>
+
+## Correctifs et atténuation
+
+La mise à jour de PHP est le seul moyen efficace d’atténuer ces vulnérabilités.
+De nombreuses versions touchées ne bénéficient plus du support officiel, mais
+peuvent encore être utilisées. Les administrateurs et les développeurs doivent
+passer à une version de PHP contenant les correctifs de sécurité. Si un serveur
+web touché ne peut pas être mis à jour, mets-le hors ligne et actualise ses
+applications avant de l’exposer à nouveau à Internet.
+
+| **Branche PHP** | **Versions vulnérables** | **Première version sûre** |
+| :-------------- | :----------------------- | :------------------------ |
+| 8.5             | Avant la 8.5.12          | 8.5.12                    |
+| 8.4             | Avant la 8.4.27          | 8.4.27                    |
+| 8.3             | Avant la 8.3.36          | 8.3.36                    |
+| 8.2             | Avant la 8.2.35          | 8.2.35                    |
+
+### Anciennes versions et rétroportages de sécurité
+
+PHP 8.1 et les versions antérieures ne reçoivent plus de mises à jour du projet
+PHP. PHP 8.2 arrivera en fin de vie le 31 décembre 2026. Pour les branches plus
+anciennes, l’équipe de sécurité de PHP a publié des rétroportages pour PHP 7.4,
+8.0 et 8.1 afin d’aider les personnes qui compilent PHP depuis les sources ou
+attendent une mise à jour de leur fournisseur.
+
+Le mainteneur indépendant
+<a href="https://github.com/sponsors/oerdnj" target="_blank">Ondřej Surý</a> a
+<a href="https://codeberg.org/oerdnj/deb.sury.org/issues/145" target="_blank">publié</a>
+des versions de PHP 7.4, 8.0 et 8.1 intégrant les correctifs de sécurité. Les
+distributions Linux devraient bientôt mettre leurs paquets à jour. Ubuntu, par
+exemple, a déjà publié des mises à jour de sécurité pour ces trois versions dans
+ses dépôts officiels
+<a href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available" target="_blank">Ubuntu
+Expanded Security Maintenance</a>.
+
+### Atténuation temporaire
+
+De nombreux sites évoquent des mesures temporaires, comme la désactivation de
+certaines fonctions PHP ou la réduction de valeurs de configuration. Ces mesures
+ne sont pas totalement efficaces et ne garantissent pas la sécurité du serveur.
+Pour le protéger complètement, mets PHP à jour vers une version sûre, puis
+redémarre le processus ou le serveur pour t’assurer que la nouvelle version est
+utilisée.
+
+## Mon serveur a-t-il été compromis ? Reste-t-il des traces ?
+
+Le script suivant ne peut pas déterminer si quelqu’un est entré dans un serveur.
+Il fonctionne en lecture seule et recherche les erreurs que ces failles peuvent
+laisser au démarrage d’une requête, ainsi que les plantages de workers, les
+sessions et les processus enfants. Il lit les journaux d’Apache, de nginx et de
+PHP-FPM, y compris les fichiers `.gz` archivés, ainsi que le journal de ces
+services.
+
+Une erreur fatale se terminant par `in Unknown on line 0` avec épuisement de la
+mémoire est un indice de CVE-2026-109618. Une version de PHP déjà corrigée écrit
+la même ligne lorsque la requête atteint `memory_limit`. Elle ne prouve donc pas
+l’exploitation de la faille. CVE-2026-109619 peut survenir sans épuisement de la
+mémoire. Elle peut se manifester par un délai dépassé ou par le plantage d’un
+worker, avant même le démarrage d’un script.
+
+Le journal des accès ne contient pas le corps des requêtes. Si PHP s’exécute
+dans un conteneur, lance le script à l’intérieur. Un résultat sans alerte, ou
+des journaux déjà supprimés par rotation, ne permettent pas de trancher.
+
+Enregistre le script et exécute-le en tant que root. Il nécessite Bash 4 ou une
+version ultérieure, ainsi que `gzip` pour lire les journaux archivés compressés.
+
+**Lis le script et la note de sécurité qui le suit avant de l’exécuter.**
+
+```bash
+#!/bin/bash
+# Triage en lecture seule pour PHP2Shell.
+# CVE-2026-109618 / CVE-2026-109619.
+#
+# Ne prouve pas une compromission. Aucun résultat ne permet de l’exclure.
+# PHP corrigé écrit aussi la même erreur fatale de mémoire.
+# Le corps des requêtes ne figure pas dans le journal des accès.
+#
+# Utilisation : sudo bash php2shell-triage.sh
+
+set -u
+
+if ((BASH_VERSINFO[0] < 4)); then
+  echo "Bash 4 ou une version ultérieure est nécessaire." >&2
+  exit 1
+fi
+
+if [[ ${EUID:-$(id -u)} -ne 0 ]]; then
+  echo "Exécute-le en tant que root pour lire les journaux : sudo bash $0" >&2
+  exit 1
+fi
+
+RED=$'\033[31m'
+YEL=$'\033[33m'
+GRN=$'\033[32m'
+NC=$'\033[0m'
+
+SINCE=2026-10-20
+
+# Erreur fatale avant que PHP ne démarre un script.
+PRESCRIPT_RE='in Unknown on line 0'
+# La seconde forme apparaît avec memory_limit=-1.
+OOM_RE='Allowed memory size of [0-9]+ bytes exhausted|Out of memory \(allocated'
+TIMEOUT_RE='Maximum execution time of [0-9]+ seconds exceeded'
+# Apache écrit "exit signal Segmentation fault (11)", pas "exit signal 11".
+CRASH_RE='exited on signal (4|6|7|8|11)|SIGSEGV|SIGBUS|SIGABRT|segfault at|Segmentation fault|zend_mm_heap corrupted'
+UPSTREAM_RE='upstream prematurely closed connection'
+# User-Agents publiés par ELLIO le 21 octobre 2026.
+UA_RE='php2shell-scan/109618|php2shell-109618|php2shell-verify/'
+
+WEB_COMM_RE='^(php-fpm[0-9.]*|php-cgi[0-9.]*|apache2|httpd|nginx|lsphp[0-9]*|frankenphp)$'
+TOOL_RE='^(sh|bash|dash|zsh|curl|wget|nc|ncat|netcat|python[0-9.]*|perl|ruby|socat|base64)$'
+
+declare -a ERR_LOGS=()
+declare -a ACC_LOGS=()
+declare -A SEEN_LOG=()
+declare -A WEB_USER=()
+GZ_WARNED=0
+
+section() { printf '\n[+] %s\n' "$1"; }
+note() { printf '  %s\n' "$1"; }
+ok() { printf '%b  %s%b\n' "$GRN" "$1" "$NC"; }
+lead() { printf '%b  %s%b\n' "$YEL" "$1" "$NC"; }
+bad() { printf '%b  %s%b\n' "$RED" "$1" "$NC"; }
+
+remember() {
+  local kind=$1 f=$2
+  [[ -f $f && -r $f ]] || return 0
+  [[ -n ${SEEN_LOG[$f]:-} ]] && return 0
+  SEEN_LOG[$f]=1
+  if [[ $kind == err ]]; then
+    ERR_LOGS+=("$f")
+  else
+    ACC_LOGS+=("$f")
+  fi
+}
+
+remember_glob() {
+  local kind=$1 pat=$2 f
+  shopt -s nullglob
+  for f in $pat; do
+    remember "$kind" "$f"
+  done
+  shopt -u nullglob
+}
+
+collect_logs() {
+  remember_glob err '/var/log/apache2/error.log*'
+  remember_glob err '/var/log/httpd/error_log*'
+  remember_glob err '/var/log/nginx/error.log*'
+  remember_glob err '/var/log/php*-fpm.log*'
+  remember_glob err '/var/log/php*-fpm/*.log*'
+  remember_glob err '/var/log/php-fpm/*.log*'
+  remember_glob err '/var/log/syslog*'
+  remember_glob err '/var/log/messages*'
+  remember_glob err '/var/log/kern.log*'
+  remember_glob acc '/var/log/apache2/access.log*'
+  remember_glob acc '/var/log/apache2/other_vhosts_access.log*'
+  remember_glob acc '/var/log/httpd/access_log*'
+  remember_glob acc '/var/log/nginx/access.log*'
+
+  local raw path ini
+  while IFS= read -r raw; do
+    raw=${raw%%#*}
+    set -- $raw
+    [[ $# -ge 2 ]] || continue
+    path=$2
+    path=${path%;}
+    path=${path//\"/}
+    path=${path//\$\{APACHE_LOG_DIR\}/\/var\/log\/apache2}
+    [[ $path == /* ]] || continue
+    [[ $path == *\$* ]] && continue
+    case $path in
+      off|stderr|syslog) continue ;;
+    esac
+    case $1 in
+      ErrorLog|error_log) remember_glob err "${path}*" ;;
+      CustomLog|access_log) remember_glob acc "${path}*" ;;
+    esac
+  done < <(grep -rhsE '^[[:space:]]*(ErrorLog|error_log|CustomLog|access_log)[[:space:]]+' \
+    /etc/apache2 /etc/httpd /etc/nginx 2>/dev/null || true)
+
+  while IFS= read -r ini; do
+    ini=${ini%%#*}
+    ini=${ini#*=}
+    ini=${ini//[[:space:]\"\;]/}
+    [[ $ini == /* ]] || continue
+    remember_glob err "${ini}*"
+  done < <(grep -rhsE '^[[:space:]]*error_log[[:space:]]*=' \
+    /etc/php /etc/php.ini /etc/php.d /etc/php-fpm.conf /etc/php-fpm.d 2>/dev/null || true)
+}
+
+is_syslog() {
+  case $1 in
+    */syslog*|*/messages*|*/kern.log*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+match_file() {
+  local re=$1 file=$2
+  if [[ $file == *.gz || $file == *.gzip ]]; then
+    if ! command -v gzip >/dev/null 2>&1; then
+      if ((GZ_WARNED == 0)); then
+        printf '  %s\n' "gzip n’est pas installé. Les journaux .gz ne seront pas lus." >&2
+        GZ_WARNED=1
+      fi
+      return 0
+    fi
+    gzip -dc -- "$file" 2>/dev/null | grep -E -- "$re" || true
+  else
+    grep -E -- "$re" "$file" 2>/dev/null || true
+  fi
+}
+
+show_tail() {
+  printf '%s\n' "$1" | tail -5 | sed 's/^/    /'
+}
+
+count_lines() {
+  printf '%s\n' "$1" | grep -c .
+}
+
+load_web_users() {
+  local u
+  for u in www-data apache nginx http nobody www; do
+    WEB_USER[$u]=1
+  done
+  while IFS= read -r u; do
+    [[ $u =~ ^[A-Za-z0-9._-]+$ ]] || continue
+    WEB_USER[$u]=1
+  done < <(grep -rhsE '^[[:space:]]*(User|user)[[:space:]]+' \
+    /etc/apache2 /etc/httpd /etc/nginx \
+    /etc/php/*/fpm/pool.d /etc/php-fpm.d 2>/dev/null \
+    | awk '{gsub(/[;=]/, " ", $0); print $2}' || true)
+}
+
+journal_units() {
+  command -v systemctl >/dev/null 2>&1 || return 0
+  systemctl list-units --type=service --all --no-legend --plain 2>/dev/null \
+    | awk '{print $1}' \
+    | grep -E '^(php.*fpm|apache2|httpd|nginx)\.service$' || true
+}
+
+echo "=== Triage PHP2Shell (lecture seule) — $(date) ==="
+echo "Ne prouve pas une compromission. Un résultat sans alerte ne l’exclut pas."
+
+collect_logs
+load_web_users
+
+J_ARGS=()
+if command -v journalctl >/dev/null 2>&1; then
+  while IFS= read -r unit; do
+    [[ -n $unit ]] && J_ARGS+=(-u "$unit")
+  done < <(journal_units)
+fi
+
+section "Journaux à lire"
+if ((${#ERR_LOGS[@]})); then
+  printf '  error: %s\n' "${ERR_LOGS[@]}"
+else
+  note "Aucun journal d’erreurs lisible. Les recherches ne verront rien."
+fi
+if ((${#ACC_LOGS[@]})); then
+  printf '  accès : %s\n' "${ACC_LOGS[@]}"
+else
+  note "Aucun journal des accès lisible."
+fi
+
+section "Binaires PHP"
+note "Le numéro de version ne suffit pas. Une distribution peut corriger sans le changer."
+note "Le php du PATH n’est pas forcément le SAPI qui sert le site."
+declare -A SEEN_BIN=()
+bins=()
+shopt -s nullglob
+if command -v php >/dev/null 2>&1; then
+  bins+=("$(command -v php)")
+fi
+for b in /usr/sbin/php-fpm* /usr/sbin/php-cgi* /usr/bin/php[0-9]*; do
+  [[ -x $b ]] || continue
+  bins+=("$b")
+done
+shopt -u nullglob
+shown=0
+for b in "${bins[@]+"${bins[@]}"}"; do
+  [[ -n ${SEEN_BIN[$b]:-} ]] && continue
+  SEEN_BIN[$b]=1
+  shown=1
+  ver=$("$b" -v 2>/dev/null | head -1 || true)
+  printf '  %s — %s\n' "$b" "${ver:-sans version}"
+done
+if ((shown == 0)); then
+  note "Aucun php dans PATH ni dans /usr/sbin."
+elif command -v php >/dev/null 2>&1; then
+  note "Valeurs de la CLI, pas forcément celles de FPM ou mod_php :"
+  php -r 'printf("  memory_limit=%s  upload_progress=%s  error_log=%s\n", ini_get("memory_limit"), ini_get("session.upload_progress.enabled"), ini_get("error_log"));' \
+    || true
+fi
+
+section "Erreurs fatales avant le démarrage d’un script"
+note "La chaîne est : in Unknown on line 0."
+note "Avec un épuisement de mémoire, c’est un indice de CVE-2026-109618."
+note "PHP corrigé écrit la même ligne s’il atteint memory_limit."
+note "Vérifie la date. Cherche à partir du 20 octobre 2026."
+
+if ((${#ERR_LOGS[@]} == 0 && ${#J_ARGS[@]} == 0)); then
+  note "Aucun journal d’erreurs ni journal pour ces unités. Recherche ignorée."
+else
+
+oom_n=0
+timeout_n=0
+other_n=0
+oom_s=""
+timeout_s=""
+other_s=""
+
+classify_prescript() {
+  local src=$1 hits=$2 line
+  [[ -n $hits ]] || return 0
+  while IFS= read -r line; do
+    [[ -n $line ]] || continue
+    if printf '%s\n' "$line" | grep -qE -- "$OOM_RE"; then
+      oom_n=$((oom_n + 1))
+      if ((oom_n <= 5)); then
+        oom_s+="    $src: $line"$'\n'
+      fi
+    elif printf '%s\n' "$line" | grep -qE -- "$TIMEOUT_RE"; then
+      timeout_n=$((timeout_n + 1))
+      if ((timeout_n <= 5)); then
+        timeout_s+="    $src: $line"$'\n'
+      fi
+    else
+      other_n=$((other_n + 1))
+      if ((other_n <= 5)); then
+        other_s+="    $src: $line"$'\n'
+      fi
+    fi
+  done <<< "$hits"
+}
+
+for f in "${ERR_LOGS[@]+"${ERR_LOGS[@]}"}"; do
+  classify_prescript "$f" "$(match_file "$PRESCRIPT_RE" "$f")"
+done
+
+if ((${#J_ARGS[@]})); then
+  jhits=$(journalctl --since "$SINCE" -q --no-pager "${J_ARGS[@]}" 2>/dev/null \
+    | grep -E -- "$PRESCRIPT_RE" || true)
+  classify_prescript "journal" "$jhits"
+elif command -v journalctl >/dev/null 2>&1; then
+  note "systemd n’a aucune unité php-fpm, apache ou nginx."
+else
+  note "journalctl n’est pas installé."
+fi
+
+if ((oom_n)); then
+  lead "Mémoire épuisée avant un script : $oom_n"
+  printf '%s' "$oom_s"
+else
+  ok "Aucun épuisement de mémoire avant un script dans les données lues."
+fi
+if ((timeout_n)); then
+  lead "Délai dépassé avant un script : $timeout_n. Indice faible de CVE-2026-109619."
+  printf '%s' "$timeout_s"
+else
+  ok "Aucun délai dépassé avant un script dans les données lues."
+fi
+if ((other_n)); then
+  lead "Autres erreurs fatales avant un script : $other_n"
+  printf '%s' "$other_s"
+else
+  ok "Aucune autre erreur fatale avant un script dans les données lues."
+fi
+
+fi
+
+section "Plantages de workers"
+note "Dans le journal d’erreurs Apache, la ligne peut omettre apache ou php."
+note "Dans syslog et le journal du noyau, si : d’autres programmes y plantent."
+
+if ((${#ERR_LOGS[@]} == 0 && ${#J_ARGS[@]} == 0)); then
+  note "Aucun journal d’erreurs ni journal pour ces unités. Recherche ignorée."
+else
+
+crash_any=0
+for f in "${ERR_LOGS[@]+"${ERR_LOGS[@]}"}"; do
+  hits=$(match_file "$CRASH_RE" "$f")
+  [[ -n $hits ]] || continue
+  if is_syslog "$f"; then
+    hits=$(printf '%s\n' "$hits" | grep -Ei 'php|apache|httpd|nginx|www-data|fpm' || true)
+  fi
+  [[ -n $hits ]] || continue
+  crash_any=1
+  lead "$f ($(count_lines "$hits"))"
+  show_tail "$hits"
+done
+
+if command -v journalctl >/dev/null 2>&1; then
+  khits=$(journalctl -k --since "$SINCE" -q --no-pager 2>/dev/null \
+    | grep -E 'segfault at|general protection' \
+    | grep -Ei 'php|apache|httpd|nginx' || true)
+  if [[ -n $khits ]]; then
+    crash_any=1
+    lead "noyau ($(count_lines "$khits"))"
+    show_tail "$khits"
+  fi
+  if ((${#J_ARGS[@]})); then
+    jhits=$(journalctl --since "$SINCE" -q --no-pager "${J_ARGS[@]}" 2>/dev/null \
+      | grep -E -- "$CRASH_RE" || true)
+    if [[ -n $jhits ]]; then
+      crash_any=1
+      lead "journal ($(count_lines "$jhits"))"
+      show_tail "$jhits"
+    fi
+  fi
+fi
+if ((crash_any == 0)); then
+  ok "Aucun plantage de worker dans les données lues."
+fi
+
+fi
+
+section "nginx et le worker PHP"
+note "upstream prematurely closed connection peut aussi résulter d’un délai dépassé normal."
+if ((${#ERR_LOGS[@]} == 0)); then
+  note "Aucun journal d’erreurs. Recherche ignorée."
+else
+up_any=0
+for f in "${ERR_LOGS[@]+"${ERR_LOGS[@]}"}"; do
+  hits=$(match_file "$UPSTREAM_RE" "$f")
+  [[ -n $hits ]] || continue
+  if is_syslog "$f"; then
+    hits=$(printf '%s\n' "$hits" | grep -Ei 'nginx' || true)
+  fi
+  [[ -n $hits ]] || continue
+  up_any=1
+  lead "$f ($(count_lines "$hits"))"
+  show_tail "$hits"
+done
+if ((up_any == 0)); then
+  ok "Cette chaîne ne figure pas dans les données lues."
+fi
+fi
+
+section "User-Agents de scanners publiés"
+note "Une correspondance indique une tentative enregistrée, pas du code exécuté."
+note "Le format common ne garde pas le User-Agent ; combined le fait."
+if ((${#ACC_LOGS[@]} == 0)); then
+  note "Aucun journal des accès. Recherche ignorée."
+else
+ua_any=0
+for f in "${ACC_LOGS[@]+"${ACC_LOGS[@]}"}"; do
+  hits=$(match_file "$UA_RE" "$f")
+  [[ -n $hits ]] || continue
+  ua_any=1
+  lead "$f ($(count_lines "$hits"))"
+  show_tail "$hits"
+done
+if ((ua_any == 0)); then
+  ok "Aucun de ces User-Agents dans les journaux des accès lus."
+fi
+fi
+
+section "Sessions sur disque"
+note "PHP les supprime après environ 24 minutes d’inactivité. Un résultat vide ne prouve rien."
+note "Redis et Memcached ne sont pas vérifiés."
+declare -A SESS_DIR=()
+add_sess() {
+  local p=$1
+  [[ $p =~ ^[0-9]+\;(.*)$ ]] && p=${BASH_REMATCH[1]}
+  p=${p//\"/}
+  [[ $p == /* && -d $p ]] || return 0
+  SESS_DIR[$p]=1
+}
+add_sess /var/lib/php/sessions
+add_sess /var/lib/php/session
+add_sess /tmp
+if command -v php >/dev/null 2>&1; then
+  add_sess "$(php -r 'echo ini_get("session.save_path");' 2>/dev/null || true)"
+fi
+while IFS= read -r p; do
+  p=${p#*=}
+  p=${p//[[:space:]\"]/}
+  p=${p%%;}
+  add_sess "$p"
+done < <(grep -rhsE 'session\.save_path[[:space:]]*=' \
+  /etc/php /etc/php.ini /etc/php-fpm.d /etc/php-fpm.conf 2>/dev/null || true)
+
+sess_any=0
+for d in "${!SESS_DIR[@]}"; do
+  depth=3
+  [[ $d == /tmp ]] && depth=1
+  up=$(find "$d" -maxdepth "$depth" -type f -name 'sess_*' -size -2M -print0 2>/dev/null \
+    | xargs -0 -r grep -l 'upload_progress_' 2>/dev/null || true)
+  code=$(find "$d" -maxdepth "$depth" -type f -name 'sess_*' -size -2M -print0 2>/dev/null \
+    | xargs -0 -r grep -lE '<\?php|<\?=' 2>/dev/null || true)
+  if [[ -n $up ]]; then
+    sess_any=1
+    lead "upload_progress_ dans $d. Peut indiquer CVE-2026-109619 ou une barre de progression légitime."
+    printf '%s\n' "$up" | head -10 | sed 's/^/    /'
+  fi
+  if [[ -n $code ]]; then
+    sess_any=1
+    bad "Code PHP dans une session de $d."
+    printf '%s\n' "$code" | head -10 | sed 's/^/    /'
+  fi
+done
+if ((sess_any == 0)); then
+  ok "Aucun de ces indices dans les sessions encore sur disque."
+fi
+
+section "Processus enfants et binaires dans /tmp"
+note "mail() de PHP lance /bin/sh. sendmail n’est pas signalé."
+note "Un convertisseur d’images peut aussi être un processus enfant du worker."
+declare -A WORKER=()
+if ps -eo pid=,comm= >/dev/null 2>&1; then
+  while read -r pid comm; do
+    [[ $comm =~ $WEB_COMM_RE ]] && WORKER[$pid]=1
+  done < <(ps -eo pid=,comm=)
+  proc_any=0
+  while read -r user pid ppid comm args; do
+    [[ -n ${WORKER[$ppid]:-} ]] || continue
+    [[ $comm =~ $TOOL_RE ]] || continue
+    case $args in
+      *sendmail*|*postfix*|*exim*|*msmtp*) continue ;;
+    esac
+    proc_any=1
+    bad "$user pid=$pid ppid=$ppid $args"
+  done < <(ps -eo user=,pid=,ppid=,comm=,args=)
+  while read -r user pid; do
+    [[ -n ${WEB_USER[$user]:-} ]] || continue
+    exe=$(readlink "/proc/$pid/exe" 2>/dev/null || true)
+    case $exe in
+      /tmp/*|/var/tmp/*|/dev/shm/*|memfd:*) ;;
+      *) continue ;;
+    esac
+    proc_any=1
+    bad "$user pid=$pid exe=$exe"
+  done < <(ps -eo user=,pid=)
+  if ((proc_any == 0)); then
+    ok "Aucun processus enfant de ce type ni binaire du compte web dans /tmp."
+  fi
+else
+  note "ps ne prend pas en charge -eo. Installe procps."
+fi
+
+section "auto_prepend_file et handlers inhabituels"
+note "Ce n’est pas une erreur de l’attaque, mais une persistance fréquente après une RCE."
+note "Certains hébergeurs légitimes utilisent auto_prepend_file."
+declare -A SEEN_ROOT=()
+roots=()
+shopt -s nullglob
+for r in /var/www /srv/www /srv/http /usr/share/nginx/html /home/*/public_html /home/*/www; do
+  [[ -d $r ]] && roots+=("$r")
+done
+shopt -u nullglob
+while IFS= read -r r; do
+  r=${r//[\"\;]/}
+  [[ -d $r ]] && roots+=("$r")
+done < <(grep -rhsE '^[[:space:]]*(DocumentRoot|root)[[:space:]]+' \
+  /etc/apache2 /etc/httpd /etc/nginx 2>/dev/null \
+  | awk '{print $2}' || true)
+
+prep_any=0
+PREPEND_RE='auto_prepend_file|auto_append_file|(AddHandler|AddType|SetHandler).*php.*\.(jpe?g|png|gif|ico|txt|css|js|svg|webp|html)'
+for r in "${roots[@]+"${roots[@]}"}"; do
+  [[ -n ${SEEN_ROOT[$r]:-} ]] && continue
+  SEEN_ROOT[$r]=1
+  hits=$(find "$r" -xdev -maxdepth 6 \( -name '.htaccess' -o -name '.user.ini' \) -type f -print0 2>/dev/null \
+    | xargs -0 -r grep -nE "$PREPEND_RE" 2>/dev/null | head -20 || true)
+  [[ -n $hits ]] || continue
+  prep_any=1
+  lead "$r"
+  printf '%s\n' "$hits" | sed 's/^/    /'
+done
+if ((prep_any == 0)); then
+  ok "Aucun de ces indices dans les racines web habituelles."
+fi
+
+echo
+echo "=== Fin. Le jaune et le rouge signalent des indices, pas un verdict. ==="
+echo "Journaux d’erreurs lus : ${#ERR_LOGS[@]}. Journaux des accès lus : ${#ACC_LOGS[@]}."
+if ((${#ERR_LOGS[@]} == 0)); then
+  echo "Aucun journal d’erreurs n’a été lu. Ce résultat ne permet aucune conclusion."
+fi
+```
+
+<Aside title="Note de sécurité sur le script" type="warning">
+
+Il s’agit d’un triage, pas d’une enquête. Un résultat vert n’exclut pas une
+compromission. Les sessions PHP sont supprimées après environ 24 minutes, le
+journal des accès ne conserve pas le corps des requêtes et une personne ayant
+obtenu l’accès root peut avoir effacé les journaux.
+
+Si tu observes une erreur fatale avant le démarrage d’un script, le plantage
+d’un worker ou un processus enfant inconnu, mets le serveur hors service et
+conserve les journaux. Mets PHP à jour et réinstalle à partir d’une copie saine.
+Supprimer uniquement le fichier suspect ne suffit pas.
+
+Le script ne modifie pas le système. Lis-le avant de l’exécuter. Il a été créé
+avec l’aide de Grok 4.7. Tu peux laisser tes remarques ou propositions
+d’amélioration dans Giscus ci-dessous.
+
+**Ce script est fourni à titre indicatif, en l’état et sans garantie. Aucune
+responsabilité n’est assumée quant à son utilisation ou à ses résultats. Si tu
+soupçonnes une compromission, il est vivement recommandé de mener une enquête de
+sécurité complète et de consulter des spécialistes.**
+
+</Aside>
+
+## Sources vérifiées
+
+- <a
+    href="https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w"
+    target="_blank"
+  >
+    GHSA-w8hw-w9fx-j79w, RCE via OOM corruption
+  </a>
+- <a
+    href="https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp"
+    target="_blank"
+  >
+    GHSA-6wmf-4rv5-p3rp, RCE via stale global state
+  </a>
+- <a href="https://www.prophetsecurity.ai/blog/php2shell" target="_blank">
+    Prophet Security : détection et analyse de php2shell
+  </a>
+- <a
+    href="https://ellio.tech/en/blog/php2shell-what-we-observed-and-what-to-do/"
+    target="_blank"
+  >
+    ELLIO : PHP2Shell, attaques avant le correctif
+  </a>
+- <a href="https://www.php.net/archive/2026.php#2026-10-21-5" target="_blank">
+    PHP : avis de sécurité sur les failles d’exécution de code à distance
+  </a>
+- <a
+    href="https://blog.lexiworks.dev/2026-10-21-php2shell-la-crisis-de-php-y-las-buenas-practicas/"
+    target="_blank"
+  >
+    LexiWorks : crise PHP2Shell et bonnes pratiques
+  </a>
+- <a
+    href="https://www.france24.com/es/ciencia-y-tecnolog%C3%ADas/20261021-cinco-claves-de-la-crisis-cibern%C3%A9tica-de-php-que-encendi%C3%B3-alarmas-a-nivel-global"
+    target="_blank"
+  >
+    France 24 : cinq points sur la crise de cybersécurité de PHP
+  </a>
+- <a
+    href="https://thehackernews.com/2026/10/php-issues-emergency-patches-for-two.html"
+    target="_blank"
+  >
+    The Hacker News : correctifs d’urgence pour deux vulnérabilités PHP2Shell
+  </a>
+- <a href="https://codeberg.org/oerdnj/deb.sury.org/issues/145" target="_blank">
+    deb.sury.org : incident 145
+  </a>
+- <a
+    href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available"
+    target="_blank"
+  >
+    Ubuntu : correctifs PHP2Shell disponibles
+  </a>
