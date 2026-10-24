@@ -166,7 +166,7 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : `/${lang}/`;
   function renderResults(items: PFData[]) {
     document.getElementById("pf-results")!.innerHTML = items.map(d => `
       <li>
-        <a href="${esc(d.url)}" class="text-[#161d2e] dark:text-white underline decoration-dashed underline-offset-4 decoration-[#a1bfef] dark:decoration-[#234c77] hover:decoration-accent">
+        <a href="${esc(d.url)}" class="text-heading underline decoration-dashed underline-offset-4 decoration-heading/25 hover:decoration-accent">
           ${esc(d.meta?.title ?? d.url)}
         </a>
         <div class="text-sm text-foreground/70 mt-1">${d.excerpt ?? ""}</div>

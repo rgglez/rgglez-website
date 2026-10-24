@@ -13,11 +13,7 @@
     h5,
     h6,
     th {
-      @apply mb-3 font-app text-[#161d2e] dark:text-foreground;
-    }
-
-    h1 {
-      @apply dark:text-white;
+      @apply mb-3 font-app text-heading;
     }
 
     h3 {
@@ -35,7 +31,7 @@
     }
 
     a {
-      @apply wrap-break-word text-[#161d2e] decoration-dashed underline-offset-4 decoration-[#a1bfef] hover:text-foreground/75 hover:decoration-accent focus-visible:no-underline dark:text-white dark:decoration-[#234c77];
+      @apply wrap-break-word text-accent decoration-dashed underline-offset-4 decoration-heading/25 hover:text-accent-2 hover:decoration-accent focus-visible:no-underline;
     }
 
     ul {
@@ -43,7 +39,7 @@
     }
 
     li {
-      @apply marker:text-[#74869b] dark:marker:text-[#7d90a7];
+      @apply marker:text-[#8c826c] dark:marker:text-[#625c4a];
     }
 
     /* MDX envuelve en <p> el texto de un <a> JSX partido en varias líneas
