@@ -6,7 +6,7 @@ description: >-
   steps.
 slug: "php2shell-critical-php-vulnerabilities"
 pubDatetime: 2026-10-21T00:00:00-06:00
-modDatetime: 2026-10-22T00:00:00-06:00
+modDatetime: 2026-10-24T00:00:00-06:00
 lang: en
 featured: false
 draft: false
@@ -119,11 +119,12 @@ team has published security backports for PHP 7.4, 8.0, and 8.1 to help those
 compiling PHP from source or waiting for a vendor update.
 
 Independent maintainer
-<a href="https://github.com/sponsors/oerdnj" target="_blank">Ondřej Surý</a> has
+<a href="https://github.com/sponsors/oerdnj" target="_blank">Ondřej Surý</a>
 <a href="https://codeberg.org/oerdnj/deb.sury.org/issues/145" target="_blank">published</a>
-PHP 7.4, 8.0, and 8.1 releases with the security patches applied. Linux
-distributions are expected to update their packages soon. Ubuntu, for example,
-has already published security updates for PHP 7.4, 8.0, and 8.1 in its official
+patched packages on October 21 and 22, 2026, for every branch he maintains, from
+PHP 5.6 through PHP 8.5. How to check one of those packages is covered below.
+Ubuntu, for its part, has already published security updates for PHP 7.4, 8.0,
+and 8.1 in its official
 <a href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available" target="_blank">Ubuntu
 Expanded Security Maintenance</a> repositories.
 
@@ -134,6 +135,171 @@ lowering configuration values. These measures are not fully effective and cannot
 guarantee server security. To protect a server fully, update PHP to a safe
 version and restart the process or server so that the updated version is
 actually running.
+
+## Is my server still vulnerable?
+
+The check runs on the server itself and opens no connection. Compare the binary
+that is running with the package that already contains the patch. `php -v` is
+not enough. It may not be the interpreter serving the site, and a distribution
+can apply the fix without changing the PHP version number.
+
+<Aside title="Do not trigger the flaw" type="danger">
+
+  Do not send a test request or use a remote scanner to see whether the server
+  is vulnerable. Those scanners exhaust memory on purpose to find out whether
+  the worker crashes. That is the flaw, not a check, and it can drop the
+  requests that worker was already handling.
+
+</Aside>
+
+### The package on disk
+
+On Ubuntu or Debian you do not need to go out to the network. These two
+commands read what is already installed.
+
+```bash
+apt list '?installed ?name(^php[0-9.]+$)'
+zgrep -l -i -e 109618 -e 109619 /usr/share/doc/php*/changelog.Debian.gz
+```
+
+If the CVE does not appear in the changelog of the package the site uses, that
+binary is not patched. Do not compare the strings by eye.
+`8.3.6-0ubuntu0.24.04.9` is older than `8.3.6-0ubuntu0.24.04.13`, even though 9
+looks greater than 13. Leave that to `dpkg`.
+
+```bash
+dpkg --compare-versions '8.3.6-0ubuntu0.24.04.9' ge '8.3.6-0ubuntu0.24.04.13'
+echo $?
+```
+
+That example exits `1`. The first argument is not greater than or equal to the
+second. When you compare your own package, `0` means it has reached the version
+on the right.
+
+<a href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available" target="_blank">Ubuntu
+published these fixes</a>
+on October 21, 2026. The first version that contains the patch is the one in
+the table. 22.04 and later are in standard support. 20.04 and 18.04 come
+through Expanded Security Maintenance. 16.04 and 14.04 also require the Legacy
+add-on.
+
+| **Ubuntu** | **Package** | **First version with the patch** |
+| :--------- | :---------- | :------------------------------- |
+| 26.10      | php8.5      | 8.5.9-0ubuntu2.1                 |
+| 26.04      | php8.5      | 8.5.4-0ubuntu1.5                 |
+| 24.04      | php8.3      | 8.3.6-0ubuntu0.24.04.13          |
+| 22.04      | php8.1      | 8.1.2-1ubuntu2.28                |
+| 20.04      | php7.4      | 7.4.3-4ubuntu2.29+esm5           |
+| 18.04      | php7.2      | 7.2.24-0ubuntu0.18.04.17+esm14   |
+| 16.04      | php7.0      | 7.0.33-0ubuntu0.16.04.16+esm22   |
+| 14.04      | php5        | 5.5.9+dfsg-1ubuntu4.29+esm18     |
+
+On Debian the check is the same changelog. Do not treat the package as patched
+just because `php -v` prints a number. On RPM, search the advisory inside the
+package that is actually installed. The name changes by branch.
+
+```bash
+rpm -q --changelog php-fpm | grep -e 109618 -e 109619
+```
+
+If you built PHP from the php.net source, the version number does count. The
+first safe releases are 8.5.12, 8.4.27, 8.3.36, and 8.2.35, from the table in
+the previous section. The project publishes no patch for 8.1 or anything older.
+An Ubuntu 22.04 package reporting 8.1.2 can be patched. Any 8.1 downloaded from
+php.net is not.
+
+### Ondřej Surý's packages
+
+The Ubuntu table does not apply if PHP came from `ppa:ondrej/php` or from
+<a href="https://packages.sury.org/php/" target="_blank">packages.sury.org</a>.
+Those packages have their own revision. An 8.1.34 build can predate the patch,
+and an Ubuntu 8.3.6 cannot be compared with a Surý 8.3.36.
+
+First check where the package came from. Replace `php8.3` with the branch that
+serves the site.
+
+```bash
+apt-cache policy php8.3
+```
+
+If the origin is `packages.sury.org` or `ppa.launchpad.net/ondrej/php`, ignore
+the Ubuntu table. The changelog is still the proof. The `zgrep` above must
+mention `109618` or `109619`.
+
+If the changelog is missing, compare against the revision that repository
+published on October 21 and 22, 2026. I checked it on October 24 for Debian 11,
+12, and 13, and for Ubuntu 22.04 and 24.04. The `+debian12` or `+ubuntu24.04`
+suffix changes with the system. The part that matters is the one on the left,
+including the epoch. PHP 7.4 and PHP 8.0 have one.
+
+| **Package** | **Minimum revision** |
+| :---------- | :------------------- |
+| php8.5      | 8.5.12-1             |
+| php8.4      | 8.4.27-1             |
+| php8.3      | 8.3.36-1             |
+| php8.2      | 8.2.35-1             |
+| php8.1      | 8.1.34-9             |
+| php8.0      | 1:8.0.30-25          |
+| php7.4      | 1:7.4.33-31          |
+| php7.3      | 7.3.33-35            |
+| php7.2      | 7.2.34-66            |
+| php7.1      | 7.1.33-81            |
+| php7.0      | 7.0.33-93            |
+| php5.6      | 5.6.40-105           |
+
+`php8.6` is not in the table. That day the index still published `8.6.0~rc3`,
+built on October 12. Do not treat it as patched.
+
+```bash
+dpkg --compare-versions "$(dpkg-query -W -f '${Version}' php8.1)" ge '8.1.34-9'
+echo $?
+```
+
+`0` means the installed package has reached that revision. `1` means it has
+not. Do not compare against a bare `8.1.34`. `8.1.34-8` is older than
+`8.1.34-9`, and the second one is the revision that carries the patch. If the
+origin is the PPA and the version does not match, the changelog decides.
+
+### The process still in memory
+
+Updating the package does not replace code that is already loaded. The worker
+keeps the old binary until you restart it. Look at the process executable, not
+at the new file on disk.
+
+```bash
+ps -eo pid,lstart,cmd | grep -E '[p]hp-fpm|[a]pache2|[h]ttpd'
+sudo readlink /proc/PID/exe
+```
+
+Replace `PID` with the value in the first column. Do not use `readlink -f`.
+That option resolves the current path and hides the fact that matters. If the
+output ends in `(deleted)`, the process is still running the binary from before
+the update.
+
+With mod_php the process is Apache. `apache2` not saying `(deleted)` proves
+nothing, because the vulnerable code is in `libphp*.so`. Check the process
+memory map.
+
+```bash
+sudo grep 'libphp' /proc/PID/maps
+```
+
+If that line also ends in `(deleted)`, Apache is still using the old module.
+Restart PHP-FPM, Apache, or whichever service applies, then run both commands
+again. The `lstart` time has to be later than the update.
+
+Do this for every binary. A server can run `php8.2-fpm` and `php8.3-fpm` at the
+same time, and the site may be using the one you did not update. The `php` on
+`PATH` does not have to be either of them.
+
+### PHP inside a container
+
+The host `php` says nothing about the container. Enter the container, or
+inspect the image, and repeat both checks. If the image was built before the
+patch, the site is still vulnerable even when the host is already updated.
+
+A clean pass means that process is running a patched binary. It does not mean
+nobody got in before the restart. That is what the next section is for.
 
 ## Was my server compromised? Did it leave any traces?
 
@@ -746,8 +912,17 @@ you suspect a compromise.**
     deb.sury.org: issue 145
   </a>
 - <a
+    href="https://www.herodevs.com/blog-posts/the-php2shell-story-the-manwho-keeps-php-running"
+    target="_blank"
+  >
+    HeroDevs: The PHP2Shell Story & The Man Who Keeps PHP Running
+  </a>
+- <a
     href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available"
     target="_blank"
   >
     Ubuntu: PHP2Shell fixes available
+  </a>
+- <a href="https://packages.sury.org/php/" target="_blank">
+    packages.sury.org: Ondřej Surý's PHP repository
   </a>

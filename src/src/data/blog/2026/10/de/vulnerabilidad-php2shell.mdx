@@ -5,7 +5,7 @@ description: >-
   beliebigen Codes auf verwundbaren Webservern. Risiken und Gegenmaßnahmen.
 slug: "php2shell-kritische-php-sicherheitsluecken"
 pubDatetime: 2026-10-21T00:00:00-06:00
-modDatetime: 2026-10-22T00:00:00-06:00
+modDatetime: 2026-10-24T00:00:00-06:00
 lang: de
 featured: false
 draft: false
@@ -129,11 +129,12 @@ auf ein Update ihres Anbieters warten.
 
 Der unabhängige Maintainer
 <a href="https://github.com/sponsors/oerdnj" target="_blank">Ondřej Surý</a> hat
-<a href="https://codeberg.org/oerdnj/deb.sury.org/issues/145" target="_blank">Versionen</a>
-von PHP 7.4, 8.0 und 8.1 mit den Sicherheitskorrekturen veröffentlicht. Auch
-Linux-Distributionen werden ihre Pakete voraussichtlich bald aktualisieren.
-Ubuntu hat beispielsweise bereits Sicherheitsupdates für diese drei Versionen in
-seinen offiziellen Repositories für
+am 21. und 22. Oktober 2026
+<a href="https://codeberg.org/oerdnj/deb.sury.org/issues/145" target="_blank">korrigierte Pakete</a>
+für alle Zweige veröffentlicht, die er pflegt, von PHP 5.6 bis PHP 8.5. Wie du
+eines dieser Pakete prüfst, steht im Abschnitt weiter unten. Ubuntu hat
+seinerseits bereits Sicherheitsupdates für PHP 7.4, 8.0 und 8.1 in seinen
+offiziellen Repositories für
 <a href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available" target="_blank">Ubuntu
 Expanded Security Maintenance</a> veröffentlicht.
 
@@ -144,6 +145,178 @@ zu deaktivieren oder Konfigurationswerte zu verringern. Diese Maßnahmen sind
 nicht vollständig wirksam und garantieren die Sicherheit des Servers nicht.
 Aktualisiere PHP auf eine sichere Version und starte den Prozess oder Server
 neu, damit tatsächlich die aktualisierte Version läuft.
+
+## Ist mein Server noch verwundbar?
+
+Die Prüfung läuft auf dem Server selbst und öffnet keine Verbindung. Vergleiche
+die laufende Programmdatei mit dem Paket, das den Patch bereits enthält.
+`php -v` genügt nicht. Das muss nicht der Interpreter sein, der die Website
+bedient, und eine Distribution kann die Korrektur einspielen, ohne die
+PHP-Versionsnummer zu ändern.
+
+<Aside title="Löse die Schwachstelle nicht aus" type="danger">
+
+  Sende keine Testanfrage und verwende keinen entfernten Scanner, um zu prüfen,
+  ob der Server verwundbar ist. Diese Scanner erschöpfen den Speicher absichtlich,
+  um zu sehen, ob der Worker abstürzt. Das ist die Schwachstelle, keine Prüfung,
+  und sie kann die Anfragen abbrechen, die dieser Worker gerade bearbeitet.
+
+</Aside>
+
+### Das Paket auf der Festplatte
+
+Unter Ubuntu oder Debian musst du nicht ins Netz gehen. Diese beiden Befehle
+lesen, was bereits installiert ist.
+
+```bash
+apt list '?installed ?name(^php[0-9.]+$)'
+zgrep -l -i -e 109618 -e 109619 /usr/share/doc/php*/changelog.Debian.gz
+```
+
+Wenn die CVE im Änderungsprotokoll des Pakets fehlt, das die Website verwendet,
+ist diese Programmdatei nicht korrigiert. Vergleiche die Zeichenketten nicht
+nach Augenmaß. `8.3.6-0ubuntu0.24.04.9` ist älter als
+`8.3.6-0ubuntu0.24.04.13`, auch wenn 9 größer aussieht als 13. Überlass das
+`dpkg`.
+
+```bash
+dpkg --compare-versions '8.3.6-0ubuntu0.24.04.9' ge '8.3.6-0ubuntu0.24.04.13'
+echo $?
+```
+
+Dieses Beispiel endet mit `1`. Das erste Argument ist nicht größer oder gleich
+dem zweiten. Wenn du dein eigenes Paket vergleichst, bedeutet `0`, dass du die
+Version rechts erreicht hast.
+
+<a href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available" target="_blank">Ubuntu
+hat diese Korrekturen veröffentlicht</a>,
+und zwar am 21. Oktober 2026. Die erste Version mit dem Patch steht in der
+Tabelle. 22.04 und neuer liegen im normalen Support. 20.04 und 18.04 kommen
+über Expanded Security Maintenance. 16.04 und 14.04 brauchen zusätzlich das
+Legacy-Add-on.
+
+| **Ubuntu** | **Paket** | **Erste Version mit dem Patch** |
+| :--------- | :-------- | :------------------------------ |
+| 26.10      | php8.5    | 8.5.9-0ubuntu2.1                |
+| 26.04      | php8.5    | 8.5.4-0ubuntu1.5                |
+| 24.04      | php8.3    | 8.3.6-0ubuntu0.24.04.13         |
+| 22.04      | php8.1    | 8.1.2-1ubuntu2.28               |
+| 20.04      | php7.4    | 7.4.3-4ubuntu2.29+esm5          |
+| 18.04      | php7.2    | 7.2.24-0ubuntu0.18.04.17+esm14  |
+| 16.04      | php7.0    | 7.0.33-0ubuntu0.16.04.16+esm22  |
+| 14.04      | php5      | 5.5.9+dfsg-1ubuntu4.29+esm18    |
+
+Unter Debian ist die Prüfung dasselbe Änderungsprotokoll. Halte das Paket
+nicht für korrigiert, nur weil `php -v` eine Nummer ausgibt. Unter RPM suchst
+du den Hinweis im tatsächlich installierten Paket. Der Name hängt vom Zweig ab.
+
+```bash
+rpm -q --changelog php-fpm | grep -e 109618 -e 109619
+```
+
+Wenn du PHP aus dem Quellcode von php.net gebaut hast, zählt die Versionsnummer.
+Die ersten sicheren Versionen sind 8.5.12, 8.4.27, 8.3.36 und 8.2.35, also die
+aus der Tabelle im vorherigen Abschnitt. Das Projekt veröffentlicht keinen
+Patch für 8.1 oder älter. Ein 8.1.2 von Ubuntu 22.04 kann korrigiert sein.
+Jedes von php.net heruntergeladene 8.1 ist es nicht.
+
+### Die Pakete von Ondřej Surý
+
+Die Ubuntu-Tabelle gilt nicht, wenn PHP aus `ppa:ondrej/php` oder von
+<a href="https://packages.sury.org/php/" target="_blank">packages.sury.org</a>
+stammt. Diese Pakete haben eine eigene Revision. Ein 8.1.34 kann älter sein als
+der Patch, und ein Ubuntu-8.3.6 lässt sich nicht mit einem Surý-8.3.36
+vergleichen.
+
+Sieh zuerst nach, woher das Paket kommt. Ersetze `php8.3` durch den Zweig, der
+die Website bedient.
+
+```bash
+apt-cache policy php8.3
+```
+
+Wenn die Herkunft `packages.sury.org` oder `ppa.launchpad.net/ondrej/php` ist,
+ignoriere die Ubuntu-Tabelle. Das Änderungsprotokoll bleibt der Nachweis. Das
+`zgrep` oben muss `109618` oder `109619` erwähnen.
+
+Wenn das Änderungsprotokoll fehlt, vergleiche mit der Revision, die dieses
+Repository am 21. und 22. Oktober 2026 veröffentlicht hat. Ich habe sie am 24.
+Oktober für Debian 11, 12 und 13 sowie für Ubuntu 22.04 und 24.04 nachgesehen.
+Das Suffix `+debian12` oder `+ubuntu24.04` ändert sich je nach System. Der
+entscheidende Teil steht links, einschließlich der Epoch. PHP 7.4 und PHP 8.0
+haben eine.
+
+| **Paket** | **Mindestrevision** |
+| :-------- | :------------------ |
+| php8.5    | 8.5.12-1            |
+| php8.4    | 8.4.27-1            |
+| php8.3    | 8.3.36-1            |
+| php8.2    | 8.2.35-1            |
+| php8.1    | 8.1.34-9            |
+| php8.0    | 1:8.0.30-25         |
+| php7.4    | 1:7.4.33-31         |
+| php7.3    | 7.3.33-35           |
+| php7.2    | 7.2.34-66           |
+| php7.1    | 7.1.33-81           |
+| php7.0    | 7.0.33-93           |
+| php5.6    | 5.6.40-105          |
+
+`php8.6` steht nicht in der Tabelle. An diesem Tag veröffentlichte der Index
+noch `8.6.0~rc3`, gebaut am 12. Oktober. Halte es nicht für korrigiert.
+
+```bash
+dpkg --compare-versions "$(dpkg-query -W -f '${Version}' php8.1)" ge '8.1.34-9'
+echo $?
+```
+
+`0` bedeutet, dass das installierte Paket diese Revision erreicht hat. `1`
+bedeutet, dass es sie nicht erreicht hat. Vergleiche nicht mit einem bloßen
+`8.1.34`. `8.1.34-8` ist älter als `8.1.34-9`, und erst die zweite Revision
+enthält den Patch. Wenn die Herkunft das PPA ist und die Version nicht
+übereinstimmt, entscheidet das Änderungsprotokoll.
+
+### Der Prozess, der noch im Speicher liegt
+
+Das Paket zu aktualisieren ersetzt keinen Code, der bereits geladen ist. Der
+Worker behält die alte Programmdatei, bis du ihn neu startest. Sieh dir die
+ausführbare Datei des Prozesses an, nicht die neue Datei auf der Festplatte.
+
+```bash
+ps -eo pid,lstart,cmd | grep -E '[p]hp-fpm|[a]pache2|[h]ttpd'
+sudo readlink /proc/PID/exe
+```
+
+Ersetze `PID` durch den Wert aus der ersten Spalte. Verwende nicht
+`readlink -f`. Diese Option löst den aktuellen Pfad auf und verbirgt die
+Information, auf die es ankommt. Endet die Ausgabe mit `(deleted)`, führt der
+Prozess noch die Programmdatei von vor der Aktualisierung aus.
+
+Bei mod_php ist der Prozess Apache. Dass `apache2` nicht `(deleted)` ausgibt,
+beweist nichts, weil der verwundbare Code in `libphp*.so` liegt. Prüfe die
+Speicherkarte des Prozesses.
+
+```bash
+sudo grep 'libphp' /proc/PID/maps
+```
+
+Wenn auch diese Zeile mit `(deleted)` endet, verwendet Apache noch das alte
+Modul. Starte PHP-FPM, Apache oder den zuständigen Dienst neu und führe beide
+Befehle erneut aus. Die Zeit in `lstart` muss nach der Aktualisierung liegen.
+
+Mach das für jede Programmdatei. Ein Server kann `php8.2-fpm` und `php8.3-fpm`
+gleichzeitig betreiben, und die Website kann die Variante verwenden, die du
+nicht aktualisiert hast. Das `php` im `PATH` muss keines von beiden sein.
+
+### PHP in einem Container
+
+Das `php` des Hosts sagt nichts über den Container. Betritt den Container oder
+untersuche das Image und wiederhole beide Prüfungen. Wenn das Image vor dem
+Patch gebaut wurde, bleibt die Website verwundbar, auch wenn der Host bereits
+aktualisiert ist.
+
+Ein sauberes Ergebnis bedeutet, dass dieser Prozess eine korrigierte
+Programmdatei ausführt. Es bedeutet nicht, dass vor dem Neustart niemand
+eingedrungen ist. Dafür ist der nächste Abschnitt da.
 
 ## Wurde mein Server kompromittiert? Gibt es Spuren?
 
@@ -760,8 +933,17 @@ Sicherheitsuntersuchung durchführen und Fachleute hinzuziehen.**
     deb.sury.org: Issue 145
   </a>
 - <a
+    href="https://www.herodevs.com/blog-posts/the-php2shell-story-the-manwho-keeps-php-running"
+    target="_blank"
+  >
+    HeroDevs: die Geschichte von PHP2Shell und dem Mann, der PHP am Laufen hält
+  </a>
+- <a
     href="https://ubuntu.com/blog/php2shell-vulnerability-fixes-available"
     target="_blank"
   >
     Ubuntu: PHP2Shell-Korrekturen verfügbar
+  </a>
+- <a href="https://packages.sury.org/php/" target="_blank">
+    packages.sury.org: PHP-Repository von Ondřej Surý
   </a>
