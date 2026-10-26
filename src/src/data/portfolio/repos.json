@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19T12:14:30.975Z",
+  "generatedAt": "2026-10-26T12:19:15.547Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -53,7 +53,7 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-19T04:02:11Z"
+      "pushedAt": "2026-10-26T04:05:40Z"
     },
     {
       "name": "rgglez-website",
@@ -67,7 +67,33 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-17T02:58:07Z"
+      "pushedAt": "2026-10-24T08:15:06Z"
+    },
+    {
+      "name": "gettext-translator",
+      "description": "Translates Gettext .po files using a variety of supported AI backends",
+      "url": "https://github.com/rgglez/gettext-translator",
+      "homepage": null,
+      "language": "Python",
+      "topics": [
+        "ai"
+      ],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-10-23T16:41:54Z"
+    },
+    {
+      "name": "gettext-spellchecker",
+      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
+      "url": "https://github.com/rgglez/gettext-spellchecker",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-10-23T16:41:52Z"
     },
     {
       "name": "gettext-po2json",
@@ -678,20 +704,6 @@
       "pushedAt": "2026-07-07T06:00:37Z"
     },
     {
-      "name": "gettext-translator",
-      "description": "Translates Gettext .po files using a variety of supported AI backends",
-      "url": "https://github.com/rgglez/gettext-translator",
-      "homepage": null,
-      "language": "Python",
-      "topics": [
-        "ai"
-      ],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-06-23T21:12:11Z"
-    },
-    {
       "name": "astro-seo",
       "description": "Optimize your website for search engines and social media with meta tags, Open Graph, and JSON-LD.",
       "url": "https://github.com/rgglez/astro-seo",
@@ -916,18 +928,6 @@
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-02-03T04:53:14Z"
-    },
-    {
-      "name": "gettext-spellchecker",
-      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
-      "url": "https://github.com/rgglez/gettext-spellchecker",
-      "homepage": null,
-      "language": "Python",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-02-03T04:53:09Z"
     },
     {
       "name": "yii-svelte-simpleautocomplete",
