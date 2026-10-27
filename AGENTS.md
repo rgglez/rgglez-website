@@ -23,8 +23,8 @@ explícitamente a qué idiomas traducirlo. No crear directorios `en/`, `fr/`,
 | Schema del frontmatter | `src/src/content.config.ts` (fuente de verdad)           |
 
 `<nombre-base>` es el nombre del archivo en español, en kebab-case, y **es el
-mismo en todos los idiomas**. Lo que cambia entre idiomas es el campo `slug`
-del frontmatter, no el nombre del archivo ni la carpeta de assets.
+mismo en todos los idiomas**. Lo que cambia entre idiomas es el campo `slug` del
+frontmatter, no el nombre del archivo ni la carpeta de assets.
 
 `<AAAA>/<MM>` corresponden a `pubDatetime`.
 
@@ -44,24 +44,23 @@ campos nuevos. Valores fijos de este sitio:
 - `author`: omitir (default `Rodolfo González González` desde `config.ts`).
 - `timezone`: `"America/Mexico_City"`.
 - `license`: `"CC BY-NC-ND 4.0"`.
-- `licenseUrl`: `https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.<lang>`
-  — sufijo `es`/`en`/`fr`/`de`; para `zh` usar `en` (no existe versión china).
+- `licenseUrl`:
+  `https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.<lang>` — sufijo
+  `es`/`en`/`fr`/`de`; para `zh` usar `en` (no existe versión china).
 - `featured: false` y `draft: false` salvo indicación contraria.
 - `pubDatetime` y `modDatetime`: iguales al crear, formato
   `AAAA-MM-DDT00:00:00-06:00`.
 - `ogImage`: ruta **relativa** desde el `.mdx`, cinco niveles arriba, apuntando
   al `<nombre-base>` en español:
-  `"../../../../../assets/posts/<AAAA>/<MM>/<nombre-base>/header.webp"`.
-  El alias `@/` NO funciona aquí. La imagen debe tener proporción 1.91:1
-  (el layout la recorta a 1200×630 y la sirve como JPEG; Facebook y WhatsApp
-  no leen WebP).
+  `"../../../../../assets/posts/<AAAA>/<MM>/<nombre-base>/header.webp"`. El
+  alias `@/` NO funciona aquí. La imagen debe tener proporción 1.91:1 (el layout
+  la recorta a 1200×630 y la sirve como JPEG; Facebook y WhatsApp no leen WebP).
 - `tags`: kebab-case, minúsculas. Los tags técnicos (`cloudflare`, `astro`,
   `d1`) se dejan igual en todos los idiomas; solo se traducen los descriptivos.
 - `description`: bloque `>-`, 2–4 líneas; se usa en `<meta description>`, en
-  `og:description` y en las tarjetas del índice. **Entre 100 y 160
-  caracteres** contados sobre el texto ya unido en una línea; el layout corta
-  en 160 para `og:description`, pero hay que escribirla completa dentro del
-  límite.
+  `og:description` y en las tarjetas del índice. **Entre 100 y 160 caracteres**
+  contados sobre el texto ya unido en una línea; el layout corta en 160 para
+  `og:description`, pero hay que escribirla completa dentro del límite.
 - `title`: **máximo 60 caracteres** recomendados. El layout añade
   ` | rodolfo.gg` al `<title>` y lo quita de `og:title`, que recorta a 60 con
   `…`; con 47 o menos no se recorta nada.
@@ -80,8 +79,8 @@ No se escriben en el frontmatter; los emite `src/src/layouts/Layout.astro`:
 | `og:image:width`, `og:image:height` | 1200 y 630 (fijos)                             |
 | `og:image:alt`                     | `title` sin sufijo                              |
 
-Si se añade un idioma a `SITE.supportedLangs`, hay que añadirlo también al
-mapa `OG_LOCALES` de `Layout.astro`.
+Si se añade un idioma a `SITE.supportedLangs`, hay que añadirlo también al mapa
+`OG_LOCALES` de `Layout.astro`.
 
 ## Estructura del cuerpo
 
@@ -128,12 +127,18 @@ mapa `OG_LOCALES` de `Layout.astro`.
   [otro post del blog](/es/posts/2026/04/slug-del-post)
   ```
 
-  Nunca escribir `https://rodolfo.gg/...`: rompe la navegación en local.
-  Antes de enlazar una traducción, comprobar que ese idioma existe; si no,
-  dejar el texto sin enlace.
-- Terminar siempre con `## Fuentes verificadas` y enlaces reales y
-  comprobables. Guías de instalación: indicar en un `<Aside>` la fecha de
-  verificación y las versiones exactas probadas.
+  Nunca escribir `https://rodolfo.gg/...`: rompe la navegación en local. Antes
+  de enlazar una traducción, comprobar que ese idioma existe; si no, dejar el
+  texto sin enlace.
+- Terminar siempre con `## Fuentes verificadas` y enlaces reales y comprobables
+  de libre acceso. Citar en formato APA 7.
+- Guías de instalación: indicar en un `<Aside>` la fecha de verificación y las
+  versiones exactas probadas.
+
+## Idioma
+
+- Se usa español de México.
+- Las comillas son dobles "".
 
 ## Tono
 
@@ -147,6 +152,8 @@ final, antes de las fuentes. Evitar el uso excesivo de dos puntos (colon sign):
 árbol es verde: tiene clorofila".
 
 Prettier con `printWidth: 80`: envolver la prosa a 80 columnas.
+
+No usar el tono de skills como `caveman` para redactar textos.
 
 ## Componentes disponibles
 
@@ -176,8 +183,8 @@ import P5Sketch from "@rgglez/astro-p5js-sketch";
 
 ## Imagen de cabecera
 
-Cada post lleva `header.webp` en su carpeta de assets. Se genera con este
-prompt base, **invariable**, más una frase final que describe el contenido:
+Cada post lleva `header.webp` en su carpeta de assets. Se genera con este prompt
+base, **invariable**, más una frase final que describe el contenido:
 
 > Genera una imagen apta tanto para og:image como para hero header de un blog
 > post. Fondo blanco. Trazos negros. Escala de grises. Caricaturezco y
@@ -194,8 +201,8 @@ prompt (qué debe aparecer en la imagen). No generar la imagen: yo la produzco.
 Las cadenas estáticas de `components/`, `layouts/` y `pages/` se traducen con
 `@rgglez/astro-i18n-gettext`. No aplica a los `.mdx`.
 
-- Catálogos en `src/src/i18n/`: `messages.pot`, `<lang>/messages.po` (se
-  editan) y `<lang>/messages.json` (generados, no editar a mano).
+- Catálogos en `src/src/i18n/`: `messages.pot`, `<lang>/messages.po` (se editan)
+  y `<lang>/messages.json` (generados, no editar a mano).
 - msgid en inglés. `en/messages.po` lleva msgstr = msgid (`msgen`).
 - Marcar así; importar siempre de `@/i18n`, no del paquete:
 
@@ -209,10 +216,10 @@ Las cadenas estáticas de `components/`, `layouts/` y `pages/` se traducen con
 
 - Solo `_()` / `_n()`; no `<T>` (`xgettext` no lo extrae).
 - Interpolación siempre con `sprintf` (sprintf-js), placeholder dentro del
-  msgid: `sprintf(_("Tag: %s"), tag)`, posicionales `%1$s`/`%2$s` si hay
-  varios. Plurales: `sprintf(_n("%d star", "%d stars", n), n)`.
-- Títulos de página: `sprintf("%s | %s", _("Posts"), SITE.title)`. El formato
-  no se traduce porque `Layout.astro` quita el sufijo ` | rodolfo.gg` para
+  msgid: `sprintf(_("Tag: %s"), tag)`, posicionales `%1$s`/`%2$s` si hay varios.
+  Plurales: `sprintf(_n("%d star", "%d stars", n), n)`.
+- Títulos de página: `sprintf("%s | %s", _("Posts"), SITE.title)`. El formato no
+  se traduce porque `Layout.astro` quita el sufijo ` | rodolfo.gg` para
   `og:title`.
 - Cadenas usadas en `<script>` de cliente: traducir en servidor y pasarlas por
   `data-*`. No se envían catálogos al navegador.
@@ -236,6 +243,6 @@ Antes de dar por terminado un post:
 cd src && bun run build
 ```
 
-Falla el build si el frontmatter no cumple el schema o si una ruta de imagen
-no resuelve. Los archivos que empiezan con `_` quedan fuera de la colección
+Falla el build si el frontmatter no cumple el schema o si una ruta de imagen no
+resuelve. Los archivos que empiezan con `_` quedan fuera de la colección
 (`**/[^_]*.{md,mdx}`), por eso `_template.mdx` no se publica.

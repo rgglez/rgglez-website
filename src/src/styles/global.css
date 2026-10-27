@@ -2,6 +2,7 @@
 @import "./typography.css";
 
 @source "../../node_modules/@rgglez/astro-aside/src/**/*.astro";
+@source "../../node_modules/@rgglez/astro-tocbutton/src/**/*.astro";
 @source "../components/**/*.{astro,tsx,ts}";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
