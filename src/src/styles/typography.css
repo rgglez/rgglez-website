@@ -60,10 +60,29 @@
       @apply opacity-75;
     }
 
+    /* block + overflow: la tabla ancha hace scroll propio en móvil en vez
+       de ensanchar la página. Las filas siguen en una tabla anónima. */
     table {
+      @apply block overflow-x-auto;
+
+      /* Sombra en el borde con contenido oculto. Las capas "local" se mueven
+         con el contenido y tapan las sombras "scroll" al llegar a cada
+         extremo. Requiere celdas sin fondo propio. */
+      --shadow: color-mix(in srgb, var(--heading) 25%, transparent);
+      background:
+        linear-gradient(to right, var(--background) 30%, transparent) left /
+          2rem 100% no-repeat local,
+        linear-gradient(to left, var(--background) 30%, transparent) right /
+          2rem 100% no-repeat local,
+        radial-gradient(farthest-side at 0 50%, var(--shadow), transparent)
+          left / 0.75rem 100% no-repeat scroll,
+        radial-gradient(farthest-side at 100% 50%, var(--shadow), transparent)
+          right / 0.75rem 100% no-repeat scroll;
+
       th,
       td {
-        @apply border border-border p-2;
+        /* min-w evita columnas de una palabra por línea en móvil. */
+        @apply min-w-40 border border-border p-2;
       }
 
       th {

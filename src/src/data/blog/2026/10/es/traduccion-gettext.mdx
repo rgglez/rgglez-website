@@ -5,7 +5,7 @@ description: >-
   la importancia de la i18n y mis herramientas para su ecosistema.
 slug: "traduccion-gettext"
 pubDatetime: 2026-10-26T00:00:00-06:00
-modDatetime: 2026-10-26T00:00:00-06:00
+modDatetime: 2026-10-27T00:00:00-06:00
 lang: es
 ogImage: "../../../../../assets/posts/2026/10/traduccion-gettext/header.webp"
 featured: false
@@ -76,6 +76,9 @@ cadenas traducibles del software, mientras que los archivos PO son los catálogo
 de traducciones para cada idioma específico.
 
 **Por el momento quédate con las 25,000 cadenas traducibles de mi proyecto.**
+Ese número vuelve al comparar gettext con los
+[sistemas basados en claves](#claves). Ahí se ve el coste de mantenerlas frente
+a revisar las entradas `fuzzy` de `msgmerge`.
 
 </Aside>
 
@@ -235,7 +238,22 @@ y extrae la cadena con `xgettext`:
 xgettext --language=C++ --from-code=UTF-8 -o ejemplo.pot ejemplo.cpp
 ```
 
-Los archivos PO y POT tienen la siguiente estructura:
+`xgettext` no extrae el `""` de `setlocale(LC_ALL, "")`. Solo saca los
+argumentos de `gettext` y de las demás funciones marcadas. En este programa la
+única cadena traducible es `Open Menu`, y la referencia cae en la línea 11.
+
+El POT y el PO comparten el formato. El `msgid ""` del inicio no es una cadena
+del programa. Es la cabecera. `xgettext` la rellena con metadatos del paquete.
+Abajo va solo la entrada extraída, que es lo que se traduce. En el POT el
+`msgstr` va vacío.
+
+```text
+#: ejemplo.cpp:11
+msgid "Open Menu"
+msgstr ""
+```
+
+El PO de cada idioma parte de esa plantilla y llena los `msgstr`.
 
 ```text
 msgid ""
@@ -248,11 +266,9 @@ msgid "Open Menu"
 msgstr "Abrir menú"
 ```
 
-En un archivo POT, `msgstr` queda vacío para que se traduzca en cada archivo PO.
-
-Como puede verse, en GNU gettext el identificador del mensaje a traducir es la
+Como puede verse, **en GNU gettext el identificador del mensaje a traducir es la
 cadena original, normalmente en inglés, aunque puede usarse otro idioma como
-base. Es importante que todas las cadenas en el programa se escriban en el
+base**. Es importante que todas las cadenas en el programa se escriban en el
 idioma seleccionado como base.
 
 El traductor recibe el archivo POT y genera un PO usando un programa como
@@ -286,18 +302,96 @@ LANG=es_MX.UTF-8 ./ejemplo
 Abrir menú
 ```
 
+`setlocale(LC_ALL, "")` es el patrón con el que el manual arranca el programa.
+La cadena vacía no se traduce. Le pide a la biblioteca que tome la locale del
+entorno. Sin una llamada que tenga éxito, gettext no consulta catálogos.
+
 El programa busca la traducción de `Open Menu` en el dominio `ejemplo`. Con
 `LANG=es_MX.UTF-8`, gettext prueba `es_MX.UTF-8`, `es_MX`, `es.UTF-8` y `es`
 hasta encontrar `locale/es/LC_MESSAGES/ejemplo.mo`. Si no encuentra esa
 traducción, imprime "Open Menu".
 
+`LANGUAGE` es una extensión de GNU. Tiene prioridad sobre `LANG` y `LC_ALL`
+para elegir el mensaje, no para el resto de categorías de la locale. Es una
+lista separada por dos puntos, por ejemplo `es_MX:es:en`. Sigue haciendo falta
+que `LANG` o `LC_ALL` apunten a una locale distinta de `C`. Si el proceso se
+queda en `C`, gettext ignora `LANGUAGE`.
+
 <Aside title="La locale debe existir" type="warning">
 
-Si la locale `es_MX.UTF-8` no está instalada en el sistema (revísalo con
-`locale -a`), `setlocale` falla y el programa se queda en la locale "C". En ella
-gettext no traduce nada e ignora incluso la variable `LANGUAGE`.
+Si la locale `es_MX.UTF-8` no está instalada (revísalo con `locale -a`),
+`setlocale` falla y el proceso se queda en `C`. En esa locale gettext no
+traduce e ignora `LANGUAGE`, aunque la variable esté definida.
 
 </Aside>
+
+### Cómo escribir las cadenas
+
+En GNU gettext las cadenas se escriben de forma natural, interpolando variables. No se usan cadenas cortadas.
+
+La herramienta no arregla una cadena mal cortada. El manual pide oraciones
+completas y formato en lugar de concatenación. Estas son las reglas que más
+fallan.
+
+No partas la frase para rellenar huecos. El traductor no ve el código. Solo ve
+el `msgid`.
+
+```c
+/* Mal. El traductor recibe dos mitades que no puede reordenar. */
+printf("%s", _("File "));
+printf("%s", _("is write protected"));
+```
+
+```c
+/* Bien. La oración viaja entera y el hueco es un marcador. */
+printf(_("File %s is write protected"), filename);
+```
+
+En muchos idiomas una palabra concuerda con otra de la misma oración. Dos
+mitades traducidas por separado no se pueden pegar después.
+
+Evita ambigüedades y abreviaturas. "Caja" puede ser una caja, una registradora
+o un estuche. Escribe "Caja registradora". Si la interfaz necesita una forma
+corta, el traductor la acorta en el `msgstr`. El `msgid` se queda completo.
+
+No concatenes fragmentos. Usa placeholders. Con un solo hueco bastan `%s` y
+`%d`. Con dos o más, usa posicionales para que el traductor cambie el orden.
+
+```c
+/* Mal. */
+strcpy(s, "Replace ");
+strcat(s, object1);
+strcat(s, " with ");
+strcat(s, object2);
+
+/* Bien. */
+sprintf(s, _("Replace %1$s with %2$s?"), object1, object2);
+```
+
+En Python el equivalente es `%(nombre)s`.
+
+Una cadena corta se repite con significados distintos. `pgettext()` la separa.
+El primer argumento es el contexto y tiene que ser un literal. `xgettext` lo
+guarda en `msgctxt`. Es una macro de `gettext.h`, no de `libintl.h`. Un
+comentario inmediato que empiece por `TRANSLATORS:` llega al PO como `#.` si
+extraes con `xgettext --add-comments=TRANSLATORS:`. Sin esa opción, el
+comentario no viaja.
+
+```c
+/* TRANSLATORS: Botón que abre el menú. No es el adjetivo "abierto". */
+pgettext("verb", "Open");
+```
+
+```po
+#. TRANSLATORS: Botón que abre el menú. No es el adjetivo "abierto".
+msgctxt "verb"
+msgid "Open"
+msgstr "Abrir"
+```
+
+Los plurales van con `ngettext`. El código solo aporta las dos formas del
+idioma fuente. Cuántas formas tiene el destino, y cuál se usa, lo declara cada
+PO en `Plural-Forms`. El ejemplo del español y el del polaco está más abajo.
 
 ### Otras herramientas de i18n
 
@@ -364,11 +458,31 @@ capacidades técnicas y limitaciones prácticas.
   msgstr[1] "Tienes %d mensajes nuevos."
   ```
 
+  El español usa dos formas. El polaco usa tres, así que el PO trae
+  `msgstr[0]`, `msgstr[1]` y `msgstr[2]`. La expresión es C y vive en el
+  archivo de destino, no en el código. El árabe usa seis. Las fórmulas están en <a href="https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html" target="_blank">Plural forms</a> del manual.
+
+  ```po
+  "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+  ```
+
+  Fuera de los plurales hay tres límites que se notan al traducir. Una cadena
+  muy corta, repetida en dos sitios de la interfaz, no se distingue sola.
+  `msgctxt` la separa. gettext no reordena variables. Eso lo hace el formato
+  del lenguaje, con `%1$s` y `%2$s`, o con `%(nombre)s` en Python. Si el
+  formateador no admite posiciones, el traductor no puede cambiar el orden. En
+  un catálogo de unas 25,000 cadenas el archivo PO pesa, y `msgmerge` tarda más
+  al buscar coincidencias fuzzy. Es manejable. No es motivo para volver a las
+  claves.
+
 - **ICU MessageFormat** es el estándar industrial. Ofrece un gran poder y
   soporte de CLDR, pero su sintaxis puede ser un obstáculo y su modelo simétrico
   puede limitar la expresividad del traductor. **MessageFormat 2.0**
-  (influenciada por Fluent), estable desde CLDR 47 en 2025, busca abordar
-  algunas de estas limitaciones.
+  (influenciada por Fluent) pasó de candidato final a estable en CLDR 47, el 13
+  de marzo de 2025. Busca abordar algunas de estas limitaciones.
+  A octubre de 2026 su adopción sigue siendo temprana. FormatJS, Lingui y el
+  plugin ICU de i18next siguen en MessageFormat 1. Tampoco tiene el ecosistema
+  de extracción y fusión de gettext.
 
   ```json
   {
@@ -401,7 +515,9 @@ Y aquí viene el problema...
 
 </Aside>
 
-## Mi problema con ICU MessageFormat, Fluent y otros sistemas basados en _keys_
+<a name="claves"></a>
+
+## Mi problema con ICU MessageFormat, Fluent y demás sistemas basados en _keys_
 
 Tal vez recuerdes mis 12,000 cadenas (hoy unas 25,000) de mi sistema escrito en
 PHP. Imagina ahora tener que crear 25,000 claves únicas estilo `mensaje-salida`
@@ -428,6 +544,19 @@ que el programa muestra el texto original en lugar de una traducción equivocada
 Además, un texto podría cambiar tanto que la clave ya no tendría ningún sentido
 de todos modos.
 
+Se ve en una errata. `Open Menu` pasa a `Open the menu`.
+
+```po
+#, fuzzy
+#| msgid "Open Menu"
+msgid "Open the menu"
+msgstr "Abrir menú"
+```
+
+Con una clave, `nav.open_menu` no se mueve. El inglés vive en otro campo. Un
+`git diff` de la clave no dice qué decía el texto, y el traductor se entera
+solo si otra herramienta le avisa.
+
 Sí, algunos editores tienen extensiones que muestran el texto original al pasar
 el puntero del ratón sobre la clave. Pero no todos los entornos las tienen, y en
 una revisión de código o un `git diff` la clave sigue sin decir nada.
@@ -437,8 +566,14 @@ subsanan antes de realizar la extracción. Y esos mismos retos están presentes 
 cualquier formato.
 
 En mi experiencia, en un sistema grande, ICU MessageFormat o Fluent podrían
-usarse únicamente en casos problemáticos, dejando las demás cadenas con
-traducciones de GNU gettext.
+usarse únicamente en casos problemáticos que involucren género (no he encontrado ninguno en 20 años), dejando las demás cadenas con traducciones de GNU gettext.
+
+<Aside title="El coste de las 25,000 claves" type="note">
+
+El coste no es la falta de género. Es inventar y cuidar 25,000 identificadores
+del estilo `inicio.bienvenida.numero.accesos.usuario`. Con GNU gettext revisas las entradas `fuzzy`. Con claves, mantienes 25,000 nombres que no dicen qué decía el texto.
+
+</Aside>
 
 ## La traducción
 
@@ -452,18 +587,16 @@ cualquier manera, el costo de una traducción especializada es elevado.
 
 Pero, afortunadamente (y desgraciadamente para los traductores humanos), gracias
 a los transformers... Estos
-<a href="https://arxiv.org/abs/1706.03762" target="_blank">transformers</a> han
-reducido increíblemente el costo de traducción. La traducción de alrededor de
-20,000 cadenas tuvo un costo de aproximadamente USD $11.00 en 2023 usando GPT
-mediante Microsoft Azure. Nada.
+<a href="https://arxiv.org/abs/1706.03762" target="_blank">transformers</a>, y todo lo que surgió a raíz de esa innovación, han reducido increíblemente el costo de traducción. La traducción de alrededor de 20,000 cadenas al árabe tuvo un costo de aproximadamente USD $11.00 en 2023 usando GPT mediante Microsoft Azure. Nada. El costo de traducción humana hubiera sido de cientos o miles de dólares, dependiendo del idioma.
 
 Por supuesto, queda el problema de los contextos —que también se presenta en el
 caso de traductores humanos—: "caja" puede ser "box", "cash register", "case",
 etc. gettext ofrece dos herramientas para esto. `msgctxt` (con `pgettext()` en
 el código) separa cadenas iguales con significado distinto, y los comentarios
-`#.` llevan al PO la explicación del programador. Ambas ayudan tanto al
-traductor humano como al modelo. Aún así, hasta el momento se requiere de cierta
-revisión humana.
+`#.` llevan al PO la explicación del programador. Cómo se escribe el
+`pgettext` y el comentario `TRANSLATORS:` está más arriba, en "Cómo escribir
+las cadenas". Ambas ayudan tanto al traductor humano como al modelo. Aún así,
+hasta el momento se requiere de cierta revisión humana.
 
 GNU gettext 1.0 incorpora los programas `msgpre` y `spit`, que hacen una
 pretraducción con un modelo LLM instalado localmente. `msgpre` trabaja sobre un
@@ -587,14 +720,64 @@ desarrollado la siguiente _suite_ de herramientas:
 
 ## Fuentes verificadas
 
-- Free Software Foundation. (s. f.). About gettext. En _GNU gettext utilities_.
-  Recuperado el 27 de octubre de 2026, de
+- Free Software Foundation. (s. f.-a). About gettext. En _GNU gettext
+  utilities_. Recuperado el 27 de octubre de 2026, de
 
   <a
     href="https://www.gnu.org/software/gettext/manual/gettext.html#About-gettext"
     target="_blank"
   >
     https://www.gnu.org/software/gettext/manual/gettext.html#About-gettext
+  </a>
+
+- Free Software Foundation. (s. f.-b). Plural forms. En _GNU gettext utilities_.
+  Recuperado el 27 de octubre de 2026, de
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html
+  </a>
+
+- Free Software Foundation. (s. f.-c). Preparing translatable strings. En _GNU
+  gettext utilities_. Recuperado el 27 de octubre de 2026, de
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Preparing-Strings.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Preparing-Strings.html
+  </a>
+
+- Free Software Foundation. (s. f.-d). Specifying a priority list of languages.
+  En _GNU gettext utilities_. Recuperado el 27 de octubre de 2026, de
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html
+  </a>
+
+- Free Software Foundation. (s. f.-e). Triggering gettext operations. En _GNU
+  gettext utilities_. Recuperado el 27 de octubre de 2026, de
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Triggering.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Triggering.html
+  </a>
+
+- Free Software Foundation. (s. f.-f). Using contexts for solving ambiguities.
+  En _GNU gettext utilities_. Recuperado el 27 de octubre de 2026, de
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Contexts.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Contexts.html
   </a>
 
 - Haible, B. (2026, 29 de enero). _gettext-1.0 released [stable]_ [Mensaje en
@@ -607,7 +790,7 @@ desarrollado la siguiente _suite_ de herramientas:
     https://lists.gnu.org/archive/html/info-gnu/2026-01/msg00007.html
   </a>
 
-- i18nweb. (s. f.). _What is i18n?_
+- i18nweb. (s. f.). _What is i18n?_ Recuperado el 27 de octubre de 2026, de
 
   <a href="https://i18nweb.com/es/blog/What-is-i18n" target="_blank">
     https://i18nweb.com/es/blog/What-is-i18n
@@ -630,6 +813,13 @@ desarrollado la siguiente _suite_ de herramientas:
     https://www.phoronix.com/news/GNU-gettext-1.0
   </a>
 
+- locize. (2026, 21 de octubre). _MessageFormat 2 in i18next: State of the
+  migration_.
+
+  <a href="https://www.locize.com/blog/messageformat-2-i18next" target="_blank">
+    https://www.locize.com/blog/messageformat-2-i18next
+  </a>
+
 - Ma, D. (2022, 1 de marzo). _Internacionalización (i18n) y localización (L10n)
   de software_ (Jose, trad.). Ibidem Group.
 
@@ -648,13 +838,14 @@ desarrollado la siguiente _suite_ de herramientas:
   </a>
 
 - Smartling. (s. f.). _Beneficios y mejores prácticas de internacionalización
-  (i18n)_.
+  (i18n)_. Recuperado el 27 de octubre de 2026, de
 
   <a href="https://es.smartling.com/blog/i18n" target="_blank">
     https://es.smartling.com/blog/i18n
   </a>
 
-- Unicode Consortium. (2025). _CLDR 47 release note_. Unicode CLDR Project.
+- Unicode Consortium. (2025, 13 de marzo). _CLDR 47 release note_. Unicode
+  CLDR Project.
 
   <a href="https://cldr.unicode.org/downloads/cldr-47" target="_blank">
     https://cldr.unicode.org/downloads/cldr-47
@@ -663,4 +854,7 @@ desarrollado la siguiente _suite_ de herramientas:
 - Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N.,
   Kaiser, Ł., & Polosukhin, I. (2017). _Attention is all you need_ [Preprint].
   arXiv.
-  <a href="https://arxiv.org/abs/1706.03762" target="_blank">https://arxiv.org/abs/1706.03762</a>
+
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank">
+    https://arxiv.org/abs/1706.03762
+  </a>

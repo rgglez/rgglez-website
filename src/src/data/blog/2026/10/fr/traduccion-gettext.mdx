@@ -1,0 +1,872 @@
+---
+title: "GNU gettext : intégrer plusieurs langues au logiciel"
+description: >-
+  GNU gettext facilite l'internationalisation des logiciels. Je retrace son
+  histoire, l'intérêt de l'i18n et les outils que j'ai créés pour cet écosystème.
+slug: "gnu-gettext-integration-multilingue-logiciels"
+pubDatetime: 2026-10-26T00:00:00-06:00
+modDatetime: 2026-10-27T00:00:00-06:00
+lang: fr
+ogImage: "../../../../../assets/posts/2026/10/traduccion-gettext/header.webp"
+featured: false
+draft: false
+tags:
+  - gnu
+  - gettext
+  - internationalisation
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.fr"
+---
+
+import Aside from "@rgglez/astro-aside";
+import { Image } from "astro:assets";
+import poeditScreenshot from "@/assets/posts/2026/10/traduccion-gettext/poedit-ejemplo-traduccion.png";
+
+## Introduction
+
+Quand tu débutes en programmation, il est courant de développer un logiciel
+dans une seule langue. Cela convient si le projet reste limité à une région ou
+à un pays et ne doit pas inclure d'autres langues locales. Mais lorsqu'il
+grandit et devient plus ambitieux, il faut envisager l'internationalisation
+(i18n) et la localisation (l10n) du logiciel.
+
+---
+
+## Table des matières
+
+---
+
+## Mon expérience de l'i18n et de GNU gettext
+
+En 2004, j'ai dû rendre disponible en allemand un système sur lequel je
+travaillais. Il fallait extraire les chaînes codées en dur dans le code source
+et créer un catalogue de traductions. GNU gettext était alors l'outil le plus
+répandu pour cette tâche, avec une communauté active et une documentation
+abondante. Heureusement, le langage que j'utilisais, PHP, disposait d'un
+framework nommé
+
+<a href="https://www.pradoframework.net/site/" target="_blank">
+  Prado
+</a>
+. J'ai obtenu de son développeur qu'il y ajoute la prise en charge de gettext,
+puis j'ai traduit l'interface en allemand. D'autres solutions existaient, mais
+chacune avait ses inconvénients, comme je l'explique plus loin. J'ai aussi dû
+réécrire l'application pour l'adapter au framework et à gettext, mais c'est une
+autre histoire.
+
+<a name="docemil"></a>
+
+Qiang Xue lui-même, créateur de Prado et de
+
+<a href="https://www.yiiframework.com/" target="_blank">
+  Yii
+</a>
+, a été surpris quand je lui ai dit, quelques années plus tard, que mon fichier
+POT (modèle de traduction) contenait plus de 12 000 chaînes. Il y en a
+aujourd'hui environ 25 000 dans ce projet. Il n'avait jamais vu autant de
+chaînes traduites dans un projet et y voyait un bel exemple d'utilisation de GNU
+gettext pour un logiciel multilingue. Des traducteurs automatiques comme Babel
+Fish ou Google Translate existaient déjà, mais leur qualité ne suffisait pas
+pour une interface utilisateur. À l'époque, la seule méthode pratique consistait
+à faire modifier les fichiers PO par des traducteurs humains. Pire encore,
+certains travaillaient dans Microsoft Excel avant de copier-coller les chaînes
+dans les PO. Aujourd'hui, de nombreux outils facilitent la traduction et en
+réduisent le coût.
+
+<Aside title="Fichiers POT, fichiers PO... De quoi s'agit-il ?" type="note">
+
+Je détaillerai ces formats plus loin. Pour l'instant, retiens qu'un fichier
+POT est un modèle contenant toutes les chaînes traduisibles du logiciel,
+tandis que les fichiers PO sont les catalogues propres à chaque langue.
+
+**Garde à l'esprit les 25 000 chaînes traduisibles de mon projet.** Ce nombre
+réapparaît lorsque je compare gettext aux
+[systèmes fondés sur des clés](#claves). Il montre le coût de leur maintenance
+par rapport à la révision des entrées `fuzzy` de `msgmerge`.
+
+</Aside>
+
+## Pourquoi l'i18n et la l10n sont-elles importantes ?
+
+Pouvoir traduire un logiciel dans plusieurs langues est aujourd'hui essentiel
+pour toucher un public plus vaste et plus diversifié. Sauf si le produit reste
+dans une niche sans jamais quitter son marché d'origine,
+l'internationalisation (i18n) et la localisation (l10n) comptent pour son
+succès mondial. L'i18n permet d'adapter le logiciel à différentes langues et
+régions sans réécrire le code. La l10n adapte le contenu et l'interface aux
+préférences culturelles et linguistiques de chaque région. Cela comprend les
+textes, les dates, les heures, les monnaies et d'autres éléments culturels.
+Wikipédia relève notamment les aspects suivants :
+
+- Plusieurs langues et sens d'écriture, de gauche à droite ou inversement.
+- Des conventions culturelles différentes.
+- Les fuseaux horaires.
+- Les formats horaires.
+- Les formats de date.
+- Les monnaies internationales.
+- Les poids et mesures (pouces/centimètres, livres/grammes, etc.).
+- Les encodages de caractères (Unicode simplifie cela s'il est utilisé dès
+  le début).
+- Les formats numériques (séparateurs décimaux et de milliers, etc.).
+
+Même si tu penses que ton produit ne sera jamais traduit, mieux vaut
+intégrer l'i18n dès le départ. Cela facilite les traductions futures,
+améliore la qualité du code et l'expérience utilisateur, et peut ouvrir
+de nouveaux marchés. De nombreuses entreprises et des développeurs
+indépendants ont aussi constaté que cet investissement accroît la
+satisfaction des clients. Le coût reste raisonnable si tu anticipes,
+au lieu de devoir refondre le code plus tard.
+
+Cet article se concentre uniquement sur la traduction de logiciels.
+
+## Brève histoire de GNU gettext et des systèmes d'i18n
+
+Avant que GNU gettext ne s'impose au milieu des années 1990, il existait
+plusieurs approches manuelles et formelles de l'internationalisation.
+
+### Approches manuelles (années 1980)
+
+- Chaînes codées en dur : les textes figuraient directement dans le code
+  source, que les traducteurs modifiaient à la main. Lotus 1-2-3 en est
+  un exemple connu. Sa traduction a demandé beaucoup de travail, car le
+  produit n'avait pas été conçu pour cela. Dans Symphony, son successeur,
+  Lotus a séparé le code des textes.
+
+- Fichiers de ressources : les chaînes traduisibles étaient placées dans des
+  fichiers distincts, tels que les fichiers Windows `.rc` utilisés avec
+  `LoadString()`, puis indexées par des nombres. Par exemple :
+
+```c
+// strings.rc — Table de chaînes pour la localisation
+// Compiler : rc.exe /r /fo "strings.res" "strings.rc"
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    101, "File"
+    102, "New"
+    103, "Open"
+    104, "Save"
+    105, "Exit"
+    106, "Hello, World!"
+END
+```
+
+<Aside title="Observe le format" type="note">
+
+Garde en mémoire le format du fichier de ressources. Il sera utile plus loin.
+
+</Aside>
+
+### Systèmes formels antérieurs
+
+Plusieurs systèmes d'internationalisation ont précédé GNU gettext. Voici
+leurs caractéristiques et leurs limites principales.
+
+| Système                              | Origine                    | Date             | Caractéristique                                                                                                                                                       |
+| :----------------------------------- | :------------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| XCCS (Xerox Character Code Standard) | Xerox                      | 1980             | Codage pionnier sur 16 bits avec prise en charge multioctet.                                                                                                          |
+| Locales ANSI C et POSIX              | ANSI X3J11 / IEEE          | 1988–1992        | `setlocale()` et les catégories `LC_CTYPE`, `LC_NUMERIC`, `LC_TIME`, etc., viennent de la norme C (ANSI X3.159-1989). POSIX les a reprises et a ajouté `LC_MESSAGES`. |
+| `catgets()`                          | Consortium X/Open (XPG)    | 1987             | Messages indexés par des nombres entiers. Présent sur les systèmes Unix, mais beaucoup moins adopté que gettext.                                                      |
+| NLS (National Language Support)      | Hewlett-Packard / HP-UX    | Années 1980–1990 | Système propriétaire pour logiciels localisables.                                                                                                                     |
+| gettext de Sun                       | Sun Microsystems (SunOS 4) | ~1990            | Implémentation de `gettext()` proposée à Uniforum, précurseur direct de GNU gettext.                                                                                  |
+
+### GNU gettext
+
+Sun Microsystems a commencé à développer `gettext` au début des années 1990. En 1995, le projet GNU a lancé sa propre implémentation de ce système
+d'internationalisation et de localisation.
+
+Le manuel de GNU gettext est explicite : l'interface `gettext()` provient
+d'une proposition de Sun à Uniforum, déjà implémentée dans SunOS 4 vers 1990.
+Ulrich Drepper s'en est servi pour créer une implémentation libre. La
+différence entre les deux approches était claire. `catgets()` indexait les
+messages par des nombres entiers ; `gettext()` utilisait la chaîne anglaise
+elle-même, ce qui facilitait le travail de traduction.
+
+<Aside title="Observe le fonctionnement" type="note">
+
+Garde `catgets()` en mémoire. Il sera utile plus loin.
+
+</Aside>
+
+## État de l'art
+
+### GNU gettext
+
+La version 1.0 de gettext, publiée le 29 janvier 2026, a marqué une étape
+symbolique après plus de trente ans de développement. Elle a succédé à la
+version 0.26, publiée en juillet 2025. Bruno Haible et Daiki Ueno assurent
+actuellement la maintenance de gettext.
+
+Le processus GNU gettext extrait les chaînes traduisibles du code source
+pour créer un fichier POT (modèle de traduction). Les traducteurs créent
+ensuite un fichier PO (catalogue) par langue. Enfin, les PO sont compilés
+en fichiers binaires MO optimisés, utilisés pendant l'exécution. On peut
+aussi convertir les PO en JSON pour une application JavaScript côté client.
+
+Prenons ce programme C++ :
+
+```cpp
+#include <iostream>
+#include <libintl.h>
+#include <locale.h>
+
+int main() {
+  setlocale(LC_ALL, "");
+  bindtextdomain("ejemplo", "./locale");
+  bind_textdomain_codeset("ejemplo", "UTF-8");
+  textdomain("ejemplo");
+
+  std::cout << gettext("Open Menu") << '\n';
+}
+```
+
+Commence par extraire la chaîne à traduire, ici `Open Menu`. Enregistre
+le programme sous `ejemplo.cpp`, puis exécute `xgettext` :
+
+```bash
+xgettext --language=C++ --from-code=UTF-8 -o ejemplo.pot ejemplo.cpp
+```
+
+`xgettext` n'extrait pas `""` de `setlocale(LC_ALL, "")`. Il ne prend que
+les arguments de `gettext` et des autres fonctions reconnues. Ici,
+`Open Menu` est la seule chaîne traduisible ; elle se trouve ligne 11.
+
+POT et PO partagent le même format. Le premier `msgid ""` constitue
+l'en-tête, pas une chaîne du programme. `xgettext` y inscrit les
+métadonnées du paquet. L'entrée extraite vient ensuite. Son `msgstr`
+reste vide dans le POT.
+
+```text
+#: ejemplo.cpp:11
+msgid "Open Menu"
+msgstr ""
+```
+
+Le fichier PO de chaque langue part de ce modèle et remplit les `msgstr`.
+
+```text
+msgid ""
+msgstr ""
+"Language: es\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: ejemplo.cpp:11
+msgid "Open Menu"
+msgstr "Abrir menú"
+```
+
+Ainsi, **dans GNU gettext, l'identifiant du message est sa chaîne d'origine,
+généralement anglaise, même si une autre langue de base est possible**. Écris
+toutes les chaînes du programme dans la langue de base choisie.
+
+Le traducteur reçoit le POT et produit un PO à l'aide d'un logiciel comme
+
+<a href="https://github.com/vslavik/poedit" target="_blank">
+  `poedit`
+</a>
+.
+
+<a href={poeditScreenshot.src}>
+  <Image
+    src={poeditScreenshot}
+    alt="Poedit montre Go back traduit par Regresar et Open Menu par Abrir menú"
+    loading="lazy"
+  />
+</a>
+
+La capture montre les chaînes originales et leurs traductions espagnoles.
+Ouvre l'image pour la voir en grand.
+
+Le programme lit le catalogue binaire MO, pas le fichier PO. `msgfmt`
+compile ce catalogue (Poedit le fait aussi à l'enregistrement). Si tu
+préfères la ligne de commande, `msginit` crée le PO à partir du POT :
+
+```bash
+msginit -i ejemplo.pot -l es_MX.UTF-8 -o es.po
+# traduire le msgstr de "Open Menu" dans es.po
+mkdir -p locale/es/LC_MESSAGES
+msgfmt -c -o locale/es/LC_MESSAGES/ejemplo.mo es.po
+g++ ejemplo.cpp -o ejemplo
+LANG=es_MX.UTF-8 ./ejemplo
+```
+
+```text
+Abrir menú
+```
+
+`setlocale(LC_ALL, "")` est la manière dont le manuel initialise le
+programme. La chaîne vide n'est pas traduite. Elle demande à la bibliothèque
+d'utiliser la locale de l'environnement. Si l'appel échoue, gettext ne
+consulte aucun catalogue.
+
+Le programme cherche la traduction de `Open Menu` dans le domaine
+`ejemplo`. Avec `LANG=es_MX.UTF-8`, gettext essaie `es_MX.UTF-8`,
+`es_MX`, `es.UTF-8` et `es`, jusqu'à trouver
+`locale/es/LC_MESSAGES/ejemplo.mo`. Sinon, il affiche "Open Menu".
+
+`LANGUAGE` est une extension GNU. Elle prime sur `LANG` et `LC_ALL`
+pour choisir les messages, mais pas pour les autres catégories de locale.
+Elle contient une liste séparée par des deux-points, par exemple
+`es_MX:es:en`. `LANG` ou `LC_ALL` doit quand même désigner une locale
+différente de `C`. Si le processus reste en `C`, gettext ignore
+`LANGUAGE`.
+
+<Aside title="La locale doit exister" type="warning">
+
+Si `es_MX.UTF-8` n'est pas installée (vérifie avec `locale -a`),
+`setlocale` échoue et le processus reste en `C`. Dans cette locale,
+gettext ne traduit rien et ignore `LANGUAGE`, même si elle est définie.
+
+</Aside>
+
+### Comment écrire les chaînes traduisibles
+
+Avec GNU gettext, écris des phrases naturelles et complètes en utilisant
+des marqueurs pour les variables. Ne découpe pas les phrases.
+
+L'outil ne répare pas une chaîne mal découpée. Le manuel recommande des
+phrases entières et du formatage plutôt que la concaténation.
+
+Ne sépare pas les morceaux d'une phrase. Le traducteur voit le `msgid`,
+pas le code qui l'entoure.
+
+```c
+/* Mauvais. Deux fragments impossibles à réordonner. */
+printf("%s", _("File "));
+printf("%s", _("is write protected"));
+```
+
+```c
+/* Bien. La phrase entière comporte un marqueur. */
+printf(_("File %s is write protected"), filename);
+```
+
+Dans beaucoup de langues, les mots d'une phrase doivent s'accorder. Deux
+fragments traduits séparément ne se raccordent pas forcément.
+
+Évite les ambiguïtés et les abréviations. "Caisse" peut désigner un
+conteneur ou une caisse enregistreuse. Écris le terme complet voulu.
+Si l'interface exige une forme courte, le traducteur raccourcira le
+`msgstr` ; le `msgid` doit rester complet.
+
+Ne concatène pas des fragments. Utilise des marqueurs. Pour une variable,
+`%s` ou `%d` suffit. Pour plusieurs variables, utilise des marqueurs
+positionnels afin que le traducteur puisse changer leur ordre.
+
+```c
+/* Mauvais. */
+strcpy(s, "Replace ");
+strcat(s, object1);
+strcat(s, " with ");
+strcat(s, object2);
+
+/* Bien. */
+sprintf(s, _("Replace %1$s with %2$s?"), object1, object2);
+```
+
+En Python, l'équivalent est `%(nombre)s`.
+
+Une courte chaîne peut avoir plusieurs sens selon le contexte.
+`pgettext()` permet de les distinguer. Son premier argument est un
+contexte littéral que `xgettext` place dans `msgctxt`. Il s'agit d'une
+macro de `gettext.h`, pas de `libintl.h`. Un commentaire immédiatement
+précédent commençant par `TRANSLATORS:` est repris dans le PO sous la
+forme `#.` si tu extrais avec
+`xgettext --add-comments=TRANSLATORS:`. Sinon, il n'y figure pas.
+
+```c
+/* TRANSLATORS: Bouton qui ouvre le menu, pas l'adjectif « ouvert ». */
+pgettext("verb", "Open");
+```
+
+```po
+#. TRANSLATORS: Bouton qui ouvre le menu, pas l'adjectif « ouvert ».
+msgctxt "verb"
+msgid "Open"
+msgstr "Abrir"
+```
+
+Pour les pluriels, utilise `ngettext`. Le code ne fournit que les deux
+formes de la langue source. Chaque PO cible déclare le nombre de formes
+et la règle de sélection dans `Plural-Forms`. Les exemples espagnol et
+polonais figurent plus loin.
+
+### Autres outils d'i18n
+
+Le paysage actuel comporte plusieurs couches : formats de messages,
+bibliothèques propres à chaque écosystème, plateformes de gestion de
+traduction (TMS), données et normes.
+
+Outre GNU gettext, les principaux formats de messages sont ICU
+MessageFormat, Fluent et les fichiers JSON/YAML simples. Chacun présente
+des avantages et des limites selon le projet.
+
+| Format             | Origine       | Particularité                                                                                                                                                                                                                                                             |
+| :----------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ICU MessageFormat  | ICU / Unicode | Référence dans l'industrie. Prend en charge pluriels, genre, nombres et dates. Sert de base à react-intl (FormatJS) et aux domaines `+intl-icu` de Symfony. Android `<plurals>` et iOS `.stringsdict` utilisent une autre syntaxe, mais les mêmes règles de pluriel CLDR. |
+| Fluent             | Mozilla       | Confie les choix linguistiques au traducteur. Le développeur fournit un identifiant et le texte source ; le traducteur compose la phrase avec les règles de sa langue. Plus expressif qu'ICU dans les cas complexes.                                                      |
+| JSON / YAML simple | Divers        | Couples clé-valeur. Ni pluriel ni sélection natifs ; on les associe souvent à l'API Intl.                                                                                                                                                                                 |
+
+Ce tableau compare **ICU MessageFormat**, **Fluent** et **Gettext**,
+de leur conception à leurs limites pratiques.
+
+### Comparaison : ICU MessageFormat, Fluent et Gettext
+
+| Critère                          | ICU MessageFormat (v1)                                                                                                                                                        | Fluent (Project Fluent)                                                                                                        | Gettext (GNU)                                                                                                                                                                                                   |
+| :------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Origine et gouvernance**       | Norme du **consortium Unicode**, issue d'IBM et maintenue par le groupe ICU.                                                                                                  | Projet libre créé par **Mozilla** pour les besoins du Web moderne.                                                             | Développé par le **projet GNU** ; référence de longue date sous Unix/Linux.                                                                                                                                     |
+| **Philosophie**                  | **Symétrique (1:1)** : la structure de la langue source, généralement l'anglais, se reflète dans les traductions. Le développeur définit la logique.                          | **Asymétrique (1:N)** : chaque locale peut avoir sa propre structure. Le traducteur adapte le message à sa grammaire.          | **Fondé sur le source** : la chaîne originale (`msgid`) sert de clé. C'est simple, mais limité par les possibilités du code source.                                                                             |
+| **Modèle de localisation**       | **Symétrique** : syntaxe et variantes sont définies au centre, souvent sous l'influence de l'anglais.                                                                         | **Asymétrique** : chaque traduction est une ressource autonome qui peut avoir une structure complexe.                          | **Fondé sur le source** : le code fixe la structure ; les fichiers PO ajoutent ensuite les variantes, notamment les pluriels.                                                                                   |
+| **Syntaxe des messages**         | **Accolades `{}`** : `{nombre}` pour les variables, `{count, plural, one{...} other{...}}` pour la logique. L'imbrication est dense et source d'erreurs.                      | **Sélecteurs `->`** : `{ $count -> [one] ... *[other] ... }`. Syntaxe lisible avec reprise sur erreur, proche de TOML ou CSS.  | **Dépend du langage** : `%s` et `%1$s` en C, `%(nombre)s` ou `{nombre}` en Python, signalés par `c-format` ou `python-format`. Les pluriels passent par `ngettext`.                                             |
+| **Identifiant du message**       | **Non défini** : le conteneur (JSON, XLIFF, `.properties`, etc.) fournit une clé comme `welcome_message`.                                                                     | **ID (clé)** : identifiant unique indépendant du texte source.                                                                 | **Texte source (`msgid`)** : la chaîne originale est l'identifiant.                                                                                                                                             |
+| **Pluriels**                     | **Natifs** : règles CLDR pour des centaines de langues, catégories `one`, `other`, `few`, `many` et cas exacts comme `=0`.                                                    | **Natifs** : sélecteurs CLDR et variantes nécessaires, dont les cas exacts `[0]` et les catégories grammaticales.              | **Par langue** : `ngettext` reçoit deux formes source ; chaque en-tête PO définit `Plural-Forms` avec une expression proche du C. Trois formes en polonais, six en arabe. Ni catégories CLDR ni cas exact `=0`. |
+| **Genre grammatical**            | **Avec `select`** : `{género, select, male{...} female{...} other{...}}`, sans sélecteur spécialisé.                                                                          | **Natif** : le même sélecteur sert au genre et au pluriel, comme `{ $gender -> [masculine] ... [feminine] ... *[other] ... }`. | **Pas natif** : `msgctxt` distingue des entrées masculines et féminines, mais cette méthode atteint vite ses limites.                                                                                           |
+| **Autres sélecteurs**            | **Avec `select`** : choix parmi des mots-clés fixes, comme `{estado, select, activo{...} inactivo{...}}`.                                                                     | **Souples** : sélection générique pour chaînes, nombres et autres variables, au-delà du genre et du pluriel.                   | **Limités** : seul le pluriel possède une logique conditionnelle native. Le reste exige des messages distincts et du code.                                                                                      |
+| **Commentaires aux traducteurs** | **Hors du motif** : placés dans le conteneur, par exemple le champ `description` de FormatJS ou les notes XLIFF.                                                              | **Pris en charge** : commentaires dans les fichiers `.ftl`.                                                                    | **Pris en charge** : commentaires (`#`, `#.`), références (`#:`), drapeaux (`#,`) et contexte avec `msgctxt` ou `pgettext()`.                                                                                   |
+| **Nombres, dates et monnaies**   | **Explicites** : formatage dans le code ou le motif, avec une extension possible mais complexe.                                                                               | **Intégrés** : le traducteur peut choisir la présentation, par exemple `$` ou `USD`.                                           | **Aucun formatage interne** : dépend de fonctions comme `printf` en C ou `String.format` en Java.                                                                                                               |
+| **Texte bidirectionnel (BiDi)**  | **Pas d'isolation native** des variables dans un texte de sens opposé.                                                                                                        | **Pris en charge** : isole les variables, utile pour afficher de l'anglais dans de l'arabe ou de l'hébreu.                     | **Pas d'isolation BiDi** au niveau du message.                                                                                                                                                                  |
+| **Références entre messages**    | **Non natives** : un message ne peut en appeler un autre.                                                                                                                     | **Prises en charge** : référence à d'autres messages ou à des « terms » réutilisables.                                         | **Non natives** : la réutilisation se fait dans le code.                                                                                                                                                        |
+| **Attributs et métadonnées**     | **Non natifs** : simulés par des suffixes d'ID comme `boton-aria-label`.                                                                                                      | **Pris en charge** : attributs liés `label`, `title`, `aria-label`, etc.                                                       | **Non natifs** : texte visible et infobulle demandent deux `msgid`.                                                                                                                                             |
+| **Erreurs et reprise**           | **Reprise limitée** : une erreur peut empêcher l'analyse du message entier.                                                                                                   | **Bonne reprise** : une variante fautive peut retomber sur `*[other]` sans casser l'interface.                                 | **Vérification à la compilation** : `msgfmt -c` contrôle marqueurs, en-têtes et pluriels. Une traduction absente affiche le `msgid`.                                                                            |
+| **Apprentissage**                | **Moyen à difficile** : motifs `plural` et `select` imbriqués, surtout pour les non-développeurs.                                                                             | **Moyen** : syntaxe conçue pour être lue et modifiée facilement.                                                               | **Facile pour les développeurs** : `_("Hello")` est simple ; contextes et pluriels demandent plus d'attention.                                                                                                  |
+| **Écosystème et adoption**       | **Très large** : Java a `java.text.MessageFormat`, Android expose ICU4J via `android.icu.text.MessageFormat`. FormatJS et de nombreuses plateformes commerciales l'emploient. | **En croissance** : utilisé par Mozilla (Firefox), Rust, Python et des applications Web modernes.                              | **Répandu** : référence Unix/Linux utilisée en Python, PHP, C/C++ et ailleurs.                                                                                                                                  |
+| **Adapté à**                     | Applications exigeant une norme répandue et une bonne intégration Java/Android.                                                                                               | Projets privilégiant la liberté du traducteur et une grammaire complexe, dont genre et cas.                                    | Logiciels anciens, outils en ligne de commande et projets cherchant une solution Unix simple et éprouvée.                                                                                                       |
+| **Limite principale**            | Sa symétrie peut imposer la grammaire anglaise ; une syntaxe complexe favorise les erreurs.                                                                                   | Écosystème plus jeune et moins mûr que ceux de gettext ou d'ICU.                                                               | Hors pluriels et `msgctxt`, aucune logique grammaticale ni sélection de genre native.                                                                                                                           |
+
+### Synthèse et tendances
+
+- **Gettext** est l'outil éprouvé. Sa simplicité est son atout. Il gère
+  les pluriels de toute langue, sans sélecteur de genre ni autre logique
+  grammaticale. Le code utilise `ngettext` :
+
+  ```c
+  printf(ngettext("You have %d new message.", "You have %d new messages.", n), n);
+  ```
+
+  Chaque PO déclare ses propres règles de pluriel :
+
+  ```po
+  "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+  #, c-format
+  msgid "You have %d new message."
+  msgid_plural "You have %d new messages."
+  msgstr[0] "Tienes %d mensaje nuevo."
+  msgstr[1] "Tienes %d mensajes nuevos."
+  ```
+
+  L'espagnol a deux formes. Le polonais en a trois : son PO contient
+  `msgstr[0]`, `msgstr[1]` et `msgstr[2]`. L'expression de type C
+  appartient au fichier cible, pas au code source. L'arabe en a six.
+  Le manuel détaille les
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html"
+    target="_blank"
+  >
+    formes plurielles
+  </a>
+  .
+
+  ```po
+  "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+  ```
+
+  Trois autres limites apparaissent en traduction. Une courte chaîne répétée
+  dans plusieurs endroits a besoin de `msgctxt` pour distinguer ses sens.
+  Gettext ne réordonne pas les variables ; c'est le formatage du langage
+  qui le fait avec `%1$s` et `%2$s`, ou `%(nombre)s` en Python.
+  Sans formatage positionnel, le traducteur ne peut pas changer l'ordre.
+  Un catalogue d'environ 25 000 chaînes est volumineux et `msgmerge`
+  cherche les correspondances `fuzzy` plus lentement. Cela reste gérable
+  et ne justifie pas un retour aux clés.
+
+- **ICU MessageFormat** est très répandu et prend en charge CLDR. Sa syntaxe
+  et son modèle symétrique peuvent toutefois limiter le traducteur.
+  **MessageFormat 2.0**, influencé par Fluent, est passé du statut de
+  candidat final à celui de version stable dans CLDR 47, le 13 mars 2025.
+  Il cherche à résoudre certaines limites. En octobre 2026, son adoption
+  reste précoce. FormatJS, Lingui et le plugin ICU d'i18next utilisent
+  encore MessageFormat 1. Il n'a pas non plus l'écosystème d'extraction
+  et de fusion de gettext.
+
+  ```json
+  {
+    "mensajes-nuevos": "{cantidad, plural, one {Tienes # mensaje nuevo.} other {Tienes # mensajes nuevos.}}"
+  }
+  ```
+
+- **Fluent** place le traducteur au centre. Son modèle asymétrique laisse
+  plus de liberté pour exprimer une grammaire complexe. Sa syntaxe lisible
+  et sa reprise sur erreur conviennent aux projets qui privilégient la
+  qualité de la localisation :
+
+  ```ftl
+  mensajes-nuevos =
+      { $cantidad ->
+          [one] Tienes { $cantidad } mensaje nuevo.
+         *[other] Tienes { $cantidad } mensajes nuevos.
+      }
+  ```
+
+<Aside title="Identifiants des messages" type="note">
+
+Dans l'exemple ICU MessageFormat, `mensajes-nuevos` est la clé du
+catalogue JSON et `cantidad` une variable du motif. L'identifiant
+ne fait pas partie de la syntaxe ICU. Dans Fluent, `mensajes-nuevos`
+figure dans l'entrée FTL elle-même. Dans gettext, l'identifiant est le
+`msgid` anglais.
+
+Et c'est là que commence mon problème...
+
+</Aside>
+
+<a name="claves"></a>
+
+## Mon problème avec ICU MessageFormat, Fluent et les systèmes à clés
+
+Souviens-toi des 12 000 chaînes, aujourd'hui environ 25 000, de mon
+système PHP. Imagine devoir créer 25 000 clés uniques comme
+`mensaje-salida` ou `inicio.bienvenida.numero.accesos.usuario`.
+Simple, n'est-ce pas ? Voilà mon principal reproche aux systèmes dont
+l'identifiant est une clé sans lien avec le message original :
+**la difficulté de créer, de suivre et d'entretenir toutes ces clés**.
+
+Pour un programme de 20 chaînes ou un jeu occasionnel, cela ne pose
+peut-être aucun problème. Dans une grande application, entretenir des
+clés obscures peut être plus difficile que de gérer des formes plurielles
+limitées ou l'absence de sélection de genre.
+
+On objecte souvent que le texte source peut changer. Corrige une coquille
+en anglais : le `msgid` change et les traductions ne correspondent plus.
+Avec des clés stables, elles continueraient de s'appliquer. Le coût est
+réel, mais gettext l'atténue. Lors de la mise à jour des PO, `msgmerge`
+cherche l'entrée précédente la plus proche, recopie sa traduction et la
+marque `#, fuzzy`. Le traducteur la vérifie et retire cette marque.
+Les entrées disparues deviennent obsolètes (`#~`) sans être perdues.
+Entre-temps, `msgfmt` ne compile pas les entrées `fuzzy` : le logiciel
+affiche donc le texte source plutôt qu'une traduction fausse. Un texte peut
+aussi changer au point de rendre l'ancienne clé absurde.
+
+Par exemple, `Open Menu` devient `Open the menu`.
+
+```po
+#, fuzzy
+#| msgid "Open Menu"
+msgid "Open the menu"
+msgstr "Abrir menú"
+```
+
+Avec une clé, `nav.open_menu` ne change pas. L'anglais se trouve ailleurs.
+Un `git diff` de la clé ne révèle pas l'ancien texte ; le traducteur
+n'apprend le changement que si un autre outil l'en avertit.
+
+Certains éditeurs affichent le texte original au survol de la clé. Mais
+ce n'est pas disponible partout et, dans une revue de code ou un
+`git diff`, la clé ne révèle toujours pas le message.
+
+Il existe d'autres difficultés, comme l'orthographe et la grammaire.
+On les corrige avant l'extraction, quel que soit le format choisi.
+
+D'après mon expérience, un grand système pourrait réserver ICU
+MessageFormat ou Fluent aux cas difficiles impliquant le genre
+(je n'en ai rencontré aucun en vingt ans), et conserver GNU gettext
+pour le reste.
+
+<Aside title="Le coût de 25 000 clés" type="note">
+
+Le coût ne vient pas de l'absence de genre. Il faut inventer et entretenir
+25 000 identifiants comme `inicio.bienvenida.numero.accesos.usuario`.
+Avec GNU gettext, tu vérifies les entrées `fuzzy`. Avec des clés, tu
+entretiens 25 000 noms qui ne disent rien du texte original.
+
+</Aside>
+
+## La traduction
+
+Venons-en à la traduction elle-même.
+
+Traditionnellement, un traducteur humain travaille sur chaque langue
+en parallèle. Le tarif se calcule généralement au nombre de mots du texte
+source. Certains facturent à la page ou, en Allemagne, à la ligne
+normalisée ; compter les pages d'un PO est délicat. Une traduction
+spécialisée reste coûteuse dans tous les cas.
+
+Heureusement (et malheureusement pour les traducteurs humains), les
+transformers ont changé la donne. Ces
+
+<a href="https://arxiv.org/abs/1706.03762" target="_blank">
+  transformers
+</a>
+et les innovations qui ont suivi ont fortement réduit le coût. En 2023, j'ai
+traduit environ 20 000 chaînes en arabe avec GPT sur Microsoft Azure pour
+environ 11 USD. Un traducteur humain aurait coûté des centaines, voire des
+milliers de dollars selon la langue.
+
+Le contexte reste problématique pour les humains comme pour les modèles.
+Le mot espagnol « caja » peut désigner une boîte, une caisse enregistreuse
+ou un étui. Gettext propose deux outils. `msgctxt`, avec `pgettext()`,
+distingue les chaînes identiques de sens différent ; les commentaires
+`#.` transmettent au PO l'explication du développeur. La section
+« Comment écrire les chaînes traduisibles » explique `pgettext` et le
+commentaire `TRANSLATORS:`. Ces outils aident tout le monde, même si
+une révision humaine demeure nécessaire.
+
+GNU gettext 1.0 inclut `msgpre` et `spit`, qui prétraduisent à l'aide
+d'un LLM installé localement. `msgpre` traite tout un PO et `spit` un
+seul message. Vérifie le résultat comme une traduction humaine. Les
+mainteneurs demandent aussi de contrôler la compatibilité entre la
+licence du modèle et le logiciel libre.
+
+## Mes outils pour GNU gettext
+
+J'ai créé les outils suivants pour accélérer la traduction des PO et
+utiliser gettext dans différents frontends.
+
+### Traduction automatique
+
+- <a href="https://pypi.org/project/gettext-translator-ollama/" target="_blank">
+    gettext-translator-ollama
+  </a>
+  <br />
+  Moteur local Ollama pour `gettext-translator`.
+
+- <a href="https://pypi.org/project/gettext-translator-nllb/" target="_blank">
+    gettext-translator-nllb
+  </a>
+  <br />
+  Moteur local fondé sur NLLB de Meta pour `gettext-translator`.
+
+- <a
+    href="https://pypi.org/project/gettext-translator-marianmt/"
+    target="_blank"
+  >
+    gettext-translator-marianmt
+  </a>
+  <br />
+  Moteur local fondé sur MarianMT de Helsinki-NLP pour `gettext-translator`.
+
+- <a
+    href="https://pypi.org/project/gettext-translator-service/"
+    target="_blank"
+  >
+    gettext-translator-service
+  </a>
+  <br />
+  Bibliothèque centrale avec interface de plugins pour les services de
+  traduction de `gettext-translator`.
+
+- <a href="https://pypi.org/project/gettext-translator-gemini/" target="_blank">
+    gettext-translator-gemini
+  </a>
+  <br />
+  Intégration de Google Gemini pour `gettext-translator`.
+
+- <a
+    href="https://pypi.org/project/gettext-translator-chatgpt/"
+    target="_blank"
+  >
+    gettext-translator-chatgpt
+  </a>
+  <br />
+  Intégration de ChatGPT d'OpenAI pour `gettext-translator`.
+
+- <a href="https://pypi.org/project/gettext-translator-azure/" target="_blank">
+    gettext-translator-azure
+  </a>
+  <br />
+  Intégration d'Azure AI Translator pour `gettext-translator`.
+
+- <a href="https://pypi.org/project/gettext-translator/" target="_blank">
+    gettext-translator
+  </a>
+  <br />
+  Traduit les fichiers gettext `.po` avec des services infonuagiques et des
+  modèles d'IA locaux.
+
+### Vérification orthographique
+
+- <a href="https://pypi.org/project/gettext-spellchecker/" target="_blank">
+    gettext-spellchecker
+  </a>
+  <br />
+  Vérifie l'orthographe des `msgid` et `msgstr` dans les fichiers `.po` et
+  `.pot` avec des dictionnaires Hunspell.
+
+### Frontend
+
+- <a href="https://www.npmjs.com/package/@rgglez/i18n-gettext" target="_blank">
+    i18n-gettext
+  </a>
+  <br />
+  Traductions gettext pour JavaScript et TypeScript, indépendantes du framework.
+
+- <a
+    href="https://www.npmjs.com/package/@rgglez/svelte-i18n-gettext"
+    target="_blank"
+  >
+    svelte-i18n-gettext
+  </a>
+  <br />
+  Composant Svelte fondé sur des stores dérivés pour traduire avec gettext.
+
+- <a
+    href="https://www.npmjs.com/package/@rgglez/react-i18n-gettext"
+    target="_blank"
+  >
+    react-i18n-gettext
+  </a>
+  <br />
+  Fournisseur et hook React pour gettext avec changement de langue en temps
+  réel.
+
+- <a
+    href="https://www.npmjs.com/package/@rgglez/astro-i18n-gettext"
+    target="_blank"
+  >
+    astro-i18n-gettext
+  </a>
+  <br />
+  Traductions gettext pour Astro avec traducteur par requête et changement de
+  langue côté client.
+
+## Sources vérifiées
+
+- Free Software Foundation. (s. d.-a). About gettext. Dans _GNU gettext
+  utilities_. Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/gettext.html#About-gettext"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/gettext.html#About-gettext
+  </a>
+
+- Free Software Foundation. (s. d.-b). Plural forms. Dans _GNU gettext utilities_.
+  Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html
+  </a>
+
+- Free Software Foundation. (s. d.-c). Preparing translatable strings. Dans _GNU
+  gettext utilities_. Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Preparing-Strings.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Preparing-Strings.html
+  </a>
+
+- Free Software Foundation. (s. d.-d). Specifying a priority list of languages.
+  Dans _GNU gettext utilities_. Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html
+  </a>
+
+- Free Software Foundation. (s. d.-e). Triggering gettext operations. Dans _GNU
+  gettext utilities_. Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Triggering.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Triggering.html
+  </a>
+
+- Free Software Foundation. (s. d.-f). Using contexts for solving ambiguities.
+  Dans _GNU gettext utilities_. Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://www.gnu.org/software/gettext/manual/html_node/Contexts.html"
+    target="_blank"
+  >
+    https://www.gnu.org/software/gettext/manual/html_node/Contexts.html
+  </a>
+
+- Haible, B. (2026, 29 janvier). _gettext-1.0 released [stable]_ [Message sur une liste de diffusion]. info-gnu.
+
+  <a
+    href="https://lists.gnu.org/archive/html/info-gnu/2026-01/msg00007.html"
+    target="_blank"
+  >
+    https://lists.gnu.org/archive/html/info-gnu/2026-01/msg00007.html
+  </a>
+
+- i18nweb. (s. d.). _What is i18n?_ Consulté le 27 octobre 2026 à
+
+  <a href="https://i18nweb.com/es/blog/What-is-i18n" target="_blank">
+    https://i18nweb.com/es/blog/What-is-i18n
+  </a>
+
+- Internacionalización y localización. (2026, 12 mai). Dans _Wikipédia_.
+  Consulté le 27 octobre 2026 à
+
+  <a
+    href="https://es.wikipedia.org/wiki/Internacionalizaci%C3%B3n_y_localizaci%C3%B3n"
+    target="_blank"
+  >
+    https://es.wikipedia.org/wiki/Internacionalizaci%C3%B3n_y_localizaci%C3%B3n
+  </a>
+
+- Larabel, M. (2026, 28 janvier). _GNU gettext reaches version 1.0 after 30+
+  years in development—Adds LLM features_. Phoronix.
+
+  <a href="https://www.phoronix.com/news/GNU-gettext-1.0" target="_blank">
+    https://www.phoronix.com/news/GNU-gettext-1.0
+  </a>
+
+- locize. (2026, 21 octobre). _MessageFormat 2 in i18next: State of the
+  migration_.
+
+  <a href="https://www.locize.com/blog/messageformat-2-i18next" target="_blank">
+    https://www.locize.com/blog/messageformat-2-i18next
+  </a>
+
+- Ma, D. (2022, 1er mars). _Internacionalización (i18n) y localización (L10n)
+  de software_ (trad. Jose). Ibidem Group.
+
+  <a
+    href="https://www.ibidemgroup.com/edu/traduccion-internacionalizacion-software/"
+    target="_blank"
+  >
+    https://www.ibidemgroup.com/edu/traduccion-internacionalizacion-software/
+  </a>
+
+- Slavík, V. (s. d.). _Poedit_ [Code source]. GitHub. Recuperado el 27 de
+  octubre de 2026, de
+
+  <a href="https://github.com/vslavik/poedit" target="_blank">
+    https://github.com/vslavik/poedit
+  </a>
+
+- Smartling. (s. d.). _Beneficios y mejores prácticas de internacionalización
+  (i18n)_. Consulté le 27 octobre 2026 à
+
+  <a href="https://es.smartling.com/blog/i18n" target="_blank">
+    https://es.smartling.com/blog/i18n
+  </a>
+
+- Unicode Consortium. (2025, 13 mars). _CLDR 47 release note_. Unicode
+  CLDR Project.
+
+  <a href="https://cldr.unicode.org/downloads/cldr-47" target="_blank">
+    https://cldr.unicode.org/downloads/cldr-47
+  </a>
+
+- Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N.,
+  Kaiser, Ł., & Polosukhin, I. (2017). _Attention is all you need_ [Preprint].
+  arXiv.
+
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank">
+    https://arxiv.org/abs/1706.03762
+  </a>
