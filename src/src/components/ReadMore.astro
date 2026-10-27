@@ -1,0 +1,137 @@
+---
+// Bloque de texto contraído con degradado y un "ver más" centrado. Se
+// despliega como cortinilla al hacer clic o al pasar el mouse, y "ver menos"
+// lo vuelve a contraer. Se usa desde los .mdx de data/intro, por eso las
+// etiquetas llegan traducidas como props.
+interface Props {
+  label: string;
+  lessLabel: string;
+}
+
+const { label, lessLabel } = Astro.props;
+---
+
+<div class="read-more" data-read-more>
+  <div class="read-more-body">
+    <slot />
+  </div>
+  <button type="button" class="read-more-toggle" aria-expanded="false">
+    <span class="more">{label}</span>
+    <span class="less">{lessLabel}</span>
+  </button>
+</div>
+
+<style>
+  .read-more {
+    position: relative;
+  }
+
+  .read-more-body {
+    max-height: 4.5rem;
+    overflow: hidden;
+    transition: max-height 0.7s ease-in-out;
+  }
+
+  /* overflow: hidden impide que el margen se colapse con el párrafo anterior. */
+  .read-more-body > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  .read-more-toggle {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 4.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 0.25rem;
+    background: linear-gradient(to bottom, transparent, var(--background) 85%);
+    color: var(--foreground);
+    opacity: 0.7;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: opacity 0.4s ease;
+  }
+
+  .read-more-toggle:hover,
+  .read-more-toggle:focus-visible {
+    opacity: 1;
+  }
+
+  /* Abierto: el botón deja de tapar el texto y queda debajo, sin degradado. */
+  .read-more.is-open .read-more-toggle {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding-top: 0.5rem;
+    background: none;
+  }
+
+  .less,
+  .read-more.is-open .more {
+    display: none;
+  }
+
+  .read-more.is-open .less {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .read-more-body,
+    .read-more-toggle {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.querySelectorAll<HTMLElement>("[data-read-more]").forEach(box => {
+      const body = box.querySelector<HTMLElement>(".read-more-body")!;
+      const toggle = box.querySelector<HTMLButtonElement>(".read-more-toggle")!;
+      // Tras "ver menos" el hover no reabre hasta que el cursor sale del bloque;
+      // si no, se abriría otra vez en cuanto se mueve el mouse.
+      let hoverOpens = true;
+      const isOpen = () => box.classList.contains("is-open");
+
+      const open = () => {
+        if (isOpen()) return;
+        body.style.maxHeight = reduced ? "none" : `${body.scrollHeight}px`;
+        box.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+      };
+
+      const close = () => {
+        // De "none" no se puede animar: fija la altura actual y luego suelta
+        // el estilo para que la transición vaya al max-height del CSS.
+        body.style.maxHeight = `${body.scrollHeight}px`;
+        void body.offsetHeight; // fuerza el reflow
+        body.style.maxHeight = "";
+        box.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        hoverOpens = false;
+      };
+
+      // Al terminar de abrir quita el tope para que el texto reaccione al ancho.
+      body.addEventListener("transitionend", () => {
+        if (isOpen()) body.style.maxHeight = "none";
+      });
+      toggle.addEventListener("click", () => (isOpen() ? close() : open()));
+      // Hover solo con mouse: en táctil el toque emula un mouseenter antes del
+      // click y el bloque se abriría y cerraría en el mismo gesto.
+      const onMouse = (el: HTMLElement, type: string, fn: () => void) =>
+        el.addEventListener(type, e => {
+          if ((e as PointerEvent).pointerType === "mouse") fn();
+        });
+      onMouse(box, "pointerenter", () => hoverOpens && open());
+      onMouse(box, "pointerleave", () => (hoverOpens = true));
+      // "ver menos" cierra al pasar el mouse, pero solo cuando terminó de abrir:
+      // durante la animación el botón baja y podría pasar bajo el cursor.
+      onMouse(toggle, "pointerenter", () => {
+        if (isOpen() && body.style.maxHeight === "none") close();
+      });
+    });
+  });
+</script>

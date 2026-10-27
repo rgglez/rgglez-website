@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 20:43-0600\n"
+"POT-Creation-Date: 2026-10-27 14:27-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -72,38 +72,33 @@ msgstr "Abrir menú"
 msgid "Close Menu"
 msgstr "Cerrar menú"
 
-#: src/components/Header.astro:94 src/pages/[lang]/about/index.astro:25
-#, javascript-format
-msgid "About"
-msgstr "Acerca de"
-
-#: src/components/Header.astro:102 src/components/PortfolioTabs.astro:50
+#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:50
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "Portafolio"
 
-#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
+#: src/components/Header.astro:102 src/pages/[lang]/archives/[...page].astro:44
 #, javascript-format
 msgid "Blog"
 msgstr "Blog"
 
-#: src/components/Header.astro:120 src/components/Header.astro:121
-#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
+#: src/components/Header.astro:112 src/components/Header.astro:113
+#: src/components/Header.astro:116 src/pages/[lang]/search.astro:21
 #: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
 #: src/pages/search.astro:17
 #, javascript-format
 msgid "Search"
 msgstr "Buscar"
 
-#: src/components/Header.astro:132 src/components/Header.astro:133
-#: src/components/Header.astro:140
+#: src/components/Header.astro:124 src/components/Header.astro:125
+#: src/components/Header.astro:132
 #, javascript-format
 msgid "RSS Feed"
 msgstr "Feed RSS"
 
-#: src/components/Header.astro:174
+#: src/components/Header.astro:166
 #, javascript-format
 msgid "Toggles light & dark"
 msgstr "Alterna entre modo claro y oscuro"
@@ -116,13 +111,20 @@ msgstr "Cambiar idioma"
 
 #: src/components/LicenseModal.astro:33
 #, javascript-format
-msgid "The full text of this license is not bundled on this site. Use the official license link above."
-msgstr "El texto completo de esta licencia no está incluido en este sitio. Usa el enlace oficial de arriba."
+msgid ""
+"The full text of this license is not bundled on this site. Use the official "
+"license link above."
+msgstr ""
+"El texto completo de esta licencia no está incluido en este sitio. Usa el "
+"enlace oficial de arriba."
 
 #: src/components/LicenseModal.astro:36
 #, javascript-format
-msgid "Could not load the local license text. Use the official license link above."
-msgstr "No se pudo cargar el texto local de la licencia. Usa el enlace oficial de arriba."
+msgid ""
+"Could not load the local license text. Use the official license link above."
+msgstr ""
+"No se pudo cargar el texto local de la licencia. Usa el enlace oficial de "
+"arriba."
 
 #: src/components/LicenseModal.astro:48
 #, javascript-format
@@ -290,13 +292,13 @@ msgstr "Todos los artículos archivados."
 
 #: src/pages/[lang]/index.astro:59
 #, javascript-format
-msgid "Recent Posts"
-msgstr "Artículos recientes"
-
-#: src/pages/[lang]/index.astro:73
-#, javascript-format
 msgid "Featured"
 msgstr "Destacados"
+
+#: src/pages/[lang]/index.astro:72
+#, javascript-format
+msgid "Recent Posts"
+msgstr "Artículos recientes"
 
 #: src/pages/[lang]/index.astro:87
 #, javascript-format
@@ -352,8 +354,12 @@ msgstr "¡Aviso de modo DEV!"
 
 #: src/pages/[lang]/search.astro:43
 #, javascript-format
-msgid "You need to build the project at least once to see search results during development."
-msgstr "Debes compilar el proyecto al menos una vez para ver resultados de búsqueda durante el desarrollo."
+msgid ""
+"You need to build the project at least once to see search results during "
+"development."
+msgstr ""
+"Debes compilar el proyecto al menos una vez para ver resultados de búsqueda "
+"durante el desarrollo."
 
 #: src/pages/[lang]/tags/[tag]/[...page].astro:38
 #, javascript-format
@@ -364,3 +370,7 @@ msgstr "Etiqueta: %s"
 #, javascript-format
 msgid "All the articles with the tag \"%s\"."
 msgstr "Todos los artículos con la etiqueta «%s»."
+
+#, javascript-format
+#~ msgid "About"
+#~ msgstr "Acerca de"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 20:43-0600\n"
+"POT-Creation-Date: 2026-10-27 14:27-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -72,38 +72,33 @@ msgstr "打开菜单"
 msgid "Close Menu"
 msgstr "关闭菜单"
 
-#: src/components/Header.astro:94 src/pages/[lang]/about/index.astro:25
-#, javascript-format
-msgid "About"
-msgstr "关于"
-
-#: src/components/Header.astro:102 src/components/PortfolioTabs.astro:50
+#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:50
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "作品集"
 
-#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
+#: src/components/Header.astro:102 src/pages/[lang]/archives/[...page].astro:44
 #, javascript-format
 msgid "Blog"
 msgstr "博客"
 
-#: src/components/Header.astro:120 src/components/Header.astro:121
-#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
+#: src/components/Header.astro:112 src/components/Header.astro:113
+#: src/components/Header.astro:116 src/pages/[lang]/search.astro:21
 #: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
 #: src/pages/search.astro:17
 #, javascript-format
 msgid "Search"
 msgstr "搜索"
 
-#: src/components/Header.astro:132 src/components/Header.astro:133
-#: src/components/Header.astro:140
+#: src/components/Header.astro:124 src/components/Header.astro:125
+#: src/components/Header.astro:132
 #, javascript-format
 msgid "RSS Feed"
 msgstr "RSS 订阅"
 
-#: src/components/Header.astro:174
+#: src/components/Header.astro:166
 #, javascript-format
 msgid "Toggles light & dark"
 msgstr "切换浅色/深色模式"
@@ -116,12 +111,15 @@ msgstr "切换语言"
 
 #: src/components/LicenseModal.astro:33
 #, javascript-format
-msgid "The full text of this license is not bundled on this site. Use the official license link above."
+msgid ""
+"The full text of this license is not bundled on this site. Use the official "
+"license link above."
 msgstr "本站未收录此许可协议的全文。请使用上方的官方许可协议链接。"
 
 #: src/components/LicenseModal.astro:36
 #, javascript-format
-msgid "Could not load the local license text. Use the official license link above."
+msgid ""
+"Could not load the local license text. Use the official license link above."
 msgstr "无法加载本地许可协议文本。请使用上方的官方许可协议链接。"
 
 #: src/components/LicenseModal.astro:48
@@ -289,13 +287,13 @@ msgstr "所有已归档的文章。"
 
 #: src/pages/[lang]/index.astro:59
 #, javascript-format
-msgid "Recent Posts"
-msgstr "最新文章"
-
-#: src/pages/[lang]/index.astro:73
-#, javascript-format
 msgid "Featured"
 msgstr "精选"
+
+#: src/pages/[lang]/index.astro:72
+#, javascript-format
+msgid "Recent Posts"
+msgstr "最新文章"
 
 #: src/pages/[lang]/index.astro:87
 #, javascript-format
@@ -350,7 +348,9 @@ msgstr "开发模式警告！"
 
 #: src/pages/[lang]/search.astro:43
 #, javascript-format
-msgid "You need to build the project at least once to see search results during development."
+msgid ""
+"You need to build the project at least once to see search results during "
+"development."
 msgstr "开发期间需要至少构建一次项目才能看到搜索结果。"
 
 #: src/pages/[lang]/tags/[tag]/[...page].astro:38
@@ -362,3 +362,7 @@ msgstr "标签：%s"
 #, javascript-format
 msgid "All the articles with the tag \"%s\"."
 msgstr "所有带有标签“%s”的文章。"
+
+#, javascript-format
+#~ msgid "About"
+#~ msgstr "关于"
