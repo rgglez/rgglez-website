@@ -2,16 +2,18 @@
 // Bloque de texto contraído con degradado y un "ver más" centrado. Se
 // despliega como cortinilla al hacer clic o al pasar el mouse, y "ver menos"
 // lo vuelve a contraer. Se usa desde los .mdx de data/intro, por eso las
-// etiquetas llegan traducidas como props.
+// etiquetas llegan traducidas como props. El hover espera hoverDelay ms antes
+// de actuar; el clic es inmediato.
 interface Props {
   label: string;
   lessLabel: string;
+  hoverDelay?: number;
 }
 
-const { label, lessLabel } = Astro.props;
+const { label, lessLabel, hoverDelay = 500 } = Astro.props;
 ---
 
-<div class="read-more" data-read-more>
+<div class="read-more" data-read-more data-hover-delay={hoverDelay}>
   <div class="read-more-body">
     <slot />
   </div>
@@ -94,6 +96,13 @@ const { label, lessLabel } = Astro.props;
       // Tras "ver menos" el hover no reabre hasta que el cursor sale del bloque;
       // si no, se abriría otra vez en cuanto se mueve el mouse.
       let hoverOpens = true;
+      const delay = Number(box.dataset.hoverDelay);
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const later = (fn: () => void) => {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+      };
+      const cancel = () => clearTimeout(timer);
       const isOpen = () => box.classList.contains("is-open");
 
       const open = () => {
@@ -118,20 +127,31 @@ const { label, lessLabel } = Astro.props;
       body.addEventListener("transitionend", () => {
         if (isOpen()) body.style.maxHeight = "none";
       });
-      toggle.addEventListener("click", () => (isOpen() ? close() : open()));
+      toggle.addEventListener("click", () => {
+        cancel();
+        isOpen() ? close() : open();
+      });
       // Hover solo con mouse: en táctil el toque emula un mouseenter antes del
       // click y el bloque se abriría y cerraría en el mismo gesto.
       const onMouse = (el: HTMLElement, type: string, fn: () => void) =>
         el.addEventListener(type, e => {
           if ((e as PointerEvent).pointerType === "mouse") fn();
         });
-      onMouse(box, "pointerenter", () => hoverOpens && open());
-      onMouse(box, "pointerleave", () => (hoverOpens = true));
+      onMouse(box, "pointerenter", () => {
+        if (hoverOpens && !isOpen()) later(open);
+      });
+      onMouse(box, "pointerleave", () => {
+        cancel();
+        hoverOpens = true;
+      });
       // "ver menos" cierra al pasar el mouse, pero solo cuando terminó de abrir:
       // durante la animación el botón baja y podría pasar bajo el cursor.
       onMouse(toggle, "pointerenter", () => {
-        if (isOpen() && body.style.maxHeight === "none") close();
+        if (isOpen() && body.style.maxHeight === "none") later(close);
       });
+      // Solo cancela un cierre pendiente; una apertura pendiente sigue mientras
+      // el cursor esté dentro del bloque.
+      onMouse(toggle, "pointerleave", () => isOpen() && cancel());
     });
   });
 </script>
