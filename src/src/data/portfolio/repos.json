@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-26T12:19:15.547Z",
+  "generatedAt": "2026-11-02T14:51:14.749Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -53,21 +53,19 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-26T04:05:40Z"
+      "pushedAt": "2026-11-02T05:18:46Z"
     },
     {
-      "name": "rgglez-website",
-      "description": "Personal website",
-      "url": "https://github.com/rgglez/rgglez-website",
+      "name": "gettext-spellchecker",
+      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
+      "url": "https://github.com/rgglez/gettext-spellchecker",
       "homepage": null,
-      "language": "MDX",
-      "topics": [
-        "astro"
-      ],
-      "stars": 1,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-24T08:15:06Z"
+      "pushedAt": "2026-11-01T07:47:36Z"
     },
     {
       "name": "gettext-translator",
@@ -81,19 +79,21 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-23T16:41:54Z"
+      "pushedAt": "2026-10-31T07:06:04Z"
     },
     {
-      "name": "gettext-spellchecker",
-      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
-      "url": "https://github.com/rgglez/gettext-spellchecker",
+      "name": "rgglez-website",
+      "description": "Personal website",
+      "url": "https://github.com/rgglez/rgglez-website",
       "homepage": null,
-      "language": "Python",
-      "topics": [],
-      "stars": 0,
+      "language": "MDX",
+      "topics": [
+        "astro"
+      ],
+      "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-23T16:41:52Z"
+      "pushedAt": "2026-10-28T02:43:09Z"
     },
     {
       "name": "gettext-po2json",
@@ -1160,7 +1160,7 @@
       "topics": [
         "jabber"
       ],
-      "stars": 0,
+      "stars": 1,
       "forks": 0,
       "archived": false,
       "pushedAt": "2023-04-04T23:39:27Z"
