@@ -1,0 +1,82 @@
+---
+title: "¡Mi Mac Mini mató el RGB de mi Epomaker HE108! ¿Qué hacer?"
+description: >-
+  Sin tanto drama, te explico cómo resetear tu Epomaker HE108 si tu Mac Mini dejó la retroiluminación del teclado en blanco.
+slug: "luces-he108"
+pubDatetime: 2026-11-10T00:00:00-06:00
+modDatetime: 2026-11-10T00:00:00-06:00
+lang: es
+ogImage: "../../../../../assets/posts/2026/11/luces-he108/header.webp"
+featured: false
+draft: false
+tags:
+  - luces
+  - he108
+  - iluminacion
+timezone: "America/Mexico_City"
+license: "CC BY-NC-ND 4.0"
+licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
+---
+
+import Aside from "@rgglez/astro-aside";
+import { Image } from "astro:assets";
+import image1 from "@/assets/posts/2026/11/luces-he108/image1.png";
+import image2 from "@/assets/posts/2026/11/luces-he108/image2.png";
+import image3 from "@/assets/posts/2026/11/luces-he108/image3.png";
+
+## Introducción
+
+El <a href="https://epomaker.com/es/products/epomaker-he108" target="_blank" rel="noopener noreferrer">Epomaker HE108</a> es un teclado mecánico de tamaño completo con disposición de los EE. UU. (US QWERTY ANSI) y cuenta con retroiluminación RGB, como muchos otros. Pero su característica más atractiva es que se trata de un teclado con interruptores mecánicos que trabajan mediante el <a href="https://es.wikipedia.org/wiki/Efecto_Hall" target="_blank" rel="noopener noreferrer">Efecto Hall</a>, lo que le permite tener un funcionamiento más silencioso y duradero. Una excelente opción para quienes buscan un teclado mecánico de tamaño completo con buena calidad y durabilidad, a buen precio, a pesar de no tener una carcaza metálica.
+
+<Image src={image3} alt="Captura de la pestaña Device de sharkfin con el Epomaker HE108 conectado por USB, con una flecha que señala el botón Reset de la sección Factory reset." class="float-right ml-6 mb-4 w-2/5 max-w-50 h-auto" />
+
+Recientemente tuve la necesidad de conectarlo a mi Mac Mini por USB y, al hacerlo, la retroiluminación del teclado dejó de funcionar, aun cuando lo conecté a mi PC regular con Debian. Después de investigar un poco, descubrí que el problema se debía a un conflicto entre el sistema operativo y el controlador del teclado. Afortunadamente, hay una solución sencilla para restaurar la iluminación RGB del Epomaker HE108.
+
+---
+
+## Tabla de contenido
+
+---
+
+## ¿Qué son las luces HE108?
+
+El Epomaker HE108 cuenta con retroiluminación RGB, lo que significa que cada tecla puede iluminarse en diferentes colores y efectos. Esto no solo mejora la estética del teclado, sino que también puede ser útil para la visibilidad en entornos con poca luz y para personalizar la experiencia de escritura según las preferencias del usuario. Personalmente hubiera preferido que los LEDs iluminaran de manera uniforme, sobre todo los textos de las teclas (para verlas en la obscuridad), pero con todo, la iluminación RGB es un plus que muchos usuarios aprecian.
+
+## El problema
+
+Como dije antes, al conectar el Epomaker HE108 a mi Mac Mini, la retroiluminación dejó de funcionar, aún cuando lo conecté a mi PC regular con Debian.
+
+## La solución
+
+El chatbot de Brave me proporcionó varias soluciones, entre ellas flashear el firmware del teclado usando la aplicación de Windows mediante Wine. Como eso no me dio mucha confianza, seguí buscando y encontré una solución más simple: resetear el teclado a su configuración de fábrica. Esto se puede hacer mediante la aplicación <a href="https://app.getsharkfin.com/" target="_blank" rel="noopener noreferrer">Sharkfin</a>, que se ejecuta en navegadores basados en Chromium mediante <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API" target="_blank" rel="noopener noreferrer">WebHID</a>:
+
+<Image src={image1} alt="Captura de la pestaña Device de sharkfin con el Epomaker HE108 conectado por USB, con una flecha que señala el botón Reset de la sección Factory reset." />
+
+<Aside type="note" title="Nota">
+
+Necesitarás conectar el Epomaker HE108 a tu computadora mediante un cable USB para poder resetearlo a su configuración de fábrica.
+
+</Aside>
+
+Como se aprecia, la aplicación permite configurar muchos aspectos del teclado. Para resetearlo a su configuración de fábrica, solo hay que ir a la pestaña "Device" y hacer clic en el botón "Reset" de la sección "Factory reset". Esto restaurará la iluminación RGB del teclado y debería solucionar el problema causado por la conexión con el Mac Mini.
+
+<Image src={image2} alt="Captura de la pestaña Device de sharkfin con el Epomaker HE108 conectado por USB, con una flecha que señala el botón Reset de la sección Factory reset." />
+
+Listo, la retroiluminación del Epomaker HE108 debería funcionar correctamente ahora, incluso después de conectarlo a tu Mac Mini.
+
+<Aside type="warning" title="Nota importante">
+
+Recuerda que al restaurar el teclado a la configuración de fábrica, se perderán todas las configuraciones personalizadas que hayas hecho en él, así que asegúrate de respaldar cualquier configuración importante antes de realizar el reset.
+
+Sharkfin permite respaldar y restaurar configuraciones, así que puedes guardar tu configuración actual antes de hacer el reset.
+
+</Aside>
+
+## Fuentes verificadas
+
+- EPOMAKER. (s. f.). *EPOMAKER HE108*. Recuperado el 10 de noviembre de
+  2026, de <a href="https://epomaker.com/es/products/epomaker-he108" target="_blank" rel="noopener noreferrer">{"https://epomaker.com/es/products/epomaker-he108"}</a>
+- MDN contributors. (2024, 17 de octubre). *WebHID API*. MDN Web Docs.
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API" target="_blank" rel="noopener noreferrer">{"https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API"}</a>
+- Sharkfin. (s. f.). *EPOMAKER HE108 keyboard software*. Recuperado el 10 de
+  noviembre de 2026, de <a href="https://getsharkfin.com/boards/epomaker-he108" target="_blank" rel="noopener noreferrer">{"https://getsharkfin.com/boards/epomaker-he108"}</a>
