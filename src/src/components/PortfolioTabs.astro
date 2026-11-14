@@ -2,6 +2,7 @@
 import type { PortfolioData, PortfolioRepo } from "@/data/portfolio/types";
 import { PORTFOLIO } from "@/data/portfolio/config";
 import { useGettext, sprintf } from "@/i18n";
+import IconGitHub from "@/assets/icons/IconGitHub.svg";
 
 type Props = { data: PortfolioData };
 const { data } = Astro.props;
@@ -11,7 +12,7 @@ const labels = {
   languages: _("Languages"),
   topics: _("Topics"),
   empty: _("No repositories in this category."),
-  homepage: _("site"),
+  homepage: _("Visit project site"),
 };
 
 const langTabs = data.languages.filter(lang =>
@@ -133,12 +134,27 @@ function reposFor(tab: Tab): PortfolioRepo[] {
                       rel="noopener noreferrer"
                       class="inline-block text-lg font-medium text-heading underline decoration-heading/25 decoration-dashed underline-offset-4 hover:decoration-accent"
                     >
+                      <IconGitHub
+                        aria-hidden="true"
+                        class="me-1.5 inline-block size-5 align-[-0.2em]"
+                      />
                       {repo.name}
                     </a>
                     {repo.description && (
                       <p class="mt-1 text-foreground/85">{repo.description}</p>
                     )}
-                    <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-foreground/65">
+                    {repo.homepage && (
+                      <a
+                        href={repo.homepage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link-exempt mt-3 inline-flex items-center gap-1 rounded border border-border px-3 py-1 text-sm font-medium text-foreground/80 transition-colors hover:border-accent hover:text-accent"
+                      >
+                        {labels.homepage}
+                        <span aria-hidden="true">→</span>
+                      </a>
+                    )}
+                    <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-foreground/65">
                       {repo.language && (
                         <span class="rounded border border-border px-1.5 py-0.5">
                           {repo.language}
@@ -153,16 +169,6 @@ function reposFor(tab: Tab): PortfolioRepo[] {
                         <span>
                           ★ {sprintf(_n("%d star", "%d stars", repo.stars), repo.stars)}
                         </span>
-                      )}
-                      {repo.homepage && (
-                        <a
-                          href={repo.homepage}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="link-exempt text-accent hover:underline"
-                        >
-                          {labels.homepage}
-                        </a>
                       )}
                     </div>
                   </li>

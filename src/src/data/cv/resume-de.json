@@ -1,0 +1,996 @@
+{
+    "$schema": "./schema.rgglez.json",
+    "basics": {
+        "name": "Rodolfo González González",
+        "label": "Software- und Cloud-Architekt | Full-Stack-Entwickler | Linux-Systemadministrator",
+        "image": "",
+        "email": "contact@rodolfo.gg",
+        "url": "http://rodolfo.gg",
+        "summary": "Software- und Cloud-Architekt mit mehr als 25 Jahren Erfahrung in Konzeption, Entwicklung und Betrieb von Bildungs- und E-Commerce-Plattformen. Ich leitete die landesweite Einführung des LMS/ERP Athenea für das Bildungsministerium Ecuadors technisch (300.000 Lehrkräfte und 5.000.000 Schülerinnen und Schüler) sowie Migrationen zwischen lokalen Infrastrukturen, AWS, Aliyun und VMware. Zu meinen jüngsten Tätigkeiten gehören mandantenfähige und serverlose Architekturen mit Go, Python, Svelte und Cloudflare Workers, OAuth/OIDC-Authentifizierung, hybride Suche und RAG sowie KI-gestützte Softwareentwicklung. Ich habe das Informatikstudienprogramm an der BUAP abgeschlossen und studiere derzeit im Masterstudiengang Künstliche Intelligenz an der UNIR.",
+        "location": {
+            "countryCode": "MX"
+        },
+        "profiles": [
+            {
+                "network": "LinkedIn",
+                "username": "rggonzalez",
+                "url": "https://www.linkedin.com/in/rggonzalez/"
+            },
+            {
+                "network": "GitHub",
+                "username": "rgglez",
+                "url": "https://www.github.com/rgglez/"
+            }
+        ]
+    },
+    "objective": "Senior-Position in der Software- oder Cloud-Architektur oder in der technischen Leitung eines Teams, das skalierbare Plattformen und KI-Funktionen entwickelt.",
+    "work": [
+        {
+            "name": "Klanet LLC",
+            "location": "Miami, FL",
+            "workMode": "remote",
+            "description": "Marktplatz, CRM, Lernplattform, Network-Marketing und Marketingagentur.",
+            "position": "Leiter Betrieb und Entwicklung",
+            "url": "https://www.klanet.com",
+            "startDate": "2023-06-01",
+            "endDate": "2026-10-30",
+            "summary": "Software- und Cloud-Architektur, Full-Stack-Entwicklung, Administration von Linux-Systemen sowie Koordination von Teams und Dienstleistern.",
+            "highlights": [
+                {
+                    "highlight": "Ich entwarf die Cloud-Architektur der Anwendungen auf Aliyun und Cloudflare und entkoppelte sie von einzelnen Anbietern, um eine Anbieterbindung zu vermeiden.",
+                    "tags": ["nube", "arquitectura", "aliyun", "alibaba-cloud", "cloudflare"]
+                },
+                {
+                    "highlight": "Ich verbesserte die horizontale Skalierbarkeit des Backends mit Go-Micro-Backends, ohne Kubernetes einzusetzen. Dabei nutzte ich SLB (Aliyun), DaemonTools zur Prozessverwaltung und Fluent-Bit-Sidecars für die Observability.",
+                    "tags": ["go", "aliyun", "daemontools", "fluent-bit"]
+                },
+                {
+                    "highlight": "Ich verkürzte die Ladezeiten des Frontends durch die Bereitstellung auf Cloudflare Workers. Ich implementierte sowohl SSR (serverseitiges Rendering) als auch eine SPA (Single-Page-Anwendung) mit SvelteKit und Svelte 5, optimierte die Auslieferung statischer Ressourcen durch Caching in Cloudflare Workers und verbesserte die SEO- und Social-Media-Konfiguration.",
+                    "tags": ["cloudflare", "cloudflare-workers", "svelte", "sveltekit", "ssr", "spa", "seo"]
+                },
+                {
+                    "highlight": "Ich implementierte eine zentrale OAuth- und OIDC-Authentifizierung mit Zitadel für alle Systemkomponenten.",
+                    "tags": ["zitadel", "oauth", "oidc"]
+                },
+                {
+                    "highlight": "Ich entwarf die mandantenfähige Systemarchitektur ohne Begrenzung der Mandantenzahl: Go-Backend, Svelte-Webfrontend und Flutter-Mobilanwendung.",
+                    "tags": ["arquitectura", "multiinquilino", "go", "svelte", "flutter"]
+                },
+                {
+                    "highlight": "Ich entwarf die Architektur der MySQL- und PostgreSQL-Datenbanken auf Apsara RDS (Aliyun).",
+                    "tags": ["arquitectura", "mysql", "postgresql", "apsara-rds", "aliyun"]
+                },
+                {
+                    "highlight": "Ich migrierte die statischen Frontends mehrerer Anwendungen von Svelte 3 auf Svelte 5 (Runes) auf Cloudflare Workers.",
+                    "tags": ["svelte", "cloudflare", "cloudflare-workers"]
+                },
+                {
+                    "highlight": "Ich ersetzte das mit PHP und Yii entwickelte Administrations-Backend des LMS TopCourses durch Go, entfernte damit den PHP-Stack und glich es an die übrige Systemarchitektur an.",
+                    "tags": ["yii", "php", "go", "arquitectura"]
+                },
+                {
+                    "highlight": "Ich senkte die durchschnittliche Latenz des TopCourses-LMS-Backends von einer Sekunde auf Millisekunden, indem ich Python-FaaS-Funktionen auf Aliyun Function Compute durch Go-Mikromonolithen ersetzte. Diese erzeugen eine einzelne Binärdatei statt Docker-Containern und vereinfachen Bereitstellung und Wartung.",
+                    "tags": ["python", "go", "arquitectura"]
+                },
+                {
+                    "highlight": "Ich verpackte Go-Micro-Backends als Docker-Container und schrieb Unit-Tests in Go für die LMS-Backends.",
+                    "tags": ["go", "docker", "testing"]
+                },
+                {
+                    "highlight": "Ich verbesserte die Relevanz der Marktplatzsuche für 10.000 indexierte Produkte um 80 % gegenüber dem alten MySQL-Volltextsystem. Dafür entwarf ich eine hybride semantische und lexikalische Suche mit Sentence Transformers, FAISS und BM25, einschließlich inkrementeller Indexierung, Query Expansion und Ergebnisfusion mit RRF (Reciprocal Rank Fusion).",
+                    "tags": ["arquitectura", "ia", "inteligencia-artificial", "busqueda-semantica", "sentence-transformers", "faiss", "bm25"]
+                },
+                {
+                    "highlight": "Ich entwickelte Go- und Python-Programme zum Import von Lieferantenkatalogen aus APIs, CSV-Dateien und PDFs. Dazu integrierte ich Bilderkennung, Segmentierung mit rembg, OCR-Texterkennung, Embedding-Modelle und Web Scraping.",
+                    "tags": ["go", "python", "api", "csv", "pdf", "ocr", "rembg", "chatgpt", "extraccion-web"]
+                },
+                {
+                    "highlight": "Ich entwickelte ein System zur Verbesserung von Produktbeschreibungen mit KI und RAG, um das Nutzererlebnis zu optimieren.",
+                    "tags": ["ia", "inteligencia-artificial", "rag"]
+                },
+                {
+                    "highlight": "Ich passte die grafische Oberfläche von GoHighLevel mit CSS und JavaScript an das Unternehmensdesign an und behob Oberflächenfehler für CRM und Marketing.",
+                    "tags": ["gohighlevel", "gui", "css", "javascript", "crm", "marketing"]
+                },
+                {
+                    "highlight": "Ich administrierte die Anwendungsinfrastruktur: Ubuntu- und FreeBSD-Server auf Aliyun sowie DNS, SSL und Workers auf Cloudflare.",
+                    "tags": ["debian", "ubuntu", "freebsd", "linux", "aliyun", "cloudflare", "cloudflare-workers", "dns", "ssl"]
+                }
+            ],
+            "keywords": ["Aliyun", "Alibaba Cloud", "Aliyun SLB", "Aliyun Function Compute", "Apsara RDS", "Cloudflare", "Cloudflare Workers", "Go", "Python", "PHP", "Yii", "JavaScript", "Svelte", "SvelteKit", "Flutter", "CSS", "Docker", "DaemonTools", "Fluent Bit", "Unit-Tests", "GoHighLevel", "CRM", "Marketing", "Zitadel", "OAuth", "OIDC", "Multi-tenant", "MySQL", "PostgreSQL", "Künstliche Intelligenz", "RAG", "ChatGPT", "Sentence Transformers", "FAISS", "BM25", "RRF", "Semantische Suche", "Embeddings", "OCR", "rembg", "Web Scraping", "API", "CSV", "PDF", "Ubuntu", "FreeBSD", "Linux", "DNS", "SSL"]
+        },
+        {
+            "name": "Enlace Athenea S.A. de C.V.",
+            "location": "Puebla, Mexiko",
+            "position": "IT-Leiter",
+            "startDate": "2013-08",
+            "summary": "IT-Betrieb und Projekte rund um Athenea LMS/ERP, darunter EducarEcuador.",
+            "highlights": [
+                {
+                    "highlight": "Als technischer Leiter der landesweiten Einführung des LMS/ERP Athenea für das Bildungsministerium Ecuadors bei der nationalen Telekommunikationsgesellschaft CNT erreichte ich 300.000 Lehrkräfte und 5.000.000 Schülerinnen und Schüler.",
+                    "tags": ["liderazgo", "equipos", "coordinación", "administración"]
+                },
+                {
+                    "highlight": "Ich koordinierte Entwicklungs-, Netzwerk- und Systemteams sowie externe Dienstleister während der Einführung und des Betriebs von Athenea.",
+                    "tags": ["liderazgo", "equipos", "coordinación"]
+                },
+                {
+                    "highlight": "Ich entwarf die AWS-Architektur und migrierte das LMS/ERP Athenea von einer lokalen Infrastruktur zu AWS: MySQL nach Aurora Serverless und Webserver zu S3 und CloudFront, mit Lastverteilung und automatischer Skalierung. Ich verbesserte Verfügbarkeit, Skalierbarkeit und Leistung und senkte Betriebs- und Wartungskosten.",
+                    "tags": ["nube", "aws", "arquitectura", "mysql", "aurora", "s3", "cloudfront", "migración", "autoescalado"]
+                },
+                {
+                    "highlight": "Ich sparte etwa 45 % der Kosten, indem ich den Betrieb des LMS/ERP Athenea von AWS auf eine Kombination aus Aliyun und Azure migrierte.",
+                    "tags": ["nube", "aws", "azure", "aliyun", "migración"]
+                },
+                {
+                    "highlight": "Ich migrierte das LMS/ERP Athenea für das Ecuador-Projekt von AWS zu VMware.",
+                    "tags": ["nube", "aws", "vmware", "migración"]
+                },
+                {
+                    "highlight": "Ich entwarf die Software- und Datenbankarchitektur des LMS TopCourses und implementierte dessen FaaS-Backend in Python und PHP, zunächst auf AWS Lambda und später auf Aliyun Function Compute, mit Aurora Serverless, S3 und SQLAlchemy.",
+                    "tags": ["python", "php", "aws", "aliyun", "aurora", "s3", "sqlalchemy", "arquitectura", "faas", "aws-lambda", "function-compute"]
+                },
+                {
+                    "highlight": "Ich entwickelte die Web- und Mobil-Frontends von TopCourses mit Svelte und SvelteKit und integrierte sie in das FaaS-Backend.",
+                    "tags": ["svelte", "sveltekit", "faas"]
+                },
+                {
+                    "highlight": "Ich entwickelte Module des LMS/ERP Athenea mit PHP (Yii), JavaScript und jQuery auf MySQL und PostgreSQL, integrierte IRC und jabberd, dokumentierte mit DocBook und stellte mit nginx, Apache und Varnish bereit.",
+                    "tags": ["php", "yii", "javascript", "jquery", "mysql", "postgresql", "irc", "jabberd", "docbook", "nginx", "apache", "varnish"]
+                },
+                {
+                    "highlight": "Ich entwarf Cloud-Architekturen auf AWS und Aliyun und administrierte Infrastruktur auf AWS, Azure und Aliyun: VPCs, automatische Skalierung, Speicher, NAS, DNS, FaaS-Funktionen und virtuelle Maschinen.",
+                    "tags": ["nube", "arquitectura", "aws", "azure", "aliyun", "dns", "vpc", "autoescalado", "nas", "faas"]
+                },
+                {
+                    "highlight": "Ich administrierte produktive Linux-Server (Ubuntu Server, RHEL und Slackware): Web (nginx, Apache), E-Mail (Postfix, Dovecot), Datenbanken (MySQL, PostgreSQL), Messaging (jabberd) und Videokonferenzen (Jitsi, BBB, OpenMeetings).",
+                    "tags": ["administración", "servidores", "linux", "ubuntu", "rhel", "slackware", "nginx", "apache", "postfix", "dovecot", "mysql", "postgresql", "jabberd", "jitsi", "bbb", "openmeetings"]
+                },
+                {
+                    "highlight": "Ich entwarf die Architektur von Full-Stack-Web- und Mobilanwendungen nach dem MVC-Muster.",
+                    "tags": ["arquitectura", "mvc"]
+                }
+            ],
+            "keywords": ["Linux", "Ubuntu", "RHEL", "Slackware", "MySQL", "PostgreSQL", "jabberd", "nginx", "Apache", "Varnish", "Postfix", "Dovecot", "Jitsi", "BigBlueButton", "OpenMeetings", "PHP", "Yii", "JavaScript", "jQuery", "IRC", "DocBook", "Python", "SQLAlchemy", "Svelte", "SvelteKit", "MVC", "AWS", "AWS Lambda", "Aurora Serverless", "S3", "CloudFront", "Azure", "Aliyun", "Aliyun Function Compute", "FaaS", "VMware", "VPC", "NAS", "DNS"]
+        },
+        {
+            "name": "Global Networks Technologies, S.A. de C.V.",
+            "location": "Puebla, Mexiko",
+            "position": "IT-Leiter",
+            "startDate": "1999-10",
+            "endDate": "2013-08",
+            "summary": "Entwicklung des LMS/ERP Athenea sowie Betrieb von Netzwerken, Systemen und einem Internetanbieter mit Einwahlzugang.",
+            "highlights": [
+                {
+                    "highlight": "Ich half bei der Anbindung von 1.400 Schulzugangspunkten im ganzen Land, indem ich den Satelliten-Internetdienst des mexikanischen Bildungsministeriums über das Netz von Tachyon Networks koordinierte (2004–2006).",
+                    "tags": ["redes", "satélite"]
+                },
+                {
+                    "highlight": "Ich verwaltete den Einwahl-Internetzugang eines Internetanbieters in sechs Städten mit Radius sowie Geräten von Huawei, Lucent und PortMaster, außerdem das Cisco-Netz und Funk- und Satellitenverbindungen.",
+                    "tags": ["isp", "acceso-telefonico", "radius", "huawei", "lucent", "portmaster", "cisco", "redes", "satélite", "satelite"]
+                },
+                {
+                    "highlight": "Ich administrierte Squid-Server zur Filterung des Datenverkehrs in Satellitennetzen.",
+                    "tags": ["squid", "redes", "satélite", "satelite"]
+                },
+                {
+                    "highlight": "Ich entwickelte das LMS und Schulverwaltungssystem Athenea in PHP nach dem MVC-Muster, zunächst mit dem Framework Prado und später mit Yii, mit Mandantenfähigkeit ohne Begrenzung der Mandantenzahl.",
+                    "tags": ["php", "prado", "yii", "mvc", "arquitectura", "multiinquilino"]
+                },
+                {
+                    "highlight": "Ich entwarf die lokale Datenbank-, Netzwerk-, Hardware- und Softwarearchitektur von Athenea mit freien Komponenten: Apache, nginx, lighttpd, Varnish, Redis, Memcached und MySQL.",
+                    "tags": ["arquitectura", "redes", "mysql", "apache", "nginx", "lighttpd", "varnish", "redis", "memcached"]
+                },
+                {
+                    "highlight": "Ich administrierte ein lokales Rechenzentrum, das Athenea und weitere Unternehmensdienste beherbergte.",
+                    "tags": ["centro-de-datos", "administración"]
+                },
+                {
+                    "highlight": "Ich administrierte Linux-Server (RHEL und Ubuntu): Web (nginx, Apache), E-Mail (Postfix, Dovecot) und Datenbanken (MySQL, PostgreSQL).",
+                    "tags": ["linux", "rhel", "ubuntu", "nginx", "apache", "postfix", "dovecot", "mysql", "postgresql"]
+                }
+            ],
+            "keywords": ["Cisco", "Huawei", "Lucent", "PortMaster", "Radius", "Squid", "Linux", "RHEL", "Ubuntu", "PHP", "Prado", "Yii", "MVC", "Multi-tenant", "MySQL", "PostgreSQL", "Apache", "nginx", "lighttpd", "Varnish", "Redis", "Memcached", "Postfix", "Dovecot"]
+        },
+        {
+            "name": "Results Internet, S.A. de C.V.",
+            "location": "Puebla, Mexiko",
+            "position": "Webmaster",
+            "startDate": "1998-08",
+            "endDate": "1999-10",
+            "summary": "Websites, Linux-Server und Verbindungen eines Internetanbieters.",
+            "highlights": [
+                {
+                    "highlight": "Ich administrierte die Infrastruktur des Internetanbieters: Linux-Server, Cisco-2500-Router, dedizierte Internetverbindungen und Radius-basierten Einwahlzugang.",
+                    "tags": ["linux", "cisco", "redes", "isp", "acceso-telefonico", "radius"]
+                },
+                {
+                    "highlight": "Ich entwickelte DoctorNet, ein System zur Verwaltung von Patientenakten, mit Perl und CGI.",
+                    "tags": ["perl", "cgi"]
+                },
+                {
+                    "highlight": "Ich entwickelte ein Verwaltungssystem für Geflügelhändler mit Visual Basic, Microsoft Access und einem Barcode-Lesegerät.",
+                    "tags": ["visual-basic", "microsoft-access", "lector-de-codigos-de-barras"]
+                },
+                {
+                    "highlight": "Ich entwickelte Websites mit HTML, CSS, Flash und Perl/CGI.",
+                    "tags": ["html", "css", "flash", "perl", "cgi"]
+                },
+                {
+                    "highlight": "Ich realisierte die erste Webübertragung einer Radiosendung in Puebla, Mexiko, mit RealServer und einem gleichzeitigen IRC-Webchat (Bahamut-Server).",
+                    "tags": ["transmision", "realserver", "irc", "bahamut"]
+                }
+            ],
+            "keywords": ["Linux", "Cisco", "Radius", "Perl", "CGI", "HTML", "CSS", "Flash", "Visual Basic", "Microsoft Access", "RealServer", "IRC", "Bahamut"]
+        }
+    ],
+    "volunteer": [
+        {
+            "organization": "Fundación Trebol",
+            "position": "Vorstandsmitglied",
+            "url": "https://www.facebook.com/FundacionTrebolDePueblaAC/",
+            "startDate": "2011-04-01",
+            "summary": "Wohnheim für Menschen mit Behinderung.",
+            "highlights": [
+                {
+                    "highlight": "Ich betreue die Facebook-Community.",
+                    "tags": ["gestor-de-comunidad", "facebook"]
+                }
+            ],
+            "tags": ["gestor-de-comunidad", "facebook"]
+        }
+    ],
+    "education": [
+        {
+            "institution": "UNIR México",
+            "url": "https://mexico.unir.net/",
+            "area": "Ingenieurwissenschaften",
+            "studyType": "Masterstudium Künstliche Intelligenz (laufend)",
+            "startDate": "2025-11-17",
+            "score": "10.0",
+            "courses": [
+                {
+                    "course": "Künstliche Intelligenz und Kognitives Computing",
+                    "tags": ["ia", "inteligencia-artificial", "computacion-cognitiva"]
+                },
+                {
+                    "course": "Computergestützte Wahrnehmung",
+                    "tags": ["ia", "inteligencia-artificial", "percepcion-computacional", "vision-computacional"]
+                },
+                {
+                    "course": "Maschinelles Lernen",
+                    "tags": ["ia", "inteligencia-artificial", "aprendizaje-automatico"]
+                },
+                {
+                    "course": "Automatisches Schlussfolgern und Planen",
+                    "tags": ["ia", "inteligencia-artificial", "razonamiento", "planificacion-automatica"]
+                },
+                {
+                    "course": "Künstliche kognitive Systeme",
+                    "tags": ["ia", "inteligencia-artificial", "computacion-cognitiva"]
+                },
+                {
+                    "course": "Verarbeitung natürlicher Sprache",
+                    "tags": ["ia", "inteligencia-artificial", "nlp"]
+                },
+                {
+                    "course": "Forschung in Künstlicher Intelligenz",
+                    "tags": ["ia", "inteligencia-artificial", "investigacion"]
+                },
+                {
+                    "course": "Methodik der Projektkonzeption und -steuerung",
+                    "tags": ["gestion-de-proyectos", "metodologia"]
+                },
+                {
+                    "course": "Seminar zu Innovationen in der Künstlichen Intelligenz",
+                    "tags": ["ia", "inteligencia-artificial", "innovacion"]
+                }
+            ],
+            "summary": "Masterstudium Künstliche Intelligenz.",
+            "tags": ["ia", "inteligencia-artificial"]
+        },
+        {
+            "institution": "UNIR México",
+            "url": "https://mexico.unir.net/",
+            "area": "Ingenieurwissenschaften",
+            "startDate": "2025-11-17",
+            "courses": [
+                {
+                    "course": "Vorbereitung auf die Zertifizierung AWS Cloud Practitioner",
+                    "tags": ["aws"]
+                },
+                {
+                    "course": "Vorbereitung auf die Zertifizierung AZ-900: Microsoft Azure Fundamentals",
+                    "tags": ["azure"]
+                },
+                {
+                    "course": "Diplomkurs zu Soft Skills und Führungskompetenzen",
+                    "tags": ["habilidad-blanda", "dirección"]
+                }
+            ]
+        },
+        {
+            "institution": "Lingo Centre",
+            "area": "Englisch",
+            "studyType": "Cambridge English C2 Proficiency (CPE), Ergebnis C1",
+            "startDate": "2019-01",
+            "endDate": "2023-12",
+            "tags": ["ingles"]
+        },
+        {
+            "institution": "Lingo Centre",
+            "area": "Englisch",
+            "studyType": "TOEFL",
+            "startDate": "2018-08",
+            "endDate": "2019-01",
+            "tags": ["ingles"]
+        },
+        {
+            "institution": "IT-University",
+            "area": "Technologiezertifizierungen",
+            "studyType": "Zertifizierungsvorbereitung",
+            "startDate": "2009-08",
+            "endDate": "2010-03",
+            "courses": [
+                {
+                    "course": "Sun Certified Java Programmer",
+                    "tags": ["java"]
+                },
+                {
+                    "course": "Oracle Database 11g: SQL Fundamentals I (Prüfung 1Z0-051)",
+                    "tags": ["oracle-sql", "sql", "oracle"]
+                },
+                {
+                    "course": ".NET Framework 3.5 - Application Fundamentals",
+                    "tags": ["dotnet", "csharp"]
+                },
+                {
+                    "course": "PMP und Projektmanagement",
+                    "tags": ["pmp", "gestion-de-proyectos"]
+                },
+                {
+                    "course": "UML",
+                    "tags": ["uml"]
+                }
+            ],
+            "tags": ["java", "oracle-sql", "dotnet", "csharp", "pmp", "gestion-de-proyectos", "uml"]
+        },
+        {
+            "institution": "Universidad Iberoamericana Puebla",
+            "area": "Bildung und Technologie",
+            "studyType": "Diplomkurs zu Innovationen in der Lehre",
+            "startDate": "2005",
+            "endDate": "2005",
+            "tags": ["educación", "tecnología"]
+        },
+        {
+            "institution": "IT-University",
+            "area": "Netzwerke",
+            "studyType": "Cisco-Netzwerkausbildung (CCNA)",
+            "startDate": "2002",
+            "endDate": "2003",
+            "courses": [
+                {
+                    "course": "Networking Essentials",
+                    "tags": ["cisco", "redes"]
+                },
+                {
+                    "course": "Kurs Cisco Certified Network Associate R&S 200-301 +",
+                    "tags": ["cisco", "ccna"]
+                }
+            ],
+            "tags": ["ccna", "cisco", "redes"]
+        },
+        {
+            "institution": "Benemérita Universidad Autónoma de Puebla",
+            "area": "Französisch",
+            "studyType": "Französische Sprache",
+            "startDate": "2003",
+            "endDate": "2005",
+            "tags": ["francés"]
+        },
+        {
+            "institution": "Benemérita Universidad Autónoma de Puebla",
+            "area": "Deutsch",
+            "studyType": "Deutsche Sprache",
+            "startDate": "1998",
+            "endDate": "2002",
+            "tags": ["aleman"]
+        },
+        {
+            "institution": "Benemérita Universidad Autónoma de Puebla",
+            "area": "Informatik",
+            "studyType": "Informatikstudium (Studienplan abgeschlossen)",
+            "startDate": "1992",
+            "endDate": "1997",
+            "score": "9.63/10",
+            "courses": [
+                {
+                    "course": "Elementarmathematik",
+                    "tags": ["matematicas"]
+                },
+                {
+                    "course": "Programmierung",
+                    "tags": ["programacion"]
+                },
+                {
+                    "course": "Einführung in Differential- und Integralrechnung",
+                    "tags": ["matematicas", "calculo"]
+                },
+                {
+                    "course": "Höhere Algebra",
+                    "tags": ["matematicas", "algebra"]
+                },
+                {
+                    "course": "Differentialrechnung",
+                    "tags": ["matematicas", "calculo"]
+                },
+                {
+                    "course": "Fortgeschrittene Programmierung",
+                    "tags": ["programacion"]
+                },
+                {
+                    "course": "Allgemeine Physik",
+                    "tags": ["fisica"]
+                },
+                {
+                    "course": "Lineare Algebra I",
+                    "tags": ["matematicas", "algebra"]
+                },
+                {
+                    "course": "Integralrechnung",
+                    "tags": ["matematicas", "calculo"]
+                },
+                {
+                    "course": "Assemblersprache",
+                    "tags": ["programacion", "ensamblador"]
+                },
+                {
+                    "course": "Elektrische Schaltungen",
+                    "tags": ["electronica"]
+                },
+                {
+                    "course": "Lineare Algebra II",
+                    "tags": ["matematicas", "algebra"]
+                },
+                {
+                    "course": "Vektorrechnung",
+                    "tags": ["matematicas", "calculo"]
+                },
+                {
+                    "course": "Systemprogrammierung",
+                    "tags": ["programacion", "sistemas"]
+                },
+                {
+                    "course": "Grundlagen der Elektronik",
+                    "tags": ["electronica"]
+                },
+                {
+                    "course": "Diskrete Mathematik",
+                    "tags": ["matematicas"]
+                },
+                {
+                    "course": "Differentialgleichungen",
+                    "tags": ["matematicas"]
+                },
+                {
+                    "course": "Algorithmen und Datenstrukturen",
+                    "tags": ["algoritmos", "estructuras-de-datos", "programacion"]
+                },
+                {
+                    "course": "Digitale Systeme",
+                    "tags": ["electronica", "arquitectura-de-computadoras"]
+                },
+                {
+                    "course": "Wahrscheinlichkeit",
+                    "tags": ["matematicas", "probabilidad"]
+                },
+                {
+                    "course": "Programmiersprachen",
+                    "tags": ["programacion", "lenguajes-de-programacion"]
+                },
+                {
+                    "course": "Softwaretechnik",
+                    "tags": ["ingenieria-de-software"]
+                },
+                {
+                    "course": "Mikroprozessoren",
+                    "tags": ["arquitectura-de-computadoras", "electronica"]
+                },
+                {
+                    "course": "Statistik",
+                    "tags": ["matematicas", "estadistica"]
+                },
+                {
+                    "course": "Numerische Analysis I",
+                    "tags": ["matematicas", "analisis-numerico"]
+                },
+                {
+                    "course": "Betriebssysteme",
+                    "tags": ["sistemas-operativos"]
+                },
+                {
+                    "course": "Rechnerarchitektur",
+                    "tags": ["arquitectura-de-computadoras"]
+                },
+                {
+                    "course": "Mathematische Logik",
+                    "tags": ["matematicas", "logica"]
+                },
+                {
+                    "course": "Numerische Analysis II",
+                    "tags": ["matematicas", "analisis-numerico"]
+                },
+                {
+                    "course": "Rechnernetze",
+                    "tags": ["redes"]
+                },
+                {
+                    "course": "Gesellschaft, Technologie und Wirtschaft",
+                    "tags": ["sociedad", "economia"]
+                },
+                {
+                    "course": "Sprachen und Automaten",
+                    "tags": ["lenguajes-formales", "automatas"]
+                },
+                {
+                    "course": "Lineare Optimierung",
+                    "tags": ["matematicas", "optimizacion"]
+                },
+                {
+                    "course": "Datenbanken",
+                    "tags": ["bases-de-datos"]
+                },
+                {
+                    "course": "Abschlussarbeitsseminar",
+                    "tags": ["tesis", "investigacion"]
+                },
+                {
+                    "course": "Abschlussarbeitsseminar I",
+                    "tags": ["tesis", "investigacion"]
+                },
+                {
+                    "course": "Philosophie und Informatik",
+                    "tags": ["filosofia"]
+                },
+                {
+                    "course": "Spezialthemen der Informatik",
+                    "tags": ["ciencias-de-la-computacion"]
+                }
+            ],
+            "tags": ["ciencias-de-la-computacion"]
+        }
+    ],
+    "skills": [
+        {
+            "name": "Softwarearchitektur",
+            "keywords": ["Softwarearchitektur", "Cloud-Architektur", "Microservices", "Serverless / FaaS", "Multi-tenant", "MVC", "Datenbankdesign", "Horizontale Skalierbarkeit", "OAuth 2.0", "OpenID Connect (OIDC)", "UML"],
+            "tags": ["arquitectura", "nube", "multiinquilino", "oauth", "oidc"]
+        },
+        {
+            "name": "Programmiersprachen",
+            "keywords": ["Go", "Python", "PHP", "JavaScript", "SQL", "HTML", "CSS", "Perl"],
+            "tags": ["go", "python", "php", "javascript", "html", "css", "perl"]
+        },
+        {
+            "name": "Frameworks und Bibliotheken",
+            "keywords": ["Svelte", "SvelteKit", "Flutter", "Go Fiber", "GORM", "SQLAlchemy", "Yii", "jQuery", "Unit-Tests"],
+            "tags": ["svelte", "sveltekit", "flutter", "gofiber", "sqlalchemy", "yii", "jquery", "testing"]
+        },
+        {
+            "name": "Cloud",
+            "keywords": ["AWS (Lambda, Aurora Serverless, S3, CloudFront, VPC)", "Alibaba Cloud / Aliyun (Function Compute, Apsara RDS)", "Cloudflare (Workers, DNS, SSL)", "Microsoft Azure", "VMware", "Docker", "Cloud-Migration"],
+            "tags": ["nube", "aws", "aliyun", "cloudflare", "azure", "vmware", "docker"]
+        },
+        {
+            "name": "Datenbanken",
+            "keywords": ["MySQL", "PostgreSQL", "Aurora Serverless", "Apsara RDS", "Redis", "Memcached"],
+            "tags": ["mysql", "postgresql", "aurora", "apsara-rds", "redis", "memcached"]
+        },
+        {
+            "name": "Systeme und Netzwerke",
+            "keywords": ["Linux (Ubuntu, RHEL, Slackware)", "FreeBSD", "nginx", "Apache", "Varnish", "Postfix", "Dovecot", "Nagios", "DNS", "SSL/TLS", "Cisco", "Radius", "Squid"],
+            "tags": ["linux", "freebsd", "nginx", "apache", "varnish", "postfix", "nagios", "dns", "ssl", "cisco", "redes"]
+        },
+        {
+            "name": "Künstliche Intelligenz",
+            "keywords": ["Generative KI", "RAG", "Semantische Suche", "Sentence Transformers", "Embeddings", "FAISS", "BM25", "OCR", "Web scraping"],
+            "tags": ["ia", "inteligencia-artificial", "rag", "incrustaciones", "busqueda-semantica"]
+        },
+        {
+            "name": "Führung und Management",
+            "keywords": ["Technische Leitung", "Koordination von Teams und Dienstleistern", "Projektmanagement", "Führungskompetenzen"],
+            "tags": ["liderazgo", "coordinación", "equipos", "habilidad-blanda", "dirección"]
+        }
+    ],
+    "languages": [
+        {
+            "language": "Spanisch",
+            "fluency": "Muttersprache"
+        },
+        {
+            "language": "Englisch",
+            "fluency": "TOEFL ITP 630 (2018), Cambridge English C2 Proficiency (CPE), Ergebnis C1 (2023)"
+        },
+        {
+            "language": "Deutsch",
+            "fluency": "ÖSD Zertifikat C1 (2002)"
+        },
+        {
+            "language": "Französisch",
+            "fluency": "Mittelstufe (2005)"
+        }
+    ],
+    "interests": [
+        {
+            "name": "Musikproduktion",
+            "keywords": ["Musik", "Synthesizer"]
+        },
+        {
+            "name": "Videoproduktion",
+            "keywords": ["Video"]
+        }
+    ],
+    "projects": [
+        {
+            "name": "gettext-translator",
+            "summary": "Übersetzt Gettext-.po-Dateien mit mehreren KI-Backends.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte einen Übersetzer für Gettext-.po-Dateien mit mehreren KI-Backends.",
+                    "tags": ["python", "gettext", "ia"]
+                }
+            ],
+            "keywords": ["Python", "Gettext", "Künstliche Intelligenz"],
+            "startDate": "2024-08",
+            "url": "https://github.com/rgglez/gettext-translator",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["python", "gettext", "ia"]
+        },
+        {
+            "name": "geonames-loader",
+            "summary": "Python-Skripte zum Herunterladen von GeoNames und zum Laden in relationale Datenbanken.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte Python-Skripte, die GeoNames herunterladen und die Daten in relationale Datenbanken laden.",
+                    "tags": ["python"]
+                }
+            ],
+            "keywords": ["Python", "GeoNames"],
+            "startDate": "2026-02",
+            "url": "https://github.com/rgglez/geonames-loader",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["python"]
+        },
+        {
+            "name": "gormcache",
+            "summary": "Fork von evangwt/grc: Caching-Plugin für GORM.",
+            "highlights": [
+                {
+                    "highlight": "Ich betreue einen Fork des GORM-Caching-Plugins mit Redis-, Memcached- und BoltDB-Backends. Ich stellte die Architektur auf ein erweiterbares Monorepo um.",
+                    "tags": ["go"]
+                }
+            ],
+            "keywords": ["Go", "GORM", "Redis", "Memcached", "BoltDB"],
+            "startDate": "2023-10",
+            "url": "https://github.com/rgglez/gormcache",
+            "roles": [
+                "Maintainer"
+            ],
+            "type": "Bibliothek",
+            "tags": ["go"]
+        },
+        {
+            "name": "whois-parser-ai",
+            "summary": "Go-Modul, das mit KI Daten aus WHOIS-Ausgaben extrahiert.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte ein Go-Modul, das mit KI nützliche Daten aus WHOIS-Ausgaben extrahiert.",
+                    "tags": ["go", "ia"]
+                }
+            ],
+            "keywords": ["Go", "WHOIS", "Künstliche Intelligenz"],
+            "startDate": "2025-09",
+            "url": "https://github.com/rgglez/whois-parser-ai",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["go", "ia"]
+        },
+        {
+            "name": "nagios-check-ssl-expiration",
+            "summary": "Nagios-Plugin, das vor dem Ablauf eines SSL-Zertifikats warnt.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte ein Nagios-Plugin, das vor dem Ablauf eines SSL-Zertifikats warnt.",
+                    "tags": ["go", "nagios"]
+                }
+            ],
+            "keywords": ["Go", "Nagios", "SSL"],
+            "startDate": "2024-09",
+            "url": "https://github.com/rgglez/nagios-check-ssl-expiration",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Plugin",
+            "tags": ["go", "nagios"]
+        },
+        {
+            "name": "nagios-check-domain",
+            "summary": "Nagios-Plugin, das anhand von WHOIS vor dem Ablauf einer Domain warnt.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte ein Nagios-Plugin, das anhand von WHOIS vor dem Ablauf einer Domain warnt.",
+                    "tags": ["go", "nagios"]
+                }
+            ],
+            "keywords": ["Go", "Nagios", "WHOIS"],
+            "startDate": "2025-03",
+            "url": "https://github.com/rgglez/nagios-check-domain",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Plugin",
+            "tags": ["go", "nagios"]
+        },
+        {
+            "name": "gofiber-recovery-middleware",
+            "summary": "Go-Fiber-Middleware, die einen Panic abfängt und protokolliert.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte Go-Fiber-Middleware, die einen Panic abfängt und dessen Ursache protokolliert.",
+                    "tags": ["go", "gofiber"]
+                }
+            ],
+            "keywords": ["Go", "Fiber"],
+            "startDate": "2025-10",
+            "url": "https://github.com/rgglez/gofiber-recovery-middleware",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["go", "gofiber"]
+        },
+        {
+            "name": "gofiber-recaptcha3-middleware",
+            "summary": "Go-Fiber-Middleware zur Validierung von Google reCAPTCHA v3.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte Go-Fiber-Middleware zur Validierung von Google reCAPTCHA v3.",
+                    "tags": ["go", "gofiber"]
+                }
+            ],
+            "keywords": ["Go", "Fiber", "reCAPTCHA"],
+            "startDate": "2025-05",
+            "url": "https://github.com/rgglez/gofiber-recaptcha3-middleware",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["go", "gofiber"]
+        },
+        {
+            "name": "svelte-i18n-gettext",
+            "summary": "Gettext-basierte Übersetzung für Svelte.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte eine Gettext-basierte Übersetzungsbibliothek für Svelte.",
+                    "tags": ["svelte", "javascript", "gettext"]
+                }
+            ],
+            "keywords": ["Svelte", "JavaScript", "gettext"],
+            "startDate": "2023-03",
+            "url": "https://github.com/rgglez/svelte-i18n-gettext",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["svelte", "javascript", "gettext"]
+        },
+        {
+            "name": "gettext-spellchecker",
+            "summary": "Rechtschreibprüfung für msgid- und msgstr-Zeichenketten in .po- und .pot-Dateien.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte eine Rechtschreibprüfung für msgid- und msgstr-Zeichenketten in .po- und .pot-Dateien.",
+                    "tags": ["python", "gettext"]
+                }
+            ],
+            "keywords": ["Python", "Gettext"],
+            "startDate": "2025-03",
+            "url": "https://github.com/rgglez/gettext-spellchecker",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["python", "gettext"]
+        },
+        {
+            "name": "yii-webfeed",
+            "summary": "WebFeed-ATOM- und RSS-Generatoren für Yii 1.1.",
+            "highlights": [
+                {
+                    "highlight": "Ich veröffentlichte WebFeed-ATOM- und RSS-Generatoren für Yii 1.1.",
+                    "tags": ["php"]
+                }
+            ],
+            "keywords": ["PHP", "Yii", "ATOM", "RSS"],
+            "startDate": "2023-02",
+            "url": "https://github.com/rgglez/yii-webfeed",
+            "roles": [
+                "Autor"
+            ],
+            "type": "Bibliothek",
+            "tags": ["php"]
+        },
+        {
+            "name": "go-storage",
+            "summary": "Fork von beyondstorage/go-storage: anbieterunabhängige Speicherung für Go.",
+            "highlights": [
+                {
+                    "highlight": "Ich betreue einen Fork der Go-Speicherbibliothek beyondstorage/go-storage.",
+                    "tags": ["go"]
+                }
+            ],
+            "keywords": ["Go"],
+            "startDate": "2024-06",
+            "url": "https://github.com/rgglez/go-storage",
+            "roles": [
+                "Maintainer"
+            ],
+            "type": "Bibliothek",
+            "tags": ["go"]
+        }
+    ],
+    "meta": {
+        "canonical": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/sample.resume.json",
+        "version": "v1.3.1",
+        "lastModified": "2026-11-05T00:00:00",
+        "exports": {
+            "desarrollo": [
+                "go",
+                "python",
+                "php",
+                "javascript",
+                "svelte",
+                "flutter",
+                "yii",
+                "perl",
+                "css",
+                "gui",
+                "gettext",
+                "gofiber",
+                "webmaster",
+                "mysql",
+                "postgresql",
+                "apsara-rds",
+                "arquitectura",
+                "multiinquilino",
+                "zitadel",
+                "oidc",
+                "oauth",
+                "aws",
+                "ia",
+                "inteligencia-artificial",
+                "ciencias-de-la-computacion",
+                "sveltekit",
+                "sqlalchemy",
+                "html",
+                "cgi",
+                "flash",
+                "mvc",
+                "jquery",
+                "api",
+                "prado",
+                "extraccion-web",
+                "visual-basic",
+                "microsoft-access",
+                "lector-de-codigos-de-barras",
+                "rag",
+                "incrustaciones",
+                "ocr",
+                "pdf",
+                "csv",
+                "rembg",
+                "testing"
+            ],
+            "sysadmin": [
+                "linux",
+                "ubuntu",
+                "freebsd",
+                "cisco",
+                "redes",
+                "isp",
+                "satelite",
+                "vmware",
+                "nagios",
+                "dns",
+                "docbook",
+                "ciencias-de-la-computacion",
+                "apache",
+                "nginx",
+                "postfix",
+                "dovecot",
+                "rhel",
+                "slackware",
+                "squid",
+                "acceso-telefonico",
+                "radius",
+                "huawei",
+                "lucent",
+                "portmaster",
+                "satélite",
+                "centro-de-datos",
+                "irc",
+                "bahamut",
+                "jabberd",
+                "varnish",
+                "redis",
+                "memcached",
+                "lighttpd",
+                "ssl",
+                "transmision",
+                "realserver",
+                "docker"
+            ],
+            "nube": [
+                "nube",
+                "aws",
+                "azure",
+                "aliyun",
+                "alibaba-cloud",
+                "cloudflare",
+                "cloudflare-workers",
+                "dns",
+                "ciencias-de-la-computacion",
+                "aurora",
+                "s3",
+                "cloudfront",
+                "ssl",
+                "docker",
+                "apsara-rds"
+            ],
+            "ia": [
+                "ia",
+                "inteligencia-artificial",
+                "rag",
+                "incrustaciones",
+                "faiss",
+                "bm25",
+                "sentence-transformers",
+                "busqueda-semantica",
+                "ocr",
+                "rembg",
+                "extraccion-web"
+            ],
+            "liderazgo": [
+                "liderazgo",
+                "dirección",
+                "habilidad-blanda",
+                "arquitectura",
+                "coordinación",
+                "equipos",
+                "administración"
+            ],
+            "marketing": [
+                "marketing",
+                "crm",
+                "gohighlevel",
+                "gestor-de-comunidad",
+                "facebook"
+            ],
+            "idiomas": [
+                "ingles",
+                "francés",
+                "aleman"
+            ]
+        }
+    }
+}

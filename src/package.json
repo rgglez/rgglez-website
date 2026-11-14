@@ -16,6 +16,7 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "sync:portfolio": "node scripts/sync-portfolio.mjs",
+    "sync:cv": "for l in es en fr de; do cp ${CV_DIR:-../../rgglez-cv}/resume-$l.json src/data/cv/ || exit 1; done",
     "i18n:extract": "find src -name '*.astro' | sort | xgettext -f - -L JavaScript --from-code=UTF-8 --keyword=_ --keyword=_n:1,2 --flag=_:1:javascript-format --flag=_n:1:javascript-format --flag=_n:2:javascript-format --package-name=rgglez-website -o src/i18n/messages.pot",
     "i18n:update": "for l in es fr de zh en; do msgmerge --quiet --update --backup=none --no-fuzzy-matching src/i18n/$l/messages.po src/i18n/messages.pot; done && msgen src/i18n/en/messages.po -o src/i18n/en/messages.po",
     "i18n:json": "for l in es en fr de zh; do msgfmt -c --statistics -o /dev/null src/i18n/$l/messages.po && perl scripts/po2json.pl --po src/i18n/$l/messages.po --json src/i18n/$l/messages.json --context app || exit 1; done"

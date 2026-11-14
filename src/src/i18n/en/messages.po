@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 14:27-0600\n"
+"POT-Creation-Date: 2026-11-14 03:38-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -72,33 +72,38 @@ msgstr "Open Menu"
 msgid "Close Menu"
 msgstr "Close Menu"
 
-#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:50
+#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: src/components/Header.astro:102 src/pages/[lang]/archives/[...page].astro:44
+#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:153
+#, javascript-format
+msgid "CV"
+msgstr "CV"
+
+#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
 #, javascript-format
 msgid "Blog"
 msgstr "Blog"
 
-#: src/components/Header.astro:112 src/components/Header.astro:113
-#: src/components/Header.astro:116 src/pages/[lang]/search.astro:21
+#: src/components/Header.astro:120 src/components/Header.astro:121
+#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
 #: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
 #: src/pages/search.astro:17
 #, javascript-format
 msgid "Search"
 msgstr "Search"
 
-#: src/components/Header.astro:124 src/components/Header.astro:125
-#: src/components/Header.astro:132
+#: src/components/Header.astro:132 src/components/Header.astro:133
+#: src/components/Header.astro:140
 #, javascript-format
 msgid "RSS Feed"
 msgstr "RSS Feed"
 
-#: src/components/Header.astro:166
+#: src/components/Header.astro:174
 #, javascript-format
 msgid "Toggles light & dark"
 msgstr "Toggles light & dark"
@@ -170,27 +175,27 @@ msgstr "Go to next page"
 msgid "Next"
 msgstr "Next"
 
-#: src/components/PortfolioTabs.astro:11
+#: src/components/PortfolioTabs.astro:12
 #, javascript-format
 msgid "Languages"
 msgstr "Languages"
 
-#: src/components/PortfolioTabs.astro:12
+#: src/components/PortfolioTabs.astro:13
 #, javascript-format
 msgid "Topics"
 msgstr "Topics"
 
-#: src/components/PortfolioTabs.astro:13
+#: src/components/PortfolioTabs.astro:14
 #, javascript-format
 msgid "No repositories in this category."
 msgstr "No repositories in this category."
 
-#: src/components/PortfolioTabs.astro:14
+#: src/components/PortfolioTabs.astro:15
 #, javascript-format
-msgid "site"
-msgstr "site"
+msgid "Visit project site"
+msgstr "Visit project site"
 
-#: src/components/PortfolioTabs.astro:154
+#: src/components/PortfolioTabs.astro:170
 #, javascript-format
 msgid "%d star"
 msgid_plural "%d stars"
@@ -289,6 +294,125 @@ msgstr "Archive"
 msgid "All the articles I've archived."
 msgstr "All the articles I've archived."
 
+#: src/pages/[lang]/cv/index.astro:38
+#, javascript-format
+msgid "Present"
+msgstr "Present"
+
+#: src/pages/[lang]/cv/index.astro:44
+#, javascript-format
+msgid "Remote"
+msgstr "Remote"
+
+#: src/pages/[lang]/cv/index.astro:45
+#, javascript-format
+msgid "On-site"
+msgstr "On-site"
+
+#: src/pages/[lang]/cv/index.astro:46
+#, javascript-format
+msgid "Hybrid"
+msgstr "Hybrid"
+
+#: src/pages/[lang]/cv/index.astro:64
+#, javascript-format
+msgid "Experience"
+msgstr "Experience"
+
+#: src/pages/[lang]/cv/index.astro:83
+#, javascript-format
+msgid "Projects"
+msgstr "Projects"
+
+#: src/pages/[lang]/cv/index.astro:96
+#, javascript-format
+msgid "Education"
+msgstr "Education"
+
+#: src/pages/[lang]/cv/index.astro:108
+#, javascript-format
+msgid "Courses"
+msgstr "Courses"
+
+#: src/pages/[lang]/cv/index.astro:112
+#, javascript-format
+msgid "Volunteering"
+msgstr "Volunteering"
+
+#: src/pages/[lang]/cv/index.astro:125
+#, javascript-format
+msgid "Skills"
+msgstr "Skills"
+
+#: src/pages/[lang]/cv/index.astro:154
+#, javascript-format
+msgid "Curriculum vitae"
+msgstr "Curriculum vitae"
+
+#: src/pages/[lang]/cv/index.astro:186
+#, javascript-format
+msgid "Objective"
+msgstr "Objective"
+
+#: src/pages/[lang]/cv/index.astro:193
+#, javascript-format
+msgid "Filter"
+msgstr "Filter"
+
+#: src/pages/[lang]/cv/index.astro:198
+#, javascript-format
+msgid ""
+"Pick profiles or tags to filter the highlights. An item is shown if it "
+"matches any selected tag."
+msgstr ""
+"Pick profiles or tags to filter the highlights. An item is shown if it "
+"matches any selected tag."
+
+#: src/pages/[lang]/cv/index.astro:203
+#, javascript-format
+msgid "Profiles"
+msgstr "Profiles"
+
+#: src/pages/[lang]/cv/index.astro:222
+#, javascript-format
+msgid "Clear filters"
+msgstr "Clear filters"
+
+#: src/pages/[lang]/cv/index.astro:227
+#, javascript-format
+msgid "Search tags"
+msgstr "Search tags"
+
+#: src/pages/[lang]/cv/index.astro:233
+#, javascript-format
+msgid "Type a tag and press Enter"
+msgstr "Type a tag and press Enter"
+
+#: src/pages/[lang]/cv/index.astro:236
+#, javascript-format
+msgid "Tag not found"
+msgstr "Tag not found"
+
+#: src/pages/[lang]/cv/index.astro:237
+#, javascript-format
+msgid "Remove tag %s"
+msgstr "Remove tag %s"
+
+#: src/pages/[lang]/cv/index.astro:245
+#, javascript-format
+msgid "All tags (%d)"
+msgstr "All tags (%d)"
+
+#: src/pages/[lang]/cv/index.astro:325
+#, javascript-format
+msgid "Spoken languages"
+msgstr "Spoken languages"
+
+#: src/pages/[lang]/cv/index.astro:339
+#, javascript-format
+msgid "Interests"
+msgstr "Interests"
+
 #: src/pages/[lang]/index.astro:59
 #, javascript-format
 msgid "Featured"
@@ -369,6 +493,10 @@ msgstr "Tag: %s"
 #, javascript-format
 msgid "All the articles with the tag \"%s\"."
 msgstr "All the articles with the tag \"%s\"."
+
+#, javascript-format
+#~ msgid "site"
+#~ msgstr "site"
 
 #, javascript-format
 #~ msgid "About"

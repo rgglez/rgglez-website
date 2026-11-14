@@ -1,0 +1,484 @@
+---
+export const prerender = true;
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
+import { useGettext, sprintf } from "@/i18n";
+
+export const getStaticPaths = (() => {
+  return SITE.supportedLangs.map(lang => ({ params: { lang } }));
+}) satisfies GetStaticPaths;
+
+const { lang } = Astro.params;
+// ponytail: no resume-zh.json yet; zh falls back to en.
+const resumes = await getCollection("cv");
+const entry =
+  resumes.find(r => r.id === `resume-${lang}`) ??
+  resumes.find(r => r.id === "resume-en");
+if (!entry) throw new Error("CV: missing src/data/cv/resume-en.json");
+const cv = entry.data;
+
+const { _ } = useGettext(Astro);
+
+const monthFmt = new Intl.DateTimeFormat(lang, {
+  year: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+const fmtDate = (d?: string) =>
+  !d
+    ? ""
+    : d.length === 4
+      ? d
+      : monthFmt.format(new Date(`${d.slice(0, 7)}-01`));
+const range = (start?: string, end?: string) =>
+  start ? `${fmtDate(start)} – ${end ? fmtDate(end) : _("Present")}` : "";
+const place = (l: typeof cv.basics.location) =>
+  typeof l === "string"
+    ? l
+    : [l?.city, l?.region, l?.countryCode].filter(Boolean).join(", ");
+const workModes = {
+  remote: _("Remote"),
+  onsite: _("On-site"),
+  hybrid: _("Hybrid"),
+};
+
+/** One filterable entry: optional gate tags plus filterable pieces. */
+type Item = {
+  title: string;
+  url?: string;
+  subtitle?: string;
+  meta: string;
+  summary?: string;
+  keywords: string[];
+  tags?: string[];
+  pieces: { text: string; tags?: string[] }[];
+  /** Label for a collapsed <details> around the pieces. */
+  collapse?: string;
+};
+const sections: { title: string; items: Item[] }[] = [
+  {
+    title: _("Experience"),
+    items: cv.work.map(w => ({
+      title: w.position ?? w.name,
+      url: w.url,
+      subtitle: w.position ? w.name : undefined,
+      meta: [
+        range(w.startDate, w.endDate),
+        place(w.location),
+        w.workMode && workModes[w.workMode],
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      summary: w.summary,
+      keywords: w.keywords,
+      tags: w.tags,
+      pieces: w.highlights.map(h => ({ text: h.highlight, tags: h.tags })),
+    })),
+  },
+  {
+    title: _("Projects"),
+    items: cv.projects.map(p => ({
+      title: p.name,
+      url: p.url,
+      subtitle: p.roles.join(", ") || undefined,
+      meta: range(p.startDate, p.endDate),
+      summary: p.summary,
+      keywords: p.keywords,
+      tags: p.tags,
+      pieces: p.highlights.map(h => ({ text: h.highlight, tags: h.tags })),
+    })),
+  },
+  {
+    title: _("Education"),
+    items: cv.education.map(e => ({
+      title: [e.studyType, e.area].filter(Boolean).join(", ") || e.institution,
+      url: e.url,
+      subtitle: e.institution,
+      meta: [range(e.startDate, e.endDate), e.score]
+        .filter(Boolean)
+        .join(" · "),
+      summary: e.summary,
+      keywords: [],
+      tags: e.tags,
+      pieces: e.courses.map(c => ({ text: c.course, tags: c.tags })),
+      collapse: _("Courses"),
+    })),
+  },
+  {
+    title: _("Volunteering"),
+    items: cv.volunteer.map(v => ({
+      title: v.position ?? v.organization,
+      url: v.url,
+      subtitle: v.position ? v.organization : undefined,
+      meta: range(v.startDate, v.endDate),
+      summary: v.summary,
+      keywords: [],
+      tags: v.tags,
+      pieces: v.highlights.map(h => ({ text: h.highlight, tags: h.tags })),
+    })),
+  },
+  {
+    title: _("Skills"),
+    items: cv.skills.map(s => ({
+      title: s.name,
+      meta: "",
+      keywords: s.keywords,
+      tags: s.tags,
+      pieces: [],
+    })),
+  },
+].filter(s => s.items.length);
+
+const allTags = [
+  ...new Set(
+    sections.flatMap(s =>
+      s.items.flatMap(i => [
+        ...(i.tags ?? []),
+        ...i.pieces.flatMap(p => p.tags ?? []),
+      ])
+    )
+  ),
+].sort((a, b) => a.localeCompare(b, lang));
+const profiles = Object.entries(cv.meta.exports);
+const tagAttr = (t?: string[]) => (t ?? []).join(" ");
+
+const chip =
+  "rounded border border-border px-2 py-0.5 text-sm text-foreground/80 transition-colors hover:border-accent hover:text-accent aria-pressed:border-accent aria-pressed:bg-accent/10 aria-pressed:text-accent";
+
+const layoutProps = {
+  title: sprintf("%s | %s", _("CV"), SITE.title),
+  description: cv.basics.label ?? _("Curriculum vitae"),
+};
+---
+
+<Layout {...layoutProps}>
+  <Header />
+  <main id="main-content" class="app-layout py-8" data-cv>
+    <h1 class="text-2xl font-semibold">{cv.basics.name}</h1>
+    {
+      cv.basics.label && (
+        <p class="mb-2 text-foreground/75">{cv.basics.label}</p>
+      )
+    }
+    <p class="mb-6 flex flex-wrap gap-x-4 text-sm">
+      {place(cv.basics.location) && <span>{place(cv.basics.location)}</span>}
+      {
+        cv.basics.email && (
+          <a href={`mailto:${cv.basics.email}`}>{cv.basics.email}</a>
+        )
+      }
+      {
+        cv.basics.profiles.map(p => (
+          <a href={p.url} target="_blank" rel="noopener">
+            {p.network}
+          </a>
+        ))
+      }
+    </p>
+    {cv.basics.summary && <p class="mb-4">{cv.basics.summary}</p>}
+    {
+      cv.objective && (
+        <p class="mb-8">
+          <strong>{_("Objective")}:</strong> {cv.objective}
+        </p>
+      )
+    }
+
+    <section
+      class="mb-8 rounded border border-border p-4"
+      aria-label={_("Filter")}
+    >
+      <p class="mb-3 text-sm text-foreground/70">
+        {
+          _(
+            "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag."
+          )
+        }
+      </p>
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <span class="me-1 text-sm text-foreground/60">{_("Profiles")}</span>
+        {
+          profiles.map(([name, tags]) => (
+            <button
+              type="button"
+              class={chip}
+              aria-pressed="false"
+              data-cv-toggle={tagAttr(tags)}
+              data-cv-profile
+            >
+              {name}
+            </button>
+          ))
+        }
+        <button
+          type="button"
+          class="ms-auto text-sm text-foreground/70 underline hover:text-accent"
+          data-cv-clear
+        >
+          {_("Clear filters")}
+        </button>
+      </div>
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <span class="contents" data-cv-selected data-chip={chip}></span>
+        <label for="cv-tag-input" class="sr-only">{_("Search tags")}</label>
+        <input
+          id="cv-tag-input"
+          type="search"
+          list="cv-tags"
+          autocomplete="off"
+          placeholder={_("Type a tag and press Enter")}
+          class="min-w-48 flex-1 rounded border border-border bg-transparent px-2 py-1 text-sm focus:border-accent focus:outline-none"
+          data-cv-input
+          data-not-found={_("Tag not found")}
+          data-remove={_("Remove tag %s")}
+        />
+        <datalist id="cv-tags">
+          {allTags.map(t => <option value={t} />)}
+        </datalist>
+      </div>
+      <details>
+        <summary class="cursor-pointer text-sm text-foreground/60">
+          {sprintf(_("All tags (%d)"), allTags.length)}
+        </summary>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {
+            allTags.map(t => (
+              <button
+                type="button"
+                class={chip}
+                aria-pressed="false"
+                data-cv-toggle={t}
+              >
+                {t}
+              </button>
+            ))
+          }
+        </div>
+      </details>
+    </section>
+
+    {
+      sections.map(s => (
+        <section class="mb-10" data-cv-section>
+          <h2 class="mb-4 text-xl font-semibold">{s.title}</h2>
+          {s.items.map(i => (
+            <article class="mb-6" data-cv-item data-tags={tagAttr(i.tags)}>
+              <h3 class="font-semibold">
+                {i.url ? (
+                  <a href={i.url} target="_blank" rel="noopener">
+                    {i.title}
+                  </a>
+                ) : (
+                  i.title
+                )}
+                {i.subtitle && (
+                  <span class="font-normal text-foreground/75">
+                    {" "}
+                    · {i.subtitle}
+                  </span>
+                )}
+              </h3>
+              {i.meta && <p class="text-sm text-foreground/60">{i.meta}</p>}
+              {i.summary && <p class="mt-1">{i.summary}</p>}
+              {i.pieces.length > 0 &&
+                (i.collapse ? (
+                  <details class="mt-2" data-cv-collapse>
+                    <summary class="cursor-pointer text-sm text-foreground/70">
+                      {i.collapse}{" "}
+                      <span data-cv-count set:text={`(${i.pieces.length})`} />
+                    </summary>
+                    <ul class="mt-1 list-disc ps-5">
+                      {i.pieces.map(p => (
+                        <li data-cv-piece data-tags={tagAttr(p.tags)}>
+                          {p.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (
+                  <ul class="mt-2 list-disc ps-5">
+                    {i.pieces.map(p => (
+                      <li data-cv-piece data-tags={tagAttr(p.tags)}>
+                        {p.text}
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              {i.keywords.length > 0 && (
+                <p class="mt-1 text-sm text-foreground/60 italic">
+                  {i.keywords.join(", ")}
+                </p>
+              )}
+            </article>
+          ))}
+        </section>
+      ))
+    }
+
+    {
+      cv.languages.length > 0 && (
+        <section class="mb-10">
+          <h2 class="mb-4 text-xl font-semibold">{_("Spoken languages")}</h2>
+          <ul class="list-disc ps-5">
+            {cv.languages.map(l => (
+              <li>
+                {l.language}: {l.fluency}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+    {
+      cv.interests.length > 0 && (
+        <section class="mb-10">
+          <h2 class="mb-4 text-xl font-semibold">{_("Interests")}</h2>
+          <ul class="list-disc ps-5">
+            {cv.interests.map(i => (
+              <li>
+                {[i.name, i.keywords.join(", ")].filter(Boolean).join(": ")}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  // Same rule as rgglez-cv/schema.rgglez.json: a piece without tags always
+  // shows; a tagged piece shows if it shares any selected tag (OR). An entry
+  // hides if its own tags miss, or if it had pieces and none remain.
+  function bindCv() {
+    const root = document.querySelector<HTMLElement>("[data-cv]");
+    if (!root) return;
+    const selected = new Set<string>();
+    const split = (s?: string) => (s ?? "").split(" ").filter(Boolean);
+    const hits = (tags: string[]) =>
+      !selected.size || !tags.length || tags.some(t => selected.has(t));
+    const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
+    const capsules = root.querySelector<HTMLElement>("[data-cv-selected]");
+    const known = new Set(
+      Array.from(
+        root.querySelectorAll("#cv-tags option"),
+        o => (o as HTMLOptionElement).value
+      )
+    );
+
+    const apply = () => {
+      root.querySelectorAll<HTMLElement>("[data-cv-item]").forEach(item => {
+        const pieces = Array.from(
+          item.querySelectorAll<HTMLElement>("[data-cv-piece]")
+        );
+        pieces.forEach(p => (p.hidden = !hits(split(p.dataset.tags))));
+        item.hidden =
+          !hits(split(item.dataset.tags)) ||
+          (pieces.length > 0 && pieces.every(p => p.hidden));
+      });
+      // Collapsed lists open while filtering so matches are visible.
+      root
+        .querySelectorAll<HTMLDetailsElement>("[data-cv-collapse]")
+        .forEach(d => {
+          d.open = selected.size > 0;
+          const count = d.querySelector("[data-cv-count]");
+          const n = d.querySelectorAll("[data-cv-piece]:not([hidden])").length;
+          if (count) count.textContent = `(${n})`;
+        });
+      root.querySelectorAll<HTMLElement>("[data-cv-section]").forEach(s => {
+        s.hidden = Array.from(
+          s.querySelectorAll<HTMLElement>("[data-cv-item]")
+        ).every(i => i.hidden);
+      });
+      // Capsules mirror `selected`; their data-cv-toggle reuses the click path.
+      capsules?.replaceChildren(
+        ...Array.from(selected)
+          .sort((a, b) => a.localeCompare(b))
+          .map(t => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = capsules.dataset.chip ?? "";
+            b.dataset.cvToggle = t;
+            b.textContent = `${t} ×`;
+            b.setAttribute(
+              "aria-label",
+              (input?.dataset.remove ?? "%s").replace("%s", t)
+            );
+            return b;
+          })
+      );
+      root
+        .querySelectorAll<HTMLButtonElement>("[data-cv-toggle]")
+        .forEach(b => {
+          const on = split(b.dataset.cvToggle).every(t => selected.has(t));
+          b.setAttribute("aria-pressed", String(on));
+        });
+    };
+
+    root.addEventListener("click", e => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+        "[data-cv-toggle], [data-cv-clear]"
+      );
+      if (!btn) return;
+      if (btn.dataset.cvToggle === undefined) {
+        selected.clear();
+      } else {
+        // Profile = group of tags: all on -> remove all, otherwise add all.
+        // On removal, keep tags still claimed by another pressed profile.
+        const tags = split(btn.dataset.cvToggle);
+        const allOn = tags.every(t => selected.has(t));
+        if (allOn && btn.dataset.cvProfile === undefined) {
+          tags.forEach(t => selected.delete(t));
+        } else if (allOn) {
+          const kept = new Set(
+            Array.from(
+              root.querySelectorAll<HTMLButtonElement>(
+                '[data-cv-profile][aria-pressed="true"]'
+              )
+            )
+              .filter(b => b !== btn)
+              .flatMap(b => split(b.dataset.cvToggle))
+          );
+          tags.forEach(t => kept.has(t) || selected.delete(t));
+        } else tags.forEach(t => selected.add(t));
+      }
+      apply();
+    });
+
+    // "Inteligencia Artificial" -> "inteligencia-artificial". Unknown tags
+    // only complain on Enter; typing a prefix of a longer tag never adds it.
+    const addTyped = (report: boolean) => {
+      if (!input) return;
+      const t = input.value.trim().toLowerCase().replace(/\s+/g, "-");
+      if (!known.has(t)) {
+        if (report && t) {
+          input.setCustomValidity(input.dataset.notFound ?? "");
+          input.reportValidity();
+        }
+        return;
+      }
+      selected.add(t);
+      input.value = "";
+      apply();
+    };
+    input?.addEventListener("keydown", e => {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      addTyped(true);
+    });
+    input?.addEventListener("input", e => {
+      input.setCustomValidity("");
+      // Picking a <datalist> option: Chrome fires a plain Event, Firefox an
+      // InputEvent with inputType "insertReplacementText".
+      if (!(e instanceof InputEvent) || e.inputType === "insertReplacementText")
+        addTyped(false);
+    });
+  }
+
+  document.addEventListener("astro:page-load", bindCv);
+</script>

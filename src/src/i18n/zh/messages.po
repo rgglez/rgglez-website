@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 14:27-0600\n"
+"POT-Creation-Date: 2026-11-14 03:38-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -72,33 +72,38 @@ msgstr "打开菜单"
 msgid "Close Menu"
 msgstr "关闭菜单"
 
-#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:50
+#: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "作品集"
 
-#: src/components/Header.astro:102 src/pages/[lang]/archives/[...page].astro:44
+#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:153
+#, javascript-format
+msgid "CV"
+msgstr "简历"
+
+#: src/components/Header.astro:110 src/pages/[lang]/archives/[...page].astro:44
 #, javascript-format
 msgid "Blog"
 msgstr "博客"
 
-#: src/components/Header.astro:112 src/components/Header.astro:113
-#: src/components/Header.astro:116 src/pages/[lang]/search.astro:21
+#: src/components/Header.astro:120 src/components/Header.astro:121
+#: src/components/Header.astro:124 src/pages/[lang]/search.astro:21
 #: src/pages/[lang]/search.astro:23 src/pages/search.astro:15
 #: src/pages/search.astro:17
 #, javascript-format
 msgid "Search"
 msgstr "搜索"
 
-#: src/components/Header.astro:124 src/components/Header.astro:125
-#: src/components/Header.astro:132
+#: src/components/Header.astro:132 src/components/Header.astro:133
+#: src/components/Header.astro:140
 #, javascript-format
 msgid "RSS Feed"
 msgstr "RSS 订阅"
 
-#: src/components/Header.astro:166
+#: src/components/Header.astro:174
 #, javascript-format
 msgid "Toggles light & dark"
 msgstr "切换浅色/深色模式"
@@ -167,27 +172,27 @@ msgstr "前往下一页"
 msgid "Next"
 msgstr "下一页"
 
-#: src/components/PortfolioTabs.astro:11
+#: src/components/PortfolioTabs.astro:12
 #, javascript-format
 msgid "Languages"
 msgstr "编程语言"
 
-#: src/components/PortfolioTabs.astro:12
+#: src/components/PortfolioTabs.astro:13
 #, javascript-format
 msgid "Topics"
 msgstr "主题"
 
-#: src/components/PortfolioTabs.astro:13
+#: src/components/PortfolioTabs.astro:14
 #, javascript-format
 msgid "No repositories in this category."
 msgstr "此类别下没有仓库。"
 
-#: src/components/PortfolioTabs.astro:14
+#: src/components/PortfolioTabs.astro:15
 #, javascript-format
-msgid "site"
-msgstr "网站"
+msgid "Visit project site"
+msgstr "访问项目网站"
 
-#: src/components/PortfolioTabs.astro:154
+#: src/components/PortfolioTabs.astro:170
 #, javascript-format
 msgid "%d star"
 msgid_plural "%d stars"
@@ -285,6 +290,123 @@ msgstr "归档"
 msgid "All the articles I've archived."
 msgstr "所有已归档的文章。"
 
+#: src/pages/[lang]/cv/index.astro:38
+#, javascript-format
+msgid "Present"
+msgstr "至今"
+
+#: src/pages/[lang]/cv/index.astro:44
+#, javascript-format
+msgid "Remote"
+msgstr "远程"
+
+#: src/pages/[lang]/cv/index.astro:45
+#, javascript-format
+msgid "On-site"
+msgstr "现场"
+
+#: src/pages/[lang]/cv/index.astro:46
+#, javascript-format
+msgid "Hybrid"
+msgstr "混合"
+
+#: src/pages/[lang]/cv/index.astro:64
+#, javascript-format
+msgid "Experience"
+msgstr "工作经历"
+
+#: src/pages/[lang]/cv/index.astro:83
+#, javascript-format
+msgid "Projects"
+msgstr "项目"
+
+#: src/pages/[lang]/cv/index.astro:96
+#, javascript-format
+msgid "Education"
+msgstr "教育背景"
+
+#: src/pages/[lang]/cv/index.astro:108
+#, javascript-format
+msgid "Courses"
+msgstr "课程"
+
+#: src/pages/[lang]/cv/index.astro:112
+#, javascript-format
+msgid "Volunteering"
+msgstr "志愿活动"
+
+#: src/pages/[lang]/cv/index.astro:125
+#, javascript-format
+msgid "Skills"
+msgstr "技能"
+
+#: src/pages/[lang]/cv/index.astro:154
+#, javascript-format
+msgid "Curriculum vitae"
+msgstr "个人简历"
+
+#: src/pages/[lang]/cv/index.astro:186
+#, javascript-format
+msgid "Objective"
+msgstr "求职目标"
+
+#: src/pages/[lang]/cv/index.astro:193
+#, javascript-format
+msgid "Filter"
+msgstr "筛选"
+
+#: src/pages/[lang]/cv/index.astro:198
+#, javascript-format
+msgid ""
+"Pick profiles or tags to filter the highlights. An item is shown if it "
+"matches any selected tag."
+msgstr "选择档案或标签来筛选成就。只要与任一所选标签匹配，条目就会显示。"
+
+#: src/pages/[lang]/cv/index.astro:203
+#, javascript-format
+msgid "Profiles"
+msgstr "档案"
+
+#: src/pages/[lang]/cv/index.astro:222
+#, javascript-format
+msgid "Clear filters"
+msgstr "清除筛选"
+
+#: src/pages/[lang]/cv/index.astro:227
+#, javascript-format
+msgid "Search tags"
+msgstr "搜索标签"
+
+#: src/pages/[lang]/cv/index.astro:233
+#, javascript-format
+msgid "Type a tag and press Enter"
+msgstr "输入标签并按回车"
+
+#: src/pages/[lang]/cv/index.astro:236
+#, javascript-format
+msgid "Tag not found"
+msgstr "未找到该标签"
+
+#: src/pages/[lang]/cv/index.astro:237
+#, javascript-format
+msgid "Remove tag %s"
+msgstr "移除标签 %s"
+
+#: src/pages/[lang]/cv/index.astro:245
+#, javascript-format
+msgid "All tags (%d)"
+msgstr "全部标签（%d）"
+
+#: src/pages/[lang]/cv/index.astro:325
+#, javascript-format
+msgid "Spoken languages"
+msgstr "语言能力"
+
+#: src/pages/[lang]/cv/index.astro:339
+#, javascript-format
+msgid "Interests"
+msgstr "兴趣"
+
 #: src/pages/[lang]/index.astro:59
 #, javascript-format
 msgid "Featured"
@@ -362,6 +484,10 @@ msgstr "标签：%s"
 #, javascript-format
 msgid "All the articles with the tag \"%s\"."
 msgstr "所有带有标签“%s”的文章。"
+
+#, javascript-format
+#~ msgid "site"
+#~ msgstr "网站"
 
 #, javascript-format
 #~ msgid "About"

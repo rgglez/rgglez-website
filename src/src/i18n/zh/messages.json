@@ -1,230 +1,151 @@
 {
-   "headers" : {
-      "Content-Transfer-Encoding" : "8bit",
-      "Language" : "zh",
-      "Last-Translator" : "Automatically generated",
-      "Plural-Forms" : "nplurals=1; plural=0;",
-      "Content-Type" : "text/plain; charset=UTF-8",
-      "MIME-Version" : "1.0",
-      "Report-Msgid-Bugs-To" : "",
-      "PO-Revision-Date" : "2026-10-16 20:43-0600",
-      "POT-Creation-Date" : "2026-10-27 14:27-0600",
-      "Project-Id-Version" : "rgglez-website",
-      "Language-Team" : "none"
-   },
-   "charset" : "utf-8",
    "translations" : {
-      "" : {
-         "" : {
-            "msgid" : "",
-            "msgstr" : [
-               "Project-Id-Version: rgglez-website\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2026-10-27 14:27-0600\nPO-Revision-Date: 2026-10-16 20:43-0600\nLast-Translator: Automatically generated\nLanguage-Team: none\nLanguage: zh\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\n"
-            ]
-         }
-      },
       "app" : {
-         "Close license" : {
-            "msgid" : "Close license",
+         "Search" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "关闭许可协议"
-            ]
-         },
-         "Tags" : {
-            "msgstr" : [
-               "标签"
+               "搜索"
             ],
-            "msgid" : "Tags",
+            "msgid" : "Search"
+         },
+         "Search ..." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "搜索…"
+            ],
+            "msgid" : "Search ..."
+         },
+         "Tag: %s" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "标签：%s"
+            ],
+            "msgid" : "Tag: %s"
+         },
+         "No language selected." : {
+            "msgstr" : [
+               "未选择语言。"
+            ],
+            "msgid" : "No language selected.",
             "msgctxt" : "app"
          },
-         "Prev" : {
-            "msgid" : "Prev",
-            "msgctxt" : "app",
+         "Hybrid" : {
+            "msgid" : "Hybrid",
             "msgstr" : [
-               "上一页"
-            ]
-         },
-         "Browse tags" : {
-            "msgstr" : [
-               "浏览标签"
+               "混合"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Browse tags"
-         },
-         "Copyright © %1$s %2$s" : {
-            "msgstr" : [
-               "版权所有 © %1$s %2$s"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Copyright © %1$s %2$s"
-         },
-         "All the articles with the tag \"%s\"." : {
-            "msgctxt" : "app",
-            "msgid" : "All the articles with the tag \"%s\".",
-            "msgstr" : [
-               "所有带有标签“%s”的文章。"
-            ]
-         },
-         "Filter tags" : {
-            "msgstr" : [
-               "筛选标签"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Filter tags"
-         },
-         "%d star" : {
-            "msgid" : "%d star",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "%d 颗星"
-            ],
-            "msgid_plural" : "%d stars"
-         },
-         "Change language" : {
-            "msgstr" : [
-               "切换语言"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Change language"
-         },
-         "The full text of this license is not bundled on this site. Use the official license link above." : {
-            "msgctxt" : "app",
-            "msgid" : "The full text of this license is not bundled on this site. Use the official license link above.",
-            "msgstr" : [
-               "本站未收录此许可协议的全文。请使用上方的官方许可协议链接。"
-            ]
-         },
-         "Copied" : {
-            "msgid" : "Copied",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "已复制"
-            ]
-         },
-         "Filter…" : {
-            "msgstr" : [
-               "筛选…"
-            ],
-            "msgid" : "Filter…",
             "msgctxt" : "app"
          },
          "Pagination Navigation" : {
+            "msgctxt" : "app",
+            "msgid" : "Pagination Navigation",
             "msgstr" : [
                "分页导航"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Pagination Navigation"
-         },
-         "Search any article ..." : {
-            "msgid" : "Search any article ...",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "搜索任意文章…"
             ]
          },
-         "Go to previous page" : {
+         "Tags" : {
+            "msgid" : "Tags",
             "msgstr" : [
-               "前往上一页"
+               "标签"
             ],
-            "msgid" : "Go to previous page",
-            "msgctxt" : "app"
-         },
-         "Topics" : {
-            "msgctxt" : "app",
-            "msgid" : "Topics",
-            "msgstr" : [
-               "主题"
-            ]
-         },
-         "RSS Feed" : {
-            "msgstr" : [
-               "RSS 订阅"
-            ],
-            "msgid" : "RSS Feed",
             "msgctxt" : "app"
          },
          "Portfolio" : {
             "msgstr" : [
                "作品集"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Portfolio"
-         },
-         "Search" : {
-            "msgstr" : [
-               "搜索"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Search"
-         },
-         "Go back" : {
-            "msgid" : "Go back",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "返回"
-            ]
-         },
-         "Tag: %s" : {
-            "msgctxt" : "app",
-            "msgid" : "Tag: %s",
-            "msgstr" : [
-               "标签：%s"
-            ]
-         },
-         "Posts (page %s)" : {
-            "msgctxt" : "app",
-            "msgid" : "Posts (page %s)",
-            "msgstr" : [
-               "文章（第 %s 页）"
-            ]
-         },
-         "All the articles I've archived." : {
-            "msgctxt" : "app",
-            "msgid" : "All the articles I've archived.",
-            "msgstr" : [
-               "所有已归档的文章。"
-            ]
-         },
-         "Home" : {
-            "msgctxt" : "app",
-            "msgid" : "Home",
-            "msgstr" : [
-               "首页"
-            ]
-         },
-         "Updated:" : {
-            "msgstr" : [
-               "更新于："
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Updated:"
-         },
-         "Next" : {
-            "msgstr" : [
-               "下一页"
-            ],
-            "msgid" : "Next",
+            "msgid" : "Portfolio",
             "msgctxt" : "app"
          },
-         "Showing the first %d." : {
-            "msgid" : "Showing the first %d.",
-            "msgctxt" : "app",
+         "No repositories in this category." : {
             "msgstr" : [
-               "显示前 %d 条。"
+               "此类别下没有仓库。"
+            ],
+            "msgid" : "No repositories in this category.",
+            "msgctxt" : "app"
+         },
+         "Remove tag %s" : {
+            "msgid" : "Remove tag %s",
+            "msgstr" : [
+               "移除标签 %s"
+            ],
+            "msgctxt" : "app"
+         },
+         "Curriculum vitae" : {
+            "msgid" : "Curriculum vitae",
+            "msgstr" : [
+               "个人简历"
+            ],
+            "msgctxt" : "app"
+         },
+         "Filter tags" : {
+            "msgid" : "Filter tags",
+            "msgstr" : [
+               "筛选标签"
+            ],
+            "msgctxt" : "app"
+         },
+         "Open Menu" : {
+            "msgid" : "Open Menu",
+            "msgstr" : [
+               "打开菜单"
+            ],
+            "msgctxt" : "app"
+         },
+         "Objective" : {
+            "msgid" : "Objective",
+            "msgstr" : [
+               "求职目标"
+            ],
+            "msgctxt" : "app"
+         },
+         "Page Not Found" : {
+            "msgid" : "Page Not Found",
+            "msgstr" : [
+               "页面未找到"
+            ],
+            "msgctxt" : "app"
+         },
+         "Blog" : {
+            "msgctxt" : "app",
+            "msgid" : "Blog",
+            "msgstr" : [
+               "博客"
             ]
          },
-         "All the articles I've posted." : {
-            "msgid" : "All the articles I've posted.",
+         "breadcrumb" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "所有已发布的文章。"
+               "面包屑导航"
+            ],
+            "msgid" : "breadcrumb"
+         },
+         "Spotify player" : {
+            "msgctxt" : "app",
+            "msgid" : "Spotify player",
+            "msgstr" : [
+               "Spotify 播放器"
             ]
          },
-         "Go to next page" : {
-            "msgid" : "Go to next page",
-            "msgctxt" : "app",
+         "License for original content:" : {
+            "msgid" : "License for original content:",
             "msgstr" : [
-               "前往下一页"
+               "原创内容许可协议："
+            ],
+            "msgctxt" : "app"
+         },
+         "Could not load the local license text. Use the official license link above." : {
+            "msgctxt" : "app",
+            "msgid" : "Could not load the local license text. Use the official license link above.",
+            "msgstr" : [
+               "无法加载本地许可协议文本。请使用上方的官方许可协议链接。"
+            ]
+         },
+         "All tags (%d)" : {
+            "msgctxt" : "app",
+            "msgid" : "All tags (%d)",
+            "msgstr" : [
+               "全部标签（%d）"
             ]
          },
          "Close Menu" : {
@@ -234,110 +155,179 @@
                "关闭菜单"
             ]
          },
-         "Search ..." : {
-            "msgctxt" : "app",
-            "msgid" : "Search ...",
+         "Loading license…" : {
             "msgstr" : [
-               "搜索…"
-            ]
+               "正在加载许可协议…"
+            ],
+            "msgid" : "Loading license…",
+            "msgctxt" : "app"
          },
          "Posts" : {
+            "msgid" : "Posts",
             "msgstr" : [
                "文章"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Posts"
+            "msgctxt" : "app"
          },
-         "Archive" : {
-            "msgid" : "Archive",
+         "Next Post" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "归档"
-            ]
+               "下一篇"
+            ],
+            "msgid" : "Next Post"
          },
-         "Open Menu" : {
+         "Spoken languages" : {
             "msgctxt" : "app",
-            "msgid" : "Open Menu",
             "msgstr" : [
-               "打开菜单"
-            ]
+               "语言能力"
+            ],
+            "msgid" : "Spoken languages"
          },
-         "Blog" : {
-            "msgctxt" : "app",
-            "msgid" : "Blog",
+         "All the articles I've archived." : {
             "msgstr" : [
-               "博客"
+               "所有已归档的文章。"
+            ],
+            "msgid" : "All the articles I've archived.",
+            "msgctxt" : "app"
+         },
+         "Showing the first %d." : {
+            "msgid" : "Showing the first %d.",
+            "msgstr" : [
+               "显示前 %d 条。"
+            ],
+            "msgctxt" : "app"
+         },
+         "Copy" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "复制"
+            ],
+            "msgid" : "Copy"
+         },
+         "404 Not Found" : {
+            "msgid" : "404 Not Found",
+            "msgstr" : [
+               "404 未找到"
+            ],
+            "msgctxt" : "app"
+         },
+         "Close license" : {
+            "msgid" : "Close license",
+            "msgstr" : [
+               "关闭许可协议"
+            ],
+            "msgctxt" : "app"
+         },
+         "Projects" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "项目"
+            ],
+            "msgid" : "Projects"
+         },
+         "Next" : {
+            "msgstr" : [
+               "下一页"
+            ],
+            "msgid" : "Next",
+            "msgctxt" : "app"
+         },
+         "Visit project site" : {
+            "msgctxt" : "app",
+            "msgid" : "Visit project site",
+            "msgstr" : [
+               "访问项目网站"
             ]
          },
          "You need to build the project at least once to see search results during development." : {
+            "msgctxt" : "app",
+            "msgid" : "You need to build the project at least once to see search results during development.",
             "msgstr" : [
                "开发期间需要至少构建一次项目才能看到搜索结果。"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "You need to build the project at least once to see search results during development."
-         },
-         "Read the License for the original content" : {
-            "msgctxt" : "app",
-            "msgid" : "Read the License for the original content",
-            "msgstr" : [
-               "阅读原创内容许可协议"
             ]
          },
-         "Recent Posts" : {
+         "Tag not found" : {
             "msgstr" : [
-               "最新文章"
+               "未找到该标签"
             ],
-            "msgid" : "Recent Posts",
+            "msgid" : "Tag not found",
             "msgctxt" : "app"
          },
-         "Could not load the local license text. Use the official license link above." : {
-            "msgstr" : [
-               "无法加载本地许可协议文本。请使用上方的官方许可协议链接。"
-            ],
+         "Back To Top" : {
             "msgctxt" : "app",
-            "msgid" : "Could not load the local license text. Use the official license link above."
-         },
-         "All Posts" : {
+            "msgid" : "Back To Top",
             "msgstr" : [
-               "全部文章"
-            ],
-            "msgid" : "All Posts",
-            "msgctxt" : "app"
-         },
-         "No repositories in this category." : {
-            "msgctxt" : "app",
-            "msgid" : "No repositories in this category.",
-            "msgstr" : [
-               "此类别下没有仓库。"
+               "返回顶部"
             ]
          },
-         "No language selected." : {
-            "msgstr" : [
-               "未选择语言。"
-            ],
+         "Posts (page %s)" : {
             "msgctxt" : "app",
-            "msgid" : "No language selected."
-         },
-         "Page Not Found" : {
             "msgstr" : [
-               "页面未找到"
+               "文章（第 %s 页）"
             ],
-            "msgid" : "Page Not Found",
+            "msgid" : "Posts (page %s)"
+         },
+         "Volunteering" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "志愿活动"
+            ],
+            "msgid" : "Volunteering"
+         },
+         "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag." : {
+            "msgstr" : [
+               "选择档案或标签来筛选成就。只要与任一所选标签匹配，条目就会显示。"
+            ],
+            "msgid" : "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag.",
             "msgctxt" : "app"
          },
-         "Languages" : {
+         "site" : {
+            "msgid" : "site",
             "msgstr" : [
-               "编程语言"
+               "网站"
             ],
-            "msgid" : "Languages",
             "msgctxt" : "app"
          },
-         "%d result." : {
-            "msgctxt" : "app",
-            "msgid" : "%d result.",
-            "msgid_plural" : "%d results.",
+         "Go to next page" : {
             "msgstr" : [
-               "%d 条结果。"
+               "前往下一页"
+            ],
+            "msgid" : "Go to next page",
+            "msgctxt" : "app"
+         },
+         "The full text of this license is not bundled on this site. Use the official license link above." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "本站未收录此许可协议的全文。请使用上方的官方许可协议链接。"
+            ],
+            "msgid" : "The full text of this license is not bundled on this site. Use the official license link above."
+         },
+         "Experience" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "工作经历"
+            ],
+            "msgid" : "Experience"
+         },
+         "Filter…" : {
+            "msgid" : "Filter…",
+            "msgstr" : [
+               "筛选…"
+            ],
+            "msgctxt" : "app"
+         },
+         "All the articles I've posted." : {
+            "msgstr" : [
+               "所有已发布的文章。"
+            ],
+            "msgid" : "All the articles I've posted.",
+            "msgctxt" : "app"
+         },
+         "Search tags" : {
+            "msgctxt" : "app",
+            "msgid" : "Search tags",
+            "msgstr" : [
+               "搜索标签"
             ]
          },
          "Share this post on:" : {
@@ -347,82 +337,47 @@
                "分享这篇文章到："
             ]
          },
-         "404 Not Found" : {
-            "msgid" : "404 Not Found",
+         "Featured" : {
             "msgctxt" : "app",
+            "msgid" : "Featured",
             "msgstr" : [
-               "404 未找到"
+               "精选"
             ]
          },
-         "Toggles light & dark" : {
+         "Public GitHub projects by language and topics." : {
             "msgctxt" : "app",
-            "msgid" : "Toggles light & dark",
+            "msgid" : "Public GitHub projects by language and topics.",
             "msgstr" : [
-               "切换浅色/深色模式"
+               "按编程语言和主题分类的公开 GitHub 项目。"
             ]
          },
-         "breadcrumb" : {
-            "msgctxt" : "app",
-            "msgid" : "breadcrumb",
+         "Skills" : {
+            "msgid" : "Skills",
             "msgstr" : [
-               "面包屑导航"
-            ]
-         },
-         "License for original content:" : {
-            "msgid" : "License for original content:",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "原创内容许可协议："
-            ]
-         },
-         "Previous Post" : {
-            "msgstr" : [
-               "上一篇"
+               "技能"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Previous Post"
-         },
-         "%1$s (page %2$s)" : {
-            "msgstr" : [
-               "%1$s（第 %2$s 页）"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "%1$s (page %2$s)"
-         },
-         "Next Post" : {
-            "msgstr" : [
-               "下一篇"
-            ],
-            "msgid" : "Next Post",
             "msgctxt" : "app"
          },
-         "DEV mode warning!" : {
-            "msgctxt" : "app",
-            "msgid" : "DEV mode warning!",
+         "Copyright © %1$s %2$s" : {
+            "msgid" : "Copyright © %1$s %2$s",
             "msgstr" : [
-               "开发模式警告！"
-            ]
+               "版权所有 © %1$s %2$s"
+            ],
+            "msgctxt" : "app"
          },
-         "No results." : {
+         "Languages" : {
             "msgctxt" : "app",
-            "msgid" : "No results.",
             "msgstr" : [
-               "没有结果。"
-            ]
+               "编程语言"
+            ],
+            "msgid" : "Languages"
          },
-         "About" : {
-            "msgid" : "About",
-            "msgctxt" : "app",
+         "Go to previous page" : {
+            "msgid" : "Go to previous page",
             "msgstr" : [
-               "关于"
-            ]
-         },
-         "site" : {
-            "msgctxt" : "app",
-            "msgid" : "site",
-            "msgstr" : [
-               "网站"
-            ]
+               "前往上一页"
+            ],
+            "msgctxt" : "app"
          },
          "Your browser does not support canvas." : {
             "msgctxt" : "app",
@@ -431,69 +386,289 @@
                "你的浏览器不支持 canvas。"
             ]
          },
-         "Copy" : {
+         "CV" : {
+            "msgctxt" : "app",
+            "msgid" : "CV",
             "msgstr" : [
-               "复制"
+               "简历"
+            ]
+         },
+         "%1$s (page %2$s)" : {
+            "msgstr" : [
+               "%1$s（第 %2$s 页）"
             ],
-            "msgid" : "Copy",
+            "msgid" : "%1$s (page %2$s)",
             "msgctxt" : "app"
          },
-         "Go back home" : {
+         "Toggles light & dark" : {
+            "msgctxt" : "app",
             "msgstr" : [
-               "返回首页"
+               "切换浅色/深色模式"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Go back home"
+            "msgid" : "Toggles light & dark"
          },
-         "Public GitHub projects by language and topics." : {
-            "msgid" : "Public GitHub projects by language and topics.",
-            "msgctxt" : "app",
+         "All the articles with the tag \"%s\"." : {
+            "msgid" : "All the articles with the tag \"%s\".",
             "msgstr" : [
-               "按编程语言和主题分类的公开 GitHub 项目。"
-            ]
-         },
-         "Loading license…" : {
-            "msgid" : "Loading license…",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "正在加载许可协议…"
-            ]
-         },
-         "Featured" : {
-            "msgctxt" : "app",
-            "msgid" : "Featured",
-            "msgstr" : [
-               "精选"
-            ]
-         },
-         "Back To Top" : {
-            "msgstr" : [
-               "返回顶部"
+               "所有带有标签“%s”的文章。"
             ],
-            "msgid" : "Back To Top",
             "msgctxt" : "app"
+         },
+         "Remote" : {
+            "msgstr" : [
+               "远程"
+            ],
+            "msgid" : "Remote",
+            "msgctxt" : "app"
+         },
+         "Prev" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "上一页"
+            ],
+            "msgid" : "Prev"
+         },
+         "Topics" : {
+            "msgid" : "Topics",
+            "msgstr" : [
+               "主题"
+            ],
+            "msgctxt" : "app"
+         },
+         "Clear filters" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "清除筛选"
+            ],
+            "msgid" : "Clear filters"
+         },
+         "Type a tag and press Enter" : {
+            "msgctxt" : "app",
+            "msgid" : "Type a tag and press Enter",
+            "msgstr" : [
+               "输入标签并按回车"
+            ]
+         },
+         "Copied" : {
+            "msgstr" : [
+               "已复制"
+            ],
+            "msgid" : "Copied",
+            "msgctxt" : "app"
+         },
+         "About" : {
+            "msgstr" : [
+               "关于"
+            ],
+            "msgid" : "About",
+            "msgctxt" : "app"
+         },
+         "Filter" : {
+            "msgctxt" : "app",
+            "msgid" : "Filter",
+            "msgstr" : [
+               "筛选"
+            ]
+         },
+         "Profiles" : {
+            "msgctxt" : "app",
+            "msgid" : "Profiles",
+            "msgstr" : [
+               "档案"
+            ]
+         },
+         "Courses" : {
+            "msgid" : "Courses",
+            "msgstr" : [
+               "课程"
+            ],
+            "msgctxt" : "app"
+         },
+         "DEV mode warning!" : {
+            "msgid" : "DEV mode warning!",
+            "msgstr" : [
+               "开发模式警告！"
+            ],
+            "msgctxt" : "app"
+         },
+         "Go back" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "返回"
+            ],
+            "msgid" : "Go back"
+         },
+         "All Posts" : {
+            "msgstr" : [
+               "全部文章"
+            ],
+            "msgid" : "All Posts",
+            "msgctxt" : "app"
+         },
+         "Present" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "至今"
+            ],
+            "msgid" : "Present"
+         },
+         "%d star" : {
+            "msgctxt" : "app",
+            "msgid_plural" : "%d stars",
+            "msgid" : "%d star",
+            "msgstr" : [
+               "%d 颗星"
+            ]
+         },
+         "Education" : {
+            "msgid" : "Education",
+            "msgstr" : [
+               "教育背景"
+            ],
+            "msgctxt" : "app"
+         },
+         "Previous Post" : {
+            "msgid" : "Previous Post",
+            "msgstr" : [
+               "上一篇"
+            ],
+            "msgctxt" : "app"
+         },
+         "Home" : {
+            "msgstr" : [
+               "首页"
+            ],
+            "msgid" : "Home",
+            "msgctxt" : "app"
+         },
+         "Read the License for the original content" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "阅读原创内容许可协议"
+            ],
+            "msgid" : "Read the License for the original content"
          },
          "Skip to content" : {
-            "msgid" : "Skip to content",
             "msgctxt" : "app",
             "msgstr" : [
                "跳到正文"
+            ],
+            "msgid" : "Skip to content"
+         },
+         "RSS Feed" : {
+            "msgstr" : [
+               "RSS 订阅"
+            ],
+            "msgid" : "RSS Feed",
+            "msgctxt" : "app"
+         },
+         "Go back home" : {
+            "msgid" : "Go back home",
+            "msgstr" : [
+               "返回首页"
+            ],
+            "msgctxt" : "app"
+         },
+         "Updated:" : {
+            "msgstr" : [
+               "更新于："
+            ],
+            "msgid" : "Updated:",
+            "msgctxt" : "app"
+         },
+         "Interests" : {
+            "msgstr" : [
+               "兴趣"
+            ],
+            "msgid" : "Interests",
+            "msgctxt" : "app"
+         },
+         "Search any article ..." : {
+            "msgctxt" : "app",
+            "msgid" : "Search any article ...",
+            "msgstr" : [
+               "搜索任意文章…"
             ]
+         },
+         "Browse tags" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "浏览标签"
+            ],
+            "msgid" : "Browse tags"
+         },
+         "%d result." : {
+            "msgctxt" : "app",
+            "msgid" : "%d result.",
+            "msgid_plural" : "%d results.",
+            "msgstr" : [
+               "%d 条结果。"
+            ]
+         },
+         "Archive" : {
+            "msgctxt" : "app",
+            "msgid" : "Archive",
+            "msgstr" : [
+               "归档"
+            ]
+         },
+         "Change language" : {
+            "msgctxt" : "app",
+            "msgid" : "Change language",
+            "msgstr" : [
+               "切换语言"
+            ]
+         },
+         "Recent Posts" : {
+            "msgstr" : [
+               "最新文章"
+            ],
+            "msgid" : "Recent Posts",
+            "msgctxt" : "app"
+         },
+         "On-site" : {
+            "msgstr" : [
+               "现场"
+            ],
+            "msgid" : "On-site",
+            "msgctxt" : "app"
+         },
+         "No results." : {
+            "msgstr" : [
+               "没有结果。"
+            ],
+            "msgid" : "No results.",
+            "msgctxt" : "app"
          },
          "Non-original content is included or referenced under fair use." : {
             "msgctxt" : "app",
-            "msgid" : "Non-original content is included or referenced under fair use.",
             "msgstr" : [
                "非原创内容依据合理使用原则收录或引用。"
-            ]
-         },
-         "Spotify player" : {
-            "msgctxt" : "app",
-            "msgid" : "Spotify player",
+            ],
+            "msgid" : "Non-original content is included or referenced under fair use."
+         }
+      },
+      "" : {
+         "" : {
             "msgstr" : [
-               "Spotify 播放器"
-            ]
+               "Project-Id-Version: rgglez-website\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2026-11-14 03:38-0600\nPO-Revision-Date: 2026-10-16 20:43-0600\nLast-Translator: Automatically generated\nLanguage-Team: none\nLanguage: zh\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\n"
+            ],
+            "msgid" : ""
          }
       }
-   }
+   },
+   "headers" : {
+      "Language" : "zh",
+      "Report-Msgid-Bugs-To" : "",
+      "MIME-Version" : "1.0",
+      "Project-Id-Version" : "rgglez-website",
+      "Last-Translator" : "Automatically generated",
+      "Content-Transfer-Encoding" : "8bit",
+      "POT-Creation-Date" : "2026-11-14 03:38-0600",
+      "Language-Team" : "none",
+      "Plural-Forms" : "nplurals=1; plural=0;",
+      "PO-Revision-Date" : "2026-10-16 20:43-0600",
+      "Content-Type" : "text/plain; charset=UTF-8"
+   },
+   "charset" : "utf-8"
 }
