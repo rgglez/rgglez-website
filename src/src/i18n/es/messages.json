@@ -1,74 +1,243 @@
 {
+   "charset" : "utf-8",
    "translations" : {
       "app" : {
-         "Archive" : {
-            "msgctxt" : "app",
-            "msgid" : "Archive",
+         "CV" : {
             "msgstr" : [
-               "Archivo"
-            ]
-         },
-         "%1$s (page %2$s)" : {
-            "msgstr" : [
-               "%1$s (página %2$s)"
+               "CV"
             ],
-            "msgctxt" : "app",
-            "msgid" : "%1$s (page %2$s)"
+            "msgid" : "CV",
+            "msgctxt" : "app"
          },
-         "404 Not Found" : {
+         "Objective" : {
+            "msgid" : "Objective",
             "msgstr" : [
-               "404 No encontrado"
+               "Objetivo"
             ],
-            "msgctxt" : "app",
-            "msgid" : "404 Not Found"
+            "msgctxt" : "app"
          },
-         "Prev" : {
+         "Recent Posts" : {
             "msgstr" : [
-               "Anterior"
+               "Artículos recientes"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Prev"
-         },
-         "Pagination Navigation" : {
-            "msgstr" : [
-               "Navegación de páginas"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Pagination Navigation"
+            "msgid" : "Recent Posts",
+            "msgctxt" : "app"
          },
          "Go back" : {
+            "msgid" : "Go back",
             "msgstr" : [
                "Regresar"
             ],
-            "msgid" : "Go back",
             "msgctxt" : "app"
          },
-         "Filter…" : {
+         "Share this post on:" : {
+            "msgid" : "Share this post on:",
             "msgstr" : [
-               "Filtrar…"
+               "Comparte este artículo en:"
             ],
-            "msgid" : "Filter…",
             "msgctxt" : "app"
+         },
+         "Back To Top" : {
+            "msgstr" : [
+               "Volver arriba"
+            ],
+            "msgid" : "Back To Top",
+            "msgctxt" : "app"
+         },
+         "Public GitHub projects by language and topics." : {
+            "msgid" : "Public GitHub projects by language and topics.",
+            "msgstr" : [
+               "Proyectos públicos en GitHub por lenguaje y tema."
+            ],
+            "msgctxt" : "app"
+         },
+         "Posts" : {
+            "msgctxt" : "app",
+            "msgid" : "Posts",
+            "msgstr" : [
+               "Artículos"
+            ]
          },
          "All tags (%d)" : {
             "msgid" : "All tags (%d)",
-            "msgctxt" : "app",
             "msgstr" : [
                "Todas las etiquetas (%d)"
+            ],
+            "msgctxt" : "app"
+         },
+         "Interests" : {
+            "msgctxt" : "app",
+            "msgid" : "Interests",
+            "msgstr" : [
+               "Intereses"
             ]
          },
-         "Non-original content is included or referenced under fair use." : {
-            "msgid" : "Non-original content is included or referenced under fair use.",
+         "Page Not Found" : {
+            "msgstr" : [
+               "Página no encontrada"
+            ],
+            "msgid" : "Page Not Found",
+            "msgctxt" : "app"
+         },
+         "Toggles light & dark" : {
+            "msgctxt" : "app",
+            "msgid" : "Toggles light & dark",
+            "msgstr" : [
+               "Alterna entre modo claro y oscuro"
+            ]
+         },
+         "Tag not found" : {
+            "msgstr" : [
+               "No existe esa etiqueta"
+            ],
+            "msgid" : "Tag not found",
+            "msgctxt" : "app"
+         },
+         "Skills" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "El contenido no original se incluye o referencia bajo uso justo."
+               "Habilidades"
+            ],
+            "msgid" : "Skills"
+         },
+         "Projects" : {
+            "msgctxt" : "app",
+            "msgid" : "Projects",
+            "msgstr" : [
+               "Proyectos"
             ]
          },
+         "Visit project site" : {
+            "msgctxt" : "app",
+            "msgid" : "Visit project site",
+            "msgstr" : [
+               "Visitar sitio del proyecto"
+            ]
+         },
+         "No language selected." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "No hay ningún idioma seleccionado."
+            ],
+            "msgid" : "No language selected."
+         },
+         "Courses" : {
+            "msgstr" : [
+               "Cursos"
+            ],
+            "msgid" : "Courses",
+            "msgctxt" : "app"
+         },
+         "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Elige perfiles o etiquetas para filtrar los logros. Se muestra cada elemento que coincida con alguna etiqueta seleccionada."
+            ],
+            "msgid" : "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag."
+         },
+         "Copy" : {
+            "msgid" : "Copy",
+            "msgstr" : [
+               "Copiar"
+            ],
+            "msgctxt" : "app"
+         },
          "Curriculum vitae" : {
+            "msgctxt" : "app",
+            "msgid" : "Curriculum vitae",
             "msgstr" : [
                "Currículum vítae"
+            ]
+         },
+         "Search any article ..." : {
+            "msgid" : "Search any article ...",
+            "msgstr" : [
+               "Busca cualquier artículo…"
             ],
-            "msgid" : "Curriculum vitae",
+            "msgctxt" : "app"
+         },
+         "Go to next page" : {
+            "msgstr" : [
+               "Ir a la página siguiente"
+            ],
+            "msgid" : "Go to next page",
+            "msgctxt" : "app"
+         },
+         "Go to previous page" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Ir a la página anterior"
+            ],
+            "msgid" : "Go to previous page"
+         },
+         "Archive" : {
+            "msgid" : "Archive",
+            "msgstr" : [
+               "Archivo"
+            ],
+            "msgctxt" : "app"
+         },
+         "Loading license…" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Cargando licencia…"
+            ],
+            "msgid" : "Loading license…"
+         },
+         "Next" : {
+            "msgctxt" : "app",
+            "msgid" : "Next",
+            "msgstr" : [
+               "Siguiente"
+            ]
+         },
+         "Portfolio" : {
+            "msgstr" : [
+               "Portafolio"
+            ],
+            "msgid" : "Portfolio",
+            "msgctxt" : "app"
+         },
+         "Home" : {
+            "msgctxt" : "app",
+            "msgid" : "Home",
+            "msgstr" : [
+               "Inicio"
+            ]
+         },
+         "You need to build the project at least once to see search results during development." : {
+            "msgstr" : [
+               "Debes compilar el proyecto al menos una vez para ver resultados de búsqueda durante el desarrollo."
+            ],
+            "msgid" : "You need to build the project at least once to see search results during development.",
+            "msgctxt" : "app"
+         },
+         "%1$s (page %2$s)" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "%1$s (página %2$s)"
+            ],
+            "msgid" : "%1$s (page %2$s)"
+         },
+         "Updated:" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Actualizado:"
+            ],
+            "msgid" : "Updated:"
+         },
+         "Education" : {
+            "msgstr" : [
+               "Formación"
+            ],
+            "msgid" : "Education",
+            "msgctxt" : "app"
+         },
+         "Change language" : {
+            "msgid" : "Change language",
+            "msgstr" : [
+               "Cambiar idioma"
+            ],
             "msgctxt" : "app"
          },
          "Showing the first %d." : {
@@ -78,237 +247,67 @@
             "msgid" : "Showing the first %d.",
             "msgctxt" : "app"
          },
-         "Interests" : {
+         "Tags" : {
             "msgstr" : [
-               "Intereses"
+               "Etiquetas"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Interests"
+            "msgid" : "Tags",
+            "msgctxt" : "app"
          },
-         "Recent Posts" : {
-            "msgid" : "Recent Posts",
+         "Spotify player" : {
+            "msgctxt" : "app",
+            "msgid" : "Spotify player",
+            "msgstr" : [
+               "Reproductor de Spotify"
+            ]
+         },
+         "Remove tag %s" : {
+            "msgid" : "Remove tag %s",
+            "msgstr" : [
+               "Quitar la etiqueta %s"
+            ],
+            "msgctxt" : "app"
+         },
+         "Profiles" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "Artículos recientes"
+               "Perfiles"
+            ],
+            "msgid" : "Profiles"
+         },
+         "Search tags" : {
+            "msgctxt" : "app",
+            "msgid" : "Search tags",
+            "msgstr" : [
+               "Buscar etiquetas"
             ]
+         },
+         "Type a tag and press Enter" : {
+            "msgid" : "Type a tag and press Enter",
+            "msgstr" : [
+               "Escribe una etiqueta y pulsa Enter"
+            ],
+            "msgctxt" : "app"
+         },
+         "Languages" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Lenguajes"
+            ],
+            "msgid" : "Languages"
+         },
+         "Tag: %s" : {
+            "msgid" : "Tag: %s",
+            "msgstr" : [
+               "Etiqueta: %s"
+            ],
+            "msgctxt" : "app"
          },
          "site" : {
             "msgctxt" : "app",
             "msgid" : "site",
             "msgstr" : [
                "sitio"
-            ]
-         },
-         "Remote" : {
-            "msgid" : "Remote",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Remoto"
-            ]
-         },
-         "Blog" : {
-            "msgstr" : [
-               "Blog"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Blog"
-         },
-         "Languages" : {
-            "msgctxt" : "app",
-            "msgid" : "Languages",
-            "msgstr" : [
-               "Lenguajes"
-            ]
-         },
-         "%d result." : {
-            "msgstr" : [
-               "%d resultado.",
-               "%d resultados."
-            ],
-            "msgid_plural" : "%d results.",
-            "msgctxt" : "app",
-            "msgid" : "%d result."
-         },
-         "breadcrumb" : {
-            "msgstr" : [
-               "ruta de navegación"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "breadcrumb"
-         },
-         "Filter tags" : {
-            "msgid" : "Filter tags",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Filtrar etiquetas"
-            ]
-         },
-         "Close Menu" : {
-            "msgid" : "Close Menu",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Cerrar menú"
-            ]
-         },
-         "All the articles I've posted." : {
-            "msgstr" : [
-               "Todos los artículos publicados."
-            ],
-            "msgid" : "All the articles I've posted.",
-            "msgctxt" : "app"
-         },
-         "Profiles" : {
-            "msgctxt" : "app",
-            "msgid" : "Profiles",
-            "msgstr" : [
-               "Perfiles"
-            ]
-         },
-         "Copy" : {
-            "msgstr" : [
-               "Copiar"
-            ],
-            "msgid" : "Copy",
-            "msgctxt" : "app"
-         },
-         "Search" : {
-            "msgstr" : [
-               "Buscar"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Search"
-         },
-         "Public GitHub projects by language and topics." : {
-            "msgstr" : [
-               "Proyectos públicos en GitHub por lenguaje y tema."
-            ],
-            "msgid" : "Public GitHub projects by language and topics.",
-            "msgctxt" : "app"
-         },
-         "Skills" : {
-            "msgstr" : [
-               "Habilidades"
-            ],
-            "msgid" : "Skills",
-            "msgctxt" : "app"
-         },
-         "Remove tag %s" : {
-            "msgctxt" : "app",
-            "msgid" : "Remove tag %s",
-            "msgstr" : [
-               "Quitar la etiqueta %s"
-            ]
-         },
-         "You need to build the project at least once to see search results during development." : {
-            "msgctxt" : "app",
-            "msgid" : "You need to build the project at least once to see search results during development.",
-            "msgstr" : [
-               "Debes compilar el proyecto al menos una vez para ver resultados de búsqueda durante el desarrollo."
-            ]
-         },
-         "All the articles I've archived." : {
-            "msgstr" : [
-               "Todos los artículos archivados."
-            ],
-            "msgid" : "All the articles I've archived.",
-            "msgctxt" : "app"
-         },
-         "Volunteering" : {
-            "msgstr" : [
-               "Voluntariado"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Volunteering"
-         },
-         "Education" : {
-            "msgstr" : [
-               "Formación"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Education"
-         },
-         "Your browser does not support canvas." : {
-            "msgid" : "Your browser does not support canvas.",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Tu navegador no soporta canvas."
-            ]
-         },
-         "Tag: %s" : {
-            "msgstr" : [
-               "Etiqueta: %s"
-            ],
-            "msgid" : "Tag: %s",
-            "msgctxt" : "app"
-         },
-         "Could not load the local license text. Use the official license link above." : {
-            "msgstr" : [
-               "No se pudo cargar el texto local de la licencia. Usa el enlace oficial de arriba."
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Could not load the local license text. Use the official license link above."
-         },
-         "Search ..." : {
-            "msgid" : "Search ...",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Buscar…"
-            ]
-         },
-         "Change language" : {
-            "msgstr" : [
-               "Cambiar idioma"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Change language"
-         },
-         "Objective" : {
-            "msgctxt" : "app",
-            "msgid" : "Objective",
-            "msgstr" : [
-               "Objetivo"
-            ]
-         },
-         "Close license" : {
-            "msgid" : "Close license",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Cerrar licencia"
-            ]
-         },
-         "Experience" : {
-            "msgstr" : [
-               "Experiencia"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Experience"
-         },
-         "Spoken languages" : {
-            "msgstr" : [
-               "Idiomas"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Spoken languages"
-         },
-         "Posts (page %s)" : {
-            "msgid" : "Posts (page %s)",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Artículos (página %s)"
-            ]
-         },
-         "Toggles light & dark" : {
-            "msgstr" : [
-               "Alterna entre modo claro y oscuro"
-            ],
-            "msgid" : "Toggles light & dark",
-            "msgctxt" : "app"
-         },
-         "Present" : {
-            "msgctxt" : "app",
-            "msgid" : "Present",
-            "msgstr" : [
-               "Actual"
             ]
          },
          "Browse tags" : {
@@ -318,116 +317,46 @@
             "msgid" : "Browse tags",
             "msgctxt" : "app"
          },
-         "Go to next page" : {
-            "msgctxt" : "app",
-            "msgid" : "Go to next page",
-            "msgstr" : [
-               "Ir a la página siguiente"
-            ]
-         },
-         "No language selected." : {
-            "msgid" : "No language selected.",
+         "Blog" : {
             "msgctxt" : "app",
             "msgstr" : [
-               "No hay ningún idioma seleccionado."
-            ]
-         },
-         "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag." : {
-            "msgctxt" : "app",
-            "msgid" : "Pick profiles or tags to filter the highlights. An item is shown if it matches any selected tag.",
-            "msgstr" : [
-               "Elige perfiles o etiquetas para filtrar los logros. Se muestra cada elemento que coincida con alguna etiqueta seleccionada."
-            ]
-         },
-         "Copyright © %1$s %2$s" : {
-            "msgstr" : [
-               "Copyright © %1$s %2$s"
+               "Blog"
             ],
-            "msgid" : "Copyright © %1$s %2$s",
+            "msgid" : "Blog"
+         },
+         "Search" : {
+            "msgstr" : [
+               "Buscar"
+            ],
+            "msgid" : "Search",
             "msgctxt" : "app"
          },
-         "Posts" : {
-            "msgid" : "Posts",
-            "msgctxt" : "app",
+         "Spoken languages" : {
             "msgstr" : [
-               "Artículos"
-            ]
-         },
-         "Hybrid" : {
-            "msgctxt" : "app",
-            "msgid" : "Hybrid",
-            "msgstr" : [
-               "Híbrido"
-            ]
-         },
-         "Featured" : {
-            "msgid" : "Featured",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Destacados"
-            ]
-         },
-         "Updated:" : {
-            "msgstr" : [
-               "Actualizado:"
+               "Idiomas"
             ],
-            "msgid" : "Updated:",
+            "msgid" : "Spoken languages",
             "msgctxt" : "app"
          },
-         "Tags" : {
+         "Could not load the local license text. Use the official license link above." : {
             "msgstr" : [
-               "Etiquetas"
+               "No se pudo cargar el texto local de la licencia. Usa el enlace oficial de arriba."
             ],
-            "msgid" : "Tags",
+            "msgid" : "Could not load the local license text. Use the official license link above.",
             "msgctxt" : "app"
-         },
-         "Open Menu" : {
-            "msgstr" : [
-               "Abrir menú"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Open Menu"
-         },
-         "The full text of this license is not bundled on this site. Use the official license link above." : {
-            "msgid" : "The full text of this license is not bundled on this site. Use the official license link above.",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "El texto completo de esta licencia no está incluido en este sitio. Usa el enlace oficial de arriba."
-            ]
-         },
-         "DEV mode warning!" : {
-            "msgstr" : [
-               "¡Aviso de modo DEV!"
-            ],
-            "msgid" : "DEV mode warning!",
-            "msgctxt" : "app"
-         },
-         "Search any article ..." : {
-            "msgctxt" : "app",
-            "msgid" : "Search any article ...",
-            "msgstr" : [
-               "Busca cualquier artículo…"
-            ]
          },
          "Read the License for the original content" : {
-            "msgctxt" : "app",
-            "msgid" : "Read the License for the original content",
             "msgstr" : [
                "Lee la licencia del contenido original"
-            ]
-         },
-         "License for original content:" : {
-            "msgid" : "License for original content:",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Licencia del contenido original:"
-            ]
-         },
-         "Back To Top" : {
-            "msgstr" : [
-               "Volver arriba"
             ],
-            "msgid" : "Back To Top",
+            "msgid" : "Read the License for the original content",
+            "msgctxt" : "app"
+         },
+         "Filter…" : {
+            "msgstr" : [
+               "Filtrar…"
+            ],
+            "msgid" : "Filter…",
             "msgctxt" : "app"
          },
          "About" : {
@@ -437,60 +366,53 @@
             "msgid" : "About",
             "msgctxt" : "app"
          },
-         "Copied" : {
-            "msgstr" : [
-               "Copiado"
-            ],
+         "License for original content:" : {
             "msgctxt" : "app",
-            "msgid" : "Copied"
-         },
-         "Tag not found" : {
             "msgstr" : [
-               "No existe esa etiqueta"
+               "Licencia del contenido original:"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Tag not found"
+            "msgid" : "License for original content:"
          },
-         "Filter" : {
+         "Pagination Navigation" : {
+            "msgid" : "Pagination Navigation",
             "msgstr" : [
-               "Filtro"
+               "Navegación de páginas"
             ],
-            "msgid" : "Filter",
             "msgctxt" : "app"
          },
+         "breadcrumb" : {
+            "msgid" : "breadcrumb",
+            "msgstr" : [
+               "ruta de navegación"
+            ],
+            "msgctxt" : "app"
+         },
+         "Experience" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Experiencia"
+            ],
+            "msgid" : "Experience"
+         },
+         "DEV mode warning!" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "¡Aviso de modo DEV!"
+            ],
+            "msgid" : "DEV mode warning!"
+         },
          "Clear filters" : {
+            "msgctxt" : "app",
             "msgstr" : [
                "Quitar filtros"
             ],
-            "msgid" : "Clear filters",
-            "msgctxt" : "app"
+            "msgid" : "Clear filters"
          },
-         "No results." : {
+         "Copyright © %1$s %2$s" : {
+            "msgid" : "Copyright © %1$s %2$s",
             "msgstr" : [
-               "Sin resultados."
+               "Copyright © %1$s %2$s"
             ],
-            "msgid" : "No results.",
-            "msgctxt" : "app"
-         },
-         "Topics" : {
-            "msgstr" : [
-               "Temas"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Topics"
-         },
-         "Courses" : {
-            "msgid" : "Courses",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Cursos"
-            ]
-         },
-         "Search tags" : {
-            "msgstr" : [
-               "Buscar etiquetas"
-            ],
-            "msgid" : "Search tags",
             "msgctxt" : "app"
          },
          "%d star" : {
@@ -502,54 +424,12 @@
             "msgid_plural" : "%d stars",
             "msgctxt" : "app"
          },
-         "CV" : {
+         "All the articles with the tag \"%s\"." : {
             "msgctxt" : "app",
-            "msgid" : "CV",
+            "msgid" : "All the articles with the tag \"%s\".",
             "msgstr" : [
-               "CV"
+               "Todos los artículos con la etiqueta «%s»."
             ]
-         },
-         "All Posts" : {
-            "msgid" : "All Posts",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Todos los artículos"
-            ]
-         },
-         "No repositories in this category." : {
-            "msgctxt" : "app",
-            "msgid" : "No repositories in this category.",
-            "msgstr" : [
-               "No hay repositorios en esta categoría."
-            ]
-         },
-         "On-site" : {
-            "msgid" : "On-site",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Presencial"
-            ]
-         },
-         "Visit project site" : {
-            "msgctxt" : "app",
-            "msgid" : "Visit project site",
-            "msgstr" : [
-               "Visitar sitio del proyecto"
-            ]
-         },
-         "Page Not Found" : {
-            "msgstr" : [
-               "Página no encontrada"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Page Not Found"
-         },
-         "Projects" : {
-            "msgstr" : [
-               "Proyectos"
-            ],
-            "msgid" : "Projects",
-            "msgctxt" : "app"
          },
          "Go back home" : {
             "msgstr" : [
@@ -558,95 +438,223 @@
             "msgid" : "Go back home",
             "msgctxt" : "app"
          },
-         "Next" : {
+         "No results." : {
             "msgctxt" : "app",
-            "msgid" : "Next",
             "msgstr" : [
-               "Siguiente"
+               "Sin resultados."
+            ],
+            "msgid" : "No results."
+         },
+         "All Posts" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Todos los artículos"
+            ],
+            "msgid" : "All Posts"
+         },
+         "All the articles I've posted." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Todos los artículos publicados."
+            ],
+            "msgid" : "All the articles I've posted."
+         },
+         "Present" : {
+            "msgstr" : [
+               "Actual"
+            ],
+            "msgid" : "Present",
+            "msgctxt" : "app"
+         },
+         "No repositories in this category." : {
+            "msgctxt" : "app",
+            "msgid" : "No repositories in this category.",
+            "msgstr" : [
+               "No hay repositorios en esta categoría."
             ]
          },
-         "Home" : {
+         "Featured" : {
             "msgstr" : [
-               "Inicio"
+               "Destacados"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Home"
+            "msgid" : "Featured",
+            "msgctxt" : "app"
          },
-         "Previous Post" : {
+         "Sections" : {
+            "msgid" : "Sections",
             "msgstr" : [
-               "Artículo anterior"
+               "Secciones"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Previous Post"
+            "msgctxt" : "app"
          },
-         "Spotify player" : {
+         "On-site" : {
             "msgstr" : [
-               "Reproductor de Spotify"
+               "Presencial"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Spotify player"
-         },
-         "RSS Feed" : {
-            "msgid" : "RSS Feed",
-            "msgctxt" : "app",
-            "msgstr" : [
-               "Feed RSS"
-            ]
-         },
-         "Skip to content" : {
-            "msgstr" : [
-               "Saltar al contenido"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Skip to content"
+            "msgid" : "On-site",
+            "msgctxt" : "app"
          },
          "Next Post" : {
             "msgstr" : [
                "Artículo siguiente"
             ],
-            "msgctxt" : "app",
-            "msgid" : "Next Post"
-         },
-         "Portfolio" : {
-            "msgstr" : [
-               "Portafolio"
-            ],
-            "msgctxt" : "app",
-            "msgid" : "Portfolio"
-         },
-         "All the articles with the tag \"%s\"." : {
-            "msgstr" : [
-               "Todos los artículos con la etiqueta «%s»."
-            ],
-            "msgid" : "All the articles with the tag \"%s\".",
+            "msgid" : "Next Post",
             "msgctxt" : "app"
          },
-         "Type a tag and press Enter" : {
+         "Your browser does not support canvas." : {
             "msgctxt" : "app",
-            "msgid" : "Type a tag and press Enter",
             "msgstr" : [
-               "Escribe una etiqueta y pulsa Enter"
-            ]
-         },
-         "Loading license…" : {
-            "msgctxt" : "app",
-            "msgid" : "Loading license…",
-            "msgstr" : [
-               "Cargando licencia…"
-            ]
-         },
-         "Go to previous page" : {
-            "msgctxt" : "app",
-            "msgid" : "Go to previous page",
-            "msgstr" : [
-               "Ir a la página anterior"
-            ]
-         },
-         "Share this post on:" : {
-            "msgstr" : [
-               "Comparte este artículo en:"
+               "Tu navegador no soporta canvas."
             ],
-            "msgid" : "Share this post on:",
+            "msgid" : "Your browser does not support canvas."
+         },
+         "Posts (page %s)" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Artículos (página %s)"
+            ],
+            "msgid" : "Posts (page %s)"
+         },
+         "Close Menu" : {
+            "msgctxt" : "app",
+            "msgid" : "Close Menu",
+            "msgstr" : [
+               "Cerrar menú"
+            ]
+         },
+         "Close license" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Cerrar licencia"
+            ],
+            "msgid" : "Close license"
+         },
+         "Remote" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Remoto"
+            ],
+            "msgid" : "Remote"
+         },
+         "Search ..." : {
+            "msgctxt" : "app",
+            "msgid" : "Search ...",
+            "msgstr" : [
+               "Buscar…"
+            ]
+         },
+         "Skip to content" : {
+            "msgid" : "Skip to content",
+            "msgstr" : [
+               "Saltar al contenido"
+            ],
+            "msgctxt" : "app"
+         },
+         "Filter tags" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Filtrar etiquetas"
+            ],
+            "msgid" : "Filter tags"
+         },
+         "Hybrid" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Híbrido"
+            ],
+            "msgid" : "Hybrid"
+         },
+         "Volunteering" : {
+            "msgctxt" : "app",
+            "msgid" : "Volunteering",
+            "msgstr" : [
+               "Voluntariado"
+            ]
+         },
+         "Open Menu" : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Abrir menú"
+            ],
+            "msgid" : "Open Menu"
+         },
+         "404 Not Found" : {
+            "msgstr" : [
+               "404 No encontrado"
+            ],
+            "msgid" : "404 Not Found",
+            "msgctxt" : "app"
+         },
+         "Copied" : {
+            "msgctxt" : "app",
+            "msgid" : "Copied",
+            "msgstr" : [
+               "Copiado"
+            ]
+         },
+         "Filter" : {
+            "msgctxt" : "app",
+            "msgid" : "Filter",
+            "msgstr" : [
+               "Filtro"
+            ]
+         },
+         "All the articles I've archived." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "Todos los artículos archivados."
+            ],
+            "msgid" : "All the articles I've archived."
+         },
+         "Topics" : {
+            "msgid" : "Topics",
+            "msgstr" : [
+               "Temas"
+            ],
+            "msgctxt" : "app"
+         },
+         "%d result." : {
+            "msgid_plural" : "%d results.",
+            "msgctxt" : "app",
+            "msgid" : "%d result.",
+            "msgstr" : [
+               "%d resultado.",
+               "%d resultados."
+            ]
+         },
+         "The full text of this license is not bundled on this site. Use the official license link above." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "El texto completo de esta licencia no está incluido en este sitio. Usa el enlace oficial de arriba."
+            ],
+            "msgid" : "The full text of this license is not bundled on this site. Use the official license link above."
+         },
+         "Prev" : {
+            "msgctxt" : "app",
+            "msgid" : "Prev",
+            "msgstr" : [
+               "Anterior"
+            ]
+         },
+         "Previous Post" : {
+            "msgstr" : [
+               "Artículo anterior"
+            ],
+            "msgid" : "Previous Post",
+            "msgctxt" : "app"
+         },
+         "Non-original content is included or referenced under fair use." : {
+            "msgctxt" : "app",
+            "msgstr" : [
+               "El contenido no original se incluye o referencia bajo uso justo."
+            ],
+            "msgid" : "Non-original content is included or referenced under fair use."
+         },
+         "RSS Feed" : {
+            "msgstr" : [
+               "Feed RSS"
+            ],
+            "msgid" : "RSS Feed",
             "msgctxt" : "app"
          }
       },
@@ -654,23 +662,22 @@
          "" : {
             "msgid" : "",
             "msgstr" : [
-               "Project-Id-Version: rgglez-website\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2026-11-14 03:38-0600\nPO-Revision-Date: 2026-10-16 20:43-0600\nLast-Translator: Automatically generated\nLanguage-Team: none\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+               "Project-Id-Version: rgglez-website\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2026-11-14 15:22-0600\nPO-Revision-Date: 2026-10-16 20:43-0600\nLast-Translator: Automatically generated\nLanguage-Team: none\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
             ]
          }
       }
    },
-   "charset" : "utf-8",
    "headers" : {
-      "Language" : "es",
-      "PO-Revision-Date" : "2026-10-16 20:43-0600",
-      "Last-Translator" : "Automatically generated",
-      "POT-Creation-Date" : "2026-11-14 03:38-0600",
-      "Report-Msgid-Bugs-To" : "",
-      "Content-Transfer-Encoding" : "8bit",
       "Project-Id-Version" : "rgglez-website",
-      "Plural-Forms" : "nplurals=2; plural=(n != 1);",
+      "Content-Transfer-Encoding" : "8bit",
+      "Report-Msgid-Bugs-To" : "",
+      "PO-Revision-Date" : "2026-10-16 20:43-0600",
       "MIME-Version" : "1.0",
+      "Last-Translator" : "Automatically generated",
+      "Content-Type" : "text/plain; charset=UTF-8",
       "Language-Team" : "none",
-      "Content-Type" : "text/plain; charset=UTF-8"
+      "Plural-Forms" : "nplurals=2; plural=(n != 1);",
+      "POT-Creation-Date" : "2026-11-14 15:22-0600",
+      "Language" : "es"
    }
 }

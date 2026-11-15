@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 03:38-0600\n"
+"POT-Creation-Date: 2026-11-14 15:22-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,6 +74,7 @@ msgid "Close Menu"
 msgstr ""
 
 #: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
+#: src/pages/[lang]/cv/index.astro:353
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
@@ -312,34 +313,44 @@ msgstr ""
 msgid "Hybrid"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:64
+#: src/pages/[lang]/cv/index.astro:65
 #, javascript-format
 msgid "Experience"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:83
-#, javascript-format
-msgid "Projects"
-msgstr ""
-
-#: src/pages/[lang]/cv/index.astro:96
+#: src/pages/[lang]/cv/index.astro:85
 #, javascript-format
 msgid "Education"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:108
+#: src/pages/[lang]/cv/index.astro:97
 #, javascript-format
 msgid "Courses"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:112
+#: src/pages/[lang]/cv/index.astro:102
 #, javascript-format
 msgid "Volunteering"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:125
+#: src/pages/[lang]/cv/index.astro:116
 #, javascript-format
 msgid "Skills"
+msgstr ""
+
+#: src/pages/[lang]/cv/index.astro:129 src/pages/[lang]/cv/index.astro:352
+#, javascript-format
+msgid "Projects"
+msgstr ""
+
+#: src/pages/[lang]/cv/index.astro:131 src/pages/[lang]/cv/index.astro:360
+#, javascript-format
+msgid "Spoken languages"
+msgstr ""
+
+#: src/pages/[lang]/cv/index.astro:133 src/pages/[lang]/cv/index.astro:375
+#, javascript-format
+msgid "Interests"
 msgstr ""
 
 #: src/pages/[lang]/cv/index.astro:154
@@ -399,14 +410,9 @@ msgstr ""
 msgid "All tags (%d)"
 msgstr ""
 
-#: src/pages/[lang]/cv/index.astro:325
+#: src/pages/[lang]/cv/index.astro:266
 #, javascript-format
-msgid "Spoken languages"
-msgstr ""
-
-#: src/pages/[lang]/cv/index.astro:339
-#, javascript-format
-msgid "Interests"
+msgid "Sections"
 msgstr ""
 
 #: src/pages/[lang]/index.astro:59

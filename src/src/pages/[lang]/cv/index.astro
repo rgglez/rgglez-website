@@ -7,6 +7,13 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { SITE } from "@/config";
 import { useGettext, sprintf } from "@/i18n";
+import IconBriefcase from "@/assets/icons/IconBriefcase.svg";
+import IconSchool from "@/assets/icons/IconSchool.svg";
+import IconHeartHandshake from "@/assets/icons/IconHeartHandshake.svg";
+import IconTool from "@/assets/icons/IconTool.svg";
+import IconFolders from "@/assets/icons/IconFolders.svg";
+import IconLanguage from "@/assets/icons/IconLanguage.svg";
+import IconBulb from "@/assets/icons/IconBulb.svg";
 
 export const getStaticPaths = (() => {
   return SITE.supportedLangs.map(lang => ({ params: { lang } }));
@@ -59,8 +66,9 @@ type Item = {
   /** Label for a collapsed <details> around the pieces. */
   collapse?: string;
 };
-const sections: { title: string; items: Item[] }[] = [
+const sections: { id: string; title: string; items: Item[] }[] = [
   {
+    id: "experience",
     title: _("Experience"),
     items: cv.work.map(w => ({
       title: w.position ?? w.name,
@@ -80,19 +88,7 @@ const sections: { title: string; items: Item[] }[] = [
     })),
   },
   {
-    title: _("Projects"),
-    items: cv.projects.map(p => ({
-      title: p.name,
-      url: p.url,
-      subtitle: p.roles.join(", ") || undefined,
-      meta: range(p.startDate, p.endDate),
-      summary: p.summary,
-      keywords: p.keywords,
-      tags: p.tags,
-      pieces: p.highlights.map(h => ({ text: h.highlight, tags: h.tags })),
-    })),
-  },
-  {
+    id: "education",
     title: _("Education"),
     items: cv.education.map(e => ({
       title: [e.studyType, e.area].filter(Boolean).join(", ") || e.institution,
@@ -109,6 +105,7 @@ const sections: { title: string; items: Item[] }[] = [
     })),
   },
   {
+    id: "volunteering",
     title: _("Volunteering"),
     items: cv.volunteer.map(v => ({
       title: v.position ?? v.organization,
@@ -122,6 +119,7 @@ const sections: { title: string; items: Item[] }[] = [
     })),
   },
   {
+    id: "skills",
     title: _("Skills"),
     items: cv.skills.map(s => ({
       title: s.name,
@@ -132,6 +130,24 @@ const sections: { title: string; items: Item[] }[] = [
     })),
   },
 ].filter(s => s.items.length);
+
+const tocIcons: Record<string, typeof IconBulb> = {
+  experience: IconBriefcase,
+  education: IconSchool,
+  volunteering: IconHeartHandshake,
+  skills: IconTool,
+  projects: IconFolders,
+  languages: IconLanguage,
+  interests: IconBulb,
+};
+const toc = [
+  ...sections.map(({ id, title }) => ({ id, title })),
+  { id: "projects", title: _("Projects") },
+  ...(cv.languages.length
+    ? [{ id: "languages", title: _("Spoken languages") }]
+    : []),
+  ...(cv.interests.length ? [{ id: "interests", title: _("Interests") }] : []),
+].map(t => ({ ...t, Icon: tocIcons[t.id] }));
 
 const allTags = [
   ...new Set(
@@ -261,92 +277,135 @@ const layoutProps = {
       </details>
     </section>
 
-    {
-      sections.map(s => (
-        <section class="mb-10" data-cv-section>
-          <h2 class="mb-4 text-xl font-semibold">{s.title}</h2>
-          {s.items.map(i => (
-            <article class="mb-6" data-cv-item data-tags={tagAttr(i.tags)}>
-              <h3 class="font-semibold">
-                {i.url ? (
-                  <a href={i.url} target="_blank" rel="noopener">
-                    {i.title}
-                  </a>
-                ) : (
-                  i.title
-                )}
-                {i.subtitle && (
-                  <span class="font-normal text-foreground/75">
-                    {" "}
-                    · {i.subtitle}
-                  </span>
-                )}
-              </h3>
-              {i.meta && <p class="text-sm text-foreground/60">{i.meta}</p>}
-              {i.summary && <p class="mt-1">{i.summary}</p>}
-              {i.pieces.length > 0 &&
-                (i.collapse ? (
-                  <details class="mt-2" data-cv-collapse>
-                    <summary class="cursor-pointer text-sm text-foreground/70">
-                      {i.collapse}{" "}
-                      <span data-cv-count set:text={`(${i.pieces.length})`} />
-                    </summary>
-                    <ul class="mt-1 list-disc ps-5">
-                      {i.pieces.map(p => (
-                        <li data-cv-piece data-tags={tagAttr(p.tags)}>
-                          {p.text}
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                ) : (
-                  <ul class="mt-2 list-disc ps-5">
-                    {i.pieces.map(p => (
-                      <li data-cv-piece data-tags={tagAttr(p.tags)}>
-                        {p.text}
-                      </li>
+    <div class="lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-8">
+      <nav
+        aria-label={_("Sections")}
+        data-cv-toc
+        class="sticky top-0 z-10 -mx-4 mb-6 bg-background/90 px-4 py-2 backdrop-blur-lg lg:top-8 lg:mx-0 lg:mb-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
+      >
+        <div
+          class="flex snap-x [scrollbar-width:none] justify-between overflow-x-auto lg:flex-col lg:justify-start lg:gap-1 lg:overflow-visible"
+        >
+          {
+            toc.map(({ id, title, Icon }) => (
+              <a
+                href={`#${id}`}
+                title={title}
+                class="link-exempt group inline-flex shrink-0 snap-start items-center gap-2 rounded px-1.5 py-1 text-sm whitespace-nowrap text-foreground/70 hover:text-accent aria-[current=true]:bg-accent/10 aria-[current=true]:font-medium aria-[current=true]:text-accent lg:px-2 lg:whitespace-normal"
+              >
+                <Icon class="size-5 shrink-0" aria-hidden="true" />
+                {/* Mobile: icon only, except the active chip. */}
+                <span class="sr-only group-aria-[current=true]:not-sr-only lg:not-sr-only">
+                  {title}
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </nav>
+      <div>
+        {
+          sections.map(s => (
+            <section
+              id={s.id}
+              class="mb-10 scroll-mt-16! lg:scroll-mt-8!"
+              data-cv-section
+            >
+              <h2 class="mb-4 text-xl font-semibold">{s.title}</h2>
+              {s.items.map(i => (
+                <article class="mb-6" data-cv-item data-tags={tagAttr(i.tags)}>
+                  <h3 class="font-semibold">
+                    {i.url ? (
+                      <a href={i.url} target="_blank" rel="noopener">
+                        {i.title}
+                      </a>
+                    ) : (
+                      i.title
+                    )}
+                    {i.subtitle && (
+                      <span class="font-normal text-foreground/75">
+                        {" "}
+                        · {i.subtitle}
+                      </span>
+                    )}
+                  </h3>
+                  {i.meta && <p class="text-sm text-foreground/60">{i.meta}</p>}
+                  {i.summary && <p class="mt-1">{i.summary}</p>}
+                  {i.pieces.length > 0 &&
+                    (i.collapse ? (
+                      <details class="mt-2" data-cv-collapse>
+                        <summary class="cursor-pointer text-sm text-foreground/70">
+                          {i.collapse}{" "}
+                          <span
+                            data-cv-count
+                            set:text={`(${i.pieces.length})`}
+                          />
+                        </summary>
+                        <ul class="mt-1 list-disc ps-5">
+                          {i.pieces.map(p => (
+                            <li data-cv-piece data-tags={tagAttr(p.tags)}>
+                              {p.text}
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    ) : (
+                      <ul class="mt-2 list-disc ps-5">
+                        {i.pieces.map(p => (
+                          <li data-cv-piece data-tags={tagAttr(p.tags)}>
+                            {p.text}
+                          </li>
+                        ))}
+                      </ul>
                     ))}
-                  </ul>
-                ))}
-              {i.keywords.length > 0 && (
-                <p class="mt-1 text-sm text-foreground/60 italic">
-                  {i.keywords.join(", ")}
-                </p>
-              )}
-            </article>
-          ))}
-        </section>
-      ))
-    }
+                  {i.keywords.length > 0 && (
+                    <p class="mt-1 text-sm text-foreground/60 italic">
+                      {i.keywords.join(", ")}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </section>
+          ))
+        }
 
-    {
-      cv.languages.length > 0 && (
-        <section class="mb-10">
-          <h2 class="mb-4 text-xl font-semibold">{_("Spoken languages")}</h2>
-          <ul class="list-disc ps-5">
-            {cv.languages.map(l => (
-              <li>
-                {l.language}: {l.fluency}
-              </li>
-            ))}
-          </ul>
+        <section id="projects" class="mb-10 scroll-mt-16! lg:scroll-mt-8!">
+          <h2 class="mb-4 text-xl font-semibold">{_("Projects")}</h2>
+          <a href={`/${lang}/portfolio`}>{_("Portfolio")}</a>
         </section>
-      )
-    }
-    {
-      cv.interests.length > 0 && (
-        <section class="mb-10">
-          <h2 class="mb-4 text-xl font-semibold">{_("Interests")}</h2>
-          <ul class="list-disc ps-5">
-            {cv.interests.map(i => (
-              <li>
-                {[i.name, i.keywords.join(", ")].filter(Boolean).join(": ")}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
+
+        {
+          cv.languages.length > 0 && (
+            <section id="languages" class="mb-10 scroll-mt-16! lg:scroll-mt-8!">
+              <h2 class="mb-4 text-xl font-semibold">
+                {_("Spoken languages")}
+              </h2>
+              <ul class="list-disc ps-5">
+                {cv.languages.map(l => (
+                  <li>
+                    {l.language}: {l.fluency}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        {
+          cv.interests.length > 0 && (
+            <section id="interests" class="mb-10 scroll-mt-16! lg:scroll-mt-8!">
+              <h2 class="mb-4 text-xl font-semibold">{_("Interests")}</h2>
+              <ul class="list-disc ps-5">
+                {cv.interests.map(i => (
+                  <li>
+                    {[i.name, i.keywords.join(", ")].filter(Boolean).join(": ")}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+    </div>
   </main>
   <Footer />
 </Layout>
@@ -355,6 +414,7 @@ const layoutProps = {
   // Same rule as rgglez-cv/schema.rgglez.json: a piece without tags always
   // shows; a tagged piece shows if it shares any selected tag (OR). An entry
   // hides if its own tags miss, or if it had pieces and none remain.
+  let spyAbort: AbortController | undefined;
   function bindCv() {
     const root = document.querySelector<HTMLElement>("[data-cv]");
     if (!root) return;
@@ -364,6 +424,36 @@ const layoutProps = {
       !selected.size || !tags.length || tags.some(t => selected.has(t));
     const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
     const capsules = root.querySelector<HTMLElement>("[data-cv-selected]");
+    const tocLinks = Array.from(
+      root.querySelectorAll<HTMLAnchorElement>("[data-cv-toc] a")
+    );
+    const target = (a: HTMLAnchorElement) =>
+      document.getElementById(a.hash.slice(1));
+    // Scroll-spy: current = last visible section whose top passed 120px; at
+    // page bottom, the last one (short trailing sections never reach the top).
+    let current: HTMLAnchorElement | undefined;
+    const spy = () => {
+      const shown = tocLinks.filter(a => !a.hidden);
+      const atEnd =
+        innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      const next = atEnd
+        ? shown.at(-1)
+        : (shown.findLast(
+            a => (target(a)?.getBoundingClientRect().top ?? 1) <= 120
+          ) ?? shown[0]);
+      if (next === current) return;
+      current?.removeAttribute("aria-current");
+      next?.setAttribute("aria-current", "true");
+      // Keeps the active chip in view inside the mobile horizontal bar.
+      // Not scrollIntoView: it would cancel the window's smooth scroll.
+      const bar = next?.parentElement;
+      if (next && bar && bar.scrollWidth > bar.clientWidth)
+        bar.scrollTo({ left: next.offsetLeft - bar.offsetLeft - 16 });
+      current = next;
+    };
+    spyAbort?.abort();
+    spyAbort = new AbortController();
+    addEventListener("scroll", spy, { passive: true, signal: spyAbort.signal });
     const known = new Set(
       Array.from(
         root.querySelectorAll("#cv-tags option"),
@@ -412,6 +502,9 @@ const layoutProps = {
             return b;
           })
       );
+      tocLinks.forEach(a => (a.hidden = !!target(a)?.hidden));
+      current = undefined;
+      spy();
       root
         .querySelectorAll<HTMLButtonElement>("[data-cv-toggle]")
         .forEach(b => {
@@ -478,6 +571,7 @@ const layoutProps = {
       if (!(e instanceof InputEvent) || e.inputType === "insertReplacementText")
         addTyped(false);
     });
+    spy();
   }
 
   document.addEventListener("astro:page-load", bindCv);

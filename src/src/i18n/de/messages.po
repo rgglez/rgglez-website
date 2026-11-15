@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 03:38-0600\n"
+"POT-Creation-Date: 2026-11-14 15:22-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -73,6 +73,7 @@ msgid "Close Menu"
 msgstr "Menü schließen"
 
 #: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
+#: src/pages/[lang]/cv/index.astro:353
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
@@ -317,35 +318,45 @@ msgstr "Vor Ort"
 msgid "Hybrid"
 msgstr "Hybrid"
 
-#: src/pages/[lang]/cv/index.astro:64
+#: src/pages/[lang]/cv/index.astro:65
 #, javascript-format
 msgid "Experience"
 msgstr "Berufserfahrung"
 
-#: src/pages/[lang]/cv/index.astro:83
-#, javascript-format
-msgid "Projects"
-msgstr "Projekte"
-
-#: src/pages/[lang]/cv/index.astro:96
+#: src/pages/[lang]/cv/index.astro:85
 #, javascript-format
 msgid "Education"
 msgstr "Ausbildung"
 
-#: src/pages/[lang]/cv/index.astro:108
+#: src/pages/[lang]/cv/index.astro:97
 #, javascript-format
 msgid "Courses"
 msgstr "Kurse"
 
-#: src/pages/[lang]/cv/index.astro:112
+#: src/pages/[lang]/cv/index.astro:102
 #, javascript-format
 msgid "Volunteering"
 msgstr "Ehrenamt"
 
-#: src/pages/[lang]/cv/index.astro:125
+#: src/pages/[lang]/cv/index.astro:116
 #, javascript-format
 msgid "Skills"
 msgstr "Kenntnisse"
+
+#: src/pages/[lang]/cv/index.astro:129 src/pages/[lang]/cv/index.astro:352
+#, javascript-format
+msgid "Projects"
+msgstr "Projekte"
+
+#: src/pages/[lang]/cv/index.astro:131 src/pages/[lang]/cv/index.astro:360
+#, javascript-format
+msgid "Spoken languages"
+msgstr "Sprachen"
+
+#: src/pages/[lang]/cv/index.astro:133 src/pages/[lang]/cv/index.astro:375
+#, javascript-format
+msgid "Interests"
+msgstr "Interessen"
 
 #: src/pages/[lang]/cv/index.astro:154
 #, javascript-format
@@ -406,15 +417,10 @@ msgstr "Tag %s entfernen"
 msgid "All tags (%d)"
 msgstr "Alle Tags (%d)"
 
-#: src/pages/[lang]/cv/index.astro:325
+#: src/pages/[lang]/cv/index.astro:266
 #, javascript-format
-msgid "Spoken languages"
-msgstr "Sprachen"
-
-#: src/pages/[lang]/cv/index.astro:339
-#, javascript-format
-msgid "Interests"
-msgstr "Interessen"
+msgid "Sections"
+msgstr "Abschnitte"
 
 #: src/pages/[lang]/index.astro:59
 #, javascript-format
