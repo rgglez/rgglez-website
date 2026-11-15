@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T15:18:24.461Z",
+  "generatedAt": "2026-11-15T06:44:46.302Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -44,32 +44,6 @@
   ],
   "repos": [
     {
-      "name": "rgglez",
-      "description": "Global readme",
-      "url": "https://github.com/rgglez/rgglez",
-      "homepage": null,
-      "language": null,
-      "topics": [],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-11-09T05:34:15Z"
-    },
-    {
-      "name": "gettext-translator",
-      "description": "Translates Gettext .po files using a variety of supported AI backends",
-      "url": "https://github.com/rgglez/gettext-translator",
-      "homepage": null,
-      "language": "Python",
-      "topics": [
-        "ai"
-      ],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-11-07T01:18:46Z"
-    },
-    {
       "name": "rgglez-website",
       "description": "Personal website",
       "url": "https://github.com/rgglez/rgglez-website",
@@ -81,31 +55,77 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-11-02T14:51:15Z"
+      "pushedAt": "2026-11-15T06:39:06Z"
     },
     {
-      "name": "gettext-spellchecker",
-      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
-      "url": "https://github.com/rgglez/gettext-spellchecker",
+      "name": "rgglez",
+      "description": "Global readme",
+      "url": "https://github.com/rgglez/rgglez",
       "homepage": null,
-      "language": "Python",
+      "language": null,
       "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-11-15T05:43:40Z"
+    },
+    {
+      "name": "music-laserharp",
+      "description": "A framework agnostic laser harp component.",
+      "url": "https://github.com/rgglez/music-laserharp",
+      "homepage": "https://rgglez.github.io/music-laserharp/",
+      "language": "TypeScript",
+      "topics": [
+        "music"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-11-01T07:47:36Z"
+      "pushedAt": "2026-11-14T04:45:15Z"
     },
     {
-      "name": "gettext-po2json",
-      "description": "Converts a PO file into a gettext-parser JSON format",
-      "url": "https://github.com/rgglez/gettext-po2json",
-      "homepage": null,
-      "language": "Perl",
-      "topics": [],
+      "name": "react-i18n-gettext",
+      "description": "i18n (translation) for React using gettext.",
+      "url": "https://github.com/rgglez/react-i18n-gettext",
+      "homepage": "https://rgglez.github.io/react-i18n-gettext/",
+      "language": "TypeScript",
+      "topics": [
+        "i18n"
+      ],
       "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-17T02:54:51Z"
+      "pushedAt": "2026-11-14T04:19:41Z"
+    },
+    {
+      "name": "astro-i18n-gettext",
+      "description": "i18n (translation) for Astro using gettext.",
+      "url": "https://github.com/rgglez/astro-i18n-gettext",
+      "homepage": "https://rgglez.github.io/astro-i18n-gettext/",
+      "language": "TypeScript",
+      "topics": [
+        "astro",
+        "i18n"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-11-14T04:17:03Z"
+    },
+    {
+      "name": "svelte-i18n-gettext",
+      "description": "i18n (translation) for Svelte using gettext.",
+      "url": "https://github.com/rgglez/svelte-i18n-gettext",
+      "homepage": "https://rgglez.github.io/svelte-i18n-gettext/",
+      "language": "JavaScript",
+      "topics": [
+        "i18n",
+        "svelte"
+      ],
+      "stars": 1,
+      "forks": 1,
+      "archived": false,
+      "pushedAt": "2026-11-14T04:16:49Z"
     },
     {
       "name": "i18n-gettext",
@@ -119,65 +139,45 @@
       "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-16T08:29:20Z"
+      "pushedAt": "2026-11-14T03:07:51Z"
     },
     {
-      "name": "music-laserharp",
-      "description": "A framework agnostic laser harp component.",
-      "url": "https://github.com/rgglez/music-laserharp",
-      "homepage": "https://rodolfo.gg/en/posts/2026/09/playing-the-light",
-      "language": "TypeScript",
-      "topics": [
-        "music"
-      ],
+      "name": "gettext-spellchecker",
+      "description": "Spellchecks msgid or msgstr strings in a .po or .pot file ",
+      "url": "https://github.com/rgglez/gettext-spellchecker",
+      "homepage": "https://rodolfo.gg/es/posts/2026/10/traduccion-gettext",
+      "language": "Python",
+      "topics": [],
       "stars": 0,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-16T08:04:01Z"
+      "pushedAt": "2026-11-12T07:31:02Z"
     },
     {
-      "name": "astro-i18n-gettext",
-      "description": "i18n (translation) for Astro using gettext.",
-      "url": "https://github.com/rgglez/astro-i18n-gettext",
-      "homepage": null,
-      "language": "TypeScript",
+      "name": "gettext-translator",
+      "description": "Translates Gettext .po files using a variety of supported AI backends",
+      "url": "https://github.com/rgglez/gettext-translator",
+      "homepage": "https://rodolfo.gg/es/posts/2026/10/traduccion-gettext",
+      "language": "Python",
       "topics": [
-        "astro",
-        "i18n"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-10-16T08:00:38Z"
-    },
-    {
-      "name": "react-i18n-gettext",
-      "description": "i18n (translation) for React using gettext.",
-      "url": "https://github.com/rgglez/react-i18n-gettext",
-      "homepage": null,
-      "language": "TypeScript",
-      "topics": [
-        "i18n"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-10-16T07:59:22Z"
-    },
-    {
-      "name": "svelte-i18n-gettext",
-      "description": "i18n (translation) for Svelte using gettext.",
-      "url": "https://github.com/rgglez/svelte-i18n-gettext",
-      "homepage": null,
-      "language": "JavaScript",
-      "topics": [
-        "i18n",
-        "svelte"
+        "ai"
       ],
       "stars": 1,
-      "forks": 1,
+      "forks": 0,
       "archived": false,
-      "pushedAt": "2026-10-16T07:57:48Z"
+      "pushedAt": "2026-11-07T01:18:46Z"
+    },
+    {
+      "name": "gettext-po2json",
+      "description": "Converts a PO file into a gettext-parser JSON format",
+      "url": "https://github.com/rgglez/gettext-po2json",
+      "homepage": null,
+      "language": "Perl",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-10-17T02:54:51Z"
     },
     {
       "name": "github-issues-sentiment-analyzer",
