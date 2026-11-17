@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T06:44:46.302Z",
+  "generatedAt": "2026-11-16T14:53:53.103Z",
   "source": "github:rgglez",
   "languages": [
     "Go",
@@ -44,6 +44,18 @@
   ],
   "repos": [
     {
+      "name": "rgglez",
+      "description": "Global readme",
+      "url": "https://github.com/rgglez/rgglez",
+      "homepage": null,
+      "language": null,
+      "topics": [],
+      "stars": 1,
+      "forks": 0,
+      "archived": false,
+      "pushedAt": "2026-11-16T05:43:34Z"
+    },
+    {
       "name": "rgglez-website",
       "description": "Personal website",
       "url": "https://github.com/rgglez/rgglez-website",
@@ -55,19 +67,7 @@
       "stars": 1,
       "forks": 0,
       "archived": false,
-      "pushedAt": "2026-11-15T06:39:06Z"
-    },
-    {
-      "name": "rgglez",
-      "description": "Global readme",
-      "url": "https://github.com/rgglez/rgglez",
-      "homepage": null,
-      "language": null,
-      "topics": [],
-      "stars": 1,
-      "forks": 0,
-      "archived": false,
-      "pushedAt": "2026-11-15T05:43:40Z"
+      "pushedAt": "2026-11-15T06:48:03Z"
     },
     {
       "name": "music-laserharp",
@@ -78,7 +78,7 @@
       "topics": [
         "music"
       ],
-      "stars": 0,
+      "stars": 1,
       "forks": 0,
       "archived": false,
       "pushedAt": "2026-11-14T04:45:15Z"
