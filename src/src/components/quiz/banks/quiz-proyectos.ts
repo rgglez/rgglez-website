@@ -11,7 +11,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Esfuerzo temporal para crear un producto, servicio o resultado singular»?",
+      "¿Qué término corresponde a esta definición: \"Esfuerzo temporal para crear un producto, servicio o resultado singular\"?",
     options: [
       {
         id: "a",
@@ -63,7 +63,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "boolean",
     prompt:
-      "En la definición de proyecto, «temporal» describe la vida útil de su resultado.",
+      "En la definición de proyecto, \"temporal\" describe la vida útil de su resultado.",
     options: [
       {
         id: "v",
@@ -77,7 +77,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Falso. El glosario aclara que «temporal» describe el esfuerzo, no la vida útil de su resultado. La plataforma de matrícula sigue en uso cuando el proyecto ya terminó.",
+      "Falso. El glosario aclara que \"temporal\" describe el esfuerzo, no la vida útil de su resultado. La plataforma de matrícula sigue en uso cuando el proyecto ya terminó.",
   },
   {
     id: "q004",
@@ -114,7 +114,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Secuencia de etapas desde la idea hasta el cierre»?",
+      "¿Qué término corresponde a esta definición: \"Secuencia de etapas desde la idea hasta el cierre\"?",
     options: [
       {
         id: "a",
@@ -166,7 +166,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Resultado que el proyecto busca alcanzar»?",
+      "¿Qué término corresponde a esta definición: \"Resultado que el proyecto busca alcanzar\"?",
     options: [
       {
         id: "a",
@@ -310,7 +310,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Persona, grupo u organización que puede afectar al proyecto o resultar afectada por él»?",
+      "¿Qué término corresponde a esta definición: \"Persona, grupo u organización que puede afectar al proyecto o resultar afectada por él\"?",
     options: [
       {
         id: "a",
@@ -485,7 +485,7 @@ export const questions: QuizQuestion[] = [
     section: "1. Fundamentos del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Aparece cuando muchas partes interactúan y un cambio tiene efectos difíciles de prever»?",
+      "¿Qué término corresponde a esta definición: \"Aparece cuando muchas partes interactúan y un cambio tiene efectos difíciles de prever\"?",
     options: [
       {
         id: "a",
@@ -645,7 +645,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Orientación que ayuda a decidir en situaciones distintas»?",
+      "¿Qué término corresponde a esta definición: \"Orientación que ayuda a decidir en situaciones distintas\"?",
     options: [
       {
         id: "a",
@@ -717,7 +717,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Selección y ajuste de prácticas para un proyecto concreto»?",
+      "¿Qué término corresponde a esta definición: \"Selección y ajuste de prácticas para un proyecto concreto\"?",
     options: [
       {
         id: "a",
@@ -748,7 +748,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Forma de trabajo que define gran parte del alcance y la planificación antes de ejecutar»?",
+      "¿Qué término corresponde a esta definición: \"Forma de trabajo que define gran parte del alcance y la planificación antes de ejecutar\"?",
     options: [
       {
         id: "a",
@@ -872,7 +872,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Marco de trabajo para abordar problemas complejos mediante ciclos breves de entrega e inspección»?",
+      "¿Qué término corresponde a esta definición: \"Marco de trabajo para abordar problemas complejos mediante ciclos breves de entrega e inspección\"?",
     options: [
       {
         id: "a",
@@ -939,7 +939,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Lista ordenada y cambiante del trabajo necesario para mejorar el producto»?",
+      "¿Qué término corresponde a esta definición: \"Lista ordenada y cambiante del trabajo necesario para mejorar el producto\"?",
     options: [
       {
         id: "a",
@@ -1026,7 +1026,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Establece las condiciones de calidad que debe cumplir el incremento»?",
+      "¿Qué término corresponde a esta definición: \"Establece las condiciones de calidad que debe cumplir el incremento\"?",
     options: [
       {
         id: "a",
@@ -1098,7 +1098,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Máximo de elementos que un equipo permite simultáneamente en una etapa»?",
+      "¿Qué término corresponde a esta definición: \"Máximo de elementos que un equipo permite simultáneamente en una etapa\"?",
     options: [
       {
         id: "a",
@@ -1129,7 +1129,7 @@ export const questions: QuizQuestion[] = [
     section: "2. Métodos y marcos de trabajo",
     kind: "boolean",
     prompt:
-      "Si la columna «en curso» tiene límite de tres y está llena, termina o desbloquea una tarea antes de iniciar otra.",
+      "Si la columna \"en curso\" tiene límite de tres y está llena, termina o desbloquea una tarea antes de iniciar otra.",
     options: [
       {
         id: "v",
@@ -1179,7 +1179,7 @@ export const questions: QuizQuestion[] = [
     id: "q043",
     section: "3. Diseño y definición del proyecto",
     kind: "single",
-    prompt: "«Las inscripciones tardan tres días» es un ejemplo de...",
+    prompt: "\"Las inscripciones tardan tres días\" es un ejemplo de...",
     options: [
       {
         id: "a",
@@ -1203,7 +1203,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "El problema describe la situación actual que impide una mejora. La necesidad expresa la mejora deseada. El glosario usa esta frase como ejemplo útil para diseñar, frente a «necesitamos una aplicación nueva».",
+      "El problema describe la situación actual que impide una mejora. La necesidad expresa la mejora deseada. El glosario usa esta frase como ejemplo útil para diseñar, frente a \"necesitamos una aplicación nueva\".",
   },
   {
     id: "q044",
@@ -1230,7 +1230,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Justificación de por qué conviene invertir en el proyecto»?",
+      "¿Qué término corresponde a esta definición: \"Justificación de por qué conviene invertir en el proyecto\"?",
     options: [
       {
         id: "a",
@@ -1436,7 +1436,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Documento que autoriza formalmente el proyecto y fija su propósito, objetivos, responsable y condiciones principales»?",
+      "¿Qué término corresponde a esta definición: \"Documento que autoriza formalmente el proyecto y fija su propósito, objetivos, responsable y condiciones principales\"?",
     options: [
       {
         id: "a",
@@ -1590,7 +1590,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Trabajo o función que se declara fuera del acuerdo»?",
+      "¿Qué término corresponde a esta definición: \"Trabajo o función que se declara fuera del acuerdo\"?",
     options: [
       {
         id: "a",
@@ -1655,14 +1655,14 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Un objetivo SMART es específico, medible, alcanzable, relevante y limitado en el tiempo. «Pactado» corresponde al criterio de aceptación y «aprobado» a las líneas base.",
+      "Un objetivo SMART es específico, medible, alcanzable, relevante y limitado en el tiempo. \"Pactado\" corresponde al criterio de aceptación y \"aprobado\" a las líneas base.",
   },
   {
     id: "q060",
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Condición pactada para que un entregable sea recibido por quien corresponde»?",
+      "¿Qué término corresponde a esta definición: \"Condición pactada para que un entregable sea recibido por quien corresponde\"?",
     options: [
       {
         id: "a",
@@ -1714,7 +1714,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Versión aprobada de lo que se entregará y del trabajo necesario»?",
+      "¿Qué término corresponde a esta definición: \"Versión aprobada de lo que se entregará y del trabajo necesario\"?",
     options: [
       {
         id: "a",
@@ -1745,7 +1745,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Crecimiento del trabajo por peticiones sucesivas que no se evalúan en conjunto»?",
+      "¿Qué término corresponde a esta definición: \"Crecimiento del trabajo por peticiones sucesivas que no se evalúan en conjunto\"?",
     options: [
       {
         id: "a",
@@ -1776,7 +1776,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Adición de características no solicitadas ni aprobadas con la intención de «mejorar» el resultado»?",
+      "¿Qué término corresponde a esta definición: \"Adición de características no solicitadas ni aprobadas con la intención de \"mejorar\" el resultado\"?",
     options: [
       {
         id: "a",
@@ -1828,7 +1828,7 @@ export const questions: QuizQuestion[] = [
     section: "3. Diseño y definición del proyecto",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Encuentro en el que patrocinador, equipo e interesados principales comparten objetivos, límites, responsabilidades y forma de colaboración»?",
+      "¿Qué término corresponde a esta definición: \"Encuentro en el que patrocinador, equipo e interesados principales comparten objetivos, límites, responsabilidades y forma de colaboración\"?",
     options: [
       {
         id: "a",
@@ -1880,7 +1880,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Documento que integra cómo se ejecutará, supervisará, modificará y cerrará el proyecto»?",
+      "¿Qué término corresponde a esta definición: \"Documento que integra cómo se ejecutará, supervisará, modificará y cerrará el proyecto\"?",
     options: [
       {
         id: "a",
@@ -1911,7 +1911,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Descomposición jerárquica del alcance en entregables y componentes gestionables»?",
+      "¿Qué término corresponde a esta definición: \"Descomposición jerárquica del alcance en entregables y componentes gestionables\"?",
     options: [
       {
         id: "a",
@@ -1966,7 +1966,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "«Pruebas de carga de la inscripción» es lo bastante concreto para estimar coste, esfuerzo, duración y responsable. «Hacer la plataforma» es demasiado amplio, «preparar datos» es una actividad y la aprobación del diseño es un hito.",
+      "\"Pruebas de carga de la inscripción\" es lo bastante concreto para estimar coste, esfuerzo, duración y responsable. \"Hacer la plataforma\" es demasiado amplio, \"preparar datos\" es una actividad y la aprobación del diseño es un hito.",
   },
   {
     id: "q071",
@@ -1994,7 +1994,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Punto de control sin duración que marca un acontecimiento importante»?",
+      "¿Qué término corresponde a esta definición: \"Punto de control sin duración que marca un acontecimiento importante\"?",
     options: [
       {
         id: "a",
@@ -2025,7 +2025,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Relación que condiciona cuándo puede empezar o terminar una actividad»?",
+      "¿Qué término corresponde a esta definición: \"Relación que condiciona cuándo puede empezar o terminar una actividad\"?",
     options: [
       {
         id: "a",
@@ -2170,7 +2170,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Predicción razonada del esfuerzo, duración o coste basada en información disponible»?",
+      "¿Qué término corresponde a esta definición: \"Predicción razonada del esfuerzo, duración o coste basada en información disponible\"?",
     options: [
       {
         id: "a",
@@ -2232,7 +2232,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Representación de actividades, secuencia, fechas e hitos»?",
+      "¿Qué término corresponde a esta definición: \"Representación de actividades, secuencia, fechas e hitos\"?",
     options: [
       {
         id: "a",
@@ -2350,7 +2350,7 @@ export const questions: QuizQuestion[] = [
     section: "4. Planificación del trabajo",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Técnica que identifica la secuencia de actividades que determina la duración mínima calculada del proyecto»?",
+      "¿Qué término corresponde a esta definición: \"Técnica que identifica la secuencia de actividades que determina la duración mínima calculada del proyecto\"?",
     options: [
       {
         id: "a",
@@ -2503,7 +2503,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Intercambio de información para que cada interesado pueda decidir o actuar»?",
+      "¿Qué término corresponde a esta definición: \"Intercambio de información para que cada interesado pueda decidir o actuar\"?",
     options: [
       {
         id: "a",
@@ -2596,7 +2596,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Grado en que los entregables cumplen requisitos y son aptos para su uso previsto»?",
+      "¿Qué término corresponde a esta definición: \"Grado en que los entregables cumplen requisitos y son aptos para su uso previsto\"?",
     options: [
       {
         id: "a",
@@ -2688,7 +2688,7 @@ export const questions: QuizQuestion[] = [
     id: "q096",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
-    prompt: "«El proveedor podría retrasar la API de pagos» es...",
+    prompt: "\"El proveedor podría retrasar la API de pagos\" es...",
     options: [
       {
         id: "a",
@@ -2712,7 +2712,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Es un riesgo: un evento incierto que, si ocurre, afecta a los objetivos. «La API se retrasó» ya sería un problema.",
+      "Es un riesgo: un evento incierto que, si ocurre, afecta a los objetivos. \"La API se retrasó\" ya sería un problema.",
   },
   {
     id: "q097",
@@ -2799,7 +2799,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Acción prevista para modificar la probabilidad o el impacto»?",
+      "¿Qué término corresponde a esta definición: \"Acción prevista para modificar la probabilidad o el impacto\"?",
     options: [
       {
         id: "a",
@@ -2912,7 +2912,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Comparación periódica entre desempeño real, plan aprobado y objetivos»?",
+      "¿Qué término corresponde a esta definición: \"Comparación periódica entre desempeño real, plan aprobado y objetivos\"?",
     options: [
       {
         id: "a",
@@ -2943,7 +2943,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Método que relaciona trabajo planificado, trabajo completado y gasto real»?",
+      "¿Qué término corresponde a esta definición: \"Método que relaciona trabajo planificado, trabajo completado y gasto real\"?",
     options: [
       {
         id: "a",
@@ -3034,7 +3034,7 @@ export const questions: QuizQuestion[] = [
     id: "q108",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "boolean",
-    prompt: "En el valor ganado, «ganado» se refiere a ingresos comerciales.",
+    prompt: "En el valor ganado, \"ganado\" se refiere a ingresos comerciales.",
     options: [
       {
         id: "v",
@@ -3048,7 +3048,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Falso. El glosario aclara que «ganado» se refiere al valor presupuestado del trabajo logrado, no a ingresos comerciales.",
+      "Falso. El glosario aclara que \"ganado\" se refiere al valor presupuestado del trabajo logrado, no a ingresos comerciales.",
   },
   {
     id: "q109",
@@ -3249,7 +3249,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Importe total aprobado en la línea base de costes para completar el proyecto»?",
+      "¿Qué término corresponde a esta definición: \"Importe total aprobado en la línea base de costes para completar el proyecto\"?",
     options: [
       {
         id: "a",
@@ -3280,7 +3280,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Gráfico de cantidades acumuladas, como PV, EV y AC, a lo largo del tiempo»?",
+      "¿Qué término corresponde a esta definición: \"Gráfico de cantidades acumuladas, como PV, EV y AC, a lo largo del tiempo\"?",
     options: [
       {
         id: "a",
@@ -3325,7 +3325,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Falso. El glosario indica que su forma frecuente de «S» depende del ritmo de trabajo y que no debes inferir cumplimiento solo por su apariencia.",
+      "Falso. El glosario indica que su forma frecuente de \"S\" depende del ritmo de trabajo y que no debes inferir cumplimiento solo por su apariencia.",
   },
   {
     id: "q119",
@@ -3409,7 +3409,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Conocimiento obtenido al comparar lo planeado con lo que ocurrió»?",
+      "¿Qué término corresponde a esta definición: \"Conocimiento obtenido al comparar lo planeado con lo que ocurrió\"?",
     options: [
       {
         id: "a",
@@ -3440,7 +3440,7 @@ export const questions: QuizQuestion[] = [
     section: "6. Organización, liderazgo y ética",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Estructura en la que especialistas se agrupan por departamentos»?",
+      "¿Qué término corresponde a esta definición: \"Estructura en la que especialistas se agrupan por departamentos\"?",
     options: [
       {
         id: "a",
@@ -3570,7 +3570,7 @@ export const questions: QuizQuestion[] = [
     section: "6. Organización, liderazgo y ética",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Capacidad de orientar a un grupo hacia un objetivo compartido»?",
+      "¿Qué término corresponde a esta definición: \"Capacidad de orientar a un grupo hacia un objetivo compartido\"?",
     options: [
       {
         id: "a",
@@ -3662,7 +3662,7 @@ export const questions: QuizQuestion[] = [
     section: "6. Organización, liderazgo y ética",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Asignación de una decisión o tarea a quien cuenta con la información y la capacidad adecuadas»?",
+      "¿Qué término corresponde a esta definición: \"Asignación de una decisión o tarea a quien cuenta con la información y la capacidad adecuadas\"?",
     options: [
       {
         id: "a",
@@ -3693,7 +3693,7 @@ export const questions: QuizQuestion[] = [
     section: "6. Organización, liderazgo y ética",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Proceso para reconocer y resolver desacuerdos sobre prioridades, recursos o criterios técnicos»?",
+      "¿Qué término corresponde a esta definición: \"Proceso para reconocer y resolver desacuerdos sobre prioridades, recursos o criterios técnicos\"?",
     options: [
       {
         id: "a",
@@ -3807,7 +3807,7 @@ export const questions: QuizQuestion[] = [
     section: "6. Organización, liderazgo y ética",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: «Compromiso de explicar decisiones, resultados y uso de recursos ante las personas responsables»?",
+      "¿Qué término corresponde a esta definición: \"Compromiso de explicar decisiones, resultados y uso de recursos ante las personas responsables\"?",
     options: [
       {
         id: "a",
