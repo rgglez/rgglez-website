@@ -139,6 +139,7 @@ Si se añade un idioma a `SITE.supportedLangs`, hay que añadirlo también al ma
 
 - Se usa español de México.
 - Las comillas son dobles "".
+- El separador de decimales es el punto (.) y de miles es la coma (,).
 
 ## Tono
 
