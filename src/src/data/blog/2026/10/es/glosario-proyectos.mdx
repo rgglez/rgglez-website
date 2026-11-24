@@ -5,7 +5,7 @@ description: >-
   riesgos, valor ganado y liderazgo, con ejemplos para aplicar cada concepto.
 slug: "glosario-proyectos"
 pubDatetime: 2026-10-16T00:00:00-06:00
-modDatetime: 2026-10-16T00:00:00-06:00
+modDatetime: 2026-11-23T00:00:00-06:00
 lang: es
 ogImage: "../../../../../assets/posts/2026/10/glosario-proyectos/header.webp"
 featured: true
@@ -18,6 +18,8 @@ timezone: "America/Mexico_City"
 license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
+
+import EarnedValueForm from "@/components/EarnedValueForm.tsx";
 
 ## Introducción
 
@@ -33,6 +35,10 @@ diseñar y planificar la solución, gestionar su ejecución y dirigir al equipo.
 Las definiciones incluyen ejemplos breves y conectan los documentos, las
 técnicas y las decisiones que suelen confundirse entre sí.
 
+El glosario toma como referencia las presentaciones de Francisco Ruiz para
+_Metodología de Diseño y Gestión de Proyectos_ de la Universidad Internacional
+de La Rioja (UNIR).
+
 ---
 
 ## Tabla de contenido
@@ -46,9 +52,11 @@ mindmap
   root((Fundamentos del proyecto))
     Naturaleza del trabajo
       Proyecto
+      Proyecto tecnológico
       Operación
       Dirección o gestión de proyectos
       Ciclo de vida del proyecto
+      Revisión de fase
     Resultados
       Objetivo
       Criterio de éxito
@@ -56,6 +64,9 @@ mindmap
       Valor y beneficio
     Personas y coordinación
       Parte interesada stakeholder
+      Registro de interesados
+      Matriz de poder e interés
+      Matriz de involucramiento de interesados
       Cliente usuario y patrocinador
       Director de proyecto
       Programa y cartera de proyectos
@@ -74,6 +85,13 @@ Esfuerzo temporal para crear un producto, servicio o resultado singular. Crear
 una plataforma de matrícula es un proyecto; atender cada año las inscripciones
 con la plataforma terminada es una operación. «Temporal» describe el esfuerzo,
 no la vida útil de su resultado.
+
+### Proyecto tecnológico
+
+Proyecto que crea, adapta o incorpora tecnología para resolver una necesidad.
+Una plataforma de matrícula exige, además del desarrollo, integrar sistemas,
+validar el servicio con usuarios y preparar a quienes lo operarán. La necesidad
+determina qué tecnología conviene usar y cómo evaluar el resultado.
 
 ### Operación
 
@@ -95,6 +113,14 @@ Secuencia de etapas desde la idea hasta el cierre. Puede incluir inicio,
 diseño, planificación, ejecución y cierre; algunas etapas se repiten si el
 producto se desarrolla por incrementos. El ciclo de vida describe cuándo se
 toman decisiones, mientras que un método indica cómo se trabaja.
+
+### Revisión de fase (_phase gate_)
+
+Punto de decisión en el que revisas la evidencia de una fase y decides si el
+proyecto continúa, requiere ajustes o debe detenerse. Por ejemplo, antes de
+autorizar el desarrollo, revisa si la solución es viable y si el beneficio
+esperado sigue justificando la inversión. Aclara quién toma la decisión y con
+qué criterios.
 
 ### Objetivo
 
@@ -131,6 +157,29 @@ Persona, grupo u organización que puede afectar al proyecto o resultar
 afectada por él. En la plataforma de matrícula participan estudiantes,
 administración, soporte y autoridades. Identifica sus intereses y su capacidad
 de decisión antes de fijar requisitos.
+
+### Registro de interesados
+
+Documento que reúne a las personas y grupos relevantes, su función, sus
+expectativas y su capacidad para influir en el resultado. Por ejemplo, registra
+quién aprueba el calendario escolar y quién atenderá dudas durante la
+inscripción. Actualízalo cuando cambien los responsables o sus intereses.
+
+### Matriz de poder e interés
+
+Clasifica a los interesados según su capacidad de influir en el proyecto y su
+interés en el resultado. Coordina de cerca con quienes tienen poder e interés
+altos, mantén satisfechos a quienes tienen poder alto e interés bajo, informa
+a quienes tienen interés alto y poder bajo, y monitorea a quienes tienen
+ambos bajos. Revisa la clasificación cuando cambie su relación con el proyecto.
+
+### Matriz de involucramiento de interesados
+
+Compara el nivel actual de involucramiento de cada interesado con el que
+necesita el proyecto. Puedes registrar si desconoce el cambio, se resiste,
+es neutral, lo apoya o lo promueve. Si esperas que el personal de control
+escolar apoye la plataforma y todavía tiene dudas, invítalo a probar el flujo
+de inscripción y revisa después si cambió su disposición.
 
 ### Cliente, usuario y patrocinador
 
@@ -189,8 +238,11 @@ mindmap
     Scrum
       Equipo Scrum
       Product Backlog
+      Historia de usuario
       Sprint y Sprint Backlog
+      Eventos de Scrum
       Incremento y definición de terminado
+      Producto mínimo viable MVP
     Kanban
       Límite de trabajo en curso WIP
       Tiempo de ciclo
@@ -287,6 +339,14 @@ Contiene elementos que pueden aclararse y dividirse conforme se aprende. Su
 orden ayuda al equipo a elegir qué aporta más valor, sujeto a las restricciones
 del proyecto.
 
+### Historia de usuario
+
+Descripción breve de una necesidad desde la perspectiva de quien la tiene.
+Una fórmula habitual identifica a la persona, lo que quiere hacer y para qué.
+Por ejemplo, "Como estudiante, quiero descargar mi comprobante de inscripción
+para acreditar que completé el trámite". Añade criterios de aceptación para
+comprobar que la historia quedó resuelta.
+
 ### _Sprint_ y _Sprint Backlog_
 
 El **Sprint** es un periodo de hasta un mes en el que el equipo busca un
@@ -295,6 +355,18 @@ objetivo, los elementos seleccionados del Product Backlog y el plan para
 realizarlos. Al terminar, se inspecciona el resultado y se ajusta el trabajo
 siguiente.
 
+### Eventos de Scrum
+
+El Sprint contiene los cuatro eventos de la tabla. Cada uno permite inspeccionar
+un aspecto del trabajo y decidir qué debes ajustar.
+
+| Evento                 | Para qué sirve                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| _Sprint Planning_      | El equipo Scrum acuerda por qué es valioso el Sprint y planea qué trabajo puede realizar y cómo abordarlo. |
+| _Daily Scrum_          | Los Developers dedican 15 minutos a revisar el progreso hacia el objetivo del Sprint y adaptar su plan.    |
+| _Sprint Review_        | El equipo y los interesados inspeccionan el resultado del Sprint y deciden qué ajustes conviene hacer.     |
+| _Sprint Retrospective_ | El equipo identifica cambios para mejorar su calidad y efectividad en el siguiente Sprint.                 |
+
 ### Incremento y definición de terminado
 
 El **incremento** reúne trabajo completado que puede utilizarse. La
@@ -302,6 +374,14 @@ El **incremento** reúne trabajo completado que puede utilizarse. La
 cumplir, por ejemplo pruebas, revisión y documentación operativa. Sin ese
 acuerdo, dos personas pueden declarar «acabada» la misma función con criterios
 incompatibles.
+
+### Producto mínimo viable (MVP)
+
+Versión de un producto con lo necesario para comprobar una hipótesis con
+usuarios reales. Puedes habilitar la inscripción para una facultad y medir si
+los estudiantes completan el trámite sin asistencia. El alcance del piloto
+debe permitir obtener evidencia y cumplir las condiciones de calidad y
+seguridad que exige el uso real.
 
 ### Kanban
 
@@ -331,13 +411,16 @@ mindmap
   root((Diseño del proyecto))
     Diagnóstico
       Necesidad y problema
+      Principio de simplicidad KISS
       Caso de negocio
+      ROI VAN y TIR
       Estudio de viabilidad
       Análisis DAFO
       Supuesto y restricción
     Acuerdo de alcance
       Acta de constitución
       Requisito
+      Priorización de requisitos por asignación de puntos
       Alcance del producto y alcance del proyecto
       Exclusión del alcance
       Objetivo SMART
@@ -360,11 +443,33 @@ situación actual que la impide. «Las inscripciones tardan tres días» es más
 útil para diseñar que «necesitamos una aplicación nueva». Investiga causas y
 personas afectadas antes de elegir tecnología.
 
+### Principio de simplicidad (KISS)
+
+Busca la solución más sencilla que satisfaga los requisitos y las restricciones
+del proyecto. Si el registro escolar ya mantiene el padrón de estudiantes,
+comprueba si puedes usar sus datos antes de diseñar otro padrón. Evalúa la
+simplicidad también desde la operación y el mantenimiento.
+
 ### Caso de negocio
 
 Justificación de por qué conviene invertir en el proyecto. Compara costes,
 beneficios, alternativas y riesgos, y sirve para decidir si se autoriza o se
 detiene. Puede cambiar si aparece información que altera el valor esperado.
+
+### ROI, VAN y TIR
+
+Tres medidas para evaluar la conveniencia económica de una alternativa. Elige
+un horizonte de evaluación y estima los flujos antes de comparar opciones.
+
+- El **retorno de la inversión (ROI)** expresa el beneficio neto en relación
+  con la inversión. Si inviertes 100,000 y obtienes un beneficio neto de 20,000
+  en el periodo analizado, el ROI es de 20%.
+- El **valor actual neto (VAN)** es la suma del valor presente de los flujos
+  netos, incluida la inversión inicial. Un VAN positivo indica que la
+  inversión generaría valor a la tasa de descuento elegida.
+- La **tasa interna de retorno (TIR)** es la tasa que hace que el VAN sea
+  cero. Si los flujos tienen una salida inicial seguida de entradas, puedes
+  compararla con la tasa mínima de rendimiento exigida.
 
 ### Estudio de viabilidad
 
@@ -400,6 +505,20 @@ Condición que el producto o el proyecto debe cumplir. Puede ser funcional,
 como emitir un comprobante de inscripción, o no funcional, como responder en
 menos de dos segundos bajo una carga acordada. Verifica cada requisito con un
 criterio observable.
+
+Los requisitos pueden referirse al **negocio** (la necesidad que se busca
+atender), al **producto** (lo que hace y con qué desempeño), al **proyecto**
+(condiciones de ejecución, como capacitar al personal antes de la entrega) o a
+la **calidad** (condiciones para verificar y validar los entregables). Por
+ejemplo, una prueba de carga comprueba el requisito de tiempo de respuesta.
+
+### Priorización de requisitos por asignación de puntos
+
+Técnica en la que cada participante distribuye un presupuesto ficticio, como
+100 puntos, entre los requisitos candidatos. Esa restricción obliga a expresar
+preferencias cuando todo parece importante. Usa el resultado para discutir qué
+incluir primero y revisa las dependencias, el coste y los requisitos
+obligatorios antes de cerrar el alcance.
 
 ### Alcance del producto y alcance del proyecto
 
@@ -470,13 +589,16 @@ mindmap
     Estimaciones
       Esfuerzo y duración
       Recurso
+      Leyes de Brooks y de Parkinson
       Estimación
+      Estimación análoga paramétrica y ascendente
       Presupuesto y reserva
     Calendario y control
       Cronograma
       Diagrama de Gantt
       Diagrama de red
       Método del camino crítico CPM
+      Técnica PERT
       Holgura total
       Holgura libre
       Línea base del cronograma y de costes
@@ -527,6 +649,16 @@ Relación que condiciona cuándo puede empezar o terminar una actividad. La
 prueba de pagos depende de contar con una integración funcional. Identificar
 dependencias revela qué retrasos podrían propagarse al resto del proyecto.
 
+En la tabla, **A** es la actividad predecesora y **B** es la sucesora. La
+relación fija el momento más temprano en que B puede iniciar o terminar.
+
+| Relación                 | Condición                          | Ejemplo                                                                                            |
+| ------------------------ | ---------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Fin a inicio (FI)**    | B puede iniciar cuando termina A.  | Las pruebas de integración pueden iniciar al terminar la integración.                              |
+| **Inicio a inicio (II)** | B puede iniciar cuando inicia A.   | El monitoreo puede iniciar a partir del arranque de las pruebas de carga.                          |
+| **Fin a fin (FF)**       | B puede terminar cuando termina A. | El informe de defectos puede elaborarse durante las pruebas, pero se cierra cuando estas terminan. |
+| **Inicio a fin (IF)**    | B puede terminar cuando inicia A.  | El turno saliente puede concluir cuando entra el turno que lo releva.                              |
+
 ### Esfuerzo y duración
 
 El **esfuerzo** mide trabajo requerido, por ejemplo 40 horas de una persona.
@@ -541,11 +673,31 @@ Su disponibilidad cambia la duración posible del trabajo. Asignar dos personas
 no siempre reduce el tiempo a la mitad, especialmente si deben coordinarse o
 esperar el mismo sistema externo.
 
+### Leyes de Brooks y de Parkinson
+
+La **ley de Brooks** advierte que añadir personas a un proyecto de software
+atrasado puede retrasarlo aún más. Quienes se incorporan necesitan tiempo para
+aprender y el equipo debe coordinar su trabajo. La **ley de Parkinson**
+describe la tendencia del trabajo a ocupar todo el tiempo disponible. Antes
+de ampliar el equipo o extender un plazo, revisa qué actividad limita la
+entrega y cómo cambiaría su duración.
+
 ### Estimación
 
 Predicción razonada del esfuerzo, duración o coste basada en información
 disponible. Expón supuestos y un margen de incertidumbre. La estimación mejora
 cuando descompones el trabajo y revisas datos de proyectos comparables.
+
+### Estimación análoga, paramétrica y ascendente
+
+| Técnica                      | Cómo se aplica                                                                            | Ejemplo                                                                                                         |
+| ---------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Análoga**                  | Parte de un trabajo similar y ajusta las diferencias.                                     | Toma como referencia una migración anterior y ajusta por el número y el estado de los sistemas de origen.       |
+| **Paramétrica**              | Usa una relación medible entre una unidad de trabajo y el esfuerzo, el tiempo o el coste. | Estima las horas de validación multiplicando el número de registros por el tiempo medio observado por registro. |
+| **Ascendente** (_bottom-up_) | Estima componentes pequeños y agrega sus resultados.                                      | Suma el esfuerzo de preparar datos, ejecutar pruebas y analizar resultados para estimar un paquete de trabajo.  |
+
+Para estimar la duración total del proyecto, incorpora además las
+dependencias, los calendarios y las restricciones de recursos.
 
 ### Presupuesto y reserva
 
@@ -581,6 +733,21 @@ mínima calculada del proyecto bajo las dependencias y duraciones previstas.
 Vigila esas actividades porque su demora puede mover la fecha final. El camino
 puede cambiar al actualizar el cronograma.
 
+### Técnica PERT
+
+La técnica de evaluación y revisión de programas (_Program Evaluation and
+Review Technique_, PERT) estima la duración de una actividad con tres
+escenarios. La fórmula clásica pondera cuatro veces la duración más probable.
+
+$$
+t_e = \frac{O + 4M + P}{6}
+$$
+
+$O$ es la duración optimista, $M$ la más probable, $P$ la pesimista y $t_e$ la
+duración esperada. Si consideras 2, 4 y 10 días, respectivamente, la estimación
+es de 4.67 días. Úsala como insumo del cronograma y conserva los tres valores
+para comunicar cuánta incertidumbre hay.
+
 ### Holgura total
 
 Tiempo que una actividad puede retrasarse sin mover la fecha prevista de
@@ -607,16 +774,20 @@ mindmap
   root((Ejecución seguimiento y cierre))
     Coordinación y calidad
       Comunicación del proyecto
+      Plan de comunicación
       Subcontratación
+      Contrato por tiempo y materiales y contrato de precio fijo
       Calidad
       Aseguramiento y control de calidad
     Riesgos y cambios
       Riesgo
       Probabilidad e impacto
+      Matriz de probabilidad e impacto
       Registro de riesgos
       Respuesta al riesgo
       Incidencia o problema
       Solicitud y control de cambios
+      Modelo ADKAR
     Medición del avance
       Seguimiento y control
       Gestión del valor ganado EVM
@@ -626,6 +797,10 @@ mindmap
       Variaciones de coste y de cronograma
       Índices de desempeño CPI y SPI
       Presupuesto al finalizar BAC
+      Estimación al finalizar EAC
+      Estimación para completar ETC
+      Variación al finalizar VAC
+      Interpretación de los indicadores de valor ganado
       Curva S
     Respuesta y cierre
       Acción correctiva
@@ -644,12 +819,29 @@ Define quién recibe qué dato, cuándo y por qué canal. Un informe para el
 patrocinador puede resumir decisiones y riesgos; el equipo necesita detalles
 operativos para coordinar tareas.
 
+### Plan de comunicación
+
+Acuerdo que indica el destinatario, la información que necesita, quién la
+envía, por qué canal y con qué frecuencia. Incluye cómo escalar una incidencia
+urgente y cómo confirmar la recepción cuando se necesite una decisión. Por
+ejemplo, planea un reporte semanal para el patrocinador y un aviso inmediato
+al responsable técnico si falla el servicio de inscripción.
+
 ### Subcontratación
 
 Encargo de parte del trabajo a un proveedor externo. Requiere acordar
 entregables, criterios de aceptación, plazos, dependencias y responsabilidades.
 Subcontratar una prueba de seguridad no transfiere al proveedor la
 responsabilidad de integrar su resultado en el proyecto.
+
+### Contrato por tiempo y materiales y contrato de precio fijo
+
+En un contrato por **tiempo y materiales (T&M)** pagas las horas y los
+materiales según las tarifas acordadas. Sirve cuando aún no puedes precisar
+cuánto trabajo hará falta. Revisa el consumo y acuerda un tope si necesitas
+limitar el gasto. En un contrato de **precio fijo** acuerdas un importe para
+un alcance definido. Precisa los criterios de aceptación y cómo se cotizarán
+los cambios.
 
 ### Calidad
 
@@ -672,12 +864,24 @@ representar una amenaza o una oportunidad. «El proveedor podría retrasar la
 API de pagos» es un riesgo; «la API se retrasó» ya es un problema que exige
 acción.
 
+Para identificar amenazas en un proyecto tecnológico, revisa el apoyo
+directivo, la viabilidad técnica, la claridad de los requisitos y las
+condiciones de aceptación del entregable.
+
 ### Probabilidad e impacto
 
 La **probabilidad** estima qué tan posible es que ocurra un riesgo; el
 **impacto** describe su efecto sobre objetivos como plazo, coste o calidad.
 Una matriz puede ayudar a priorizar, pero sus puntuaciones dependen de las
 escalas elegidas y no son probabilidades exactas por sí mismas.
+
+### Matriz de probabilidad e impacto
+
+Herramienta que cruza la probabilidad de un riesgo con el impacto que tendría
+si ocurriera. Define qué significa bajo, medio y alto antes de clasificar.
+Si la inscripción depende de un único proveedor, incluso una falla poco
+probable puede requerir una respuesta prioritaria por su efecto en el
+servicio. Actualiza la clasificación cuando aparezcan datos nuevos.
 
 ### Registro de riesgos
 
@@ -688,10 +892,18 @@ respuesta difícilmente se gestiona.
 
 ### Respuesta al riesgo
 
-Acción prevista para modificar la probabilidad o el impacto. Ante un posible
-retraso de la API de pagos, puedes preparar una integración simulada para
-seguir probando. La respuesta debe tener responsable y un momento de
-activación, no quedarse en una intención general.
+Decisión sobre cómo tratar un riesgo. Define quién se encarga y qué condición
+activa la respuesta. Ante una amenaza, elige la estrategia que mejor responda
+a su probabilidad e impacto.
+
+- **Evitar.** Cambia el plan para eliminar la amenaza, por ejemplo, elige una
+  integración que prescinda de una API que será retirada.
+- **Transferir.** Acuerda que un tercero asuma parte del impacto o la gestión
+  del riesgo. Un seguro puede cubrir una pérdida económica específica.
+- **Mitigar.** Reduce la probabilidad o el impacto. Ante un posible retraso de
+  la API de pagos, prepara una integración simulada para seguir probando.
+- **Aceptar.** Reconoce la amenaza y asume sus efectos si ocurre. Acuerda el
+  seguimiento y, cuando corresponda, prepara una contingencia.
 
 ### Incidencia o problema
 
@@ -706,6 +918,16 @@ Una **solicitud de cambio** propone modificar alcance, fechas, costes u otra
 referencia acordada. El **control de cambios** analiza su impacto, decide si
 se aprueba y actualiza las líneas base y documentos afectados. Así evitas que
 el plan oficial y el trabajo real cuenten historias distintas.
+
+### Modelo ADKAR
+
+Modelo para identificar qué necesita una persona para adoptar un cambio.
+ADKAR reúne cinco resultados. La persona comprende por qué se necesita el
+cambio (_Awareness_), decide apoyarlo (_Desire_), aprende qué hacer
+(_Knowledge_), puede hacerlo en la práctica (_Ability_) y recibe refuerzo
+para sostenerlo (_Reinforcement_). Si el personal entiende y apoya la nueva
+plataforma, pero tiene dificultades para usarla, practica con casos reales
+antes del arranque.
 
 ### Seguimiento y control
 
@@ -722,22 +944,22 @@ del trabajo presupuestado se terminó.
 
 ### Valor planificado (PV)
 
-Presupuesto del trabajo que debía estar terminado en la fecha de corte. Si el
-plan preveía completar tareas valoradas en 10 000 unidades monetarias, ese es
-el PV aunque el equipo haya ejecutado menos trabajo.
+Presupuesto del trabajo programado hasta la fecha de corte. Si el plan
+preveía trabajo por 10,000 unidades monetarias, ese es el PV a esa fecha.
 
 ### Valor ganado (EV)
 
-Presupuesto asignado al trabajo efectivamente terminado. Si a la fecha de
-corte se completaron tareas cuyo presupuesto era 8 000, el EV es 8 000, con
-independencia de lo que realmente costaron. «Ganado» se refiere al valor
-presupuestado del trabajo logrado, no a ingresos comerciales.
+Valor presupuestado del trabajo realizado hasta la fecha de corte. Si una
+tarea tiene un presupuesto de 5,000 y la regla de medición permite reconocer
+un avance verificado de 40%, esa tarea aporta 2,000 al EV. Aplica la regla de
+medición acordada para cada paquete y suma el valor obtenido.
 
 ### Coste real (AC)
 
-Gasto incurrido para realizar el trabajo hasta la fecha de corte. Si el
-trabajo con EV de 8 000 costó 9 000, el AC es 9 000. Compara AC con EV para
-interpretar costes; compararlo solo con PV mezcla gasto y avance.
+Coste incurrido para realizar el trabajo hasta la fecha de corte. Incluye
+los costes del trabajo ya realizado cuya factura aún está pendiente de pago.
+Si el trabajo con EV de 8,000 costó 9,000, el AC es 9,000. Compara AC con
+EV para evaluar el desempeño en costes.
 
 ### Variaciones de coste y de cronograma
 
@@ -757,7 +979,7 @@ moneda y la misma fecha de corte.
 
 El **índice de desempeño del coste** es $CPI=EV/AC$ y el **índice de
 desempeño del cronograma** es $SPI=EV/PV$. Con los datos anteriores,
-$CPI\approx0{,}89$ y $SPI=0{,}8$. Un valor menor que uno señala, en cada
+$CPI\approx0.89$ y $SPI=0.8$. Un valor menor que uno señala, en cada
 caso, menor rendimiento que el previsto. No calcules el índice si su
 denominador es cero.
 
@@ -772,6 +994,68 @@ Importe total aprobado en la línea base de costes para completar el proyecto.
 Sirve como referencia para proyectar el coste final, pero una proyección
 depende de los supuestos sobre el rendimiento futuro. Distingue el BAC del
 gasto acumulado hasta hoy.
+
+### Estimación al finalizar (EAC)
+
+Pronóstico del coste total al terminar. Si supones que la eficiencia de coste
+acumulada continuará y que $CPI>0$, usa $EAC=BAC/CPI$. Si supones que el
+trabajo restante se hará al coste presupuestado, usa $EAC=AC+(BAC-EV)$.
+Elige el cálculo según lo que esperas del trabajo pendiente y documenta el
+supuesto.
+
+### Estimación para completar (ETC)
+
+Coste que se prevé incurrir desde la fecha de corte hasta terminar el
+proyecto. Si ya estimaste el coste final, obtén el coste pendiente con
+$ETC=EAC-AC$. Si el trabajo restante cambió, vuelve a estimar sus actividades
+y suma sus costes para construir un nuevo pronóstico.
+
+### Variación al finalizar (VAC)
+
+Diferencia proyectada entre el presupuesto y el coste final estimado.
+Calcula $VAC=BAC-EAC$. Un valor positivo indica que se prevé cerrar por
+debajo del presupuesto, uno negativo indica un sobrecoste previsto y cero
+indica que el coste final estimado coincide con el presupuesto.
+
+<EarnedValueForm client:load />
+
+### Interpretación de los indicadores de valor ganado
+
+Lee cada fila comparando el primer valor con el segundo. Usa la misma fecha
+de corte para los datos de avance y coste.
+
+| Comparación                         | Menor                                                           | Igual                                                       | Mayor                                                         |
+| ----------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| $SPI$ frente a $1$                  | Se completó menos trabajo que el previsto.                      | Se completó la cantidad de trabajo prevista.                | Se completó más trabajo que el previsto.                      |
+| $CPI$ frente a $1$                  | El trabajo realizado costó más de lo presupuestado.             | El trabajo realizado costó lo presupuestado.                | El trabajo realizado costó menos de lo presupuestado.         |
+| $SV$ frente a $0$                   | Se completó menos trabajo que el previsto.                      | El avance coincide con el plan.                             | Se completó más trabajo que el previsto.                      |
+| $CV$ frente a $0$                   | Hay un sobrecoste para el trabajo realizado.                    | El coste coincide con el presupuesto del trabajo realizado. | Se gastó menos de lo presupuestado para el trabajo realizado. |
+| $EV$ frente a $PV$                  | El avance está por debajo de lo previsto.                       | El avance coincide con el plan.                             | El avance supera lo previsto.                                 |
+| $AC$ frente a $EV$                  | El gasto está por debajo del presupuesto del trabajo realizado. | El gasto coincide con el presupuesto del trabajo realizado. | El gasto supera el presupuesto del trabajo realizado.         |
+| Coste final estimado frente a $BAC$ | Se prevé cerrar por debajo del presupuesto total.               | Se prevé cerrar con el presupuesto total.                   | Se prevé superar el presupuesto total.                        |
+
+#### Ejemplo de los laboratorios de robótica
+
+Se planeó equipar cuatro laboratorios, uno por semana y con un presupuesto de
+$5{,}000$ dólares por laboratorio. Al cierre de la semana 3, hay dos
+laboratorios terminados y el tercero registra un avance verificado de 40%.
+Los costes incurridos son de 5,000, 6,500 y 3,000 dólares, respectivamente.
+Con esos datos, $BAC=20{,}000$, $PV=15{,}000$, $EV=12{,}000$ y $AC=14{,}500$.
+
+| Indicador | Resultado      | Interpretación                                                                          |
+| --------- | -------------- | --------------------------------------------------------------------------------------- |
+| $SPI$     | $0.80$         | Se completó el 80% del trabajo programado, medido por su valor presupuestado.           |
+| $CPI$     | $\approx 0.83$ | Por cada dólar de coste se ganaron cerca de 0.83 dólares de valor presupuestado.        |
+| $SV$      | $-3{,}000$     | Falta trabajo presupuestado en 3,000 dólares para alcanzar el avance previsto al corte. |
+| $CV$      | $-2{,}500$     | El trabajo realizado costó 2,500 dólares más de lo presupuestado.                       |
+| $EAC$     | $24{,}166.67$  | Es el coste final estimado si se mantiene la eficiencia observada.                      |
+| $ETC$     | $9{,}666.67$   | Es el coste estimado de completar el trabajo pendiente.                                 |
+| $VAC$     | $-4{,}166.67$  | Se estima un sobrecoste final de 4,166.67 dólares.                                      |
+
+Para calcular $EAC$, usa el cociente completo $12{,}000/14{,}500$ como $CPI$
+y redondea al presentar las cifras. En este ejemplo, $AC<PV$ y $AC>EV$.
+Aunque el gasto queda por debajo del plan de la semana 3, el equipo lleva
+menos avance del previsto e incurrió en un sobrecoste por el trabajo realizado.
 
 ### Curva S
 
@@ -814,7 +1098,9 @@ mindmap
       Autoridad y responsabilidad
     Dirección del equipo
       Liderazgo
+      Funciones de la dirección de proyectos
       Motivación y rendimiento del equipo
+      Matriz de urgencia e importancia
       Delegación
       Gestión de conflictos
       Negociación
@@ -847,12 +1133,23 @@ Una persona puede responder a su responsable técnico y al director del
 proyecto. Acuerda autoridad, dedicación y prioridades para evitar instrucciones
 contradictorias.
 
+La distribución concreta depende de la organización. Por ejemplo, la
+dirección del proyecto puede coordinar entregables y fechas, mientras que
+las jefaturas funcionales asignan especialistas y supervisan las decisiones
+técnicas de su área.
+
 ### Autoridad y responsabilidad
 
 La **autoridad** permite tomar decisiones o asignar recursos; la
 **responsabilidad** obliga a responder por un resultado. Si el director de
 proyecto debe cumplir una fecha pero no decide sobre la disponibilidad del
 equipo, necesita mecanismos explícitos de negociación y escalado.
+
+La **autoridad formal** proviene del cargo o de las facultades delegadas,
+como aprobar gastos. La **autoridad informal** surge de la experiencia, la
+confianza y la capacidad de influir en decisiones. Una especialista puede
+orientar al equipo gracias a su experiencia aunque la aprobación corresponda
+a la persona que dirige el proyecto.
 
 ### Liderazgo
 
@@ -861,11 +1158,28 @@ implica comunicar el propósito, escuchar, resolver obstáculos y crear
 condiciones para que las personas colaboren. No depende únicamente del cargo
 formal ni se mide por el número de instrucciones dadas.
 
+### Funciones de la dirección de proyectos
+
+La dirección **planifica** objetivos y recursos, **organiza** las
+responsabilidades, **coordina** el trabajo entre áreas, **controla** el
+avance y **motiva** al equipo. Por ejemplo, para preparar el arranque de la
+plataforma, acuerda la fecha, asigna responsables, coordina a soporte y
+control escolar, verifica que se cumplan los criterios de salida y escucha
+al equipo para resolver bloqueos.
+
 ### Motivación y rendimiento del equipo
 
 La **motivación** influye en el compromiso; el **rendimiento** depende además
 de capacidad, recursos, claridad y coordinación. Si una entrega se retrasa,
 investiga bloqueos y prioridades antes de atribuirlo a falta de esfuerzo.
+
+### Matriz de urgencia e importancia
+
+Herramienta para decidir cómo atender el trabajo. Atiende de inmediato lo
+urgente e importante, como una caída durante la inscripción. Reserva tiempo
+para lo importante que aún puede planearse, como ensayar la recuperación.
+Canaliza o delega solicitudes urgentes de menor impacto y reduce las
+actividades de escasa importancia que pueden esperar.
 
 ### Delegación
 
@@ -873,6 +1187,9 @@ Asignación de una decisión o tarea a quien cuenta con la información y la
 capacidad adecuadas. Define el resultado esperado y los límites de autonomía,
 mantén un seguimiento proporcionado y evita convertir cada paso en una
 aprobación del director.
+
+Asegura que la persona tenga acceso a los datos, herramientas y apoyo que
+necesite. Acuerda cuándo revisarán el avance y cómo evaluarán el resultado.
 
 ### Gestión de conflictos
 
@@ -890,10 +1207,10 @@ opción para que el acuerdo sea viable.
 
 ### Ética profesional
 
-Aplicación de criterios de honestidad, responsabilidad, respeto y equidad al
-tomar decisiones. Si una prueba revela un defecto grave antes del lanzamiento,
-informa del riesgo y registra la decisión, aunque comunicarlo resulte
-incómodo. La ética protege a usuarios, equipo y organización.
+Aplicación de criterios de honestidad, responsabilidad, respeto e imparcialidad
+al tomar decisiones. Si una prueba revela un defecto grave antes del
+lanzamiento, informa del riesgo y registra la decisión, aunque comunicarlo
+resulte incómodo. La ética protege a usuarios, equipo y organización.
 
 ### Rendición de cuentas
 
@@ -913,9 +1230,11 @@ mindmap
     Fundamentos del proyecto
       Naturaleza del trabajo
         Proyecto
+        Proyecto tecnológico
         Operación
         Dirección o gestión de proyectos
         Ciclo de vida del proyecto
+        Revisión de fase
       Resultados
         Objetivo
         Criterio de éxito
@@ -923,6 +1242,9 @@ mindmap
         Valor y beneficio
       Personas y coordinación
         Parte interesada stakeholder
+        Registro de interesados
+        Matriz de poder e interés
+        Matriz de involucramiento de interesados
         Cliente usuario y patrocinador
         Director de proyecto
         Programa y cartera de proyectos
@@ -944,21 +1266,27 @@ mindmap
       Scrum
         Equipo Scrum
         Product Backlog
+        Historia de usuario
         Sprint y Sprint Backlog
+        Eventos de Scrum
         Incremento y definición de terminado
+        Producto mínimo viable MVP
       Kanban
         Límite de trabajo en curso WIP
         Tiempo de ciclo
     Diseño y definición del proyecto
       Diagnóstico
         Necesidad y problema
+        Principio de simplicidad KISS
         Caso de negocio
+        ROI VAN y TIR
         Estudio de viabilidad
         Análisis DAFO
         Supuesto y restricción
       Acuerdo de alcance
         Acta de constitución
         Requisito
+        Priorización de requisitos por asignación de puntos
         Alcance del producto y alcance del proyecto
         Exclusión del alcance
         Objetivo SMART
@@ -979,29 +1307,36 @@ mindmap
       Estimaciones
         Esfuerzo y duración
         Recurso
+        Leyes de Brooks y de Parkinson
         Estimación
+        Estimación análoga paramétrica y ascendente
         Presupuesto y reserva
       Calendario y control
         Cronograma
         Diagrama de Gantt
         Diagrama de red
         Método del camino crítico CPM
+        Técnica PERT
         Holgura total
         Holgura libre
         Línea base del cronograma y de costes
     Ejecución seguimiento y cierre
       Coordinación y calidad
         Comunicación del proyecto
+        Plan de comunicación
         Subcontratación
+        Contrato por tiempo y materiales y contrato de precio fijo
         Calidad
         Aseguramiento y control de calidad
       Riesgos y cambios
         Riesgo
         Probabilidad e impacto
+        Matriz de probabilidad e impacto
         Registro de riesgos
         Respuesta al riesgo
         Incidencia o problema
         Solicitud y control de cambios
+        Modelo ADKAR
       Medición del avance
         Seguimiento y control
         Gestión del valor ganado EVM
@@ -1011,6 +1346,10 @@ mindmap
         Variaciones de coste y de cronograma
         Índices de desempeño CPI y SPI
         Presupuesto al finalizar BAC
+        Estimación al finalizar EAC
+        Estimación para completar ETC
+        Variación al finalizar VAC
+        Interpretación de los indicadores de valor ganado
         Curva S
       Respuesta y cierre
         Acción correctiva
@@ -1024,7 +1363,9 @@ mindmap
         Autoridad y responsabilidad
       Dirección del equipo
         Liderazgo
+        Funciones de la dirección de proyectos
         Motivación y rendimiento del equipo
+        Matriz de urgencia e importancia
         Delegación
         Gestión de conflictos
         Negociación
@@ -1036,7 +1377,7 @@ mindmap
   </div>
 </div>
 
-El mapa reúne las 96 entradas del glosario. Léelo desde el propósito del
+El mapa reúne las 120 entradas del glosario. Léelo desde el propósito del
 proyecto hasta la forma de organizar el equipo: cada decisión de diseño y
 planificación establece una referencia para ejecutar, medir y cerrar el
 trabajo.
@@ -1073,3 +1414,13 @@ trabajo.
 - <a href="https://agilemanifesto.org/iso/es/manifesto.html" target="_blank">
     Manifiesto por el Desarrollo Ágil de Software
   </a>
+- Bahnmaier, W. W. (Ed.). (2001).
+  <a href="https://s3vi.ndc.nasa.gov/ssri-kb/static/resources/Scheduling%20Guide%20for%20Program%20Managers%20Oct%202001.pdf" target="_blank"><em>Scheduling guide for program managers</em></a> (3.ª ed.). Defense Systems Management College Press.
+- FranklinCovey. (s. f.).
+  <a href="https://www.franklincovey.com/courses/the-7-habits/habit-3/" target="_blank"><em>Habit 3: Put first things first</em></a>.
+- Prosci. (s. f.).
+  <a href="https://www.prosci.com/methodology/adkar" target="_blank"><em>The Prosci ADKAR model</em></a>.
+- Project Management Institute. (s. f.).
+  <a href="https://www.pmi.org/about/ethics/guidelines" target="_blank"><em>Ethics guidelines</em></a>.
+- U.S. Department of Energy. (2019, 10 de julio).
+  <a href="https://www.energy.gov/projectmanagement/articles/earned-value-management-system-evms-gold-card" target="_blank"><em>Earned value management system (EVMS) gold card</em></a>.

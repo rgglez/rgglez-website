@@ -38,6 +38,37 @@ export const questions: QuizQuestion[] = [
       "El proyecto es un esfuerzo temporal para crear un producto, servicio o resultado singular. La operación es trabajo recurrente, el programa coordina proyectos relacionados y el entregable es un resultado verificable producido durante el proyecto.",
   },
   {
+    id: "q136",
+    section: "1. Fundamentos del proyecto",
+    kind: "single",
+    prompt:
+      "La universidad integra un sistema de pagos con su plataforma de matrícula y valida el servicio antes de entregarlo. ¿Qué describe ese trabajo?",
+    options: [
+      {
+        id: "a",
+        text: "Operación recurrente de la plataforma",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Proyecto tecnológico",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Programa de proyectos",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Control de calidad del servicio en operación",
+        correct: false,
+      },
+    ],
+    explanation:
+      "Es un proyecto tecnológico porque incorpora tecnología para resolver una necesidad concreta y termina con la entrega del servicio validado.",
+  },
+  {
     id: "q002",
     section: "1. Fundamentos del proyecto",
     kind: "boolean",
@@ -160,6 +191,37 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Verdadero. Es la distinción que hace el glosario entre ciclo de vida y método.",
+  },
+  {
+    id: "q137",
+    section: "1. Fundamentos del proyecto",
+    kind: "single",
+    prompt:
+      "Tras el piloto, el comité revisa la viabilidad de la solución y decide si autoriza el despliegue, solicita ajustes o detiene el proyecto. ¿Qué práctica aplica?",
+    options: [
+      {
+        id: "a",
+        text: "Reunión de lanzamiento",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Retrospectiva del Sprint",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Revisión de fase",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "Aceptación formal al cierre",
+        correct: false,
+      },
+    ],
+    explanation:
+      "En una revisión de fase, quienes tienen autoridad evalúan la evidencia y deciden si el proyecto continúa, cambia o se detiene.",
   },
   {
     id: "q007",
@@ -335,6 +397,99 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Es la definición de parte interesada. El cliente solicita o recibe el resultado, el patrocinador respalda el proyecto y el director de proyecto lo coordina. En la plataforma participan estudiantes, administración, soporte y autoridades.",
+  },
+  {
+    id: "q138",
+    section: "1. Fundamentos del proyecto",
+    kind: "single",
+    prompt:
+      "Quieres documentar quién aprueba el calendario escolar, qué espera del proyecto y en qué decisiones puede influir. ¿Dónde registras esos datos?",
+    options: [
+      {
+        id: "a",
+        text: "Registro de interesados",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Matriz de probabilidad e impacto",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Matriz de involucramiento de interesados",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Plan de comunicación",
+        correct: false,
+      },
+    ],
+    explanation:
+      "El registro de interesados reúne las personas y los grupos relevantes, sus funciones, expectativas y capacidad de influir.",
+  },
+  {
+    id: "q139",
+    section: "1. Fundamentos del proyecto",
+    kind: "single",
+    prompt:
+      "En la matriz de poder e interés, ¿cómo debes tratar a un grupo con mucho interés en el resultado y poca capacidad de influir en las decisiones?",
+    options: [
+      {
+        id: "a",
+        text: "Mantenerlo satisfecho",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Monitorearlo con atención mínima",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Coordinar de cerca con él",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Mantenerlo informado",
+        correct: true,
+      },
+    ],
+    explanation:
+      "El interés alto y poder bajo indican que conviene mantener informado al grupo. Coordina de cerca con quienes tienen poder e interés altos.",
+  },
+  {
+    id: "q140",
+    section: "1. Fundamentos del proyecto",
+    kind: "single",
+    prompt:
+      "El personal de control escolar se muestra neutral ante la nueva plataforma y necesitas que la apoye. ¿Qué herramienta registra el nivel actual y el deseado?",
+    options: [
+      {
+        id: "a",
+        text: "Plan de comunicación",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Matriz de poder e interés",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Matriz de involucramiento de interesados",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "Registro de riesgos",
+        correct: false,
+      },
+    ],
+    explanation:
+      "La matriz de involucramiento compara la disposición actual con la que necesita el proyecto. El equipo puede usar esa diferencia para decidir cómo involucrar al personal.",
   },
   {
     id: "q013",
@@ -966,6 +1121,40 @@ export const questions: QuizQuestion[] = [
       "Es el Product Backlog. El Sprint Backlog solo reúne el objetivo del Sprint, los elementos seleccionados y el plan para realizarlos.",
   },
   {
+    id: "q141",
+    section: "2. Métodos y marcos de trabajo",
+    kind: "single",
+    prompt:
+      "¿Cuál de estas opciones formula una historia de usuario con una persona, una necesidad y el beneficio esperado?",
+    options: [
+      {
+        id: "a",
+        text:
+          "Como estudiante, quiero descargar mi comprobante para acreditar mi inscripción.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "El comprobante se entregará en PDF en menos de dos segundos.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text:
+          "El equipo debe integrar el generador de comprobantes antes del piloto.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Se acepta la entrega cuando se puedan descargar diez comprobantes de prueba.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "La historia expresa quién necesita algo, qué quiere hacer y para qué. Las demás opciones describen condiciones de producto, ejecución o aceptación.",
+  },
+  {
     id: "q035",
     section: "2. Métodos y marcos de trabajo",
     kind: "multi",
@@ -1022,6 +1211,47 @@ export const questions: QuizQuestion[] = [
       "Verdadero. Al terminar, se inspecciona el resultado y se ajusta el trabajo siguiente.",
   },
   {
+    id: "q142",
+    section: "2. Métodos y marcos de trabajo",
+    kind: "multi",
+    prompt:
+      "¿Qué pares relacionan correctamente un evento de Scrum con su propósito? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text:
+          "Daily Scrum y adaptar el plan de los Developers según el progreso hacia el objetivo del Sprint.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text:
+          "Sprint Planning e inspeccionar el resultado del Sprint con los interesados.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text:
+          "Sprint Review e inspeccionar el resultado del Sprint con los interesados.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text:
+          "Sprint Retrospective y acordar por qué es valioso el Sprint que inicia.",
+        correct: false,
+      },
+      {
+        id: "e",
+        text:
+          "Sprint Retrospective e identificar mejoras en la calidad y efectividad del equipo.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "El Daily Scrum adapta el plan, el Sprint Review inspecciona el resultado con interesados y la retrospectiva busca mejoras. El Sprint Planning acuerda el propósito y plan del Sprint.",
+  },
+  {
     id: "q037",
     section: "2. Métodos y marcos de trabajo",
     kind: "single",
@@ -1051,6 +1281,40 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Es la definición de terminado, por ejemplo pruebas, revisión y documentación operativa. El glosario la distingue del criterio de aceptación, que es la condición pactada para que el cliente reciba un entregable.",
+  },
+  {
+    id: "q143",
+    section: "2. Métodos y marcos de trabajo",
+    kind: "single",
+    prompt:
+      "¿Qué decisión corresponde a un producto mínimo viable para comprobar si los estudiantes pueden inscribirse sin asistencia?",
+    options: [
+      {
+        id: "a",
+        text:
+          "Registrar la hipótesis y sus criterios de éxito en el caso de negocio.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Mostrar el diseño de las pantallas al equipo técnico.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text:
+          "Completar la integración de pagos para cumplir la definición de terminado.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Abrir la inscripción a una facultad y medir cuántos estudiantes completan el trámite sin ayuda.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "El MVP reúne lo necesario para probar la hipótesis con usuarios reales. La apertura a una facultad permite medir el resultado del trámite en condiciones de uso.",
   },
   {
     id: "q038",
@@ -1226,6 +1490,40 @@ export const questions: QuizQuestion[] = [
       "Falso. Esa es la definición de problema. La necesidad expresa una mejora deseada.",
   },
   {
+    id: "q144",
+    section: "3. Diseño y definición del proyecto",
+    kind: "single",
+    prompt:
+      "El padrón escolar existente satisface los requisitos de acceso y seguridad de la plataforma. ¿Qué decisión aplica el principio de simplicidad?",
+    options: [
+      {
+        id: "a",
+        text:
+          "Crear un segundo padrón para separar los entregables del proyecto.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text:
+          "Reutilizar el padrón existente y verificar que su operación se pueda mantener.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Diseñar dos padrones y elegir uno después de terminar ambos.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Crear un padrón nuevo con funciones adicionales para futuros proyectos.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "KISS busca la solución más sencilla que satisfaga los requisitos y las restricciones. Reutilizar una fuente adecuada evita duplicar datos y mantenimiento.",
+  },
+  {
     id: "q045",
     section: "3. Diseño y definición del proyecto",
     kind: "single",
@@ -1255,6 +1553,39 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "El caso de negocio compara costes, beneficios, alternativas y riesgos para decidir si se autoriza o se detiene el proyecto. El estudio de viabilidad evalúa si la solución puede realizarse.",
+  },
+  {
+    id: "q145",
+    section: "3. Diseño y definición del proyecto",
+    kind: "multi",
+    prompt:
+      "¿Qué afirmaciones sobre ROI, VAN y TIR son correctas? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text:
+          "Una inversión de 100,000 con un beneficio neto de 20,000 tiene un ROI de 20%.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text:
+          "El VAN suma el valor presente de los flujos netos, incluida la inversión inicial.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "La TIR es la tasa con la que el VAN alcanza su valor máximo.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "La TIR es la tasa que hace que el VAN sea cero.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "El ROI relaciona el beneficio neto con la inversión, el VAN descuenta los flujos y la TIR es la tasa que iguala el VAN a cero.",
   },
   {
     id: "q046",
@@ -1533,6 +1864,69 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Verdadero. Un requisito es una condición que el producto o el proyecto debe cumplir y conviene verificarlo con un criterio observable.",
+  },
+  {
+    id: "q146",
+    section: "3. Diseño y definición del proyecto",
+    kind: "single",
+    prompt:
+      "El proveedor debe capacitar al personal antes de entregar la plataforma. ¿Qué tipo de requisito describe esa condición de ejecución?",
+    options: [
+      {
+        id: "a",
+        text: "De producto",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "De negocio",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "De proyecto",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "De calidad",
+        correct: false,
+      },
+    ],
+    explanation:
+      "Es un requisito de proyecto porque establece una condición sobre cómo se ejecuta o entrega el trabajo.",
+  },
+  {
+    id: "q147",
+    section: "3. Diseño y definición del proyecto",
+    kind: "single",
+    prompt:
+      "Cada interesado recibe 100 puntos para repartirlos entre los requisitos candidatos. ¿Para qué sirve ese límite?",
+    options: [
+      {
+        id: "a",
+        text: "Estimar cuántas horas requiere cada requisito.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Decidir cuáles serán los criterios de aceptación.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Calcular el porcentaje del presupuesto asignado al producto.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Expresar preferencias relativas para discutir qué requisitos implementar primero.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "Un presupuesto ficticio limitado obliga a elegir prioridades. Antes de decidir el alcance, considera también el coste, las dependencias y los requisitos obligatorios.",
   },
   {
     id: "q056",
@@ -2052,6 +2446,37 @@ export const questions: QuizQuestion[] = [
       "Es la dependencia. Por ejemplo, la prueba de pagos depende de contar con una integración funcional. El diagrama de red representa actividades y dependencias, pero no es la relación misma.",
   },
   {
+    id: "q148",
+    section: "4. Planificación del trabajo",
+    kind: "multi",
+    prompt:
+      "¿Qué relaciones de dependencia coinciden con las condiciones indicadas? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text: "Fin a inicio: B puede empezar cuando termina A.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Inicio a inicio: B puede terminar cuando inicia A.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Fin a fin: B puede terminar cuando termina A.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "Inicio a fin: B puede terminar cuando inicia A.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "El primer término indica el evento de la actividad predecesora A y el segundo, el de la sucesora B. Inicio a inicio vincula el inicio de ambas.",
+  },
+  {
     id: "q074",
     section: "4. Planificación del trabajo",
     kind: "single",
@@ -2166,6 +2591,40 @@ export const questions: QuizQuestion[] = [
       "Falso. El glosario advierte que no siempre ocurre, especialmente si deben coordinarse o esperar el mismo sistema externo.",
   },
   {
+    id: "q149",
+    section: "4. Planificación del trabajo",
+    kind: "multi",
+    prompt:
+      "¿Qué pares describen correctamente las leyes de Brooks y de Parkinson? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text: "Brooks: el trabajo tiende a ocupar todo el tiempo disponible.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text:
+          "Parkinson: el trabajo tiende a ocupar todo el tiempo disponible.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text:
+          "Brooks: incorporar personas a un proyecto de software atrasado puede retrasarlo más.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text:
+          "Parkinson: incorporar personas a un proyecto de software atrasado puede retrasarlo más.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "Brooks advierte del coste de aprendizaje y coordinación al incorporar personas. Parkinson describe cómo el trabajo tiende a ocupar el plazo que le asignas.",
+  },
+  {
     id: "q078",
     section: "4. Planificación del trabajo",
     kind: "single",
@@ -2195,6 +2654,41 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Es la estimación. Mejora cuando descompones el trabajo y revisas datos de proyectos comparables, y debe exponer supuestos y un margen de incertidumbre.",
+  },
+  {
+    id: "q150",
+    section: "4. Planificación del trabajo",
+    kind: "multi",
+    prompt:
+      "Selecciona las correspondencias correctas entre técnica de estimación y procedimiento.",
+    options: [
+      {
+        id: "a",
+        text:
+          "Análoga: ajustar el esfuerzo de una migración previa comparable.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text:
+          "Paramétrica: multiplicar los registros por el tiempo medio de validación por registro.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text:
+          "Ascendente: tomar como total el esfuerzo de un proyecto anterior parecido.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Ascendente: estimar por separado la preparación de datos, las pruebas y el análisis, y sumar los esfuerzos.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "La estimación análoga parte de un caso comparable, la paramétrica usa una relación medible y la ascendente agrega estimaciones de componentes.",
   },
   {
     id: "q079",
@@ -2397,6 +2891,37 @@ export const questions: QuizQuestion[] = [
       "Verdadero. El CPM calcula la secuencia bajo las dependencias y duraciones previstas; si estas cambian, el camino también puede cambiar.",
   },
   {
+    id: "q151",
+    section: "4. Planificación del trabajo",
+    kind: "single",
+    prompt:
+      "Una actividad puede durar 2 días en el escenario optimista, 4 en el más probable y 10 en el pesimista. ¿Cuál es la duración esperada con PERT clásico?",
+    options: [
+      {
+        id: "a",
+        text: "4.00 días",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "5.33 días",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "4.67 días",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "5.00 días",
+        correct: false,
+      },
+    ],
+    explanation:
+      "PERT clásico pondera cuatro veces la duración más probable. El cálculo es (2 + 4 × 4 + 10) / 6 ≈ 4.67 días.",
+  },
+  {
     id: "q086",
     section: "4. Planificación del trabajo",
     kind: "single",
@@ -2530,6 +3055,37 @@ export const questions: QuizQuestion[] = [
       "Es la comunicación del proyecto. Define quién recibe qué dato, cuándo y por qué canal.",
   },
   {
+    id: "q152",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "El equipo acuerda quién envía el reporte semanal al patrocinador y cómo escalar una caída del servicio. ¿En qué documento debe quedar el acuerdo?",
+    options: [
+      {
+        id: "a",
+        text: "Acta de constitución",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Plan de comunicación",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Registro de interesados",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Registro de riesgos",
+        correct: false,
+      },
+    ],
+    explanation:
+      "El plan de comunicación especifica qué información se comparte, quién la envía, quién la recibe, por qué canal y con qué frecuencia. También puede incluir cómo escalar una incidencia urgente.",
+  },
+  {
     id: "q091",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "boolean",
@@ -2590,6 +3146,37 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "La subcontratación requiere acordar entregables, criterios de aceptación, plazos, dependencias y responsabilidades. Los límites WIP pertenecen a Kanban y la holgura libre al cálculo del cronograma.",
+  },
+  {
+    id: "q153",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "Dos proveedores ofrecen el mismo servicio. Uno cobra horas y materiales a tarifas acordadas. El otro cotiza un importe por un alcance definido. ¿Qué modalidades ofrecen, respectivamente?",
+    options: [
+      {
+        id: "a",
+        text: "Ambos ofrecen precio fijo.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Precio fijo y tiempo y materiales.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Ambos ofrecen tiempo y materiales.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Tiempo y materiales y precio fijo.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "Tiempo y materiales factura las horas y materiales según las tarifas acordadas. El precio fijo establece un importe por el alcance pactado.",
   },
   {
     id: "q093",
@@ -2755,6 +3342,37 @@ export const questions: QuizQuestion[] = [
       "Falso. Eso es la probabilidad. El impacto describe el efecto del riesgo sobre objetivos como plazo, coste o calidad.",
   },
   {
+    id: "q154",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "Ya tienes un registro de riesgos y quieres distinguir cuáles atender primero según la posibilidad de que ocurran y sus consecuencias. ¿Qué herramienta usas?",
+    options: [
+      {
+        id: "a",
+        text: "La matriz de probabilidad e impacto",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "La matriz de poder e interés",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "El control de cambios",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "La curva S",
+        correct: false,
+      },
+    ],
+    explanation:
+      "La matriz de probabilidad e impacto usa escalas acordadas para priorizar los riesgos según su probabilidad y el efecto que tendrían.",
+  },
+  {
     id: "q099",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "multi",
@@ -2799,7 +3417,7 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "¿Qué término corresponde a esta definición: \"Acción prevista para modificar la probabilidad o el impacto\"?",
+      "¿Qué término corresponde a esta definición: \"Decisión sobre cómo tratar un riesgo\"?",
     options: [
       {
         id: "a",
@@ -2824,6 +3442,40 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Es la respuesta al riesgo, por ejemplo preparar una integración simulada ante un posible retraso de la API. Debe tener responsable y momento de activación. La acción correctiva actúa sobre una desviación ya ocurrida.",
+  },
+  {
+    id: "q155",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "multi",
+    prompt:
+      "¿Qué acciones están asociadas con la estrategia correcta ante una amenaza? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text:
+          "Evitar: cambiar el plan para prescindir de una API que será retirada.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text:
+          "Transferir: contratar un seguro que cubra una pérdida específica.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Mitigar: registrar la amenaza y asumir sus efectos si ocurre.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text:
+          "Mitigar: preparar una integración simulada para reducir el efecto de un posible retraso.",
+        correct: true,
+      },
+    ],
+    explanation:
+      "Evitar elimina la amenaza, transferir desplaza parte de su impacto a un tercero y mitigar reduce probabilidad o impacto. Asumir el efecto si ocurre corresponde a aceptar.",
   },
   {
     id: "q101",
@@ -2908,6 +3560,37 @@ export const questions: QuizQuestion[] = [
       "La solicitud propone el cambio y el control de cambios lo analiza, decide y actualiza las líneas base. El crecimiento por peticiones no evaluadas es la ampliación gradual del alcance.",
   },
   {
+    id: "q156",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "En ADKAR, el personal comprende el cambio, lo apoya y puede explicar los pasos, pero aún necesita ayuda para completar una inscripción. ¿Qué resultado falta desarrollar?",
+    options: [
+      {
+        id: "a",
+        text: "Conciencia (Awareness)",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "Conocimiento (Knowledge)",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Habilidad (Ability)",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "Refuerzo (Reinforcement)",
+        correct: false,
+      },
+    ],
+    explanation:
+      "La habilidad consiste en aplicar el conocimiento en la práctica. En este caso, conviene ensayar inscripciones hasta que el personal pueda realizarlas por sí mismo.",
+  },
+  {
     id: "q104",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
@@ -2977,12 +3660,12 @@ export const questions: QuizQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Presupuesto asignado al trabajo efectivamente terminado",
+        text: "Valor presupuestado del trabajo realizado hasta la fecha de corte",
         correct: false,
       },
       {
         id: "b",
-        text: "Presupuesto del trabajo que debía estar terminado en la fecha de corte",
+        text: "Presupuesto del trabajo programado hasta la fecha de corte",
         correct: true,
       },
       {
@@ -2997,38 +3680,38 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "El PV es el presupuesto del trabajo que debía estar terminado. Las otras opciones definen el EV, el AC y el BAC.",
+      "El PV es el presupuesto del trabajo programado hasta el corte. Las otras opciones corresponden al EV, el BAC y el AC.",
   },
   {
     id: "q107",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "A la fecha de corte se completaron tareas cuyo presupuesto era 8 000 y que costaron 9 000. El plan preveía 10 000. ¿Cuánto vale el EV?",
+      "Una tarea tiene un presupuesto de 5,000. Al corte ha costado 3,000 y la regla de medición reconoce un avance verificado de 40%. ¿Cuánto aporta la tarea al EV?",
     options: [
       {
         id: "a",
-        text: "-1 000",
+        text: "1,200",
         correct: false,
       },
       {
         id: "b",
-        text: "9 000",
+        text: "3,000",
         correct: false,
       },
       {
         id: "c",
-        text: "10 000",
+        text: "5,000",
         correct: false,
       },
       {
         id: "d",
-        text: "8 000",
+        text: "2,000",
         correct: true,
       },
     ],
     explanation:
-      "El valor ganado es el presupuesto del trabajo efectivamente terminado: 8 000, con independencia de lo que realmente costó. 9 000 es el AC y 10 000 el PV.",
+      "El EV reconoce el valor presupuestado del avance verificado. El 40% de 5,000 es 2,000. Los 3,000 corresponden al coste real.",
   },
   {
     id: "q108",
@@ -3048,37 +3731,38 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Falso. El glosario aclara que \"ganado\" se refiere al valor presupuestado del trabajo logrado, no a ingresos comerciales.",
+      "Falso. En EVM, el valor ganado es el valor presupuestado del trabajo realizado hasta la fecha de corte.",
   },
   {
     id: "q109",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
-    prompt: "El trabajo con EV de 8 000 costó 9 000. ¿Cuánto vale el AC?",
+    prompt:
+      "Por el trabajo realizado hasta el corte ya pagaste 8,000 y adeudas 1,000 de una factura pendiente. ¿Cuánto vale el AC?",
     options: [
       {
         id: "a",
-        text: "9 000",
+        text: "9,000",
         correct: true,
       },
       {
         id: "b",
-        text: "10 000",
+        text: "1,000",
         correct: false,
       },
       {
         id: "c",
-        text: "8 000",
+        text: "8,000",
         correct: false,
       },
       {
         id: "d",
-        text: "-1 000",
+        text: "7,000",
         correct: false,
       },
     ],
     explanation:
-      "El coste real es el gasto incurrido hasta la fecha de corte: 9 000.",
+      "El AC incluye tanto lo que ya pagaste como los costes incurridos pendientes de pago. El total es 8,000 + 1,000 = 9,000.",
   },
   {
     id: "q110",
@@ -3147,31 +3831,31 @@ export const questions: QuizQuestion[] = [
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
     prompt:
-      "Con EV = 8 000, AC = 9 000 y PV = 10 000, ¿cuánto vale la variación de cronograma (SV)?",
+      "Con EV = 8,000, AC = 9,000 y PV = 10,000, ¿cuánto vale la variación de cronograma (SV)?",
     options: [
       {
         id: "a",
-        text: "≈0,89",
+        text: "≈0.89",
         correct: false,
       },
       {
         id: "b",
-        text: "0,8",
+        text: "0.80",
         correct: false,
       },
       {
         id: "c",
-        text: "-2 000",
+        text: "−2,000",
         correct: true,
       },
       {
         id: "d",
-        text: "-1 000",
+        text: "−1,000",
         correct: false,
       },
     ],
     explanation:
-      "SV = EV − PV = 8 000 − 10 000 = −2 000. −1 000 es la CV, 0,8 es el SPI y ≈0,89 el CPI.",
+      "SV = EV − PV = 8,000 − 10,000 = −2,000. La CV es −1,000, el SPI es 0.80 y el CPI es aproximadamente 0.89.",
   },
   {
     id: "q113",
@@ -3197,38 +3881,38 @@ export const questions: QuizQuestion[] = [
     id: "q114",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "single",
-    prompt: "Con EV = 8 000, AC = 9 000 y PV = 10 000, ¿cuánto vale el CPI?",
+    prompt: "Con EV = 8,000, AC = 9,000 y PV = 10,000, ¿cuánto vale el CPI?",
     options: [
       {
         id: "a",
-        text: "≈0,89",
+        text: "≈0.89",
         correct: true,
       },
       {
         id: "b",
-        text: "-2 000",
+        text: "−2,000",
         correct: false,
       },
       {
         id: "c",
-        text: "0,8",
+        text: "0.80",
         correct: false,
       },
       {
         id: "d",
-        text: "-1 000",
+        text: "−1,000",
         correct: false,
       },
     ],
     explanation:
-      "CPI = EV / AC = 8 000 / 9 000 ≈ 0,89. 0,8 es el SPI; −1 000 y −2 000 son la CV y la SV.",
+      "CPI = EV / AC = 8,000 / 9,000 ≈ 0.89. El SPI es 0.80, la CV es −1,000 y la SV es −2,000.",
   },
   {
     id: "q115",
     section: "5. Ejecución, seguimiento y cierre",
     kind: "boolean",
     prompt:
-      "Un CPI o un SPI menor que uno señala, en cada caso, menor rendimiento que el previsto.",
+      "Si SPI es mayor que 1 y CPI es igual a 1, al corte se completó más trabajo que el previsto y el coste del trabajo realizado coincide con su presupuesto.",
     options: [
       {
         id: "v",
@@ -3242,7 +3926,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "Verdadero. Ambos índices son cocientes sin unidad; no deben calcularse si su denominador es cero.",
+      "Verdadero. SPI > 1 indica que EV supera PV. CPI = 1 indica que EV coincide con AC. Ambos índices requieren un denominador distinto de cero.",
   },
   {
     id: "q116",
@@ -3274,6 +3958,165 @@ export const questions: QuizQuestion[] = [
     ],
     explanation:
       "Es el BAC. Distínguelo del gasto acumulado hasta hoy, que es el coste real.",
+  },
+  {
+    id: "q157",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "Al corte del proyecto de robótica, BAC = 20,000, EV = 12,000 y AC = 14,500. Si se mantiene la eficiencia de coste observada, ¿cuál es el EAC? Redondea al final.",
+    options: [
+      {
+        id: "a",
+        text: "24,096.39",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "24,166.67",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "22,500.00",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "9,666.67",
+        correct: false,
+      },
+    ],
+    explanation:
+      "EAC = BAC / CPI = 20,000 / (12,000 / 14,500) ≈ 24,166.67. Usa el CPI sin redondear. 22,500.00 corresponde al supuesto de completar el trabajo pendiente al coste presupuestado.",
+  },
+  {
+    id: "q158",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "En el mismo proyecto, BAC = 20,000, EV = 12,000 y AC = 14,500. Si el trabajo pendiente se realizará al coste presupuestado, ¿cuál es el EAC?",
+    options: [
+      {
+        id: "a",
+        text: "8,000.00",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "24,166.67",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "20,000.00",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "22,500.00",
+        correct: true,
+      },
+    ],
+    explanation:
+      "Con este supuesto, EAC = AC + (BAC − EV) = 14,500 + (20,000 − 12,000) = 22,500.00. El coste acumulado se suma al presupuesto del trabajo pendiente.",
+  },
+  {
+    id: "q159",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "Si el coste final estimado de los laboratorios es 24,166.67 y al corte ya se incurrió en 14,500, ¿cuánto se estima que costará completar el trabajo pendiente?",
+    options: [
+      {
+        id: "a",
+        text: "9,666.67",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "4,166.67",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "8,000.00",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "24,166.67",
+        correct: false,
+      },
+    ],
+    explanation:
+      "ETC = EAC − AC = 24,166.67 − 14,500 = 9,666.67. Es el coste estimado desde el corte hasta terminar.",
+  },
+  {
+    id: "q160",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "single",
+    prompt:
+      "El BAC de los laboratorios es 20,000 y su EAC es 24,166.67. ¿Qué VAC resulta y qué significa?",
+    options: [
+      {
+        id: "a",
+        text: "4,166.67 de ahorro previsto.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "−9,666.67 de sobrecoste previsto.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "−4,166.67 de variación, que indica un sobrecoste previsto.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "0.00 de variación, porque el BAC permanece en 20,000.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "VAC = BAC − EAC = 20,000 − 24,166.67 = −4,166.67. El signo negativo indica que el coste final estimado supera el presupuesto.",
+  },
+  {
+    id: "q161",
+    section: "5. Ejecución, seguimiento y cierre",
+    kind: "multi",
+    prompt:
+      "Al cierre de la semana 3 de los laboratorios, PV = 15,000, EV = 12,000 y AC = 14,500. ¿Qué interpretaciones son correctas? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text:
+          "Como AC es menor que PV, el trabajo realizado quedó por debajo de su propio presupuesto.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text:
+          "Como EV es menor que PV, se completó menos trabajo que el programado a la fecha de corte.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text:
+          "Como AC es mayor que EV, hubo un sobrecoste para el trabajo realizado.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text:
+          "Un SPI de 0.80 indica que se completó el 80% del trabajo total del proyecto.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "EV frente a PV mide el avance al corte. AC frente a EV mide el coste frente al presupuesto del trabajo realizado. SPI = 0.80 compara el avance con lo programado al corte.",
   },
   {
     id: "q117",
@@ -3566,6 +4409,37 @@ export const questions: QuizQuestion[] = [
       "La autoridad permite decidir o asignar recursos; la responsabilidad obliga a responder por un resultado. Si el director tiene la segunda sin la primera, necesita mecanismos de negociación y escalado.",
   },
   {
+    id: "q162",
+    section: "6. Organización, liderazgo y ética",
+    kind: "single",
+    prompt:
+      "Una especialista orienta las decisiones técnicas por su experiencia. La aprobación del gasto corresponde a la directora por las facultades del cargo. ¿Qué tipos de autoridad ejercen, respectivamente?",
+    options: [
+      {
+        id: "a",
+        text: "Informal y formal.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Formal e informal.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Formal en ambos casos.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Informal en ambos casos.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "La autoridad informal surge de la experiencia, confianza e influencia. La formal proviene del cargo o de facultades delegadas, como aprobar gastos.",
+  },
+  {
     id: "q127",
     section: "6. Organización, liderazgo y ética",
     kind: "single",
@@ -3617,6 +4491,42 @@ export const questions: QuizQuestion[] = [
       "Falso. El glosario indica que no depende únicamente del cargo formal ni se mide por el número de instrucciones dadas.",
   },
   {
+    id: "q163",
+    section: "6. Organización, liderazgo y ética",
+    kind: "multi",
+    prompt:
+      "¿Qué pares vinculan correctamente funciones directivas y acciones en el arranque de la plataforma? Marca todas las que apliquen.",
+    options: [
+      {
+        id: "a",
+        text: "Organizar: asignar responsabilidades.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Controlar: definir los recursos que se usarán.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Coordinar: sincronizar a soporte y control escolar.",
+        correct: true,
+      },
+      {
+        id: "d",
+        text: "Controlar: verificar que se cumplan los criterios de salida.",
+        correct: true,
+      },
+      {
+        id: "e",
+        text: "Planificar: comprobar el avance contra el plan aprobado.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "Organizar estructura responsabilidades, coordinar integra el trabajo de las áreas y controlar comprueba el avance y los criterios acordados. Planificar establece objetivos y recursos.",
+  },
+  {
     id: "q129",
     section: "6. Organización, liderazgo y ética",
     kind: "multi",
@@ -3630,7 +4540,7 @@ export const questions: QuizQuestion[] = [
       },
       {
         id: "b",
-        text: "Equidad",
+        text: "Imparcialidad",
         correct: false,
       },
       {
@@ -3655,7 +4565,39 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "El rendimiento depende de capacidad, recursos, claridad y coordinación. Honestidad y equidad son criterios de la ética profesional.",
+      "El rendimiento depende de capacidad, recursos, claridad y coordinación. La honestidad y la imparcialidad son criterios de la ética profesional.",
+  },
+  {
+    id: "q164",
+    section: "6. Organización, liderazgo y ética",
+    kind: "single",
+    prompt:
+      "El arranque es el próximo mes. Ensayar ahora la recuperación ante fallas es importante, aunque todavía hay tiempo. Según la matriz de urgencia e importancia, ¿cómo atiendes el ensayo?",
+    options: [
+      {
+        id: "a",
+        text: "Lo clasificas como urgente y lo ejecutas de inmediato.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text:
+          "Reservas tiempo en el plan para llevarlo a cabo antes del arranque.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Lo canalizas como solicitud urgente de menor impacto.",
+        correct: false,
+      },
+      {
+        id: "d",
+        text: "Lo pospones como actividad de escasa importancia.",
+        correct: false,
+      },
+    ],
+    explanation:
+      "Una tarea importante que aún puede planearse requiere tiempo reservado. El ensayo prepara al equipo para responder a una falla durante la inscripción.",
   },
   {
     id: "q130",
@@ -3770,7 +4712,7 @@ export const questions: QuizQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Equidad",
+        text: "Imparcialidad",
         correct: true,
       },
       {
@@ -3800,7 +4742,7 @@ export const questions: QuizQuestion[] = [
       },
     ],
     explanation:
-      "La ética profesional aplica honestidad, responsabilidad, respeto y equidad. Capacidad y coordinación son factores del rendimiento del equipo.",
+      "La ética profesional aplica honestidad, responsabilidad, respeto e imparcialidad. Capacidad y coordinación son factores del rendimiento del equipo.",
   },
   {
     id: "q135",
