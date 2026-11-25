@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { QuizKind, QuizQuestion } from "./types";
 
 interface BankModule {
@@ -20,6 +20,16 @@ function loadBank(bank: string): QuizQuestion[] {
     );
   }
   return mod.questions;
+}
+
+/** Fisher-Yates sobre una copia; no muta la batería importada. */
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 const KIND_LABEL: Record<QuizKind, string> = {
@@ -80,7 +90,9 @@ function GradeIcon({ correct }: { correct: boolean }) {
 }
 
 export default function QuizWizard({ bank }: { bank: string }) {
-  const questions = useMemo(() => loadBank(bank), [bank]);
+  // Orden del banco en SSR; preguntas y opciones se barajan tras montar para no
+  // romper la hidratación.
+  const [questions, setQuestions] = useState(() => loadBank(bank));
   const total = questions.length;
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
@@ -88,6 +100,14 @@ export default function QuizWizard({ bank }: { bank: string }) {
   const [explained, setExplained] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    setQuestions(
+      shuffle(loadBank(bank)).map(question =>
+        // Verdadero/Falso conserva su orden; el resto baraja opciones.
+        question.kind === "boolean"
+          ? question
+          : { ...question, options: shuffle(question.options) }
+      )
+    );
     setIndex(0);
     setAnswers({});
     setGraded({});
