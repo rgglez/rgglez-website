@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 15:22-0600\n"
+"POT-Creation-Date: 2026-11-27 00:17-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -52,6 +52,85 @@ msgstr "Home"
 msgid "Updated:"
 msgstr "Updated:"
 
+#: src/components/EarnedValueForm.astro:20
+#, javascript-format
+msgid "Planned value"
+msgstr "Planned value"
+
+#: src/components/EarnedValueForm.astro:21
+#, javascript-format
+msgid "Earned value"
+msgstr "Earned value"
+
+#: src/components/EarnedValueForm.astro:22
+#, javascript-format
+msgid "Actual cost"
+msgstr "Actual cost"
+
+#: src/components/EarnedValueForm.astro:23
+#, javascript-format
+msgid "Budget at completion"
+msgstr "Budget at completion"
+
+#: src/components/EarnedValueForm.astro:25
+#, javascript-format
+msgid "Earned value form"
+msgstr "Earned value form"
+
+#: src/components/EarnedValueForm.astro:27
+#, javascript-format
+msgid ""
+"Enter the amounts in the same currency. Use a single cutoff date for PV, EV "
+"and AC."
+msgstr ""
+"Enter the amounts in the same currency. Use a single cutoff date for PV, EV "
+"and AC."
+
+#: src/components/EarnedValueForm.astro:29
+#, javascript-format
+msgid "Assumption to estimate the final cost (EAC)"
+msgstr "Assumption to estimate the final cost (EAC)"
+
+#: src/components/EarnedValueForm.astro:30
+#, javascript-format
+msgid "The observed cost efficiency continues"
+msgstr "The observed cost efficiency continues"
+
+#: src/components/EarnedValueForm.astro:31
+#, javascript-format
+msgid "The remaining work is done at the budgeted cost"
+msgstr "The remaining work is done at the budgeted cost"
+
+#: src/components/EarnedValueForm.astro:32
+#, javascript-format
+msgid "Calculate"
+msgstr "Calculate"
+
+#: src/components/EarnedValueForm.astro:33
+#, javascript-format
+msgid "Indicator"
+msgstr "Indicator"
+
+#: src/components/EarnedValueForm.astro:34
+#, javascript-format
+msgid "Formula"
+msgstr "Formula"
+
+#: src/components/EarnedValueForm.astro:35
+#, javascript-format
+msgid "Result"
+msgstr "Result"
+
+#: src/components/EarnedValueForm.astro:36
+#, javascript-format
+msgid "Undefined"
+msgstr "Undefined"
+
+#: src/components/EarnedValueForm.astro:37
+#, javascript-format
+msgid "Results calculated."
+msgstr "Results calculated."
+
 #: src/components/Footer.astro:33
 #, javascript-format
 msgid "Copyright © %1$s %2$s"
@@ -73,14 +152,14 @@ msgid "Close Menu"
 msgstr "Close Menu"
 
 #: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
-#: src/pages/[lang]/cv/index.astro:353
+#: src/pages/[lang]/cv/index.astro:374
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:153
+#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:169
 #, javascript-format
 msgid "CV"
 msgstr "CV"
@@ -161,7 +240,7 @@ msgstr "Pagination Navigation"
 msgid "Go to previous page"
 msgstr "Go to previous page"
 
-#: src/components/Pagination.astro:31
+#: src/components/Pagination.astro:31 src/components/quiz/QuizWizard.astro:34
 #, javascript-format
 msgid "Prev"
 msgstr "Prev"
@@ -171,7 +250,7 @@ msgstr "Prev"
 msgid "Go to next page"
 msgstr "Go to next page"
 
-#: src/components/Pagination.astro:40
+#: src/components/Pagination.astro:40 src/components/quiz/QuizWizard.astro:35
 #, javascript-format
 msgid "Next"
 msgstr "Next"
@@ -202,6 +281,81 @@ msgid "%d star"
 msgid_plural "%d stars"
 msgstr[0] "%d star"
 msgstr[1] "%d stars"
+
+#: src/components/quiz/QuizWizard.astro:18
+#, javascript-format
+msgid "Multiple choice"
+msgstr "Multiple choice"
+
+#: src/components/quiz/QuizWizard.astro:19
+#, javascript-format
+msgid "Multiple answers"
+msgstr "Multiple answers"
+
+#: src/components/quiz/QuizWizard.astro:20
+#, javascript-format
+msgid "True or false"
+msgstr "True or false"
+
+#: src/components/quiz/QuizWizard.astro:22
+#, javascript-format
+msgid "Correct answer"
+msgstr "Correct answer"
+
+#: src/components/quiz/QuizWizard.astro:23
+#, javascript-format
+msgid "Correct answers"
+msgstr "Correct answers"
+
+#: src/components/quiz/QuizWizard.astro:24
+#, javascript-format
+msgid "Incorrect answer"
+msgstr "Incorrect answer"
+
+#: src/components/quiz/QuizWizard.astro:25
+#, javascript-format
+msgid "The quiz \"%s\" has no questions."
+msgstr "The quiz \"%s\" has no questions."
+
+#: src/components/quiz/QuizWizard.astro:26
+#, javascript-format
+msgid "Question %1$d of %2$d"
+msgstr "Question %1$d of %2$d"
+
+#: src/components/quiz/QuizWizard.astro:27
+#, javascript-format
+msgid "No answers yet"
+msgstr "No answers yet"
+
+#: src/components/quiz/QuizWizard.astro:28
+#, javascript-format
+msgid "%1$d of %2$d correct"
+msgstr "%1$d of %2$d correct"
+
+#: src/components/quiz/QuizWizard.astro:29
+#, javascript-format
+msgid "Correct"
+msgstr "Correct"
+
+#: src/components/quiz/QuizWizard.astro:30
+#, javascript-format
+msgid "Incorrect"
+msgstr "Incorrect"
+
+#: src/components/quiz/QuizWizard.astro:31
+#, javascript-format
+msgid "Check"
+msgstr "Check"
+
+#: src/components/quiz/QuizWizard.astro:32
+#, javascript-format
+msgid "Explain"
+msgstr "Explain"
+
+#: src/components/quiz/QuizWizard.astro:33
+#, javascript-format
+msgid "Hide explanation"
+msgstr "Hide explanation"
 
 #: src/components/ShareLinks.astro:13
 #, javascript-format
@@ -295,82 +449,82 @@ msgstr "Archive"
 msgid "All the articles I've archived."
 msgstr "All the articles I've archived."
 
-#: src/pages/[lang]/cv/index.astro:38
+#: src/pages/[lang]/cv/index.astro:45
 #, javascript-format
 msgid "Present"
 msgstr "Present"
 
-#: src/pages/[lang]/cv/index.astro:44
+#: src/pages/[lang]/cv/index.astro:51
 #, javascript-format
 msgid "Remote"
 msgstr "Remote"
 
-#: src/pages/[lang]/cv/index.astro:45
+#: src/pages/[lang]/cv/index.astro:52
 #, javascript-format
 msgid "On-site"
 msgstr "On-site"
 
-#: src/pages/[lang]/cv/index.astro:46
+#: src/pages/[lang]/cv/index.astro:53
 #, javascript-format
 msgid "Hybrid"
 msgstr "Hybrid"
 
-#: src/pages/[lang]/cv/index.astro:65
+#: src/pages/[lang]/cv/index.astro:72
 #, javascript-format
 msgid "Experience"
 msgstr "Experience"
 
-#: src/pages/[lang]/cv/index.astro:85
+#: src/pages/[lang]/cv/index.astro:92
 #, javascript-format
 msgid "Education"
 msgstr "Education"
 
-#: src/pages/[lang]/cv/index.astro:97
+#: src/pages/[lang]/cv/index.astro:104
 #, javascript-format
 msgid "Courses"
 msgstr "Courses"
 
-#: src/pages/[lang]/cv/index.astro:102
+#: src/pages/[lang]/cv/index.astro:109
 #, javascript-format
 msgid "Volunteering"
 msgstr "Volunteering"
 
-#: src/pages/[lang]/cv/index.astro:116
+#: src/pages/[lang]/cv/index.astro:123
 #, javascript-format
 msgid "Skills"
 msgstr "Skills"
 
-#: src/pages/[lang]/cv/index.astro:129 src/pages/[lang]/cv/index.astro:352
+#: src/pages/[lang]/cv/index.astro:145 src/pages/[lang]/cv/index.astro:373
 #, javascript-format
 msgid "Projects"
 msgstr "Projects"
 
-#: src/pages/[lang]/cv/index.astro:131 src/pages/[lang]/cv/index.astro:360
+#: src/pages/[lang]/cv/index.astro:147 src/pages/[lang]/cv/index.astro:381
 #, javascript-format
 msgid "Spoken languages"
 msgstr "Spoken languages"
 
-#: src/pages/[lang]/cv/index.astro:133 src/pages/[lang]/cv/index.astro:375
+#: src/pages/[lang]/cv/index.astro:149 src/pages/[lang]/cv/index.astro:396
 #, javascript-format
 msgid "Interests"
 msgstr "Interests"
 
-#: src/pages/[lang]/cv/index.astro:154
+#: src/pages/[lang]/cv/index.astro:170
 #, javascript-format
 msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
-#: src/pages/[lang]/cv/index.astro:186
+#: src/pages/[lang]/cv/index.astro:202
 #, javascript-format
 msgid "Objective"
 msgstr "Objective"
 
-#: src/pages/[lang]/cv/index.astro:193
+#: src/pages/[lang]/cv/index.astro:209
 #, javascript-format
 msgid "Filter"
 msgstr "Filter"
 
-#: src/pages/[lang]/cv/index.astro:198
+#: src/pages/[lang]/cv/index.astro:214
 #, javascript-format
 msgid ""
 "Pick profiles or tags to filter the highlights. An item is shown if it "
@@ -379,42 +533,42 @@ msgstr ""
 "Pick profiles or tags to filter the highlights. An item is shown if it "
 "matches any selected tag."
 
-#: src/pages/[lang]/cv/index.astro:203
+#: src/pages/[lang]/cv/index.astro:219
 #, javascript-format
 msgid "Profiles"
 msgstr "Profiles"
 
-#: src/pages/[lang]/cv/index.astro:222
+#: src/pages/[lang]/cv/index.astro:238
 #, javascript-format
 msgid "Clear filters"
 msgstr "Clear filters"
 
-#: src/pages/[lang]/cv/index.astro:227
+#: src/pages/[lang]/cv/index.astro:243
 #, javascript-format
 msgid "Search tags"
 msgstr "Search tags"
 
-#: src/pages/[lang]/cv/index.astro:233
+#: src/pages/[lang]/cv/index.astro:249
 #, javascript-format
 msgid "Type a tag and press Enter"
 msgstr "Type a tag and press Enter"
 
-#: src/pages/[lang]/cv/index.astro:236
+#: src/pages/[lang]/cv/index.astro:252
 #, javascript-format
 msgid "Tag not found"
 msgstr "Tag not found"
 
-#: src/pages/[lang]/cv/index.astro:237
+#: src/pages/[lang]/cv/index.astro:253
 #, javascript-format
 msgid "Remove tag %s"
 msgstr "Remove tag %s"
 
-#: src/pages/[lang]/cv/index.astro:245
+#: src/pages/[lang]/cv/index.astro:261
 #, javascript-format
 msgid "All tags (%d)"
 msgstr "All tags (%d)"
 
-#: src/pages/[lang]/cv/index.astro:266
+#: src/pages/[lang]/cv/index.astro:282
 #, javascript-format
 msgid "Sections"
 msgstr "Sections"

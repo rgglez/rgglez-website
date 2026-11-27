@@ -1,20 +1,22 @@
 import { useEffect, useState, type FormEvent } from "react";
 
-const inputs = [
-  ["PV", "Valor planificado"],
-  ["EV", "Valor ganado"],
-  ["AC", "Coste real"],
-  ["BAC", "Presupuesto al finalizar"],
-] as const;
+const inputs = ["PV", "EV", "AC", "BAC"] as const;
 
-const amountFormat = new Intl.NumberFormat("es-MX", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-const indexFormat = new Intl.NumberFormat("es-MX", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 4,
-});
+/** Etiquetas ya traducidas en servidor por `EarnedValueForm.astro` (gettext). */
+export interface EarnedValueLabels {
+  inputs: Record<(typeof inputs)[number], string>;
+  legend: string;
+  intro: string;
+  assumption: string;
+  atCpi: string;
+  atBudget: string;
+  calculate: string;
+  indicator: string;
+  formula: string;
+  result: string;
+  undefined: string;
+  done: string;
+}
 
 function calculate(
   PV: number,
@@ -42,7 +44,22 @@ function calculate(
   };
 }
 
-export default function EarnedValueForm() {
+export default function EarnedValueForm({
+  labels,
+  locale,
+}: {
+  labels: EarnedValueLabels;
+  /** Locale BCP 47 para `Intl.NumberFormat`, p. ej. `es-MX`. */
+  locale: string;
+}) {
+  const amountFormat = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const indexFormat = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  });
   const [ready, setReady] = useState(false);
   const [atBudget, setAtBudget] = useState(false);
   const [results, setResults] = useState<ReturnType<typeof calculate> | null>(
@@ -64,7 +81,7 @@ export default function EarnedValueForm() {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const [PV, EV, AC, BAC] = inputs.map(([name]) => Number(data.get(name)));
+    const [PV, EV, AC, BAC] = inputs.map(name => Number(data.get(name)));
     setResults(calculate(PV, EV, AC, BAC, atBudget));
   }
 
@@ -74,19 +91,14 @@ export default function EarnedValueForm() {
         disabled={!ready}
         className="my-6 rounded-lg border border-border px-4 pb-4 sm:px-6"
       >
-        <legend className="px-2 font-semibold">
-          Formulario de valor ganado
-        </legend>
-        <p>
-          Ingresa los importes en la misma moneda. Usa una sola fecha de corte
-          para PV, EV y AC.
-        </p>
+        <legend className="px-2 font-semibold">{labels.legend}</legend>
+        <p>{labels.intro}</p>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {inputs.map(([name, label]) => (
+          {inputs.map(name => (
             <label key={name} className="flex flex-col gap-1">
               <span>
-                {label} ({name})
+                {labels.inputs[name]} ({name})
               </span>
               <input
                 name={name}
@@ -101,7 +113,7 @@ export default function EarnedValueForm() {
         </div>
 
         <label className="mt-4 flex flex-col gap-1">
-          <span>Supuesto para estimar el coste final (EAC)</span>
+          <span>{labels.assumption}</span>
           <select
             value={atBudget ? "budget" : "cpi"}
             onChange={event =>
@@ -109,12 +121,8 @@ export default function EarnedValueForm() {
             }
             className="w-full rounded-md border border-border bg-background px-3 py-2"
           >
-            <option value="cpi">
-              Se mantiene la eficiencia de coste observada
-            </option>
-            <option value="budget">
-              El trabajo pendiente se realiza al coste presupuestado
-            </option>
+            <option value="cpi">{labels.atCpi}</option>
+            <option value="budget">{labels.atBudget}</option>
           </select>
         </label>
 
@@ -122,17 +130,17 @@ export default function EarnedValueForm() {
           type="submit"
           className="mt-4 rounded-md bg-accent px-4 py-2 font-medium text-white"
         >
-          Calcular
+          {labels.calculate}
         </button>
 
         <div className="overflow-x-auto">
           <table>
             <thead>
               <tr>
-                <th scope="col">Indicador</th>
-                <th scope="col">Fórmula</th>
+                <th scope="col">{labels.indicator}</th>
+                <th scope="col">{labels.formula}</th>
                 <th scope="col" className="text-right">
-                  Resultado
+                  {labels.result}
                 </th>
               </tr>
             </thead>
@@ -152,7 +160,7 @@ export default function EarnedValueForm() {
                         ? "—"
                         : Number.isFinite(value)
                           ? format.format(value)
-                          : "Sin definir"}
+                          : labels.undefined}
                     </td>
                   </tr>
                 );
@@ -161,7 +169,7 @@ export default function EarnedValueForm() {
           </table>
         </div>
         <p role="status" className="sr-only">
-          {results && "Resultados calculados."}
+          {results && labels.done}
         </p>
       </fieldset>
     </form>

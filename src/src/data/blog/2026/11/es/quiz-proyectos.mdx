@@ -22,7 +22,7 @@ licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
 import Aside from "@rgglez/astro-aside";
-import QuizWizard from "@/components/quiz/QuizWizard.tsx";
+import QuizWizard from "@/components/quiz/QuizWizard.astro";
 
 ## Introducción
 
@@ -78,7 +78,7 @@ comprueba tus cálculos con el
 
 ## Examen
 
-<QuizWizard client:load bank="quiz-proyectos" />
+<QuizWizard bank="quiz-proyectos" />
 
 ## Qué repasar si fallas
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { sprintf } from "sprintf-js";
 import type { QuizKind, QuizQuestion } from "./types";
 
 interface BankModule {
@@ -32,11 +33,27 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
-const KIND_LABEL: Record<QuizKind, string> = {
-  single: "Opción múltiple",
-  multi: "Respuesta múltiple",
-  boolean: "Verdadero o falso",
-};
+/**
+ * Etiquetas ya traducidas en servidor por `QuizWizard.astro` (gettext). Las
+ * que llevan `%` se completan aquí con `sprintf`.
+ */
+export interface QuizLabels {
+  kind: Record<QuizKind, string>;
+  correctAnswer: string;
+  correctAnswers: string;
+  incorrectAnswer: string;
+  emptyBank: string;
+  position: string;
+  noAnswers: string;
+  score: string;
+  correct: string;
+  incorrect: string;
+  check: string;
+  explain: string;
+  hideExplanation: string;
+  previous: string;
+  next: string;
+}
 
 function setsEqual(a: string[], b: string[]): boolean {
   if (a.length !== b.length) return false;
@@ -50,8 +67,14 @@ function correctIds(question: QuizQuestion): string[] {
     .map(option => option.id);
 }
 
-function GradeIcon({ correct }: { correct: boolean }) {
-  const title = correct ? "Respuesta correcta" : "Respuesta incorrecta";
+function GradeIcon({
+  correct,
+  labels,
+}: {
+  correct: boolean;
+  labels: QuizLabels;
+}) {
+  const title = correct ? labels.correctAnswer : labels.incorrectAnswer;
   return (
     <span
       role="img"
@@ -89,7 +112,13 @@ function GradeIcon({ correct }: { correct: boolean }) {
   );
 }
 
-export default function QuizWizard({ bank }: { bank: string }) {
+export default function QuizWizard({
+  bank,
+  labels,
+}: {
+  bank: string;
+  labels: QuizLabels;
+}) {
   // Orden del banco en SSR; preguntas y opciones se barajan tras montar para no
   // romper la hidratación.
   const [questions, setQuestions] = useState(() => loadBank(bank));
@@ -117,7 +146,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
   if (total === 0) {
     return (
       <p className="not-prose my-8 font-app text-foreground">
-        La batería «{bank}» no tiene preguntas.
+        {sprintf(labels.emptyBank, bank)}
       </p>
     );
   }
@@ -170,12 +199,12 @@ export default function QuizWizard({ bank }: { bank: string }) {
 
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3 sm:px-6">
           <p className="text-sm text-foreground/70">
-            Pregunta {index + 1} de {total}
+            {sprintf(labels.position, index + 1, total)}
           </p>
           <p className="text-sm text-foreground/70">
             {answeredCount === 0
-              ? "Sin respuestas todavía"
-              : `${correctCount} de ${answeredCount} correctas`}
+              ? labels.noAnswers
+              : sprintf(labels.score, correctCount, answeredCount)}
           </p>
         </div>
 
@@ -183,7 +212,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
           <legend className="float-none mb-4 block w-full text-start">
             <span className="mb-3 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-border bg-muted px-2.5 py-0.5 font-app text-xs tracking-wide text-foreground/80 uppercase">
-                {KIND_LABEL[question.kind]}
+                {labels.kind[question.kind]}
               </span>
               <span className="text-xs text-foreground/60">
                 {question.section}
@@ -232,8 +261,8 @@ export default function QuizWizard({ bank }: { bank: string }) {
                   : "flex items-center gap-2 text-sm font-medium text-red-700 dark:text-red-400"
               }
             >
-              <GradeIcon correct={isCorrect} />
-              {isCorrect ? "Correcta" : "Incorrecta"}
+              <GradeIcon correct={isCorrect} labels={labels} />
+              {isCorrect ? labels.correct : labels.incorrect}
             </p>
           ) : (
             <button
@@ -242,7 +271,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
               disabled={selected.length === 0}
               className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Comprobar
+              {labels.check}
             </button>
           )}
 
@@ -257,7 +286,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
             aria-expanded={showExplanation}
             className="rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:border-accent"
           >
-            {showExplanation ? "Ocultar explicación" : "Explicar"}
+            {showExplanation ? labels.hideExplanation : labels.explain}
           </button>
         </div>
 
@@ -265,8 +294,8 @@ export default function QuizWizard({ bank }: { bank: string }) {
           <div className="border-t border-border bg-muted/60 px-4 py-4 text-[0.975rem] leading-relaxed sm:px-6">
             <p className="mb-2 font-app text-sm font-semibold">
               {expected.length > 1
-                ? "Respuestas correctas"
-                : "Respuesta correcta"}
+                ? labels.correctAnswers
+                : labels.correctAnswer}
             </p>
             <ul className="mb-3 list-disc ps-5">
               {question.options
@@ -286,7 +315,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
             disabled={index === 0}
             className="rounded-md border border-border px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Anterior
+            {labels.previous}
           </button>
           <button
             type="button"
@@ -294,7 +323,7 @@ export default function QuizWizard({ bank }: { bank: string }) {
             disabled={index === total - 1}
             className="rounded-md border border-border px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Siguiente
+            {labels.next}
           </button>
         </div>
       </div>

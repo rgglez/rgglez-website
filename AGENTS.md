@@ -224,6 +224,14 @@ Las cadenas estáticas de `components/`, `layouts/` y `pages/` se traducen con
   `og:title`.
 - Cadenas usadas en `<script>` de cliente: traducir en servidor y pasarlas por
   `data-*`. No se envían catálogos al navegador.
+- Las etiquetas de los componentes también se traducen, incluidas las islas
+  React (`.tsx`). La isla no lleva texto fijo; recibe un prop `labels` ya
+  traducido. Un envoltorio `.astro` con el mismo nombre llama a
+  `useGettext(Astro)`, arma `labels` y monta la isla con `client:load`. Los
+  `.mdx` importan el `.astro`, no el `.tsx`. Las cadenas con variables se
+  pasan como plantilla (`_("Question %1$d of %2$d")`) y la isla las completa
+  con `sprintf` de `sprintf-js`. Ejemplos: `components/quiz/QuizWizard.astro`
+  y `components/EarnedValueForm.astro`.
 - Ciclo tras cambiar cadenas (desde `src/`):
 
   ```bash

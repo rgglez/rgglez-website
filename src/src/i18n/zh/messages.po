@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rgglez-website\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-14 15:22-0600\n"
+"POT-Creation-Date: 2026-11-27 00:17-0600\n"
 "PO-Revision-Date: 2026-10-16 20:43-0600\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -52,6 +52,83 @@ msgstr "首页"
 msgid "Updated:"
 msgstr "更新于："
 
+#: src/components/EarnedValueForm.astro:20
+#, javascript-format
+msgid "Planned value"
+msgstr "计划价值"
+
+#: src/components/EarnedValueForm.astro:21
+#, javascript-format
+msgid "Earned value"
+msgstr "挣值"
+
+#: src/components/EarnedValueForm.astro:22
+#, javascript-format
+msgid "Actual cost"
+msgstr "实际成本"
+
+#: src/components/EarnedValueForm.astro:23
+#, javascript-format
+msgid "Budget at completion"
+msgstr "完工预算"
+
+#: src/components/EarnedValueForm.astro:25
+#, javascript-format
+msgid "Earned value form"
+msgstr "挣值计算表"
+
+#: src/components/EarnedValueForm.astro:27
+#, javascript-format
+msgid ""
+"Enter the amounts in the same currency. Use a single cutoff date for PV, EV "
+"and AC."
+msgstr "请使用同一种货币输入金额。PV、EV 和 AC 请使用同一个截止日期。"
+
+#: src/components/EarnedValueForm.astro:29
+#, javascript-format
+msgid "Assumption to estimate the final cost (EAC)"
+msgstr "估算完工成本 (EAC) 的假设"
+
+#: src/components/EarnedValueForm.astro:30
+#, javascript-format
+msgid "The observed cost efficiency continues"
+msgstr "保持目前观察到的成本效率"
+
+#: src/components/EarnedValueForm.astro:31
+#, javascript-format
+msgid "The remaining work is done at the budgeted cost"
+msgstr "剩余工作按预算成本完成"
+
+#: src/components/EarnedValueForm.astro:32
+#, javascript-format
+msgid "Calculate"
+msgstr "计算"
+
+#: src/components/EarnedValueForm.astro:33
+#, javascript-format
+msgid "Indicator"
+msgstr "指标"
+
+#: src/components/EarnedValueForm.astro:34
+#, javascript-format
+msgid "Formula"
+msgstr "公式"
+
+#: src/components/EarnedValueForm.astro:35
+#, javascript-format
+msgid "Result"
+msgstr "结果"
+
+#: src/components/EarnedValueForm.astro:36
+#, javascript-format
+msgid "Undefined"
+msgstr "未定义"
+
+#: src/components/EarnedValueForm.astro:37
+#, javascript-format
+msgid "Results calculated."
+msgstr "已计算结果。"
+
 #: src/components/Footer.astro:33
 #, javascript-format
 msgid "Copyright © %1$s %2$s"
@@ -73,14 +150,14 @@ msgid "Close Menu"
 msgstr "关闭菜单"
 
 #: src/components/Header.astro:94 src/components/PortfolioTabs.astro:51
-#: src/pages/[lang]/cv/index.astro:353
+#: src/pages/[lang]/cv/index.astro:374
 #: src/pages/[lang]/portfolio/index.astro:21
 #: src/pages/[lang]/portfolio/index.astro:29
 #, javascript-format
 msgid "Portfolio"
 msgstr "作品集"
 
-#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:153
+#: src/components/Header.astro:102 src/pages/[lang]/cv/index.astro:169
 #, javascript-format
 msgid "CV"
 msgstr "简历"
@@ -158,7 +235,7 @@ msgstr "分页导航"
 msgid "Go to previous page"
 msgstr "前往上一页"
 
-#: src/components/Pagination.astro:31
+#: src/components/Pagination.astro:31 src/components/quiz/QuizWizard.astro:34
 #, javascript-format
 msgid "Prev"
 msgstr "上一页"
@@ -168,7 +245,7 @@ msgstr "上一页"
 msgid "Go to next page"
 msgstr "前往下一页"
 
-#: src/components/Pagination.astro:40
+#: src/components/Pagination.astro:40 src/components/quiz/QuizWizard.astro:35
 #, javascript-format
 msgid "Next"
 msgstr "下一页"
@@ -198,6 +275,81 @@ msgstr "访问项目网站"
 msgid "%d star"
 msgid_plural "%d stars"
 msgstr[0] "%d 颗星"
+
+#: src/components/quiz/QuizWizard.astro:18
+#, javascript-format
+msgid "Multiple choice"
+msgstr "单选题"
+
+#: src/components/quiz/QuizWizard.astro:19
+#, javascript-format
+msgid "Multiple answers"
+msgstr "多选题"
+
+#: src/components/quiz/QuizWizard.astro:20
+#, javascript-format
+msgid "True or false"
+msgstr "判断题"
+
+#: src/components/quiz/QuizWizard.astro:22
+#, javascript-format
+msgid "Correct answer"
+msgstr "正确答案"
+
+#: src/components/quiz/QuizWizard.astro:23
+#, javascript-format
+msgid "Correct answers"
+msgstr "正确答案"
+
+#: src/components/quiz/QuizWizard.astro:24
+#, javascript-format
+msgid "Incorrect answer"
+msgstr "错误答案"
+
+#: src/components/quiz/QuizWizard.astro:25
+#, javascript-format
+msgid "The quiz \"%s\" has no questions."
+msgstr "测验“%s”没有题目。"
+
+#: src/components/quiz/QuizWizard.astro:26
+#, javascript-format
+msgid "Question %1$d of %2$d"
+msgstr "第 %1$d 题，共 %2$d 题"
+
+#: src/components/quiz/QuizWizard.astro:27
+#, javascript-format
+msgid "No answers yet"
+msgstr "尚未作答"
+
+#: src/components/quiz/QuizWizard.astro:28
+#, javascript-format
+msgid "%1$d of %2$d correct"
+msgstr "%2$d 题中答对 %1$d 题"
+
+#: src/components/quiz/QuizWizard.astro:29
+#, javascript-format
+msgid "Correct"
+msgstr "正确"
+
+#: src/components/quiz/QuizWizard.astro:30
+#, javascript-format
+msgid "Incorrect"
+msgstr "错误"
+
+#: src/components/quiz/QuizWizard.astro:31
+#, javascript-format
+msgid "Check"
+msgstr "检查"
+
+#: src/components/quiz/QuizWizard.astro:32
+#, javascript-format
+msgid "Explain"
+msgstr "解释"
+
+#: src/components/quiz/QuizWizard.astro:33
+#, javascript-format
+msgid "Hide explanation"
+msgstr "隐藏解释"
 
 #: src/components/ShareLinks.astro:13
 #, javascript-format
@@ -291,124 +443,124 @@ msgstr "归档"
 msgid "All the articles I've archived."
 msgstr "所有已归档的文章。"
 
-#: src/pages/[lang]/cv/index.astro:38
+#: src/pages/[lang]/cv/index.astro:45
 #, javascript-format
 msgid "Present"
 msgstr "至今"
 
-#: src/pages/[lang]/cv/index.astro:44
+#: src/pages/[lang]/cv/index.astro:51
 #, javascript-format
 msgid "Remote"
 msgstr "远程"
 
-#: src/pages/[lang]/cv/index.astro:45
+#: src/pages/[lang]/cv/index.astro:52
 #, javascript-format
 msgid "On-site"
 msgstr "现场"
 
-#: src/pages/[lang]/cv/index.astro:46
+#: src/pages/[lang]/cv/index.astro:53
 #, javascript-format
 msgid "Hybrid"
 msgstr "混合"
 
-#: src/pages/[lang]/cv/index.astro:65
+#: src/pages/[lang]/cv/index.astro:72
 #, javascript-format
 msgid "Experience"
 msgstr "工作经历"
 
-#: src/pages/[lang]/cv/index.astro:85
+#: src/pages/[lang]/cv/index.astro:92
 #, javascript-format
 msgid "Education"
 msgstr "教育背景"
 
-#: src/pages/[lang]/cv/index.astro:97
+#: src/pages/[lang]/cv/index.astro:104
 #, javascript-format
 msgid "Courses"
 msgstr "课程"
 
-#: src/pages/[lang]/cv/index.astro:102
+#: src/pages/[lang]/cv/index.astro:109
 #, javascript-format
 msgid "Volunteering"
 msgstr "志愿活动"
 
-#: src/pages/[lang]/cv/index.astro:116
+#: src/pages/[lang]/cv/index.astro:123
 #, javascript-format
 msgid "Skills"
 msgstr "技能"
 
-#: src/pages/[lang]/cv/index.astro:129 src/pages/[lang]/cv/index.astro:352
+#: src/pages/[lang]/cv/index.astro:145 src/pages/[lang]/cv/index.astro:373
 #, javascript-format
 msgid "Projects"
 msgstr "项目"
 
-#: src/pages/[lang]/cv/index.astro:131 src/pages/[lang]/cv/index.astro:360
+#: src/pages/[lang]/cv/index.astro:147 src/pages/[lang]/cv/index.astro:381
 #, javascript-format
 msgid "Spoken languages"
 msgstr "语言能力"
 
-#: src/pages/[lang]/cv/index.astro:133 src/pages/[lang]/cv/index.astro:375
+#: src/pages/[lang]/cv/index.astro:149 src/pages/[lang]/cv/index.astro:396
 #, javascript-format
 msgid "Interests"
 msgstr "兴趣"
 
-#: src/pages/[lang]/cv/index.astro:154
+#: src/pages/[lang]/cv/index.astro:170
 #, javascript-format
 msgid "Curriculum vitae"
 msgstr "个人简历"
 
-#: src/pages/[lang]/cv/index.astro:186
+#: src/pages/[lang]/cv/index.astro:202
 #, javascript-format
 msgid "Objective"
 msgstr "求职目标"
 
-#: src/pages/[lang]/cv/index.astro:193
+#: src/pages/[lang]/cv/index.astro:209
 #, javascript-format
 msgid "Filter"
 msgstr "筛选"
 
-#: src/pages/[lang]/cv/index.astro:198
+#: src/pages/[lang]/cv/index.astro:214
 #, javascript-format
 msgid ""
 "Pick profiles or tags to filter the highlights. An item is shown if it "
 "matches any selected tag."
 msgstr "选择档案或标签来筛选成就。只要与任一所选标签匹配，条目就会显示。"
 
-#: src/pages/[lang]/cv/index.astro:203
+#: src/pages/[lang]/cv/index.astro:219
 #, javascript-format
 msgid "Profiles"
 msgstr "档案"
 
-#: src/pages/[lang]/cv/index.astro:222
+#: src/pages/[lang]/cv/index.astro:238
 #, javascript-format
 msgid "Clear filters"
 msgstr "清除筛选"
 
-#: src/pages/[lang]/cv/index.astro:227
+#: src/pages/[lang]/cv/index.astro:243
 #, javascript-format
 msgid "Search tags"
 msgstr "搜索标签"
 
-#: src/pages/[lang]/cv/index.astro:233
+#: src/pages/[lang]/cv/index.astro:249
 #, javascript-format
 msgid "Type a tag and press Enter"
 msgstr "输入标签并按回车"
 
-#: src/pages/[lang]/cv/index.astro:236
+#: src/pages/[lang]/cv/index.astro:252
 #, javascript-format
 msgid "Tag not found"
 msgstr "未找到该标签"
 
-#: src/pages/[lang]/cv/index.astro:237
+#: src/pages/[lang]/cv/index.astro:253
 #, javascript-format
 msgid "Remove tag %s"
 msgstr "移除标签 %s"
 
-#: src/pages/[lang]/cv/index.astro:245
+#: src/pages/[lang]/cv/index.astro:261
 #, javascript-format
 msgid "All tags (%d)"
 msgstr "全部标签（%d）"
 
-#: src/pages/[lang]/cv/index.astro:266
+#: src/pages/[lang]/cv/index.astro:282
 #, javascript-format
 msgid "Sections"
 msgstr "章节"

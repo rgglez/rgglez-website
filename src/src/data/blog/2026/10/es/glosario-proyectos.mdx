@@ -8,7 +8,7 @@ pubDatetime: 2026-10-16T00:00:00-06:00
 modDatetime: 2026-11-23T00:00:00-06:00
 lang: es
 ogImage: "../../../../../assets/posts/2026/10/glosario-proyectos/header.webp"
-featured: true
+featured: false
 draft: false
 tags:
   - gestion-de-proyectos
@@ -19,7 +19,7 @@ license: "CC BY-NC-ND 4.0"
 licenseUrl: "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es"
 ---
 
-import EarnedValueForm from "@/components/EarnedValueForm.tsx";
+import EarnedValueForm from "@/components/EarnedValueForm.astro";
 
 ## Introducción
 
@@ -1013,7 +1013,7 @@ Calcula $VAC=BAC-EAC$. Un valor positivo indica que se prevé cerrar por
 debajo del presupuesto, uno negativo indica un sobrecoste previsto y cero
 indica que el coste final estimado coincide con el presupuesto.
 
-<EarnedValueForm client:load />
+<EarnedValueForm />
 
 ### Interpretación de los indicadores de valor ganado
 

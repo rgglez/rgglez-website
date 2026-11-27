@@ -1,0 +1,41 @@
+---
+/**
+ * Envoltorio de la isla `EarnedValueForm.tsx`. Traduce las etiquetas en
+ * servidor con gettext y las pasa como prop: los catálogos no viajan al
+ * navegador.
+ */
+import { useGettext } from "@/i18n";
+import EarnedValueForm, {
+  type EarnedValueLabels,
+} from "./EarnedValueForm.tsx";
+
+const { _, lang } = useGettext(Astro);
+
+// ponytail: solo `es` necesita región (es-MX usa punto decimal); el resto usa
+// el código de idioma tal cual. Mover a config.ts si aparece otro caso.
+const locale = lang === "es" ? "es-MX" : lang;
+
+const labels: EarnedValueLabels = {
+  inputs: {
+    PV: _("Planned value"),
+    EV: _("Earned value"),
+    AC: _("Actual cost"),
+    BAC: _("Budget at completion"),
+  },
+  legend: _("Earned value form"),
+  intro: _(
+    "Enter the amounts in the same currency. Use a single cutoff date for PV, EV and AC."
+  ),
+  assumption: _("Assumption to estimate the final cost (EAC)"),
+  atCpi: _("The observed cost efficiency continues"),
+  atBudget: _("The remaining work is done at the budgeted cost"),
+  calculate: _("Calculate"),
+  indicator: _("Indicator"),
+  formula: _("Formula"),
+  result: _("Result"),
+  undefined: _("Undefined"),
+  done: _("Results calculated."),
+};
+---
+
+<EarnedValueForm client:load labels={labels} locale={locale} />

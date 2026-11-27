@@ -16,16 +16,18 @@ html[data-theme="light"] {
   --accent-2: #b17a30;
   --muted: #e8e1d0;
   --border: #ded5c0;
+  --side: #e3dbc6;
 }
 
 html[data-theme="dark"] {
-  --background: #14120d;
+  --background: #1a1712;
   --foreground: #a89e8a;
   --heading: #e6e0d2;
   --accent: #c98a3f;
   --accent-2: #e0a457;
-  --muted: #1b1811;
-  --border: #211d15;
+  --muted: #221e17;
+  --border: #2b261c;
+  --side: #0f0d09;
 }
 
 @theme inline {
@@ -48,9 +50,12 @@ html[data-theme="dark"] {
   }
   html {
     @apply overflow-y-scroll scroll-smooth;
+    /* Laterales: la "mesa" sobre la que va la hoja */
+    background-color: var(--side);
   }
   body {
-    @apply flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/75 selection:text-background;
+    /* La "hoja": columna centrada con fondo propio y bordes laterales */
+    @apply mx-auto flex min-h-svh w-full max-w-app flex-col border-x bg-background font-app text-foreground selection:bg-accent/75 selection:text-background;
   }
   a,
   button {
@@ -65,12 +70,27 @@ html[data-theme="dark"] {
   }
 }
 
+/* Ancho de la hoja: 4xl/5xl + 2rem, compensa el sm:px-8 de app-layout */
+:root {
+  --sheet-w: 58rem;
+}
+@media (width >= 80rem) {
+  :root {
+    --sheet-w: 66rem;
+  }
+}
+
 @utility max-w-app {
-  @apply max-w-4xl xl:max-w-5xl;
+  max-width: var(--sheet-w);
 }
 
 @utility app-layout {
-  @apply mx-auto w-full max-w-app px-4;
+  @apply mx-auto w-full max-w-app px-4 sm:px-8;
+}
+
+/* Rompe el padding de app-layout para llegar a los bordes de la hoja */
+@utility sheet-bleed {
+  @apply -mx-4 w-auto sm:-mx-8;
 }
 
 .active-nav {
@@ -227,4 +247,49 @@ svg.mindmapDiagram [class*="section-"] span {
 }
 [aria-expanded="true"] [data-code-icon] {
   transform: rotate(90deg);
+}
+
+/* Barra superior en pantallas anchas (lg+). En angostas no cambia nada.
+   Arriba: franja color lateral dentro de la hoja.
+   Al salir del viewport (data-stuck, lo pone Header.astro): fija y a todo
+   el ancho, con logo y menú en los extremos. */
+@media (width >= 64rem) {
+  html {
+    /* Que la barra fija no tape los destinos de los anclas */
+    scroll-padding-top: 5rem;
+  }
+  #site-header {
+    background-color: var(--side);
+    /* La línea inferior va en el header para llegar a los bordes de la hoja */
+    border-bottom: 1px solid var(--border);
+  }
+  #site-header #top-nav-wrap {
+    background-color: transparent;
+    border-bottom-width: 0;
+  }
+  #header-slot[data-stuck] {
+    /* Conserva el hueco para que el contenido no salte */
+    height: var(--header-h);
+  }
+  #header-slot[data-stuck] #site-header {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 40;
+    max-width: none;
+    /* Logo y menú pegados a los extremos de la barra, igual que en la hoja */
+    padding-inline: 2rem;
+  }
+}
+
+@media (width >= 64rem) and (prefers-reduced-motion: no-preference) {
+  #header-slot[data-stuck] #site-header {
+    animation: header-slide-in 200ms ease-out;
+  }
+}
+
+@keyframes header-slide-in {
+  from {
+    transform: translateY(-100%);
+  }
 }

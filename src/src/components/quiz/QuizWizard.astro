@@ -1,0 +1,39 @@
+---
+/**
+ * Envoltorio de la isla `QuizWizard.tsx`. Traduce las etiquetas en servidor
+ * con gettext y las pasa como prop: los catálogos no viajan al navegador.
+ */
+import { useGettext } from "@/i18n";
+import QuizWizard, { type QuizLabels } from "./QuizWizard.tsx";
+
+interface Props {
+  bank: string;
+}
+
+const { bank } = Astro.props;
+const { _ } = useGettext(Astro);
+
+const labels: QuizLabels = {
+  kind: {
+    single: _("Multiple choice"),
+    multi: _("Multiple answers"),
+    boolean: _("True or false"),
+  },
+  correctAnswer: _("Correct answer"),
+  correctAnswers: _("Correct answers"),
+  incorrectAnswer: _("Incorrect answer"),
+  emptyBank: _('The quiz "%s" has no questions.'),
+  position: _("Question %1$d of %2$d"),
+  noAnswers: _("No answers yet"),
+  score: _("%1$d of %2$d correct"),
+  correct: _("Correct"),
+  incorrect: _("Incorrect"),
+  check: _("Check"),
+  explain: _("Explain"),
+  hideExplanation: _("Hide explanation"),
+  previous: _("Prev"),
+  next: _("Next"),
+};
+---
+
+<QuizWizard client:load bank={bank} labels={labels} />
