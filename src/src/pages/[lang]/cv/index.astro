@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import BackToTopButton from "@/components/BackToTopButton.astro";
 import { SITE } from "@/config";
 import { useGettext, sprintf } from "@/i18n";
 import IconBriefcase from "@/assets/icons/IconBriefcase.svg";
@@ -281,7 +282,7 @@ const layoutProps = {
       <nav
         aria-label={_("Sections")}
         data-cv-toc
-        class="sticky top-0 z-10 -mx-4 mb-6 bg-background/90 px-4 py-2 backdrop-blur-lg lg:top-8 lg:mx-0 lg:mb-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
+        class="sticky top-0 z-10 -mx-4 mb-6 bg-background/90 px-4 py-2 backdrop-blur-lg lg:top-24 lg:mx-0 lg:mb-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
       >
         <div
           class="flex snap-x [scrollbar-width:none] justify-between overflow-x-auto lg:flex-col lg:justify-start lg:gap-1 lg:overflow-visible"
@@ -406,6 +407,7 @@ const layoutProps = {
         }
       </div>
     </div>
+    <BackToTopButton />
   </main>
   <Footer />
 </Layout>

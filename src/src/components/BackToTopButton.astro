@@ -43,6 +43,8 @@ const { _ } = useGettext(Astro);
     const btnContainer = document.querySelector("#btt-btn-container");
     const backToTopBtn = document.querySelector("[data-button='back-to-top']");
     const progressIndicator = document.querySelector("#progress-indicator");
+    // Hero del post (ImageHeroHeader). Sin hero, se usa el 30 % del scroll.
+    const hero = document.querySelector("[data-hero]");
 
     if (!rootElement || !btnContainer || !backToTopBtn || !progressIndicator)
       return;
@@ -70,7 +72,9 @@ const { _ } = useGettext(Astro);
         `conic-gradient(var(--accent), var(--accent) ${scrollPercent}%, transparent ${scrollPercent}%)`
       );
 
-      const isVisible = scrollTotal > 0 && scrollTop / scrollTotal > 0.3;
+      const isVisible = hero
+        ? hero.getBoundingClientRect().bottom < 0
+        : scrollTotal > 0 && scrollTop / scrollTotal > 0.3;
 
       if (isVisible !== lastVisible) {
         btnContainer.classList.toggle("opacity-100", isVisible);

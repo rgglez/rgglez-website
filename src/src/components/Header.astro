@@ -224,27 +224,23 @@ const isActive = (path: string) => {
 
   toggleNav();
 
-  // Barra fija en pantallas anchas: marca #header-slot con data-stuck cuando
-  // la barra sale del viewport por arriba. La CSS (global.css) solo lo
-  // aplica en lg+, así que en pantallas angostas no tiene efecto.
-  let headerObserver: IntersectionObserver | undefined;
+  // Barra fija en pantallas anchas: #header-slot reserva su alto en el flujo.
+  // La CSS (global.css) solo lo aplica en lg+; en angostas no tiene efecto.
+  let headerResize: ResizeObserver | undefined;
 
-  function initStickyHeader() {
-    headerObserver?.disconnect();
+  function initFixedHeader() {
+    headerResize?.disconnect();
     const slot = document.getElementById("header-slot");
     const header = document.getElementById("site-header");
     if (!slot || !header) return;
 
-    headerObserver = new IntersectionObserver(([entry]) => {
-      const stuck = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-      if (stuck)
-        slot.style.setProperty("--header-h", `${header.offsetHeight}px`);
-      slot.toggleAttribute("data-stuck", stuck);
-    });
-    headerObserver.observe(slot);
+    headerResize = new ResizeObserver(() =>
+      slot.style.setProperty("--header-h", `${header.offsetHeight}px`)
+    );
+    headerResize.observe(header);
   }
 
-  document.addEventListener("astro:page-load", initStickyHeader);
+  document.addEventListener("astro:page-load", initFixedHeader);
 
   // Runs on view transitions navigation
   document.addEventListener("astro:after-swap", toggleNav);
