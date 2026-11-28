@@ -15,8 +15,10 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
+import rehypeHyphenate from "@rgglez/rehype-hyphenate";
 import { SITE } from "./src/config";
 import mdx from "@astrojs/mdx";
+import { unified } from "@astrojs/markdown-remark";
 import cloudflare from "@astrojs/cloudflare";
 import type { AstroIntegration } from "astro";
 
@@ -142,6 +144,11 @@ export default defineConfig({
   site: SITE.website,
   trailingSlash: "never",
 
+  // ponytail: comportamiento de Astro 6. El default de v7 ('jsx') quita el
+  // espacio entre elementos inline separados por salto de línea en las
+  // plantillas. Pasar a 'jsx' requiere revisar los .astro y añadir {" "}.
+  compressHTML: true,
+
   integrations: [
     fontPreloadIntegration(),
     sitemap({
@@ -162,25 +169,40 @@ export default defineConfig({
   ],
 
   markdown: {
-    rehypePlugins: [rehypeKatex],
-    remarkPlugins: [
-      remarkMermaidBypass,
-      [
-        remarkToc,
-        {
-          heading:
-            "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis|目录",
-        },
+    // Astro 7 usa Sätteri por defecto; los plugins remark/rehype necesitan el
+    // procesador unified de @astrojs/markdown-remark (también para .mdx).
+    processor: unified({
+      rehypePlugins: [
+        rehypeKatex,
+        [
+          rehypeHyphenate,
+          {
+            // El idioma sale de la carpeta del post: blog/<AAAA>/<MM>/<lang>/.
+            // zh queda sin guionar (el plugin excluye CJK).
+            lang: (file: { path?: string }) =>
+              file.path?.match(/\/blog\/\d{4}\/\d{2}\/([a-z]{2})\//)?.[1],
+          },
+        ],
       ],
-      remarkMath,
-      [
-        remarkCollapse,
-        {
-          test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis|目录)$/i,
-          summary: (str: string) => str,
-        },
+      remarkPlugins: [
+        remarkMermaidBypass,
+        [
+          remarkToc,
+          {
+            heading:
+              "(table[ -]of[ -])?contents?|toc|tabla de contenido|table des matières|inhaltsverzeichnis|目录",
+          },
+        ],
+        remarkMath,
+        [
+          remarkCollapse,
+          {
+            test: /^(table of contents|tabla de contenido|table des mati[eè]res|inhaltsverzeichnis|目录)$/i,
+            summary: (str: string) => str,
+          },
+        ],
       ],
-    ],
+    }),
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
       themes: { light: "min-light", dark: "night-owl" },

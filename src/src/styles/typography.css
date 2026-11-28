@@ -42,6 +42,15 @@
       @apply marker:text-[#8c826c] dark:marker:text-[#625c4a];
     }
 
+    /* Los guiones suaves (&shy;) los inserta @rgglez/rehype-hyphenate en build;
+       `hyphens: manual` usa solo esos. `pretty` optimiza el párrafo. */
+    p,
+    li {
+      text-align: justify;
+      hyphens: manual;
+      text-wrap: pretty;
+    }
+
     /* MDX envuelve en <p> el texto de un <a> JSX partido en varias líneas
        (prettier lo hace con URLs largas). Anula el margen del párrafo. */
     a > p:only-child {
