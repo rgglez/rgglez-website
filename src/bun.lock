@@ -52,12 +52,14 @@
         "@pagefind/default-ui": "^1.5.2",
         "@shikijs/transformers": "^4.6.0",
         "@tailwindcss/typography": "^0.5.19",
+        "@types/js-yaml": "^4.0.9",
         "@types/lodash.kebabcase": "^4.1.9",
         "@types/sprintf-js": "^1.1.4",
         "@typescript-eslint/parser": "^8.60.1",
         "eslint": "^9.39.4",
         "eslint-plugin-astro": "^1.7.0",
         "globals": "^16.5.0",
+        "js-yaml": "^4.1.1",
         "pagefind": "^1.5.2",
         "prettier": "^3.8.3",
         "prettier-plugin-astro": "^0.14.1",
@@ -641,6 +643,8 @@
     "@types/geojson": ["@types/geojson@7946.0.16", "", {}, "sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg=="],
 
     "@types/hast": ["@types/hast@3.0.5", "", { "dependencies": { "@types/unist": "*" } }, "sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g=="],
+
+    "@types/js-yaml": ["@types/js-yaml@4.0.9", "", {}, "sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg=="],
 
     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
 

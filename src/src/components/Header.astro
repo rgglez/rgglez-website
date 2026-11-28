@@ -22,7 +22,8 @@ const currentPath =
 // Derive current lang from URL first segment, fallback to default
 const firstSegment = currentPath.split("/").filter(Boolean)[0];
 const currentLang =
-  firstSegment && SITE.supportedLangs.includes(firstSegment)
+  firstSegment &&
+  (SITE.supportedLangs as readonly string[]).includes(firstSegment)
     ? firstSegment
     : SITE.defaultLang;
 
